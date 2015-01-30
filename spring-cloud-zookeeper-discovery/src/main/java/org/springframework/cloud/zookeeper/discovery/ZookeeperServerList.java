@@ -1,21 +1,17 @@
 package org.springframework.cloud.zookeeper.discovery;
 
-import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Lists.newArrayList;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
+
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * @author Spencer Gibb
@@ -52,21 +48,15 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			if (instances == null || instances.isEmpty()) {
 				return Collections.EMPTY_LIST;
 			}
-			Collection<ZookeeperServer> servers = transform(instances,
-					new Function<ServiceInstance<ZookeeperInstance>, ZookeeperServer>() {
-						@Nullable
-						@Override
-						public ZookeeperServer apply(
-								@Nullable ServiceInstance<ZookeeperInstance> instance) {
-							ZookeeperServer server = new ZookeeperServer(instance);
-							return server;
-						}
-					});
+			List<ZookeeperServer> servers = new ArrayList<>();
+			for (ServiceInstance<ZookeeperInstance> instance : instances) {
+				servers.add(new ZookeeperServer(instance));
+			}
 
-			return newArrayList(servers);
+			return servers;
 		}
 		catch (Exception e) {
-			Throwables.propagate(e);
+			rethrowRuntimeException(e);
 		}
 		return Collections.EMPTY_LIST;
 	}

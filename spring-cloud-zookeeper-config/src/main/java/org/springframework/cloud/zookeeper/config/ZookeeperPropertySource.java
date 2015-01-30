@@ -1,5 +1,6 @@
 package org.springframework.cloud.zookeeper.config;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.Lifecycle;
 import org.springframework.core.env.EnumerablePropertySource;
-
-import com.google.common.base.Charsets;
 
 /**
  * @author Spencer Gibb
@@ -58,7 +57,7 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 		ChildData data = cache.getCurrentData(fullPath);
 		if (data == null)
 			return null;
-		return new String(data.getData(), Charsets.UTF_8);
+		return new String(data.getData(), Charset.forName("UTF-8"));
 	}
 
 	@Override
