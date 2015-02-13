@@ -40,8 +40,19 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			throw new IllegalStateException("Unable to locate instance in zookeeper: "
 					+ context.getId());
 		}
-		return new DefaultServiceInstance(instance.getId(), instance.getAddress(),
-				instance.getPort(), instance.getSslPort()!=null);
+
+		return createServiceInstance(instance.getId(), instance);
+	}
+
+	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
+		boolean secure = serviceInstance.getSslPort() != null;
+		Integer port = serviceInstance.getPort();
+
+		if (secure) {
+			port = serviceInstance.getSslPort();
+		}
+
+		return new DefaultServiceInstance(serviceId, serviceInstance.getAddress(), port, secure);
 	}
 
 	@Override
@@ -54,13 +65,11 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 
 		for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
-			instances.add(new DefaultServiceInstance(serviceId, instance.getAddress(),
-					instance.getPort(), instance.getSslPort()!=null));
+			instances.add(createServiceInstance(serviceId, instance));
 		}
 
 		return instances;
 	}
-
 
 	@Override
 	public List<String> getServices() {
