@@ -8,7 +8,8 @@ import javax.annotation.PreDestroy;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.config.client.PropertySourceLocator;
+// import org.springframework.cloud.config.client.PropertySourceLocator;
+import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;

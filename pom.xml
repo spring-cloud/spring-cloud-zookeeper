@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<version>1.0.1.BUILD-SNAPSHOT</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -57,32 +57,32 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-core</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-bus</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-config</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-discovery</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-commons</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring.cloud.commons}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-bus</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring.cloud.bus}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework.boot</groupId>
@@ -112,12 +112,12 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-config-client</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring.cloud.config.client}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-netflix-core</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring.cloud.netflix.core}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.curator</groupId>
@@ -165,6 +165,10 @@
 	</dependencyManagement>
 
 	<properties>
+		<spring.cloud.commons>1.0.1.BUILD-SNAPSHOT</spring.cloud.commons>
+		<spring.cloud.bus>1.0.1.BUILD-SNAPSHOT</spring.cloud.bus>
+		<spring.cloud.config.client>1.0.1.BUILD-SNAPSHOT</spring.cloud.config.client>
+		<spring.cloud.netflix.core>1.0.1.BUILD-SNAPSHOT</spring.cloud.netflix.core>
 		<curator.version>2.7.0</curator.version>
 		<ribbon.version>2.0-RC9</ribbon.version>
 	</properties>
