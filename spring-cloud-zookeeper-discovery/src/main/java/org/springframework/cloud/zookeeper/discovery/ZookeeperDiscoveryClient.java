@@ -61,20 +61,6 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		return instances;
 	}
 
-//	@Override
-//	@SneakyThrows
-//	public List<org.springframework.cloud.client.ServiceInstance> getAllInstances() {
-//		List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
-//
-//		for (String name : discovery.queryForNames()) {
-//			for (ServiceInstance<ZookeeperInstance> instance: discovery.queryForInstances(name)) {
-//				instances.add(new DefaultServiceInstance(instance.getName(), instance
-//						.getAddress(), instance.getPort(), instance.getSslPort()!=null));
-//			}
-//		}
-//
-//		return instances;
-//	}
 
 	@Override
 	public List<String> getServices() {
