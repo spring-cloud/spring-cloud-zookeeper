@@ -41,7 +41,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 					+ context.getId());
 		}
 		return new DefaultServiceInstance(instance.getId(), instance.getAddress(),
-				instance.getPort());
+				instance.getPort(), instance.getSslPort()!=null);
 	}
 
 	@Override
@@ -55,26 +55,12 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 		for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 			instances.add(new DefaultServiceInstance(serviceId, instance.getAddress(),
-					instance.getPort()));
+					instance.getPort(), instance.getSslPort()!=null));
 		}
 
 		return instances;
 	}
 
-	@Override
-	@SneakyThrows
-	public List<org.springframework.cloud.client.ServiceInstance> getAllInstances() {
-		List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
-
-		for (String name : discovery.queryForNames()) {
-			for (ServiceInstance<ZookeeperInstance> instance: discovery.queryForInstances(name)) {
-				instances.add(new DefaultServiceInstance(instance.getName(), instance
-						.getAddress(), instance.getPort()));
-			}
-		}
-
-		return instances;
-	}
 
 	@Override
 	public List<String> getServices() {
