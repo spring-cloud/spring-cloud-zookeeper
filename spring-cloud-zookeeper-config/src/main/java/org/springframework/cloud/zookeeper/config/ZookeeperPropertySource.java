@@ -42,16 +42,14 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 			cache = TreeCache.newBuilder(source, context).build();
 			cache.start();
 			running = true;
-            /*
-                TODO: race condition since TreeCache.process(..) is invoked asynchronously.
-                Methods getProperty and getPropertyNames could be invoked before that TreeCache.process(..) receives
-                all the WatchedEvents.
-            */
-		}
-		catch (NoNodeException e) {
+						/*
+								TODO: race condition since TreeCache.process(..) is invoked asynchronously.
+								Methods getProperty and getPropertyNames could be invoked before that TreeCache.process(..) receives
+								all the WatchedEvents.
+						*/
+		} catch (NoNodeException e) {
 			// no node, ignore
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOG.error("Error initializing ZookeperPropertySource", e);
 		}
 	}
@@ -79,10 +77,9 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 			return;
 		for (Map.Entry<String, ChildData> entry : children.entrySet()) {
 			ChildData child = entry.getValue();
-			if (child.getData()==null || child.getData().length == 0) {
+			if (child.getData() == null || child.getData().length == 0) {
 				findKeys(keys, child.getPath());
-			}
-			else {
+			} else {
 				keys.add(child.getPath().replace(context + "/", "").replace('/', '.'));
 			}
 		}

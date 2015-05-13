@@ -8,6 +8,7 @@ import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.core.env.Environment;
  * @author Spencer Gibb
  */
 @Configuration
+@Import(AddressProviderConfiguration.class)
 @EnableConfigurationProperties
 public class ZookeeperDiscoveryClientConfiguration {
 	@Autowired
@@ -40,13 +42,14 @@ public class ZookeeperDiscoveryClientConfiguration {
 	}
 
 	@Bean
-	public ServiceInstance<ZookeeperInstance> serviceInstance() throws Exception {
+	@ConditionalOnMissingBean
+	public ServiceInstance<ZookeeperInstance> serviceInstance(MicroserviceAddressProvider microserviceAddressProvider) throws Exception {
 		Environment environment = context.getEnvironment();
-		Integer port = new Integer(environment.getProperty("server.port", "8080"));
 		UriSpec uriSpec = new UriSpec(zookeeperDiscoveryProperties().getUriSpec());
 		return ServiceInstance.<ZookeeperInstance> builder()
 				.name(environment.getProperty("spring.application.name"))
-				.payload(new ZookeeperInstance(context.getId())).port(port)
+				.payload(new ZookeeperInstance(context.getId())).port(microserviceAddressProvider.getPort())
+				.address(microserviceAddressProvider.getHost())
 				.uriSpec(uriSpec).build();
 	}
 
@@ -56,15 +59,17 @@ public class ZookeeperDiscoveryClientConfiguration {
 	}
 
 	@Bean
-	public ServiceDiscovery<ZookeeperInstance> serviceDiscovery(CuratorFramework curator)
+	@ConditionalOnMissingBean
+	public ServiceDiscovery<ZookeeperInstance> serviceDiscovery(CuratorFramework curator, ServiceInstance<ZookeeperInstance> serviceInstance)
 			throws Exception {
 		return ServiceDiscoveryBuilder.builder(ZookeeperInstance.class).client(curator)
 				.basePath(zookeeperDiscoveryProperties().getRoot())
-				.serializer(instanceSerializer()).thisInstance(serviceInstance()).build();
+				.serializer(instanceSerializer()).thisInstance(serviceInstance).build();
 	}
 
 	@Bean
 	public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
 		return new ZookeeperDiscoveryHealthIndicator();
 	}
+
 }
