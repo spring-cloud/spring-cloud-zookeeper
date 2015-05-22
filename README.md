@@ -1,6 +1,8 @@
 spring-cloud-zookeeper
 ===================
 
+[![Build Status](https://travis-ci.org/spring-cloud/spring-cloud-zookeeper.svg?branch=master)](https://travis-ci.org/spring-cloud/spring-cloud-zookeeper)
+
 Developer Preview
 
 ### TODO
