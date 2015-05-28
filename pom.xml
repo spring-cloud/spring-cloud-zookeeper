@@ -34,7 +34,6 @@
 		<module>spring-cloud-zookeeper-core</module>
 		<module>spring-cloud-zookeeper-config</module>
 		<module>spring-cloud-zookeeper-discovery</module>
-		<module>spring-cloud-zookeeper-bus</module>
 		<module>spring-cloud-zookeeper-sample</module>
 	</modules>
 
