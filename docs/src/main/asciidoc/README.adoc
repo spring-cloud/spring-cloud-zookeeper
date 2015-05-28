@@ -1,0 +1,33 @@
+image::https://travis-ci.org/spring-cloud/spring-cloud-zookeeper.svg?branch=master[Build Status, link=https://travis-ci.org/spring-cloud/spring-cloud-zookeeper]
+
+include::intro.adoc[]
+
+== This is a Developer Preview
+
+We plan on releasing a milestone shortly.
+
+== Zookeeper overview
+
+Features of Zookeeper
+
+* TODO: list high level features of zookeeper
+
+See the http://zookeeper.apache.org[Zookeeper site] for more information.  Spring Cloud Zookeeper also builds on the http://curator.apache.org[Apache Curator] project which started life at Netflix.
+
+== Spring Cloud Zookeeper Features
+
+* Spring Cloud `DiscoveryClient` implementation
+** supports Ribbon and Zuul
+* Zookeeper based `PropertySource` loaded during the 'bootstrap' phase.
+
+== Running the sample
+
+1. TODO: document running the sample
+
+== Building
+
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/building.adoc[]
+
+== Contributing
+
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]

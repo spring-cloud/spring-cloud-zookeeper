@@ -35,6 +35,7 @@
 		<module>spring-cloud-zookeeper-config</module>
 		<module>spring-cloud-zookeeper-discovery</module>
 		<module>spring-cloud-zookeeper-sample</module>
+		<module>docs</module>
 	</modules>
 
 	<build>

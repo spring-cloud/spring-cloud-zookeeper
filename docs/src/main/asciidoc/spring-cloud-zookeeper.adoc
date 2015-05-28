@@ -1,0 +1,21 @@
+:github-tag: master
+:github-repo: spring-cloud/spring-cloud-zookeeper
+:github-raw: http://raw.github.com/{github-repo}/{github-tag}
+:github-code: http://github.com/{github-repo}/tree/{github-tag}
+= Spring Cloud Zookeeper
+
+include::intro.adoc[]
+
+[[spring-cloud-zookeeper-install]]
+== Install Zookeeper
+TODO: document zookeeper installation
+
+[[spring-cloud-zookeeper-discovery]]
+== Service Discovery with Zookeeper
+
+TODO: document zookeeper service discovery
+
+[[spring-cloud-zookeeper-config]]
+== Distributed Configuration with Zookeeper
+
+TODO: document zookeeper config
