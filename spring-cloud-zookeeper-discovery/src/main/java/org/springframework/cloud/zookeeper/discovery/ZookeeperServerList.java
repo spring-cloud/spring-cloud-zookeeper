@@ -1,20 +1,21 @@
 package org.springframework.cloud.zookeeper.discovery;
 
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.AbstractServerList;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceInstance;
-
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.AbstractServerList;
-
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * @author Spencer Gibb
+ * @author Marcin Grzejszczak, 4financeIT
  */
 public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 
@@ -28,6 +29,10 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 	@Override
 	public void initWithNiwsConfig(IClientConfig clientConfig) {
 		this.serviceId = clientConfig.getClientName();
+	}
+
+	public void initFromDependencies(IClientConfig clientConfig, ZookeeperDependencies zookeeperDependencies) {
+		this.serviceId = zookeeperDependencies.getPathForAlias(clientConfig.getClientName());
 	}
 
 	@Override

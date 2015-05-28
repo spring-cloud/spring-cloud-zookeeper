@@ -1,22 +1,23 @@
 package org.springframework.cloud.zookeeper.discovery;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import lombok.SneakyThrows;
-
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.ApplicationContext;
 
-import static org.springframework.util.ReflectionUtils.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * @author Spencer Gibb
+ * @author Marcin Grzejszczak, 4financeIT
  */
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
@@ -28,6 +29,9 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Autowired
 	ServiceDiscovery<ZookeeperInstance> discovery;
+
+	@Autowired(required = false)
+	ZookeeperDependencies zookeeperDependencies;
 
 	@Override
 	public String description() {
@@ -59,16 +63,24 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	@SneakyThrows
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
+		String serviceIdToQuery = getServiceIdToQuery(serviceId);
 		Collection<ServiceInstance<ZookeeperInstance>> zkInstances = discovery
-				.queryForInstances(serviceId);
+				.queryForInstances(serviceIdToQuery);
 
 		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 
 		for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
-			instances.add(createServiceInstance(serviceId, instance));
+			instances.add(createServiceInstance(serviceIdToQuery, instance));
 		}
 
 		return instances;
+	}
+
+	private String getServiceIdToQuery(String serviceId) {
+		if (zookeeperDependencies != null && zookeeperDependencies.hasDependencies()) {
+			return zookeeperDependencies.getPathForAlias(serviceId);
+		}
+		return serviceId;
 	}
 
 	@Override
