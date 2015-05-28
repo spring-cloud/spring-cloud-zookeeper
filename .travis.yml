@@ -11,13 +11,11 @@ install:
 #- mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 #- ./docs/src/main/asciidoc/ghpages.sh
 script:
-#TODO: run zookeeper on tests?
-#TODO: change to deploy
-- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml install -nsu -Dmaven.test.redirectTestOutputToFile=true'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml deploy -nsu -Dmaven.test.redirectTestOutputToFile=true'
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || mvn --settings .settings.xml install -nsu -Dmaven.test.redirectTestOutputToFile=true'
 env:
   global:
   - GIT_NAME="Spencer Gibb"
   - GIT_EMAIL=sgibb@pivotal.io
   - CI_DEPLOY_USERNAME=sgibb
-  - secure: C0sQZDWIkR5mhsstNzOgZ9hzyixLqul2k+EqUda7dJFZaRup0PSAdvZBJ6Kf2s9YF6ovovNCHOr4gadCrg7PFDik78lpgiytvUCIyHgKNATD809azkaVFFQPFT1Hq/SMK0un37rl2BxLI//0bJCvVkTNs6sGJ10pcPUtGvD+t18=
+  - secure: cbst4/p78WIcjFgGV5YJ4x8vTpaMrrDMiVuHi3iprf4vE3KNktod9NW0/C6AB77ik6ndAYHI/qwUpb401DPPGvKf6rMwKtsVelwQu0TPqIhb3aHtOGwYdwQ5sCASkJZv2XvVc1sjjYLL7cXGRn85q1WN8B8JywKU6u9jgt2612o=
