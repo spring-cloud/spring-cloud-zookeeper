@@ -57,4 +57,9 @@ public class ZookeeperDiscoveryClientConfiguration {
 		return new ZookeeperDiscoveryHealthIndicator(zookeeperServiceDiscovery());
 	}
 
+	@Bean
+	public ZookeeperServiceWatch zookeeperServiceWatch() {
+		return new ZookeeperServiceWatch(curator, zookeeperDiscoveryProperties());
+	}
+
 }
