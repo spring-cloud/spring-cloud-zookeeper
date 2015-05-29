@@ -16,9 +16,9 @@
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.SneakyThrows;
 import org.apache.curator.x.discovery.ServiceCache;
@@ -36,7 +36,7 @@ import org.springframework.context.ApplicationListener;
 public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent> {
 
 	private final ZookeeperServiceDiscovery serviceDiscovery;
-	private final Map<String, ServiceCache> dependencyRegistry = new HashMap<>();
+	private final Map<String, ServiceCache> dependencyRegistry = new ConcurrentHashMap<>();
 	private final List<DependencyWatcherListener> listeners;
 	private final DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	private final ZookeeperDependencies zookeeperDependencies;
