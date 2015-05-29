@@ -15,16 +15,16 @@
  */
 package org.springframework.cloud.zookeeper.discovery;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * Configuration that registers a bean related to microservice's address and port providing.
@@ -40,11 +40,20 @@ public class AddressProviderConfiguration {
 	@Autowired
 	private Environment environment;
 
+	@Autowired
+	private ZookeeperDiscoveryProperties properties;
+
+	public AddressProviderConfiguration(Environment environment,
+			ZookeeperDiscoveryProperties properties) {
+		this.environment = environment;
+		this.properties = properties;
+	}
+
 	@Bean
-	MicroserviceAddressProvider microserviceAddressProvider() {
-		String microserviceHost = environment.getProperty("microservice.host", getIpAddress());
-		Integer microservicePort = Integer.valueOf(environment.getProperty("server.port", "8080"));
-		return new MicroserviceAddressProvider(microserviceHost, microservicePort);
+	public MicroserviceAddressProvider microserviceAddressProvider() {
+		String host = properties.getInstanceHost() == null? getIpAddress() : properties.getInstanceHost();
+		Integer port = Integer.valueOf(environment.getProperty("server.port", "8080"));
+		return new MicroserviceAddressProvider(host, port);
 	}
 
 	/**

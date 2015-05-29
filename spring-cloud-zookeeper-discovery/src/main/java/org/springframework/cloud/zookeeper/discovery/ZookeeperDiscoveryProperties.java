@@ -20,4 +20,6 @@ public class ZookeeperDiscoveryProperties {
 	 * @param realm allows you to register a service under specified realm
 	 */
 	private String realm;
+
+	private String instanceHost;
 }
