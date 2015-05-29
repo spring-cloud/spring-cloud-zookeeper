@@ -19,10 +19,14 @@ import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.curator.test.TestingServer
-import org.apache.curator.x.discovery.*
+import org.apache.curator.x.discovery.ServiceCache
+import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
+import org.apache.curator.x.discovery.ServiceInstance
+import org.apache.curator.x.discovery.UriSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker
 import org.springframework.context.annotation.Bean
@@ -34,14 +38,16 @@ import org.springframework.util.SocketUtils
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import javax.annotation.PreDestroy
+
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('watcher')
 class DefaultDependencyWatcherSpringISpec extends Specification {
 
 	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier
 	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener
-	@Autowired ServiceDiscovery serviceDiscovery
-	@Autowired ServiceInstance serviceInstance
+    @Autowired
+    ZookeeperServiceDiscovery serviceDiscovery
 
 	def 'should verify that presence of a dependency has been checked'() {
 		expect:
@@ -50,7 +56,7 @@ class DefaultDependencyWatcherSpringISpec extends Specification {
 
 	def 'should verify that dependency watcher listener is successfully registered and operational'() {
 		when:
-			serviceDiscovery.unregisterService(serviceInstance)
+        serviceDiscovery.serviceDiscovery.unregisterService(serviceDiscovery.serviceInstance)
 		then:
 			new PollingConditions().eventually {
 				dependencyWatcherListener.dependencyState == DependencyState.DISCONNECTED
@@ -71,24 +77,12 @@ class DefaultDependencyWatcherSpringISpec extends Specification {
 			return new TestingServer(SocketUtils.findAvailableTcpPort())
 		}
 
-		@Bean
-		ServiceInstance serviceInstance() {
-			return ServiceInstance.builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
-					.address('anyUrl')
-					.port(10)
-					.name('testInstance')
-					.build()
-		}
+        @Bean
+        ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
+            return new MyZookeeperServiceDiscovery(curatorFramework()) {
 
-		@Bean(initMethod = 'start', destroyMethod = 'close')
-		ServiceDiscovery serviceDiscovery() {
-			return ServiceDiscoveryBuilder
-					.builder(Void)
-					.basePath('/')
-					.client(curatorFramework())
-					.thisInstance(serviceInstance())
-					.build()
-		}
+            }
+        }
 
 		@Bean(initMethod = 'start', destroyMethod = 'close')
 		CuratorFramework curatorFramework() {
@@ -106,6 +100,41 @@ class DefaultDependencyWatcherSpringISpec extends Specification {
 		}
 
 	}
+
+    static class MyZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
+        MyZookeeperServiceDiscovery(CuratorFramework curator) {
+            super(curator, null, null)
+            build()
+        }
+
+        @Override
+        void build() {
+            setPort(10)
+
+
+            def instance = ServiceInstance.builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
+                    .address('anyUrl')
+                    .port(10)
+                    .name('testInstance')
+                    .build()
+            getServiceInstanceRef().set(instance)
+
+
+            def discovery = ServiceDiscoveryBuilder
+                    .builder(Void)
+                    .basePath('/')
+                    .client(getCurator())
+                    .thisInstance(instance)
+                    .build()
+            getServiceDiscoveryRef().set(discovery)
+            discovery.start()
+        }
+
+        @PreDestroy
+        void close() {
+            getServiceDiscoveryRef().get().close()
+        }
+    }
 
 	static class AssertableDependencyWatcherListener implements DependencyWatcherListener {
 

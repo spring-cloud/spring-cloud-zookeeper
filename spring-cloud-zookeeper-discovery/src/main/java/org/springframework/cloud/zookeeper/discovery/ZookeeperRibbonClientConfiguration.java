@@ -21,7 +21,6 @@ import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.loadbalancer.ServerList;
-import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,8 +49,10 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
 public class ZookeeperRibbonClientConfiguration {
 	protected static final String VALUE_NOT_SET = "__not__set__";
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
+
 	@Autowired
-	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private ZookeeperServiceDiscovery serviceDiscovery;
+
 	@Value("${ribbon.client.name}")
 	private String serviceId = "client";
 
@@ -63,7 +64,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@Conditional(DependenciesPassedCondition.class)
 	@ConditionalOnProperty(value = "zookeeper.dependencies.enabled", matchIfMissing = true)
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
-		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
+		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
 		serverList.initFromDependencies(config, zookeeperDependencies);
 		return serverList;
 	}
@@ -71,7 +72,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ServerList<?> ribbonServerList(IClientConfig config) {
-		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
+		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
 		serverList.initWithNiwsConfig(config);
 		return serverList;
 	}

@@ -15,12 +15,15 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesPassedCondition;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration;
@@ -29,9 +32,6 @@ import org.springframework.cloud.zookeeper.discovery.watcher.presence.Dependency
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides hooks for observing dependency lifecycle in Zookeeper.
@@ -57,9 +57,10 @@ public class DependencyWatcherAutoConfiguration {
 		return new DefaultDependencyPresenceOnStartupVerifier();
 	}
 
-	@Bean(initMethod = "registerDependencyRegistrationHooks", destroyMethod = "clearDependencyRegistrationHooks")
+	@Bean(destroyMethod = "clearDependencyRegistrationHooks")
 	@ConditionalOnMissingBean
-	public DependencyRegistrationHookProvider dependencyWatcher(ServiceDiscovery serviceDiscovery,
+	public DependencyRegistrationHookProvider dependencyWatcher(
+			ZookeeperServiceDiscovery serviceDiscovery,
 																DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
 																ZookeeperDependencies zookeeperDependencies) {
 		return new DefaultDependencyWatcher(serviceDiscovery,

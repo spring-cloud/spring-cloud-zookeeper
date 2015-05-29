@@ -5,9 +5,7 @@ import java.util.Collection;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -16,17 +14,21 @@ import org.springframework.boot.actuate.health.Health;
  */
 @Slf4j
 public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
-	@Autowired
-	ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+
+	private ZookeeperServiceDiscovery serviceDiscovery;
+
+	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery) {
+		this.serviceDiscovery = serviceDiscovery;
+	}
 
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
-			Collection<String> names = serviceDiscovery.queryForNames();
+			Collection<String> names = serviceDiscovery.getServiceDiscovery().queryForNames();
 			ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
 			for (String name : names) {
 				Collection<ServiceInstance<ZookeeperInstance>> instances = serviceDiscovery
-						.queryForInstances(name);
+						.getServiceDiscovery().queryForInstances(name);
 				for (ServiceInstance<ZookeeperInstance> instance : instances) {
 					allInstances.add(instance);
 				}

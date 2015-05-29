@@ -46,12 +46,24 @@
 			<artifactId>spring-cloud-netflix-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.netflix.archaius</groupId>
+			<artifactId>archaius-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.netflix.ribbon</groupId>
 			<artifactId>ribbon</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.netflix.ribbon</groupId>
 			<artifactId>ribbon-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.ribbon</groupId>
+			<artifactId>ribbon-loadbalancer</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.netflix.ribbon</groupId>

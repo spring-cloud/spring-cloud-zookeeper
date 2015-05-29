@@ -3,16 +3,13 @@ package org.springframework.cloud.zookeeper.sample;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.cloud.bus.jackson.SubtypeModule;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.zookeeper.bus.SimpleRemoteEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,18 +24,19 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableDiscoveryClient
 @RestController
 @Slf4j
-public class SampleApplication implements ApplicationListener<SimpleRemoteEvent> {
+public class SampleApplication {
 
-	public static final String CLIENT_NAME = "testZookeeperApp";
-
-	@Autowired
-	LoadBalancerClient loadBalancer;
+	@Value("${spring.application.name:testZookeeperApp}")
+	private String appName;
 
 	@Autowired
-	Environment env;
+	private LoadBalancerClient loadBalancer;
+
+	@Autowired
+	private Environment env;
 
 	@Autowired(required = false)
-	RelaxedPropertyResolver resolver;
+	private RelaxedPropertyResolver resolver;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleApplication.class, args);
@@ -46,22 +44,12 @@ public class SampleApplication implements ApplicationListener<SimpleRemoteEvent>
 
 	@RequestMapping("/")
 	public ServiceInstance lb() {
-		return loadBalancer.choose(CLIENT_NAME);
+		return loadBalancer.choose(appName);
 	}
 
 	@RequestMapping("/myenv")
 	public String env(@RequestParam("prop") String prop) {
 		String property = new RelaxedPropertyResolver(env).getProperty(prop, "Not Found");
 		return property;
-	}
-
-	@Bean
-	public SubtypeModule sampleSubtypeModule() {
-		return new SubtypeModule(SimpleRemoteEvent.class);
-	}
-
-	@Override
-	public void onApplicationEvent(SimpleRemoteEvent event) {
-		log.info("Received event: {}", event);
 	}
 }

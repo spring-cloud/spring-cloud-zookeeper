@@ -3,9 +3,6 @@ package org.springframework.cloud.zookeeper.discovery;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle;
 
 /**
@@ -14,19 +11,19 @@ import org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle;
 @Slf4j
 public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 
-	@Autowired
 	private ZookeeperDiscoveryProperties properties;
+	private ZookeeperServiceDiscovery serviceDiscovery;
 
-	@Autowired
-	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
-
-	@Autowired
-	private ServiceInstance<ZookeeperInstance> instance;
+	public ZookeeperLifecycle(ZookeeperDiscoveryProperties properties,
+			ZookeeperServiceDiscovery serviceDiscovery) {
+		this.properties = properties;
+		this.serviceDiscovery = serviceDiscovery;
+	}
 
 	@Override
 	@SneakyThrows
 	protected void register() {
-		serviceDiscovery.start();
+		this.serviceDiscovery.getServiceDiscovery().start();
 	}
 
 	// TODO: implement registerManagement
@@ -34,7 +31,8 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 	@Override
 	@SneakyThrows
 	protected void deregister() {
-		serviceDiscovery.unregisterService(instance);
+		this.serviceDiscovery.getServiceDiscovery().unregisterService(
+				this.serviceDiscovery.getServiceInstance());
 	}
 
 	// TODO: implement deregisterManagement
@@ -42,6 +40,17 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 	@Override
 	protected boolean isEnabled() {
 		return properties.isEnabled();
+	}
+
+	@Override
+	protected int getConfiguredPort() {
+		return serviceDiscovery.getPort();
+	}
+
+	@Override
+	protected void setConfiguredPort(int port) {
+		serviceDiscovery.setPort(port);
+		serviceDiscovery.build();
 	}
 
 	@Override

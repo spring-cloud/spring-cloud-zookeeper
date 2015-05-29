@@ -85,11 +85,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-zookeeper-bus</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-config</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -101,47 +96,17 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-commons</artifactId>
-				<version>${spring.cloud.commons}</version>
+				<version>${spring-cloud-commons.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-bus</artifactId>
-				<version>${spring.cloud.bus}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-amqp</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework.integration</groupId>
-						<artifactId>spring-integration-amqp</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-spring-service-connector
-						</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-localconfig-connector
-						</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-cloudfoundry-connector
-						</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-config-client</artifactId>
-				<version>${spring.cloud.config.client}</version>
+				<artifactId>spring-cloud-context</artifactId>
+				<version>${spring-cloud-commons.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-netflix-core</artifactId>
-				<version>${spring.cloud.netflix.core}</version>
+				<version>${spring-cloud-netflix.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.curator</groupId>
@@ -165,6 +130,17 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>com.netflix.archaius</groupId>
+				<artifactId>archaius-core</artifactId>
+				<version>${archaius.version}</version>
+			</dependency>
+			<!-- archaius dep -->
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.8</version>
+			</dependency>
+			<dependency>
 				<groupId>com.netflix.ribbon</groupId>
 				<artifactId>ribbon</artifactId>
 				<version>${ribbon.version}</version>
@@ -172,6 +148,11 @@
 			<dependency>
 				<groupId>com.netflix.ribbon</groupId>
 				<artifactId>ribbon-core</artifactId>
+				<version>${ribbon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.netflix.ribbon</groupId>
+				<artifactId>ribbon-loadbalancer</artifactId>
 				<version>${ribbon.version}</version>
 			</dependency>
 			<dependency>
@@ -226,12 +207,11 @@
 	</dependencyManagement>
 
 	<properties>
-		<spring.cloud.commons>1.0.1.BUILD-SNAPSHOT</spring.cloud.commons>
-		<spring.cloud.bus>1.0.1.BUILD-SNAPSHOT</spring.cloud.bus>
-		<spring.cloud.config.client>1.0.1.BUILD-SNAPSHOT</spring.cloud.config.client>
-		<spring.cloud.netflix.core>1.0.1.BUILD-SNAPSHOT</spring.cloud.netflix.core>
+		<spring-cloud-commons.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-netflix.version>1.0.3.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<archaius.version>0.6.6</archaius.version>
 		<curator.version>2.7.0</curator.version>
-		<ribbon.version>2.0-RC9</ribbon.version>
+		<ribbon.version>2.0.2</ribbon.version>
 		<spock.version>1.0-groovy-2.4</spock.version>
 	</properties>
 

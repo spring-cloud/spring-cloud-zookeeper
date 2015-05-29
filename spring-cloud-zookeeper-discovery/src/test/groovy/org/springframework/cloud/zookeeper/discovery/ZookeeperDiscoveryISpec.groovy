@@ -38,7 +38,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('ribbon')
-@WebIntegrationTest
+@WebIntegrationTest(randomPort = true)
 class ZookeeperDiscoveryISpec extends Specification {
 
 	public static final String TEST_INSTANCE_NAME = 'testInstance'
@@ -46,6 +46,7 @@ class ZookeeperDiscoveryISpec extends Specification {
 	@Autowired TestRibbonClient testRibbonClient
 	@Autowired WireMockServer wiremockServer
 	@Autowired DiscoveryClient discoveryClient
+    @Autowired ZookeeperServiceDiscovery serviceDiscovery
 	WireMock wireMock
 
 	def setup() {
@@ -73,7 +74,7 @@ class ZookeeperDiscoveryISpec extends Specification {
 
 	def 'should properly find local instance'() {
 		expect:
-			AddressProviderConfiguration.ipAddress == discoveryClient.localServiceInstance.host
+			serviceDiscovery.serviceInstance.address == discoveryClient.localServiceInstance.host
 	}
 
 	@Configuration

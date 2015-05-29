@@ -15,30 +15,33 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import org.apache.curator.x.discovery.ServiceCache;
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies.ZookeeperDependency;
-import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.SneakyThrows;
+import org.apache.curator.x.discovery.ServiceCache;
+import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies.ZookeeperDependency;
+import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
+import org.springframework.context.ApplicationListener;
+
 /**
  * @author Marcin Grzejszczak, 4financeIT
  * @author Michal Chmielarz, 4financeIT
  */
-public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider {
+public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent> {
 
-	private final ServiceDiscovery serviceDiscovery;
+	private final ZookeeperServiceDiscovery serviceDiscovery;
 	private final Map<String, ServiceCache> dependencyRegistry = new HashMap<>();
 	private final List<DependencyWatcherListener> listeners;
 	private final DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	private final ZookeeperDependencies zookeeperDependencies;
 
-	public DefaultDependencyWatcher(ServiceDiscovery serviceDiscovery,
+	public DefaultDependencyWatcher(ZookeeperServiceDiscovery serviceDiscovery,
 									DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
 									List<DependencyWatcherListener> dependencyWatcherListeners,
 									ZookeeperDependencies zookeeperDependencies) {
@@ -49,11 +52,18 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 	}
 
 	@Override
+	@SneakyThrows
+	public void onApplicationEvent(InstanceRegisteredEvent event) {
+		registerDependencyRegistrationHooks();
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void registerDependencyRegistrationHooks() throws Exception {
 		for (ZookeeperDependency zookeeperDependency : zookeeperDependencies.getDependencyConfigurations()) {
 			String dependencyPath = zookeeperDependency.getPath();
-			ServiceCache serviceCache = serviceDiscovery.serviceCacheBuilder().name(dependencyPath).build();
+			ServiceCache serviceCache = serviceDiscovery.getServiceDiscovery()
+					.serviceCacheBuilder().name(dependencyPath).build();
 			serviceCache.start();
 			dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
 			dependencyRegistry.put(dependencyPath, serviceCache);
