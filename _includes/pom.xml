@@ -1,7 +1,16 @@
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>{@= groupId @}</groupId>
+            <artifactId>spring-cloud-zookeeper</artifactId>
+            <version>{@= version @}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
 <dependencies>
     <dependency>
         <groupId>{@= groupId @}</groupId>
-        <artifactId>spring-cloud-starter-zookeeper-all</artifactId>
-        <version>{@= version @}</version>
+        <artifactId>spring-cloud-zookeeper-discovery</artifactId>
     </dependency>
 </dependencies>
