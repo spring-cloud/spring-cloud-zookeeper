@@ -4,6 +4,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
 		return new ZookeeperServiceDiscovery(curator, zookeeperDiscoveryProperties(),
 				instanceSerializer());
