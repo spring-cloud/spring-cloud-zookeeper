@@ -2,6 +2,7 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -35,7 +36,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			String root = properties.getRoot();
 			List<String> contexts = new ArrayList<>();
 
-			String defaultContext = root + "/application";
+			String defaultContext = root + "/" + properties.getDefaultContext();
 			contexts.add(defaultContext);
 			addProfiles(contexts, defaultContext, profiles);
 
@@ -44,6 +45,8 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			addProfiles(contexts, baseContext, profiles);
 
 			CompositePropertySource composite = new CompositePropertySource("zookeeper");
+
+			Collections.reverse(contexts);
 
 			for (String propertySourceContext : contexts) {
 				ZookeeperPropertySource propertySource = create(propertySourceContext);
@@ -69,7 +72,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	private void addProfiles(List<String> contexts, String baseContext,
 			List<String> profiles) {
 		for (String profile : profiles) {
-			contexts.add(baseContext + "::" + profile);
+			contexts.add(baseContext + properties.getProfileSeparator() + profile);
 		}
 	}
 }

@@ -2,6 +2,7 @@ package org.springframework.cloud.zookeeper.config;
 
 import lombok.Data;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -13,4 +14,10 @@ public class ZookeeperConfigProperties {
 	private boolean enabled = true;
 
 	private String root = "config";
+
+	@NotEmpty
+	private String defaultContext = "application";
+
+	@NotEmpty
+	private String profileSeparator = ",";
 }
