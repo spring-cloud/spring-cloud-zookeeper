@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Spencer Gibb
  */
-@ConfigurationProperties("zookeeper.discovery")
+@ConfigurationProperties("spring.cloud.zookeeper.discovery")
 @Data
 public class ZookeeperDiscoveryProperties {
 	private boolean enabled = true;

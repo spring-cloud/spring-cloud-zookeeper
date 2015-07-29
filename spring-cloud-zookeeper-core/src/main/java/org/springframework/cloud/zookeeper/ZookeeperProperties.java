@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 /**
  * @author Spencer Gibb
  */
-@ConfigurationProperties("zookeeper")
+@ConfigurationProperties("spring.cloud.zookeeper")
 @Data
 public class ZookeeperProperties {
 	@NotNull

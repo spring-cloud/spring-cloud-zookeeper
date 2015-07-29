@@ -40,12 +40,14 @@ public class Application {
 }
 ----
 
-(i.e. utterly normal Spring Boot app).  If Zookeeper is located somewhere other than `localhost:2181`, the configuration is required to locate the client. Example:
+(i.e. utterly normal Spring Boot app).  If Zookeeper is located somewhere other than `localhost:2181`, the configuration is required to locate the server. Example:
 
 .application.yml
 ----
-zookeeper:
-  connect-string: localhost:2181
+spring:
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
 ----
 
 CAUTION: If you use <<spring-cloud-zookeeper-config,Spring Cloud Zookeeper Config>>, the above values will need to be placed in `bootstrap.yml` instead of `application.yml`.
@@ -99,12 +101,14 @@ Zookeeper Config may be customized using the following properties:
 
 .bootstrap.yml
 ----
-zookeeper:
-  config:
-    enabled: true
-    root: configuration
-    defaultContext: apps
-    profileSeparator: '::'
+spring:
+  cloud:
+    zookeeper:
+      config:
+        enabled: true
+        root: configuration
+        defaultContext: apps
+        profileSeparator: '::'
 ----
 
 * `enabled` setting this value to "false" disables Zookeeper Config
