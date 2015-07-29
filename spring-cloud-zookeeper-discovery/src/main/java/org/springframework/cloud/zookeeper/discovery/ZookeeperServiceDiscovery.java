@@ -1,14 +1,5 @@
 package org.springframework.cloud.zookeeper.discovery;
 
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import lombok.SneakyThrows;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
@@ -21,6 +12,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Spencer Gibb
@@ -83,22 +83,42 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 			}
 			String host = properties.getInstanceHost() == null? getIpAddress() : properties.getInstanceHost();
 			UriSpec uriSpec = new UriSpec(properties.getUriSpec());
-			// @formatter:off
-			serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
-					.name(appName)
-					.payload(new ZookeeperInstance(context.getId()))
-					.port(port.get())
-					.address(host)
-					.uriSpec(uriSpec).build());
-
-			serviceDiscovery.set(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
-					.client(curator)
-					.basePath(properties.getRoot())
-					.serializer(instanceSerializer)
-					.thisInstance(serviceInstance.get())
-					.build());
-			// @formatter:on
+			configureServiceInstance(serviceInstance, appName, context, port, host, uriSpec);
+			configureServiceDiscovery(serviceDiscovery, curator, properties, instanceSerializer, serviceInstance);
 		}
+	}
+
+	@SneakyThrows
+	protected void configureServiceInstance(AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance,
+											String appName,
+											ApplicationContext context,
+											AtomicInteger port,
+											String host,
+											UriSpec uriSpec) {
+		// @formatter:off
+		serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
+				.name(appName)
+				.payload(new ZookeeperInstance(context.getId()))
+				.port(port.get())
+				.address(host)
+				.uriSpec(uriSpec).build());
+		// @formatter:on
+	}
+
+	@SneakyThrows
+	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
+											 CuratorFramework curator,
+											 ZookeeperDiscoveryProperties properties,
+											 InstanceSerializer<ZookeeperInstance> instanceSerializer,
+											 AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance) {
+		// @formatter:off
+		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
+				.client(curator)
+				.basePath(properties.getRoot())
+				.serializer(instanceSerializer)
+				.thisInstance(serviceInstance.get())
+				.build());
+		// @formatter:on
 	}
 
 

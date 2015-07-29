@@ -75,10 +75,28 @@ public class ZookeeperDependencies {
 		return !dependencies.isEmpty();
 	}
 
+	public ZookeeperDependency getDependencyForAlias(final String alias) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+			if (zookeeperDependencyEntry.getKey().equals(alias)) {
+				return zookeeperDependencyEntry.getValue();
+			}
+		}
+		return null;
+	}
+
 	public String getPathForAlias(final String alias) {
 		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
 			if (zookeeperDependencyEntry.getKey().equals(alias)) {
 				return zookeeperDependencyEntry.getValue().getPath();
+			}
+		}
+		return "";
+	}
+
+	public String getAliasForPath(final String path) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+			if (zookeeperDependencyEntry.getValue().getPath().equals(path)) {
+				return zookeeperDependencyEntry.getKey();
 			}
 		}
 		return "";

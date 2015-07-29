@@ -1,15 +1,10 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import lombok.SneakyThrows;
-import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,7 +68,8 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private String getServiceIdToQuery(String serviceId) {
 		if (zookeeperDependencies != null && zookeeperDependencies.hasDependencies()) {
-			return zookeeperDependencies.getPathForAlias(serviceId);
+			String pathForAlias = zookeeperDependencies.getPathForAlias(serviceId);
+			return pathForAlias.isEmpty() ? serviceId : pathForAlias;
 		}
 		return serviceId;
 	}
