@@ -34,6 +34,10 @@
 		<module>spring-cloud-zookeeper-core</module>
 		<module>spring-cloud-zookeeper-config</module>
 		<module>spring-cloud-zookeeper-discovery</module>
+		<module>spring-cloud-starter-zookeeper</module>
+		<module>spring-cloud-starter-zookeeper-config</module>
+		<module>spring-cloud-starter-zookeeper-discovery</module>
+		<module>spring-cloud-starter-zookeeper-all</module>
 		<module>spring-cloud-zookeeper-sample</module>
 		<module>docs</module>
 	</modules>
@@ -91,6 +95,26 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-zookeeper-discovery</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-zookeeper</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-zookeeper-all</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-zookeeper-config</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

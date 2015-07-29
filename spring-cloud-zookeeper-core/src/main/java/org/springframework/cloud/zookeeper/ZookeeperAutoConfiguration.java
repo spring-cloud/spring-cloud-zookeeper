@@ -4,6 +4,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,16 +45,18 @@ public class ZookeeperAutoConfiguration {
 				zookeeperProperties().getMaxSleepMs());
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperEndpoint zookeeperEndpoint() {
-		return new ZookeeperEndpoint();
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperHealthIndicator zookeeperHealthIndicator() {
+	@Configuration
+	@ConditionalOnClass(name = "org.springframework.boot.actuate.endpoint.Endpoint")
+	protected static class ZookeeperHealthConfig {
+		@Bean
+		@ConditionalOnMissingBean
+		public ZookeeperEndpoint zookeeperEndpoint() {
+			return new ZookeeperEndpoint();
+		}
+        @Bean
+        @ConditionalOnMissingBean
+        public ZookeeperHealthIndicator zookeeperHealthIndicator() {
 		return new ZookeeperHealthIndicator();
 	}
-
+    }
 }

@@ -15,6 +15,10 @@ Please see the http://zookeeper.apache.org/doc/current/zookeeperStarted.html[ins
 
 Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. http://curator.apache.org[Curator](A java library for Zookeeper) provides Service Discovery services via http://curator.apache.org/curator-x-discovery/[Service Discovery Extension]. Spring Cloud Zookeeper leverages this extension for service registration and discovery.
 
+=== How to activate
+
+Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` will enable auto-configuration that will setup Spring Cloud Zookeeper Discovery.
+
 === Registering with Zookeeper
 
 When a client registers with Zookeeper, it provides meta-data about itself such as host and port, id and name.
@@ -93,7 +97,7 @@ Configuration is currently read on startup of the application.  Sending a HTTP P
 
 === How to activate
 
-Including a dependency on `org.springframework.cloud:spring-cloud-zookeeper-config` will enable auto-configuration that will setup Spring Cloud Zookeeper Config.
+Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-config` will enable auto-configuration that will setup Spring Cloud Zookeeper Config.
 
 === Customizing
 

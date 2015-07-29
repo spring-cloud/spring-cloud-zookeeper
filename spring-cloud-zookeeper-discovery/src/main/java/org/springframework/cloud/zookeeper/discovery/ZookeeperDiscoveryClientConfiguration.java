@@ -4,6 +4,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,9 +53,16 @@ public class ZookeeperDiscoveryClientConfiguration {
 		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
 	}
 
-	@Bean
-	public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
-		return new ZookeeperDiscoveryHealthIndicator(zookeeperServiceDiscovery());
+	@Configuration
+	@ConditionalOnClass(name = "org.springframework.boot.actuate.endpoint.Endpoint")
+	protected static class ZookeeperDiscoveryHealthConfig {
+		@Autowired
+		private ZookeeperServiceDiscovery serviceDiscovery;
+
+		@Bean
+		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
+			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery);
+		}
 	}
 
 	@Bean
