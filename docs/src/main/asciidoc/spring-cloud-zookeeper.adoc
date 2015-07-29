@@ -76,4 +76,39 @@ public String serviceUrl() {
 [[spring-cloud-zookeeper-config]]
 == Distributed Configuration with Zookeeper
 
-TODO: document zookeeper config
+Zookeeper provides a http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace[hierarchical namespace] that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the https://github.com/spring-cloud/spring-cloud-config[Config Server and Client].  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the `/config` namespace by default.  Multiple `PropertySource` instances are created based on the application's name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:
+
+----
+config/testApp,dev
+config/testApp
+config/application,dev
+config/application
+----
+
+The most specific property source is at the top, with the least specific at the bottom.  Properties is the `config/application` namespace are applicable to all applications using zookeeper for configuration.  Properties in the `config/testApp` namespace are only available to the instances of the service named "testApp".
+
+Configuration is currently read on startup of the application.  Sending a HTTP POST to `/refresh` will cause the configuration to be reloaded.  Watching the configuration namespace (which Zookeeper supports) is not currently implemented, but will be a future addition to this project.
+
+=== How to activate
+
+Including a dependency on `org.springframework.cloud:spring-cloud-zookeeper-config` will enable auto-configuration that will setup Spring Cloud Zookeeper Config.
+
+=== Customizing
+
+Zookeeper Config may be customized using the following properties:
+
+.bootstrap.yml
+----
+zookeeper:
+  config:
+    enabled: true
+    root: configuration
+    defaultContext: apps
+    profileSeparator: '::'
+----
+
+* `enabled` setting this value to "false" disables Zookeeper Config
+* `root` sets the base namespace for configuration values
+* `defaultContext` sets the name used by all applications
+* `profileSeparator` sets the value of the separator used to separate the profile name in property sources with profiles
+
