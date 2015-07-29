@@ -17,6 +17,7 @@ package org.springframework.cloud.zookeeper.discovery
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -60,8 +61,11 @@ class ZookeeperDiscoveryISpec extends Specification {
 	}
 
 	def 'should find the app by its name via Ribbon'() {
+		given:
+            def jsonSlurper = new JsonSlurper()
+            def health = jsonSlurper.parseText(testRibbonClient.thisHealthCheck())
 		expect:
-			'{"status":"UP"}' == testRibbonClient.thisHealthCheck()
+			'UP' == health.status
 	}
 
 	def 'should find a collaborator via discovery client'() {
