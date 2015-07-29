@@ -50,6 +50,11 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
 		wireMock.register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
 	}
 
+	def 'should find an instance via path when alias is not found'() {
+		expect:
+			!discoveryClient.getInstances('some/name/without/alias').empty
+	}
+
 	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
 		expect:
 			'pong' == testRibbonClient.pingService('someAlias')

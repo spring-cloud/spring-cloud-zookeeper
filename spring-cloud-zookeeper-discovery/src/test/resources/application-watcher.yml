@@ -1,4 +1,4 @@
-spring.application.name: someName
+spring.application.name: some/name/without/alias
 zookeeper:
   dependencies:
     someAlias:
