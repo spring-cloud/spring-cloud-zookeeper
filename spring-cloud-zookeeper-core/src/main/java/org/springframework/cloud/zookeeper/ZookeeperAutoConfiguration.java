@@ -1,9 +1,11 @@
 package org.springframework.cloud.zookeeper;
 
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,6 +22,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties
 public class ZookeeperAutoConfiguration {
 
+	@Autowired(required = false)
+	private EnsembleProvider ensembleProvider;
+
 	@Bean
 	@ConditionalOnMissingBean
 	public ZookeeperProperties zookeeperProperties() {
@@ -29,11 +34,14 @@ public class ZookeeperAutoConfiguration {
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
 	public CuratorFramework curatorFramework(RetryPolicy retryPolicy) {
-		CuratorFramework curator = CuratorFrameworkFactory.builder()
+		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
+		if (ensembleProvider != null) {
+			builder.ensembleProvider(ensembleProvider);
+		}
+		CuratorFramework curator = builder
 				.retryPolicy(retryPolicy)
-				// TODO: support ensembleProvider via ExhibitorEnsembleProvider
-				// .ensembleProvider(new ExhibitorEnsembleProvider())
-				.connectString(zookeeperProperties().getConnectString()).build();
+				.connectString(zookeeperProperties().getConnectString())
+				.build();
 		curator.start();
 		return curator;
 	}
