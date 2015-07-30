@@ -36,7 +36,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-zookeeper-all</artifactId>
 		</dependency>
-		<!-- TODO: should be able to run without actuator -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>

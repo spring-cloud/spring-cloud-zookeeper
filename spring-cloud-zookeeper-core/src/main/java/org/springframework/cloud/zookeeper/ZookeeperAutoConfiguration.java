@@ -4,6 +4,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,7 +47,7 @@ public class ZookeeperAutoConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnClass(name = "org.springframework.boot.actuate.endpoint.Endpoint")
+	@ConditionalOnClass(Endpoint.class)
 	protected static class ZookeeperHealthConfig {
 		@Bean
 		@ConditionalOnMissingBean
