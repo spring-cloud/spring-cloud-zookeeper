@@ -62,7 +62,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@Conditional(DependenciesPassedCondition.class)
-	@ConditionalOnProperty(value = "zookeeper.dependencies.enabled", matchIfMissing = true)
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
 		serverList.initFromDependencies(config, zookeeperDependencies);
