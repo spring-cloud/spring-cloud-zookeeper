@@ -1,5 +1,5 @@
 spring.application.name: some/name/without/alias
-zookeeper:
+spring.cloud.zookeeper:
   dependencies:
     someAlias:
       id: someId

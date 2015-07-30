@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @Conditional(DependenciesPassedCondition.class)
-@ConditionalOnProperty(value = "zookeeper.dependencies.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
 @AutoConfigureAfter(ZookeeperAutoConfiguration.class)
 public class ZookeeperDependenciesAutoConfiguration {
 

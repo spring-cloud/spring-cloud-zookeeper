@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class DependenciesPassedCondition extends SpringBootCondition {
 
-	private static final String ZOOKEEPER_DEPENDENCIES_PROP = "zookeeper.dependencies";
+	private static final String ZOOKEEPER_DEPENDENCIES_PROP = "spring.cloud.zookeeper.dependencies";
 
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {

@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Data
-@ConfigurationProperties("zookeeper")
+@ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperDependencies {
 
 	private String prefix = "";
