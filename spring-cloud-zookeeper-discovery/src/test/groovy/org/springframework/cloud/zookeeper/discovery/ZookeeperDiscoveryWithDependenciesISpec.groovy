@@ -32,32 +32,39 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('watcher')
 @WebIntegrationTest(randomPort = true)
-class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
+class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements PollingUtils {
 
 	@Autowired TestRibbonClient testRibbonClient
 	@Autowired WireMockServer wiremockServer
 	@Autowired DiscoveryClient discoveryClient
 	WireMock wireMock
+	PollingConditions conditions
 
 	def setup() {
+		conditions = new PollingConditions()
 		wireMock = new WireMock('localhost', wiremockServer.port())
 		wireMock.register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
 	}
 
 	def 'should find an instance via path when alias is not found'() {
 		expect:
-			!discoveryClient.getInstances('some/name/without/alias').empty
+			conditions.eventually willPass {
+				assert !discoveryClient.getInstances('some/name/without/alias').empty
+			}
 	}
 
 	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
 		expect:
-			'pong' == testRibbonClient.pingService('someAlias')
+			conditions.eventually willPass {
+				assert 'pong' == testRibbonClient.pingService('someAlias')
+			}
 	}
 
 	def 'should find a collaborator via discovery client'() {
@@ -65,7 +72,9 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
 			List<ServiceInstance> instances = discoveryClient.getInstances('someAlias')
 			ServiceInstance instance = instances.first()
 		expect:
-			'pong' == testRibbonClient.pingOnUrl("${instance.host}:${instance.port}")
+			conditions.eventually willPass {
+				assert 'pong' == testRibbonClient.pingOnUrl("${instance.host}:${instance.port}")
+			}
 	}
 
 	@Configuration
