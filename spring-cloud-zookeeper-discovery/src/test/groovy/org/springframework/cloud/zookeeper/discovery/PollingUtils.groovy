@@ -6,8 +6,7 @@ trait PollingUtils {
 			try {
 				closure()
 			} catch (Exception e) {
-				e.printStackTrace()
-				assert !e
+				throw new AssertionError("Exception occurred while evaluating closure", e)
 			}
 		}
 	}
