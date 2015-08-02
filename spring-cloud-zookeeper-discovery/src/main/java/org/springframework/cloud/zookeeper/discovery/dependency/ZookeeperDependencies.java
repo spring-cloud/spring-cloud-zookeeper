@@ -65,14 +65,23 @@ public class ZookeeperDependencies {
 		private Map<String, String> headers;
 
 		private boolean required;
-	}
 
+	}
 	public Collection<ZookeeperDependency> getDependencyConfigurations() {
 		return dependencies.values();
 	}
 
 	public boolean hasDependencies() {
 		return !dependencies.isEmpty();
+	}
+
+	public ZookeeperDependency getDependencyForPath(String path) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+			if (zookeeperDependencyEntry.getValue().getPath().equals(path)) {
+				return zookeeperDependencyEntry.getValue();
+			}
+		}
+		return null;
 	}
 
 	public ZookeeperDependency getDependencyForAlias(final String alias) {

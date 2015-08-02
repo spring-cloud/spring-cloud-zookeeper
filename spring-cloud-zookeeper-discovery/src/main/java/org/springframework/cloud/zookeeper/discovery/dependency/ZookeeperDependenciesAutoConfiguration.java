@@ -17,11 +17,9 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -34,8 +32,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties
-@Conditional(DependenciesPassedCondition.class)
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
+@ConditionalOnDependenciesPassed
 @AutoConfigureAfter(ZookeeperAutoConfiguration.class)
 public class ZookeeperDependenciesAutoConfiguration {
 

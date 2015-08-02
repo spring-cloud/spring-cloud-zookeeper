@@ -20,15 +20,15 @@ import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
+import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.ServerList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesPassedCondition;
+import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
+import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBasedLoadBalancer;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -37,7 +37,7 @@ import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextB
 import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
 
 /**
- * Preprocessor that configures defaults for eureka-discovered ribbon clients. Such as:
+ * Preprocessor that configures defaults for zookeeper-discovered ribbon clients. Such as:
  * <code>@zone</code>, NIWSServerListClassName, DeploymentContextBasedVipAddresses,
  * NFLoadBalancerRuleClassName, NIWSServerListFilterClassName and more
  *
@@ -61,12 +61,18 @@ public class ZookeeperRibbonClientConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@Conditional(DependenciesPassedCondition.class)
-	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
+	@ConditionalOnDependenciesPassed
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
 		serverList.initFromDependencies(config, zookeeperDependencies);
 		return serverList;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnDependenciesPassed
+	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList serverList) {
+		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList);
 	}
 
 	@Bean
