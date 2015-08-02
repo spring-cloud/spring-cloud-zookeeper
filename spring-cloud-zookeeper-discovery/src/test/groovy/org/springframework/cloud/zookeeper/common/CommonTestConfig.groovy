@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.zookeeper.discovery
+package org.springframework.cloud.zookeeper.common
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.test.TestingServer
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.context.annotation.Bean
@@ -32,15 +30,6 @@ class CommonTestConfig {
 	@Bean(destroyMethod = 'close')
 	TestingServer testingServer() {
 		return new TestingServer(SocketUtils.findAvailableTcpPort())
-	}
-
-	@Bean(initMethod = "start", destroyMethod = "stop")
-	TestServiceRegistrar testServiceRegistrar(CuratorFramework curatorFramework) {
-		return new TestServiceRegistrar(wiremockServer().port(), curatorFramework)
-	}
-
-	@Bean(initMethod = "start", destroyMethod = "shutdown") WireMockServer wiremockServer() {
-		return new WireMockServer(SocketUtils.findAvailableTcpPort())
 	}
 
 	@Bean ZookeeperProperties zookeeperProperties() {

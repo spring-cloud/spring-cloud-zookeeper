@@ -1,4 +1,4 @@
-package org.springframework.cloud.zookeeper.config;
+package org.springframework.cloud.zookeeper.common;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;

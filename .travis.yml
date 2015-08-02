@@ -1,3 +1,9 @@
+sudo: false
+
+cache:
+  directories:
+  - $HOME/.m2
+
 language: java
 before_install:
   - git config user.name "$GIT_NAME"
@@ -10,8 +16,8 @@ install:
 - mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 - ./docs/src/main/asciidoc/ghpages.sh
 script:
-- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml deploy -nsu -Dmaven.test.redirectTestOutputToFile=true'
-- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || mvn --settings .settings.xml install -nsu -Dmaven.test.redirectTestOutputToFile=true'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml clean deploy -nsu'
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || mvn --settings .settings.xml clean install -nsu'
 env:
   global:
   - GIT_NAME="Spencer Gibb"

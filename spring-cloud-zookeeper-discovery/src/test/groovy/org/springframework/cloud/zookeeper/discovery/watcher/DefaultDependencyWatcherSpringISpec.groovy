@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.watcher
-
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
@@ -26,11 +25,13 @@ import org.apache.curator.x.discovery.UriSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -42,12 +43,16 @@ import javax.annotation.PreDestroy
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('watcher')
-class DefaultDependencyWatcherSpringISpec extends Specification {
+class DefaultDependencyWatcherSpringISpec extends Specification implements PollingUtils {
 
 	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier
 	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener
-    @Autowired
-    ZookeeperServiceDiscovery serviceDiscovery
+    @Autowired ZookeeperServiceDiscovery serviceDiscovery
+	PollingConditions conditions
+
+	def setup() {
+		conditions = new PollingConditions()
+	}
 
 	def 'should verify that presence of a dependency has been checked'() {
 		expect:
@@ -56,15 +61,17 @@ class DefaultDependencyWatcherSpringISpec extends Specification {
 
 	def 'should verify that dependency watcher listener is successfully registered and operational'() {
 		when:
-        serviceDiscovery.serviceDiscovery.unregisterService(serviceDiscovery.serviceInstance)
+        	serviceDiscovery.serviceDiscovery.unregisterService(serviceDiscovery.serviceInstance)
+
 		then:
-			new PollingConditions().eventually {
-				dependencyWatcherListener.dependencyState == DependencyState.DISCONNECTED
+			conditions.eventually willPass {
+				assert dependencyWatcherListener.dependencyState == DependencyState.DISCONNECTED
 			}
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
+	@Profile('watcher')
 	static class Config {
 
 		@Bean
@@ -79,9 +86,7 @@ class DefaultDependencyWatcherSpringISpec extends Specification {
 
         @Bean
         ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
-            return new MyZookeeperServiceDiscovery(curatorFramework()) {
-
-            }
+            return new MyZookeeperServiceDiscovery(curatorFramework())
         }
 
 		@Bean(initMethod = 'start', destroyMethod = 'close')

@@ -15,23 +15,21 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
-import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesPassedCondition;
+import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DefaultDependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides hooks for observing dependency lifecycle in Zookeeper.
@@ -43,8 +41,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties
-@Conditional(DependenciesPassedCondition.class)
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
+@ConditionalOnDependenciesPassed
 @AutoConfigureAfter(ZookeeperDependenciesAutoConfiguration.class)
 public class DependencyWatcherAutoConfiguration {
 

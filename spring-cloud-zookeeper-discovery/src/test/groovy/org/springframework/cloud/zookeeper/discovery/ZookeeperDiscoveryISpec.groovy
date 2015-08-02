@@ -15,8 +15,6 @@
  */
 package org.springframework.cloud.zookeeper.discovery
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -27,53 +25,47 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.zookeeper.common.CommonTestConfig
+import org.springframework.cloud.zookeeper.common.TestRibbonClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('ribbon')
 @WebIntegrationTest(randomPort = true)
 class ZookeeperDiscoveryISpec extends Specification {
 
-	public static final String TEST_INSTANCE_NAME = 'testInstance'
-
 	@Autowired TestRibbonClient testRibbonClient
-	@Autowired WireMockServer wiremockServer
 	@Autowired DiscoveryClient discoveryClient
     @Autowired ZookeeperServiceDiscovery serviceDiscovery
-	WireMock wireMock
+	@Value('${spring.application.name}') String springAppName
 
-	def setup() {
-		wireMock = new WireMock('localhost', wiremockServer.port())
-		wireMock.register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
-	}
-
-	def 'should find a collaborator via Ribbon'() {
-		expect:
-			'pong' == testRibbonClient.pingService(TEST_INSTANCE_NAME)
-	}
 
 	def 'should find the app by its name via Ribbon'() {
-		given:
-            def jsonSlurper = new JsonSlurper()
-            def health = jsonSlurper.parseText(testRibbonClient.thisHealthCheck())
 		expect:
-			'UP' == health.status
+			'UP' == registeredServiceStatusViaServiceName()
 	}
 
 	def 'should find a collaborator via discovery client'() {
 		given:
-			List<ServiceInstance> instances = discoveryClient.getInstances(TEST_INSTANCE_NAME)
+			List<ServiceInstance> instances = discoveryClient.getInstances(springAppName)
 			ServiceInstance instance = instances.first()
 		expect:
-			'pong' == testRibbonClient.pingOnUrl("${instance.host}:${instance.port}")
+			'UP' == registeredServiceStatus(instance)
+	}
+
+	private String registeredServiceStatusViaServiceName() {
+		return new JsonSlurper().parseText(testRibbonClient.thisHealthCheck()).status
+	}
+
+	private String registeredServiceStatus(ServiceInstance instance) {
+		return new JsonSlurper().parseText(testRibbonClient.callOnUrl("${instance.host}:${instance.port}", 'health')).status
 	}
 
 	def 'should properly find local instance'() {
@@ -85,6 +77,7 @@ class ZookeeperDiscoveryISpec extends Specification {
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
+	@Profile('ribbon')
 	static class Config {
 
 		@Bean
@@ -92,21 +85,5 @@ class ZookeeperDiscoveryISpec extends Specification {
 										  @Value('${spring.application.name}') String springAppName) {
 			return new TestRibbonClient(restTemplate, springAppName)
 		}
-
-	}
-
-	static class TestRibbonClient extends TestServiceRestClient {
-
-		private final String thisAppName
-
-		TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
-			super(restTemplate)
-			this.thisAppName = thisAppName
-		}
-
-		String thisHealthCheck() {
-			return restTemplate.getForObject("http://$thisAppName/health", String)
-		}
-
 	}
 }
