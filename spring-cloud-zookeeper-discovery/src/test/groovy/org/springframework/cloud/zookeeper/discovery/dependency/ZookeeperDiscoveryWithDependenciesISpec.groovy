@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.zookeeper.discovery
+package org.springframework.cloud.zookeeper.discovery.dependency
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
@@ -25,39 +23,46 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.zookeeper.common.CommonTestConfig
+import org.springframework.cloud.zookeeper.common.TestRibbonClient
+import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Controller
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
+import spock.util.concurrent.PollingConditions
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
-@ActiveProfiles('watcher')
+@ActiveProfiles('dependencies')
 @WebIntegrationTest(randomPort = true)
-class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
+class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements PollingUtils {
 
 	@Autowired TestRibbonClient testRibbonClient
-	@Autowired WireMockServer wiremockServer
 	@Autowired DiscoveryClient discoveryClient
-	WireMock wireMock
+	PollingConditions conditions
 
 	def setup() {
-		wireMock = new WireMock('localhost', wiremockServer.port())
-		wireMock.register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
+		conditions = new PollingConditions()
 	}
 
 	def 'should find an instance via path when alias is not found'() {
 		expect:
-			!discoveryClient.getInstances('some/name/without/alias').empty
+			conditions.eventually willPass {
+				assert !discoveryClient.getInstances('nameWithoutAlias').empty
+			}
 	}
 
 	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
 		expect:
-			'pong' == testRibbonClient.pingService('someAlias')
+			conditions.eventually willPass {
+				assert callingServiceAtBeansEndpointIsNotEmpty()
+			}
 	}
 
 	def 'should find a collaborator via discovery client'() {
@@ -65,13 +70,24 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
 			List<ServiceInstance> instances = discoveryClient.getInstances('someAlias')
 			ServiceInstance instance = instances.first()
 		expect:
-			'pong' == testRibbonClient.pingOnUrl("${instance.host}:${instance.port}")
+			conditions.eventually willPass {
+				assert callingServiceViaUrlOnBeansEndpointIsNotEmpty(instance)
+			}
+	}
+
+	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
+		return !testRibbonClient.callService('someAlias', 'beans').empty
+	}
+
+	private boolean callingServiceViaUrlOnBeansEndpointIsNotEmpty(ServiceInstance instance) {
+		return !testRibbonClient.callOnUrl("${instance.host}:${instance.port}", 'beans').empty
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
+	@Profile('dependencies')
 	static class Config {
 
 		@Bean
@@ -81,10 +97,12 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification {
 
 	}
 
-	static class TestRibbonClient extends TestServiceRestClient {
+	@Controller
+	@Profile('dependencies')
+	class PingController {
 
-		TestRibbonClient(RestTemplate restTemplate) {
-			super(restTemplate)
+		@RequestMapping('/ping') String ping() {
+			return 'pong'
 		}
 	}
 }
