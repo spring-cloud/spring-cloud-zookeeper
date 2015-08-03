@@ -14,55 +14,66 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.dependency
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.test.TestingServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
+import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.zookeeper.ZookeeperProperties
+import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.TestServiceRegistrar
 import org.springframework.cloud.zookeeper.discovery.TestServiceRestClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*
+import spock.util.concurrent.PollingConditions
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('loadbalancerclient')
 @WebIntegrationTest(randomPort = true)
-class StickyRuleISpec extends Specification {
+class StickyRuleISpec extends Specification implements PollingUtils {
 
-	@Autowired TestRibbonClient testRibbonClient
-	@Autowired WireMockServer wiremockServerOne
-	@Autowired WireMockServer wiremockServerTwo
+	@Autowired LoadBalancerClient loadBalancerClient
+	@Autowired DiscoveryClient discoveryClient
+	PollingConditions conditions
 
 	def setup() {
-		new WireMock('localhost', wiremockServerOne.port()).register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
-		new WireMock('localhost', wiremockServerTwo.port()).register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pongFromSecondServer')))
+		conditions = new PollingConditions()
 	}
 
 	def 'should use sticky load balancing strategy taken from Zookeeper dependencies'() {
-		given:
-			String initialResponse = testRibbonClient.pingService('someAlias')
 		expect:
-			5.times {
-				assert testRibbonClient.pingService('someAlias') == initialResponse
+			thereAreTwoRegisteredServices()
+			conditions.eventually willPass {
+				URI uri = getUriForAlias()
+				2.times {
+					assert uri == getUriForAlias()
+				}
 			}
 	}
+
+	private boolean thereAreTwoRegisteredServices() {
+		return discoveryClient.getInstances('someAlias').size() == 2
+	}
+
+	private URI getUriForAlias() {
+		return loadBalancerClient.choose('someAlias').uri
+	}
+
 
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableDiscoveryClient
+	@Profile('loadbalancerclient')
 	static class Config {
 
 		@Bean(destroyMethod = 'close')
@@ -70,28 +81,16 @@ class StickyRuleISpec extends Specification {
 			return new TestingServer(SocketUtils.findAvailableTcpPort())
 		}
 
-		@Bean(initMethod = "start", destroyMethod = "shutdown") WireMockServer wiremockServerOne() {
-			return new WireMockServer(SocketUtils.findAvailableTcpPort())
-		}
-
-		@Bean(initMethod = "start", destroyMethod = "shutdown") WireMockServer wiremockServerTwo() {
-			return new WireMockServer(SocketUtils.findAvailableTcpPort())
-		}
-
-		@Bean TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate) {
-			return new TestRibbonClient(restTemplate)
-		}
-
 		@Bean ZookeeperProperties zookeeperProperties() {
 			return new ZookeeperProperties(connectString: "localhost:${testingServer().port}")
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "stop") TestServiceRegistrar serviceOne(CuratorFramework curatorFramework) {
-			return new TestServiceRegistrar(wiremockServerOne().port(), curatorFramework)
+			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework)
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "stop") TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
-			return new TestServiceRegistrar(wiremockServerTwo().port(), curatorFramework)
+			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework)
 		}
 
 	}

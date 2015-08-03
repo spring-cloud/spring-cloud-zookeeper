@@ -15,8 +15,6 @@
  */
 package org.springframework.cloud.zookeeper.discovery
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
@@ -25,45 +23,43 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.zookeeper.config.CommonTestConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Controller
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*
-
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
-@ActiveProfiles('watcher')
+@ActiveProfiles('dependencies')
 @WebIntegrationTest(randomPort = true)
 class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements PollingUtils {
 
 	@Autowired TestRibbonClient testRibbonClient
-	@Autowired WireMockServer wiremockServer
 	@Autowired DiscoveryClient discoveryClient
-	WireMock wireMock
 	PollingConditions conditions
 
 	def setup() {
 		conditions = new PollingConditions()
-		wireMock = new WireMock('localhost', wiremockServer.port())
-		wireMock.register(get(urlEqualTo('/ping')).willReturn(aResponse().withBody('pong')))
 	}
 
 	def 'should find an instance via path when alias is not found'() {
 		expect:
 			conditions.eventually willPass {
-				assert !discoveryClient.getInstances('some/name/without/alias').empty
+				assert !discoveryClient.getInstances('nameWithoutAlias').empty
 			}
 	}
 
 	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
 		expect:
 			conditions.eventually willPass {
-				assert 'pong' == testRibbonClient.pingService('someAlias')
+				assert callingServiceAtBeansEndpointIsNotEmpty()
 			}
 	}
 
@@ -73,14 +69,23 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			ServiceInstance instance = instances.first()
 		expect:
 			conditions.eventually willPass {
-				assert 'pong' == testRibbonClient.pingOnUrl("${instance.host}:${instance.port}")
+				assert callingServiceViaUrlOnBeansEndpointIsNotEmpty(instance)
 			}
+	}
+
+	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
+		return !testRibbonClient.callService('someAlias', 'beans').empty
+	}
+
+	private boolean callingServiceViaUrlOnBeansEndpointIsNotEmpty(ServiceInstance instance) {
+		return !testRibbonClient.callOnUrl("${instance.host}:${instance.port}", 'beans').empty
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
+	@Profile('dependencies')
 	static class Config {
 
 		@Bean
@@ -88,6 +93,15 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			return new TestRibbonClient(restTemplate)
 		}
 
+	}
+
+	@Controller
+	@Profile('dependencies')
+	class PingController {
+
+		@RequestMapping('/ping') String ping() {
+			return 'pong'
+		}
 	}
 
 	static class TestRibbonClient extends TestServiceRestClient {
