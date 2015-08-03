@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery
-
-import groovy.transform.PackageScope
 import groovy.transform.CompileStatic
 import org.springframework.web.client.RestTemplate
 
-@PackageScope
 @CompileStatic
 class TestServiceRestClient {
 
@@ -30,7 +27,11 @@ class TestServiceRestClient {
 	}
 
 	String pingService(String alias) {
-		return restTemplate.getForObject("http://$alias/ping", String)
+		return callService(alias, 'ping')
+	}
+
+	String callService(String alias, String url) {
+		return restTemplate.getForObject("http://$alias/$url", String)
 	}
 
 	String pingOnUrl(String url) {

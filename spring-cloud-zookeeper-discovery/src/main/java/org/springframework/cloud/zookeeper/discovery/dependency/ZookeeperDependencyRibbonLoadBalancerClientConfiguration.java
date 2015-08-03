@@ -29,6 +29,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ *
+ * Provides LoadBalancerClient that at runtime can pick proper load balancing strategy
+ * basing on the Zookeeper dependencies from properties
+ *
  * @author Marcin Grzejszczak, 4financeIT
  */
 @AutoConfigureBefore(RibbonAutoConfiguration.class)

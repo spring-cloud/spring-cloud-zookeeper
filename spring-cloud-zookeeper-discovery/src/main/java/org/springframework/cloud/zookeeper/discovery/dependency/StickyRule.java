@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * Load balancing rule that returns always the same instance.
+ *
  * Ported from {@link org.apache.curator.x.discovery.strategies.StickyStrategy}
  *
  * author: Marcin Grzejszczak, 4financeIT

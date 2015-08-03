@@ -51,7 +51,7 @@ class ZookeeperDependenciesSpec extends Specification {
 	}
 
 	@Unroll
-	def "should retrieve path for alias"() {
+	def "should retrieve path [#expectedPath] for alias [#alias]"() {
 		expect:
 			expectedPath == zookeeperDependencies.getPathForAlias(alias)
 		where:
