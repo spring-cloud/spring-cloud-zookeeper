@@ -26,14 +26,12 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.TestServiceRegistrar
-import org.springframework.cloud.zookeeper.discovery.TestServiceRestClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
-import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -93,12 +91,5 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework)
 		}
 
-	}
-
-	static class TestRibbonClient extends TestServiceRestClient {
-
-		TestRibbonClient(RestTemplate restTemplate) {
-			super(restTemplate)
-		}
 	}
 }

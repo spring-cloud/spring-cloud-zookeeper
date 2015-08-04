@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 
-	private static final Map<String, IRule> RULE_CACHE = new ConcurrentHashMap<>();
+	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
 
 	private final ZookeeperDependencies zookeeperDependencies;
 
@@ -29,10 +29,14 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 		if (dependency == null) {
 			return rule.choose(key);
 		};
-		if (!RULE_CACHE.containsKey(keyAsString)) {
-			RULE_CACHE.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
+		cacheEntryIfMissing(keyAsString, dependency);
+		return ruleCache.get(keyAsString).choose(key);
+	}
+
+	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependencies.ZookeeperDependency dependency) {
+		if (!ruleCache.containsKey(keyAsString)) {
+			ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
 		}
-		return RULE_CACHE.get(keyAsString).choose(key);
 	}
 
 	private IRule chooseRuleForLoadBalancerType(LoadBalancerType type) {

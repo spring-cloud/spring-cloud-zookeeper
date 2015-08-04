@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore(RibbonAutoConfiguration.class)
 @ConditionalOnRibbonZookeeper
 @Configuration
-public class ZookeeperDependencyRibbonLoadBalancerClientConfiguration {
+public class DependencyRibbonAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean

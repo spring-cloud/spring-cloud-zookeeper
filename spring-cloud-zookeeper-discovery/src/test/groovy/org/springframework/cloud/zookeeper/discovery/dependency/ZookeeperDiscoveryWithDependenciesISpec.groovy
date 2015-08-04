@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.zookeeper.discovery
+package org.springframework.cloud.zookeeper.discovery.dependency
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -24,6 +24,8 @@ import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.zookeeper.config.CommonTestConfig
+import org.springframework.cloud.zookeeper.discovery.PollingUtils
+import org.springframework.cloud.zookeeper.discovery.TestServiceRestClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
