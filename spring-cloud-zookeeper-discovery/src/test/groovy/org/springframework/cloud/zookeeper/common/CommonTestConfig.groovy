@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.zookeeper.config
+package org.springframework.cloud.zookeeper.common
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope

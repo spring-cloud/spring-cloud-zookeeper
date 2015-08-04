@@ -60,11 +60,11 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 	}
 
 	private boolean thereAreTwoRegisteredServices() {
-		return discoveryClient.getInstances('someAlias').size() == 2
+		return discoveryClient.getInstances('someAlias')?.size() == 2
 	}
 
 	private URI getUriForAlias() {
-		return loadBalancerClient.choose('someAlias').uri
+		return loadBalancerClient.choose('someAlias')?.uri
 	}
 
 

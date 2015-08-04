@@ -25,7 +25,8 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
-import org.springframework.cloud.zookeeper.config.CommonTestConfig
+import org.springframework.cloud.zookeeper.common.CommonTestConfig
+import org.springframework.cloud.zookeeper.common.TestRibbonClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -84,21 +85,5 @@ class ZookeeperDiscoveryISpec extends Specification {
 										  @Value('${spring.application.name}') String springAppName) {
 			return new TestRibbonClient(restTemplate, springAppName)
 		}
-
-	}
-
-	static class TestRibbonClient extends TestServiceRestClient {
-
-		private final String thisAppName
-
-		TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
-			super(restTemplate)
-			this.thisAppName = thisAppName
-		}
-
-		String thisHealthCheck() {
-			return restTemplate.getForObject("http://$thisAppName/health", String)
-		}
-
 	}
 }
