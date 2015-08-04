@@ -56,7 +56,7 @@ public class ZookeeperDependencies {
 
 		private String path;
 
-		private LoadBalancerType loadBalancerType;
+		private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
 		private String contentTypeTemplate;
 
