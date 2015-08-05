@@ -1,6 +1,7 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import com.netflix.loadbalancer.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Marcin Grzejszczak, 4financeIT
  */
+@Slf4j
 public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
@@ -27,14 +29,17 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 		String keyAsString = (String) key;
 		ZookeeperDependencies.ZookeeperDependency dependency = zookeeperDependencies.getDependencyForAlias(keyAsString);
 		if (dependency == null) {
+			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, rule);
 			return rule.choose(key);
 		};
 		cacheEntryIfMissing(keyAsString, dependency);
+		log.debug("Will try to retrieve dependency for key [{}]. Current cache contents [{}]", keyAsString, ruleCache);
 		return ruleCache.get(keyAsString).choose(key);
 	}
 
 	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependencies.ZookeeperDependency dependency) {
 		if (!ruleCache.containsKey(keyAsString)) {
+			log.debug("Cache doesn't contain entry for [{}]", keyAsString);
 			ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
 		}
 	}
