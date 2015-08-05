@@ -10,7 +10,6 @@ install:
 - mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 - ./docs/src/main/asciidoc/ghpages.sh
 script:
-- mvn dependency:tree -s .settings.xml
 - '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml deploy -nsu'
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || mvn --settings .settings.xml install -nsu'
 env:
