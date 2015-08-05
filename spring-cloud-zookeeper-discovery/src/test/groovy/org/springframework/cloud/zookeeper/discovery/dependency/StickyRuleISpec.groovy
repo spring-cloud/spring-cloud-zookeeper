@@ -51,8 +51,8 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 	def 'should use sticky load balancing strategy taken from Zookeeper dependencies'() {
 		expect:
 			thereAreTwoRegisteredServices()
+			URI uri = getUriForAlias()
 			conditions.eventually willPass {
-				URI uri = getUriForAlias()
 				2.times {
 					assert uri == getUriForAlias()
 				}
