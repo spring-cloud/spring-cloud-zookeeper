@@ -67,6 +67,7 @@ public class ZookeeperDependencies {
 		private boolean required;
 
 	}
+
 	public Collection<ZookeeperDependency> getDependencyConfigurations() {
 		return dependencies.values();
 	}
