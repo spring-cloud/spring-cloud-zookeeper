@@ -12,7 +12,6 @@ before_install:
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
   - gem install asciidoctor
 install:
-#TODO: build docs
 - mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 - ./docs/src/main/asciidoc/ghpages.sh
 script:
