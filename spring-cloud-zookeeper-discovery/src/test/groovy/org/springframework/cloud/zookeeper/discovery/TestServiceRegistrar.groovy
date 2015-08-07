@@ -25,12 +25,12 @@ import org.apache.curator.x.discovery.UriSpec
 @CompileStatic
 class TestServiceRegistrar {
 
-	private final int wiremockServerPort
+	private final int serverPort
 	private final CuratorFramework curatorFramework
 	private final ServiceDiscovery serviceDiscovery
 
-	TestServiceRegistrar(int wiremockServerPort, CuratorFramework curatorFramework) {
-		this.wiremockServerPort = wiremockServerPort
+	TestServiceRegistrar(int serverPort, CuratorFramework curatorFramework) {
+		this.serverPort = serverPort
 		this.curatorFramework = curatorFramework
 		this.serviceDiscovery = serviceDiscovery()
 	}
@@ -42,7 +42,7 @@ class TestServiceRegistrar {
 	ServiceInstance serviceInstance() {
 		return ServiceInstance.builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
 				.address('localhost')
-				.port(wiremockServerPort)
+				.port(serverPort)
 				.name('testInstance')
 				.build()
 	}

@@ -1,4 +1,4 @@
-package org.springframework.cloud.zookeeper.config;
+package org.springframework.cloud.zookeeper.common;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;

@@ -56,7 +56,7 @@ public class ZookeeperDependencies {
 
 		private String path;
 
-		private LoadBalancerType loadBalancerType;
+		private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
 		private String contentTypeTemplate;
 
@@ -65,6 +65,7 @@ public class ZookeeperDependencies {
 		private Map<String, String> headers;
 
 		private boolean required;
+
 	}
 
 	public Collection<ZookeeperDependency> getDependencyConfigurations() {
@@ -73,6 +74,15 @@ public class ZookeeperDependencies {
 
 	public boolean hasDependencies() {
 		return !dependencies.isEmpty();
+	}
+
+	public ZookeeperDependency getDependencyForPath(final String path) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+			if (zookeeperDependencyEntry.getValue().getPath().equals(path)) {
+				return zookeeperDependencyEntry.getValue();
+			}
+		}
+		return null;
 	}
 
 	public ZookeeperDependency getDependencyForAlias(final String alias) {
