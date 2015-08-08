@@ -27,12 +27,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * Representation of this service's dependencies in Zookeeper
+ *
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Data
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperDependencies {
 
+	/**
+	 * Common prefix that will be applied to all Zookeeper dependencies' paths
+	 */
 	private String prefix = "";
 
 	private Map<String, ZookeeperDependency> dependencies = new LinkedHashMap<>();
@@ -52,17 +57,66 @@ public class ZookeeperDependencies {
 	@NoArgsConstructor
 	public static class ZookeeperDependency {
 
+		private static final String VERSION_PLACEHOLDER_REGEX = "\\$version";
+
+		/**
+		 * Path under which the dependency is registered in Zookeeper. The common prefix
+		 * {@link ZookeeperDependencies#prefix} will be applied to this path
+		 */
 		private String path;
 
+		/**
+		 * Type of load balancer that should be used for this particular dependency
+		 */
 		private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
-		private String contentTypeTemplate;
+		/**
+		 * Content type template with {@code $version} placeholder which will be filled
+		 * by the {@link ZookeeperDependency#version} variable.
+		 *
+		 * e.g. {@code 'application/vnd.some-service.$version+json'}
+		 */
+		private String contentTypeTemplate = "";
 
-		private String version;
+		/**
+		 * Provide the current version number of the dependency. This version will be placed under the
+		 * {@code $version} placeholder in {@link ZookeeperDependency#contentTypeTemplate}
+		 */
+		private String version = "";
 
+		/**
+		 * You can provide a map of default headers that should be attached when sending a message to the dependency
+		 */
 		private Map<String, String> headers;
 
+		/**
+		 * If set to true - if the dependency is not present on startup then the application will not boot successfully
+		 *
+		 * {@link org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;}
+		 * {@link org.springframework.cloud.zookeeper.discovery.watcher.DefaultDependencyWatcher}
+		 */
 		private boolean required;
+
+		/**
+		 * Function that will replace the placeholder {@link ZookeeperDependency#VERSION_PLACEHOLDER_REGEX} from the
+		 * {@link ZookeeperDependency#contentTypeTemplate} with value from {@link ZookeeperDependency#version}.
+		 *
+		 * <p>
+		 * e.g. having:
+		 *  <li>contentTypeTemplate: {@code 'application/vnd.some-service.$version+json'}</li>
+		 *  <li>version: {@code 'v1'}</li>
+		 * </p>
+		 *
+		 * the result of the function will be {@code 'application/vnd.some-service.v1+json'}
+		 *
+		 * @return content type template with version
+		 */
+		public String getContentTypeWithVersion() {
+			if (!StringUtils.hasText(contentTypeTemplate) || !StringUtils.hasText(version)) {
+				return "";
+			}
+			return contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX, version);
+		}
 
 	}
 
