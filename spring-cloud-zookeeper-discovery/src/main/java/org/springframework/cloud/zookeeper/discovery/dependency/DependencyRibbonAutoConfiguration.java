@@ -19,13 +19,16 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnRibbonZookeeper;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,12 +42,15 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore(RibbonAutoConfiguration.class)
 @ConditionalOnRibbonZookeeper
 @Configuration
+@ConditionalOnDependenciesPassed
 @Slf4j
 public class DependencyRibbonAutoConfiguration {
 
+	@Autowired ApplicationContext applicationContext;
+
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnDependenciesPassed
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.enabled", matchIfMissing = true)
 	public LoadBalancerClient loadBalancerClient(SpringClientFactory springClientFactory) {
 		return new RibbonLoadBalancerClient(springClientFactory) {
 			@Override

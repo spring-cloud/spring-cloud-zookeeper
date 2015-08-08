@@ -75,5 +75,13 @@ class ZookeeperDependenciesSpec extends Specification {
 			'alias'        || 'path'
 	}
 
-
+	def "should successfully replace version in content type template"() {
+		given:
+			ZookeeperDependencies.ZookeeperDependency zookeeperDependency = new ZookeeperDependencies.ZookeeperDependency(
+					contentTypeTemplate: 'application/vnd.some-service.$version+json',
+					version: 'v1'
+			)
+		expect:
+			'application/vnd.some-service.v1+json' == zookeeperDependency.contentTypeWithVersion
+	}
 }

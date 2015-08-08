@@ -8,8 +8,10 @@ spring.cloud.zookeeper:
       contentTypeTemplate: application/vnd.newsletter.$version+json
       version: v1
       headers:
-        header1: value1
-        header2: value2
+        header1:
+          - value1
+        header2:
+          - value2
       required: false
     testInstance2:
       id: someId2
