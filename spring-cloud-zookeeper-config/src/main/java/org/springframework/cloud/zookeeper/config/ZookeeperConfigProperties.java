@@ -1,4 +1,4 @@
-package org.springframework.cloud.zookeeper.common;
+package org.springframework.cloud.zookeeper.config;
 
 import lombok.Data;
 

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableDiscoveryClient
 @RestController
 @Slf4j
-public class SampleApplication {
+public class SampleZookeeperApplication {
 
 	@Value("${spring.application.name:testZookeeperApp}")
 	private String appName;
@@ -39,7 +39,7 @@ public class SampleApplication {
 	private RelaxedPropertyResolver resolver;
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleApplication.class, args);
+		SpringApplication.run(SampleZookeeperApplication.class, args);
 	}
 
 	@RequestMapping("/")
