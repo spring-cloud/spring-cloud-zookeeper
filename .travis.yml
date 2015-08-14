@@ -15,7 +15,7 @@ install:
 - ./mvnw install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 - ./docs/src/main/asciidoc/ghpages.sh
 script:
-- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || ./mvnw clean deploy -nsu'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || ./mvnw --settings .settings.xml clean deploy -nsu'
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || ./mvnw clean install -nsu'
 env:
   global:
