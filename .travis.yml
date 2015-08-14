@@ -12,11 +12,11 @@ before_install:
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
   - gem install asciidoctor
 install:
-- mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
+- ./mvnw install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 - ./docs/src/main/asciidoc/ghpages.sh
 script:
-- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml clean deploy -nsu'
-- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || mvn --settings .settings.xml clean install -nsu'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || ./mvnw clean deploy -nsu'
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || ./mvnw clean install -nsu'
 env:
   global:
   - GIT_NAME="Spencer Gibb"
