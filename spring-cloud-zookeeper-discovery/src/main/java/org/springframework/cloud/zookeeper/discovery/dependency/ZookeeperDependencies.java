@@ -52,8 +52,6 @@ public class ZookeeperDependencies {
 	@NoArgsConstructor
 	public static class ZookeeperDependency {
 
-		private String id;
-
 		private String path;
 
 		private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;

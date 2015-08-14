@@ -22,7 +22,6 @@ import spock.lang.Unroll
 class ZookeeperDependenciesSpec extends Specification {
 
 	private static final ZookeeperDependencies.ZookeeperDependency EXPECTED_DEPENDENCY = new ZookeeperDependencies.ZookeeperDependency(
-			'id',
 			'path',
 			LoadBalancerType.RANDOM,
 			'contentTypeTemplate',
