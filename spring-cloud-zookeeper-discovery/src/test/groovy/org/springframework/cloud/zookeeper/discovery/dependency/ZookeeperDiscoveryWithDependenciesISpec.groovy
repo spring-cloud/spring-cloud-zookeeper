@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.dependency
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
@@ -23,6 +22,8 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.netflix.feign.EnableFeignClients
+import org.springframework.cloud.netflix.feign.FeignClient
 import org.springframework.cloud.zookeeper.common.CommonTestConfig
 import org.springframework.cloud.zookeeper.common.TestRibbonClient
 import org.springframework.cloud.zookeeper.discovery.PollingUtils
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -45,11 +47,9 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 
 	@Autowired TestRibbonClient testRibbonClient
 	@Autowired DiscoveryClient discoveryClient
-	PollingConditions conditions
-
-	def setup() {
-		conditions = new PollingConditions()
-	}
+	@Autowired AliasUsingFeignClient aliasUsingFeignClient
+	@Autowired IdUsingFeignClient idUsingFeignClient
+	PollingConditions conditions = new PollingConditions()
 
 	def 'should find an instance via path when alias is not found'() {
 		expect:
@@ -58,10 +58,24 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			}
 	}
 
+	def 'should find an instance using feign via serviceID when alias is not found'() {
+		expect:
+			conditions.eventually willPass {
+				assert idUsingFeignClient.beans
+			}
+	}
+
 	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
 		expect:
 			conditions.eventually willPass {
 				assert callingServiceAtBeansEndpointIsNotEmpty()
+			}
+	}
+
+	def 'should find a collaborator using feign by using its alias from dependencies'() {
+		expect:
+			conditions.eventually willPass {
+				assert aliasUsingFeignClient.beans
 			}
 	}
 
@@ -87,6 +101,7 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
+	@EnableFeignClients
 	@Profile('dependencies')
 	static class Config {
 
@@ -97,6 +112,18 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 
 	}
 
+	@FeignClient("someAlias")
+	public static interface AliasUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/beans")
+		String getBeans();
+	}
+
+	@FeignClient("nameWithoutAlias")
+	public static interface IdUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/beans")
+		String getBeans();
+	}
+
 	@Controller
 	@Profile('dependencies')
 	class PingController {
@@ -105,4 +132,5 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			return 'pong'
 		}
 	}
+
 }

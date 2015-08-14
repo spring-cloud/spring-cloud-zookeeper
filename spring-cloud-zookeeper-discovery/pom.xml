@@ -145,6 +145,16 @@
 			<scope>test</scope>
 			<version>1.53</version>
 		</dependency>
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-feign</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

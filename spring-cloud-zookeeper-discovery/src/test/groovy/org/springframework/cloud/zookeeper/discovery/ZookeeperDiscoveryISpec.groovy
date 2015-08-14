@@ -25,26 +25,34 @@ import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.netflix.feign.EnableFeignClients
+import org.springframework.cloud.netflix.feign.FeignClient
 import org.springframework.cloud.zookeeper.common.CommonTestConfig
 import org.springframework.cloud.zookeeper.common.TestRibbonClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Controller
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('ribbon')
 @WebIntegrationTest(randomPort = true)
-class ZookeeperDiscoveryISpec extends Specification {
+class ZookeeperDiscoveryISpec extends Specification implements PollingUtils {
 
 	@Autowired TestRibbonClient testRibbonClient
 	@Autowired DiscoveryClient discoveryClient
     @Autowired ZookeeperServiceDiscovery serviceDiscovery
 	@Value('${spring.application.name}') String springAppName
+	@Autowired IdUsingFeignClient idUsingFeignClient
+	PollingConditions conditions = new PollingConditions()
 
 
 	def 'should find the app by its name via Ribbon'() {
@@ -60,6 +68,13 @@ class ZookeeperDiscoveryISpec extends Specification {
 			'UP' == registeredServiceStatus(instance)
 	}
 
+	def 'should find an instance using feign via service id'() {
+		expect:
+			conditions.eventually willPass {
+				assert idUsingFeignClient.beans
+			}
+	}
+
 	private String registeredServiceStatusViaServiceName() {
 		return new JsonSlurper().parseText(testRibbonClient.thisHealthCheck()).status
 	}
@@ -73,10 +88,17 @@ class ZookeeperDiscoveryISpec extends Specification {
 			serviceDiscovery.serviceInstance.address == discoveryClient.localServiceInstance.host
 	}
 
+	@FeignClient("ribbonApp")
+	public static interface IdUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/beans")
+		String getBeans();
+	}
+
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
+	@EnableFeignClients
 	@Profile('ribbon')
 	static class Config {
 
@@ -84,6 +106,15 @@ class ZookeeperDiscoveryISpec extends Specification {
 		TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
 										  @Value('${spring.application.name}') String springAppName) {
 			return new TestRibbonClient(restTemplate, springAppName)
+		}
+	}
+
+	@Controller
+	@Profile('ribbon')
+	class PingController {
+
+		@RequestMapping('/ping') String ping() {
+			return 'pong'
 		}
 	}
 }

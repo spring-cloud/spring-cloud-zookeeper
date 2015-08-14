@@ -21,6 +21,7 @@ import com.netflix.loadbalancer.AbstractServerList;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +49,12 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 	}
 
 	public void initFromDependencies(IClientConfig clientConfig, ZookeeperDependencies zookeeperDependencies) {
-		this.serviceId = zookeeperDependencies.getPathForAlias(clientConfig.getClientName());
+		this.serviceId = getServiceIdFromDepsOrClientName(clientConfig, zookeeperDependencies);
+	}
+
+	private String getServiceIdFromDepsOrClientName(IClientConfig clientConfig, ZookeeperDependencies zookeeperDependencies) {
+		String serviceIdFromDeps = zookeeperDependencies.getPathForAlias(clientConfig.getClientName());
+		return StringUtils.hasText(serviceIdFromDeps) ? serviceIdFromDeps : clientConfig.getClientName();
 	}
 
 	@Override
