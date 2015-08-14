@@ -40,6 +40,10 @@ public class ZookeeperDependencies {
 	 */
 	private String prefix = "";
 
+	/**
+	 * Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias
+	 * is actually serviceID since Ribbon can't accept nested structures in serviceID
+	 */
 	private Map<String, ZookeeperDependency> dependencies = new LinkedHashMap<>();
 
 	@PostConstruct
