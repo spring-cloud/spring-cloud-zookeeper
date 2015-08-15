@@ -22,7 +22,9 @@ trait PollingUtils {
 			try {
 				closure()
 			} catch (Exception e) {
-				throw new AssertionError("Exception occurred while evaluating closure", e)
+				AssertionError assertionError = new AssertionError("Exception occurred while evaluating closure", e)
+				System.err.println(assertionError)
+				return assertionError
 			}
 		}
 	}
