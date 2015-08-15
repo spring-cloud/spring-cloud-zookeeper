@@ -66,7 +66,7 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			}
 	}
 
-	def 'should find a collaborator via Ribbon by using its alias from dependencies'() {
+	def 'should find a collaborator via load balanced rest template by using its alias from dependencies'() {
 		expect:
 			conditions.eventually willPass {
 				assert callingServiceAtBeansEndpointIsNotEmpty()
@@ -77,6 +77,13 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 		expect:
 			conditions.eventually willPass {
 				assert aliasUsingFeignClient.beans
+			}
+	}
+
+	def 'should have headers from dependencies attached to the request via load balanced rest template'() {
+		expect:
+			conditions.eventually willPass {
+				callingServiceToCheckIfHeadersArePassed()
 			}
 	}
 
@@ -103,6 +110,10 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 
 	private boolean callingServiceViaUrlOnBeansEndpointIsNotEmpty(ServiceInstance instance) {
 		return !testRibbonClient.callOnUrl("${instance.host}:${instance.port}", 'beans').empty
+	}
+
+	private void callingServiceToCheckIfHeadersArePassed() {
+		testRibbonClient.callService('someAlias', 'checkHeaders')
 	}
 
 	@Configuration
@@ -143,10 +154,6 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 	@RestController
 	@Profile('dependencies')
 	static class PingController {
-
-		PingController() {
-			println 'dupa'
-		}
 
 		@RequestMapping('/ping') String ping() {
 			return 'pong'

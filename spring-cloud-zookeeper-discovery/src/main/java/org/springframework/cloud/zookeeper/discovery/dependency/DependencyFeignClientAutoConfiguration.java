@@ -42,7 +42,7 @@ import java.util.Map;
 @Configuration
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.headers.enabled", matchIfMissing = true)
-@ConditionalOnClass(Client.class)
+@ConditionalOnClass({Client.class, RibbonClient.class})
 public class DependencyFeignClientAutoConfiguration {
 
 	@Bean
