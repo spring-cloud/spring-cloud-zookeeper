@@ -79,6 +79,195 @@ public String serviceUrl() {
 }
 ----
 
+[[spring-cloud-zookeeper-dependencies]]
+=== Using the Zookeeper Dependencies
+Spring Cloud Zookeeper gives you a possibility to provide dependencies of your application as properties. As dependencies you can understand other applications that are registered
+in Zookeeper and which you would like to call via https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign] (a REST client builder)
+and also https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon[Spring `RestTemplate`].
+
+You can also benefit from the Zookeeper Dependency Watchers functionality that lets you control and monitor what is the state of your dependencies and decide what to do with that.
+
+=== How to activate Zookeeper Dependencies
+
+- Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` will enable auto-configuration that will setup Spring Cloud Zookeeper Dependencies.
+- In addition to that you have to set the property `spring.cloud.zookeeper.dependencies.enabled` to true (defaults to `true` if not set explicitly).
+- You have to have the `spring.cloud.zookeeper.dependencies` section properly set up - check the subsequent section for more details.
+
+=== Setting up Zookeeper Dependencies
+Let's take a closer look at an example of dependencies representation:
+
+.application.yml
+----
+spring.application.name: yourServiceName
+spring.cloud.zookeeper:
+  dependencies:
+    newsletter:
+      path: /path/where/newsletter/has/registered/in/zookeeper
+      loadBalancerType: ROUND_ROBIN
+      contentTypeTemplate: application/vnd.newsletter.$version+json
+      version: v1
+      headers:
+        header1:
+            - value1
+        header2:
+            - value2
+      required: false
+    mailing:
+      path: /path/where/mailing/has/registered/in/zookeeper
+      loadBalancerType: ROUND_ROBIN
+      contentTypeTemplate: application/vnd.mailing.$version+json
+      version: v1
+      required: true
+----
+
+Let's now go through each part of the dependency one by one. The root property name is `spring.cloud.zookeeper.dependencies`.
+
+==== Aliases
+
+Below the root property you have to represent each dependency has by an alias due to the constraints of Ribbon (the application id has to be placed in the URL
+thus you can't pass any complex path like /foo/bar/name). The alias will be the name that you will use instead of serviceId for `DiscoveryClient`, `Feign` or `RestTemplate`.
+
+In the aforementioned examples the aliases are `newsletter` and `mailing`. Example of Feign usage with `newsletter` would be:
+
+----
+@FeignClient("newsletter")
+public interface NewsletterService {
+        @RequestMapping(method = RequestMethod.GET, value = "/newsletter")
+        String getNewsletters();
+}
+----
+
+==== Path
+
+Represented by `path` yaml property.
+
+Path is the path under which the dependency is registered under Zookeeper. Like presented before Ribbon operates on URLs thus this path is not compliant with its requirement.
+That is why Spring Cloud Zookeeper maps the alias to the proper path.
+
+==== Load balancer type
+
+Represented by `loadBalancerType` yaml property.
+
+If you know what kind of load balancing strategy has to be applied when calling this particular dependency then you can provide it in the yaml file and it will be automatically applied.
+You can choose one of the following load balancing strategies
+
+- STICKY - once chosen the instance will always be called
+- RANDOM - picks an instance randomly
+- ROUND_ROBIN - iterates over instances over and over again
+
+==== Content-Type template and version
+
+Represented by `contentTypeTemplate` and `version` yaml property.
+
+If you version your api via the `Content-Type` header then you don't want to add this header to each of your requests. Also if you want to call a new version of the API you don't want to
+roam around your code to bump up the API version. That's why you can provide a `contentTypeTemplate` with a special `$version` placeholder. That placeholder will be filled by the value of the
+`version` yaml property. Let's take a look at an example.
+
+Having the following `contentTypeTemplate`:
+
+----
+application/vnd.newsletter.$version+json
+----
+
+and the following `version`:
+
+----
+v1
+----
+
+Will result in setting up of a `Content-Type` header for each request:
+
+----
+application/vnd.newsletter.v1+json
+----
+
+==== Default headers
+
+Represented by `headers` map in yaml
+
+Sometimes each call to a dependency requires setting up of some default headers. In order not to do that in code you can set them up in the yaml file.
+Having the following `headers` section:
+
+----
+headers:
+    Accept:
+        - text/html
+        - application/xhtml+xml
+    Cache-Control:
+        - no-cache
+----
+
+Results in adding the `Accept` and `Cache-Control` headers with appropriate list of values in your HTTP request.
+
+==== Obligatory dependencies
+
+Represented by `required` property in yaml
+
+If one of your dependencies is required to be up and running when your application is booting then it's enough to set up the `required: true` property in the yaml file.
+
+If your application can't localize the required dependency during boot time it will throw an exception and the Spring Context will fail to set up.
+In other words your application won't be able to start if the required dependency is not registered in Zookeeper.
+
+You can read more about Spring Cloud Zookeeper Presence Checker in the following sections.
+
+=== Configuring Spring Cloud Zookeeper Dependencies
+
+There is a bunch of properties that you can set to enable / disable parts of Zookeeper Dependencies functionalities.
+
+- `spring.cloud.zookeeper.dependencies` - if you don't set this property you won't benefit from Zookeeper Dependencies
+- `spring.cloud.zookeeper.dependencies.ribbon.enabled` (enabled by default) - Ribbon requires explicit global configuration or a particular one for a dependency. By turning on this property
+ runtime load balancing strategy resolution is possible and you can profit from the `loadBalancerType` section of the Zookeeper Dependencies. The configuration that needs this property
+ has an implementation of `LoadBalancerClient` that delegates to the `ILoadBalancer` presented in the next bullet
+- `spring.cloud.zookeeper.dependencies.ribbon.loadbalancer` (enabled by default) - thanks to this property the custom `ILoadBalancer` knows that the part of the URI passed to Ribbon might
+actually be the alias that has to be resolved to a proper path in Zookeeper. Without this property you won't be able to register applications under nested paths.
+- `spring.cloud.zookeeper.dependencies.headers.enabled` (enabled by default) - this property registers such a `RibbonClient` that automatically will append appropriate headers and content
+types with version as presented in the Dependency configuration. Without this setting of those two parameters will not be operational.
+- `spring.cloud.zookeeper.dependencies.resttemplate.enabled` (enabled by default) - when enabled will modify the request headers of `@LoadBalanced` annotated `RestTemplate` so that it passes
+headers and content type with version set in Dependency configuration. Wihtout this setting of those two parameters will not be operational.
+
+
+[[spring-cloud-zookeeper-dependency-watcher]]
+=== Spring Cloud Zookeeper Dependency Watcher
+
+The Dependency Watcher mechanism allows you to register listeners to your dependencies. The functionality is in fact an implementation of the `Observator` pattern. When a dependency changes
+its state (UP or DOWN) then some custom logic can be applied.
+
+=== How to activate
+
+Spring Cloud Zookeeper Dependencies functionality needs to be enabled to profit from Dependency Watcher mechanism.
+
+=== Registering a listener
+
+In order to register a listener you have to implement an interface `org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherListener` and register it as a bean.
+The interface gives you one method:
+
+----
+    /**
+    * Method executed upon state change of a dependency
+    *
+    * @param dependencyName - alias from microservice configuration {@see ZookeeperDependencies}
+    * @param newState
+    */
+    void stateChanged(String dependencyName, DependencyState newState);
+----
+
+If you want to register a listener for a particular dependency then the `dependencyName` would be the discriminator for your concrete implementation. `newState` will provide you with information
+ whether your dependency has changed to `CONNECTED` or `DISCONNECTED`.
+
+=== Presence Checker
+
+Bound with Dependency Watcher is the functionality called Presence Checker. It allows you to provide custom behaviour upon booting of your application to react accordingly to the state
+of your dependencies.
+
+The default implementation of the abstract `org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier` class is the
+`org.springframework.cloud.zookeeper.discovery.watcher.presence.DefaultDependencyPresenceOnStartupVerifier` which works in the following way.
+
+- If the dependency is marked us `required` and it's not in Zookeeper then upon booting your application will throw an exception and shutdown
+- If dependency is not `required` the `org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker` will log that application is missing at `WARN` level
+
+The functionality can be overriden since the `DefaultDependencyPresenceOnStartupVerifier` is registered only when there is no bean of `DependencyPresenceOnStartupVerifier`.
+
+
 [[spring-cloud-zookeeper-config]]
 == Distributed Configuration with Zookeeper
 

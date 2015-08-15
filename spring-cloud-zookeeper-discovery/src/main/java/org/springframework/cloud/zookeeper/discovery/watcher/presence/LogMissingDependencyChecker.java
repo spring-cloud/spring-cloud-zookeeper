@@ -23,6 +23,9 @@ import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 /**
+ *
+ * Will log the missing microservice dependency
+ *
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Dziurko, 4financeIT
  */
@@ -33,7 +36,7 @@ public class LogMissingDependencyChecker implements PresenceChecker {
 	@Override
 	public void checkPresence(String dependencyName, List<ServiceInstance> serviceInstances) {
 		if (serviceInstances.isEmpty()) {
-			log.warn("Microservice dependency with name [" + dependencyName + "] is missing.");
+			log.warn("Microservice dependency with name [{}] is missing.", dependencyName);
 		}
 	}
 

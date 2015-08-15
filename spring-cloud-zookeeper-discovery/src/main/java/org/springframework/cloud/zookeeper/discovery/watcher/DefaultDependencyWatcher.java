@@ -15,11 +15,6 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import lombok.SneakyThrows;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
@@ -29,7 +24,18 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.context.ApplicationListener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
+ * This Dependency Watcher will verify the presence of dependencies upon startup and registers listeners
+ * to changing of state of dependencies during the application's lifecycle.
+ *
+ * @see DependencyPresenceOnStartupVerifier
+ * @see DependencyWatcherListener
+ *
  * @author Marcin Grzejszczak, 4financeIT
  * @author Michal Chmielarz, 4financeIT
  */

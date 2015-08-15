@@ -2,7 +2,6 @@ spring.application.name: nameWithoutAlias
 spring.cloud.zookeeper:
   dependencies:
     someAlias:
-      id: someId
       path: nameWithoutAlias
       loadBalancerType: ROUND_ROBIN
       contentTypeTemplate: application/vnd.newsletter.$version+json
@@ -14,9 +13,8 @@ spring.cloud.zookeeper:
           - value2
       required: false
     testInstance2:
-      id: someId2
       path: somePath2
       loadBalancerType: ROUND_ROBIN
-      contentTypeTemplate: application/vnd.newsletter.$version+json2
+      contentTypeTemplate: application/vnd.newsletter.$version+json
       version: v1
       required: false

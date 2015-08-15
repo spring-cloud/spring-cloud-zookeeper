@@ -16,7 +16,12 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import com.netflix.loadbalancer.*;
+import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.RandomRule;
+import com.netflix.loadbalancer.RoundRobinRule;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
