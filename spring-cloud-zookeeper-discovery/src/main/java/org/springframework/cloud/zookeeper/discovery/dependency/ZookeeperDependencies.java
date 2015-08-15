@@ -22,9 +22,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Representation of this service's dependencies in Zookeeper
@@ -62,6 +62,7 @@ public class ZookeeperDependencies {
 	public static class ZookeeperDependency {
 
 		private static final String VERSION_PLACEHOLDER_REGEX = "\\$version";
+		private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
 		/**
 		 * Path under which the dependency is registered in Zookeeper. The common prefix
@@ -91,7 +92,7 @@ public class ZookeeperDependencies {
 		/**
 		 * You can provide a map of default headers that should be attached when sending a message to the dependency
 		 */
-		private Map<String, String> headers;
+		private Map<String, Collection<String>> headers;
 
 		/**
 		 * If set to true - if the dependency is not present on startup then the application will not boot successfully
@@ -120,6 +121,45 @@ public class ZookeeperDependencies {
 				return "";
 			}
 			return contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX, version);
+		}
+
+		public Map<String, Collection<String>> getUpdatedHeaders(Map<String, Collection<String>> headers) {
+			Map<String, Collection<String>> newHeaders = new HashMap<>(headers);
+			if (hasContentTypeTemplate()) {
+				setContentTypeFromTemplate(newHeaders);
+			}
+			if (hasHeadersSet()) {
+				addPredefinedHeaders(newHeaders);
+			}
+			return newHeaders;
+		}
+
+		private void setContentTypeFromTemplate(Map<String, Collection<String>> headers) {
+			Collection<String> contentTypes = headers.get(CONTENT_TYPE_HEADER);
+			if (contentTypes == null || contentTypes.isEmpty()) {
+				headers.put(CONTENT_TYPE_HEADER, singletonList(getContentTypeWithVersion()));
+			} else {
+				contentTypes.add(getContentTypeWithVersion());
+			}
+		}
+
+		private void addPredefinedHeaders(Map<String, Collection<String>> newHeaders) {
+			for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
+				Collection<String> value = newHeaders.get(entry.getKey());
+				if (value == null || value.isEmpty()) {
+					newHeaders.put(entry.getKey(), entry.getValue());
+				} else {
+					value.addAll(entry.getValue());
+				}
+			}
+		}
+
+		private boolean hasContentTypeTemplate() {
+			return StringUtils.hasText(contentTypeTemplate);
+		}
+
+		private boolean hasHeadersSet() {
+			return !headers.isEmpty();
 		}
 
 	}

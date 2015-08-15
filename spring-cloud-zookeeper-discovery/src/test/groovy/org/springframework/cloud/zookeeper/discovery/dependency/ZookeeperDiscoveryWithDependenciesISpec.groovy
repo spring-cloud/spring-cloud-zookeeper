@@ -31,11 +31,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Controller
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -79,6 +80,13 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			}
 	}
 
+	def 'should have headers from dependencies attached to the request via feign'() {
+		expect:
+			conditions.eventually willPass {
+				assert aliasUsingFeignClient.checkHeaders()
+			}
+	}
+
 	def 'should find a collaborator via discovery client'() {
 		given:
 			List<ServiceInstance> instances = discoveryClient.getInstances('someAlias')
@@ -110,12 +118,20 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			return new TestRibbonClient(restTemplate)
 		}
 
+		@Bean
+		PingController pingController() {
+			return new PingController()
+		}
+
 	}
 
 	@FeignClient("someAlias")
 	public static interface AliasUsingFeignClient {
 		@RequestMapping(method = RequestMethod.GET, value = "/beans")
 		String getBeans();
+
+		@RequestMapping(method = RequestMethod.GET, value = "/checkHeaders")
+		String checkHeaders();
 	}
 
 	@FeignClient("nameWithoutAlias")
@@ -124,12 +140,25 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 		String getBeans();
 	}
 
-	@Controller
+	@RestController
 	@Profile('dependencies')
-	class PingController {
+	static class PingController {
+
+		PingController() {
+			println 'dupa'
+		}
 
 		@RequestMapping('/ping') String ping() {
 			return 'pong'
+		}
+
+		@RequestMapping('/checkHeaders') String checkHeaders(@RequestHeader('Content-Type') String contentType,
+															 @RequestHeader('header1') Collection<String> header1,
+															 @RequestHeader('header2') Collection<String> header2) {
+			assert  contentType == 'application/vnd.newsletter.v1+json'
+			assert  header1 == ['value1'] as Set
+			assert  header2 == ['value2'] as Set
+			return 'ok'
 		}
 	}
 
