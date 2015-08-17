@@ -47,6 +47,7 @@ public class DependencyFeignClientAutoConfiguration {
 
 	@Bean
 	@Primary
+    @SuppressWarnings("deprecation")
 	Client dependencyBasedFeignClient(final RibbonClient ribbonClient, final ZookeeperDependencies zookeeperDependencies) {
 		return new RibbonClient() {
 			@Override
