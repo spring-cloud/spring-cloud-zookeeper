@@ -15,16 +15,21 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import static java.util.Collections.singletonList;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.PostConstruct;
-import java.util.*;
-
-import static java.util.Collections.singletonList;
 
 /**
  * Representation of this service's dependencies in Zookeeper
@@ -92,7 +97,7 @@ public class ZookeeperDependencies {
 		/**
 		 * You can provide a map of default headers that should be attached when sending a message to the dependency
 		 */
-		private Map<String, Collection<String>> headers = Collections.emptyMap();
+		private Map<String, Collection<String>> headers = new HashMap<>();
 
 		/**
 		 * If set to true - if the dependency is not present on startup then the application will not boot successfully
