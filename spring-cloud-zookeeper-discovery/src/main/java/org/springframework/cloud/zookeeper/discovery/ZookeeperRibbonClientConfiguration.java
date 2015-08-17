@@ -25,6 +25,7 @@ import com.netflix.loadbalancer.ServerList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBasedLoadBalancer;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
@@ -71,6 +72,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
 	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList serverList) {
 		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList);
 	}

@@ -236,7 +236,6 @@
 				<groupId>com.netflix.feign</groupId>
 				<artifactId>feign-core</artifactId>
 				<version>8.7.1</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
