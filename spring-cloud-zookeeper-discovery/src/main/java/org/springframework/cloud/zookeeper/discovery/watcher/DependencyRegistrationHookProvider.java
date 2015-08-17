@@ -18,6 +18,9 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
 import java.io.IOException;
 
 /**
+ * Implementations of this interface are required to register dependency registration hooks
+ * on startup and their cleaning upon application context shutdown.
+ *
  * @author <a href="http://www.4financeit.com>4financeIT</a>
  */
 public interface DependencyRegistrationHookProvider {

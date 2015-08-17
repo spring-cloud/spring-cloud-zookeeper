@@ -16,6 +16,11 @@
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
 /**
+ * By default passes logging dependency checker in order not to shutdown the application
+ * if dependency is missing
+ *
+ * @see LogMissingDependencyChecker
+ *
  * @author <a href="http://www.4financeit.com>4financeIT</a>
  */
 public class DefaultDependencyPresenceOnStartupVerifier extends DependencyPresenceOnStartupVerifier {

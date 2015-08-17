@@ -24,6 +24,9 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import java.util.Map;
 
 /**
+ * Condition that verifies if the Dependencies have been passed in an appropriate
+ * place in the application properties.
+ *
  * @author Marcin Grzejszczak, 4financeIT
  */
 public class DependenciesPassedCondition extends SpringBootCondition {

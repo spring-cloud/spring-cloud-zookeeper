@@ -21,17 +21,4 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
  */
 public enum LoadBalancerType {
 	STICKY, RANDOM, ROUND_ROBIN;
-
-	public static LoadBalancerType fromName(String strategyName) {
-		if (strategyName == null) {
-			return ROUND_ROBIN;
-		}
-		for (LoadBalancerType type : values()) {
-			if (type.name().equals(strategyName.toUpperCase())) {
-				return type;
-			}
-		}
-		return ROUND_ROBIN;
-	}
-
 }

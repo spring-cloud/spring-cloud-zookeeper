@@ -16,12 +16,13 @@
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.zookeeper.discovery.watcher.presence.NoInstancesRunningException;
-import org.springframework.cloud.zookeeper.discovery.watcher.presence.PresenceChecker;
 
 import java.util.List;
 
 /**
+ *
+ * Will result in throwing an exception if there are no running instances of the dependency
+ *
  * @author Marcin Grzejszczak, 4financeIT
  * @author Adam Chudzik, 4financeIT
  */

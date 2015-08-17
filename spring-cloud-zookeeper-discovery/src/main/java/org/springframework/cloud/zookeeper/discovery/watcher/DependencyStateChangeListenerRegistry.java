@@ -25,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
+ *
+ * Informs all the DependencyWatcherListeners that a dependency's state has changed
+ *
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Nurkiewicz, 4financeIT
  */

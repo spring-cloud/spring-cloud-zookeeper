@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnRibbonZookeeper;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +48,7 @@ import java.util.Map;
 @ConditionalOnRibbonZookeeper
 @Configuration
 @ConditionalOnDependenciesPassed
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.resttemplate.enabled", matchIfMissing = true)
 @Slf4j
 public class DependencyRestTemplateAutoConfiguration {
 

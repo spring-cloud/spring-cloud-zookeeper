@@ -16,6 +16,9 @@
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 /**
+ *
+ * Represents a dependency's Zookeeper connection state
+ *
  * @author <a href="http://www.4financeit.com>4financeIT</a>
  */
 public enum DependencyState {
