@@ -22,10 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Collections.singletonList;
 
@@ -95,7 +92,7 @@ public class ZookeeperDependencies {
 		/**
 		 * You can provide a map of default headers that should be attached when sending a message to the dependency
 		 */
-		private Map<String, Collection<String>> headers;
+		private Map<String, Collection<String>> headers = Collections.emptyMap();
 
 		/**
 		 * If set to true - if the dependency is not present on startup then the application will not boot successfully
