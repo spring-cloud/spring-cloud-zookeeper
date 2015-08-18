@@ -47,7 +47,7 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private ZookeeperDiscoveryProperties properties;
 
-	private InstanceSerializer<ZookeeperInstance> instanceSerializer;
+	private InstanceSerializer<Object> instanceSerializer;
 
 	private ApplicationContext context;
 
@@ -55,14 +55,14 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private AtomicInteger port = new AtomicInteger();
 
-	private AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance = new AtomicReference<>();
+	private AtomicReference<ServiceInstance<Object>> serviceInstance = new AtomicReference<>();
 
-	private AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery = new AtomicReference<>();
+	private AtomicReference<ServiceDiscovery<Object>> serviceDiscovery = new AtomicReference<>();
 
 	@Value("${spring.application.name:application}")
 	private String appName;
 
-	public ZookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties properties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
+	public ZookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties properties, InstanceSerializer<Object> instanceSerializer) {
 		this.curator = curator;
 		this.properties = properties;
 		this.instanceSerializer = instanceSerializer;
@@ -76,12 +76,12 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		this.port.set(port);
 	}
 
-	public ServiceInstance<ZookeeperInstance> getServiceInstance() {
+	public ServiceInstance getServiceInstance() {
 		Assert.notNull(serviceInstance.get(), "serviceInstance has not been built");
 		return serviceInstance.get();
 	}
 
-	public ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
+	public ServiceDiscovery getServiceDiscovery() {
 		Assert.notNull(serviceDiscovery.get(), "serviceDiscovery has not been built");
 		return serviceDiscovery.get();
 	}
@@ -105,16 +105,16 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	@SneakyThrows
-	protected void configureServiceInstance(AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance,
+	protected void configureServiceInstance(AtomicReference<ServiceInstance<Object>> serviceInstance,
 											String appName,
 											ApplicationContext context,
 											AtomicInteger port,
 											String host,
 											UriSpec uriSpec) {
 		// @formatter:off
-		serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
+		serviceInstance.set(ServiceInstance.builder()
 				.name(appName)
-				.payload(new ZookeeperInstance(context.getId()))
+				//.payload(new Object(context.getId()))
 				.port(port.get())
 				.address(host)
 				.uriSpec(uriSpec).build());
@@ -122,13 +122,13 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	@SneakyThrows
-	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
+	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<Object>> serviceDiscovery,
 											 CuratorFramework curator,
 											 ZookeeperDiscoveryProperties properties,
-											 InstanceSerializer<ZookeeperInstance> instanceSerializer,
-											 AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance) {
+											 InstanceSerializer<Object> instanceSerializer,
+											 AtomicReference<ServiceInstance<Object>> serviceInstance) {
 		// @formatter:off
-		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
+		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(Object.class)
 				.client(curator)
 				.basePath(properties.getRoot())
 				.serializer(instanceSerializer)
@@ -169,11 +169,11 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		return "unknown";
 	}
 
-	protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {
+	protected AtomicReference<ServiceDiscovery<Object>> getServiceDiscoveryRef() {
 		return this.serviceDiscovery;
 	}
 
-	protected AtomicReference<ServiceInstance<ZookeeperInstance>> getServiceInstanceRef() {
+	protected AtomicReference<ServiceInstance<Object>> getServiceInstanceRef() {
 		return this.serviceInstance;
 	}
 

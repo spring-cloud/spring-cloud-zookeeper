@@ -43,6 +43,9 @@ public class ZookeeperDiscoveryClientConfiguration {
 	@Autowired
 	private CuratorFramework curator;
 
+	@Autowired(required = false)
+	private InstanceSerializer instanceSerializer;
+
 	@Bean
 	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties() {
 		return new ZookeeperDiscoveryProperties();
@@ -52,7 +55,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 	@ConditionalOnMissingBean
 	public ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
 		return new ZookeeperServiceDiscovery(curator, zookeeperDiscoveryProperties(),
-				instanceSerializer());
+				instanceSerializer);
 	}
 
 	@Bean
@@ -65,10 +68,10 @@ public class ZookeeperDiscoveryClientConfiguration {
 		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery(), zookeeperDependencies);
 	}
 
-	@Bean
+	/*@Bean
 	public InstanceSerializer<ZookeeperInstance> instanceSerializer() {
 		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
-	}
+	}*/
 
 	@Configuration
 	@ConditionalOnClass(Endpoint.class)
@@ -79,6 +82,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 		private ZookeeperDependencies zookeeperDependencies;
 
 		@Bean
+		@ConditionalOnMissingBean
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
 			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery, zookeeperDependencies);
 		}

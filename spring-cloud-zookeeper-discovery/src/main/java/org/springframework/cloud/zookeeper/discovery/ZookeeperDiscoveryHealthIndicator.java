@@ -45,9 +45,9 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 			Collection<String> names = getNamesToQuery();
 			ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
 			for (String name : names) {
-				Collection<ServiceInstance<ZookeeperInstance>> instances = serviceDiscovery
+				Collection<ServiceInstance> instances = serviceDiscovery
 						.getServiceDiscovery().queryForInstances(name);
-				for (ServiceInstance<ZookeeperInstance> instance : instances) {
+				for (ServiceInstance instance : instances) {
 					allInstances.add(instance);
 				}
 			}
