@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
- * in the {@link ZookeeperDependencies.ZookeeperDependency#getLoadBalancerType()}
+ * in the {@link ZookeeperDependency#getLoadBalancerType()}
  *
  * @author Marcin Grzejszczak, 4financeIT
  */
@@ -48,7 +48,7 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 	@Override
 	public Server chooseServer(Object key) {
 		String keyAsString = (String) key;
-		ZookeeperDependencies.ZookeeperDependency dependency = zookeeperDependencies.getDependencyForAlias(keyAsString);
+		ZookeeperDependency dependency = zookeeperDependencies.getDependencyForAlias(keyAsString);
 		if (dependency == null) {
 			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, rule);
 			return rule.choose(key);
@@ -58,7 +58,7 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 		return ruleCache.get(keyAsString).choose(key);
 	}
 
-	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependencies.ZookeeperDependency dependency) {
+	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependency dependency) {
 		if (!ruleCache.containsKey(keyAsString)) {
 			log.debug("Cache doesn't contain entry for [{}]", keyAsString);
 			ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));

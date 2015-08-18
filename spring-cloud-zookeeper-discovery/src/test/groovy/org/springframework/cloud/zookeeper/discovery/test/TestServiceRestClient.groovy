@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.zookeeper.common
+package org.springframework.cloud.zookeeper.discovery.test
 
 import groovy.transform.CompileStatic
-import groovy.transform.PackageScope
-import org.apache.curator.test.TestingServer
-import org.springframework.cloud.zookeeper.ZookeeperProperties
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.util.SocketUtils
+import org.springframework.web.client.RestTemplate
 
-@PackageScope
 @CompileStatic
-@Configuration
-class CommonTestConfig {
-	@Bean(destroyMethod = 'close')
-	TestingServer testingServer() {
-		return new TestingServer(SocketUtils.findAvailableTcpPort())
+class TestServiceRestClient {
+
+	final RestTemplate restTemplate;
+
+	TestServiceRestClient(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate
 	}
 
-	@Bean ZookeeperProperties zookeeperProperties() {
-		return new ZookeeperProperties(connectString: "localhost:${testingServer().port}")
+	String callService(String alias, String endpoint) {
+		return restTemplate.getForObject("http://$alias/$endpoint", String)
+	}
+
+	String callOnUrl(String url, String endpoint) {
+		return new RestTemplate().getForObject("http://$url/$endpoint", String)
 	}
 }

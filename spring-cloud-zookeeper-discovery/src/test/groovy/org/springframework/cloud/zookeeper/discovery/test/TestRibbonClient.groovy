@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.zookeeper.common
+package org.springframework.cloud.zookeeper.discovery.test
 
 import org.springframework.web.client.RestTemplate
 
