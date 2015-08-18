@@ -28,6 +28,7 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 
 /**
+ * @author Marcin Grzejszczak, 4financeIT
  * @author Spencer Gibb
  */
 @Data
