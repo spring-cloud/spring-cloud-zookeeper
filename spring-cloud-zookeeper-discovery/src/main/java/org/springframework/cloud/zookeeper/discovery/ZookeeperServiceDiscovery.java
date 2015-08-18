@@ -76,12 +76,12 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		this.port.set(port);
 	}
 
-	public ServiceInstance getServiceInstance() {
+	public ServiceInstance<ZookeeperInstance> getServiceInstance() {
 		Assert.notNull(serviceInstance.get(), "serviceInstance has not been built");
 		return serviceInstance.get();
 	}
 
-	public ServiceDiscovery getServiceDiscovery() {
+	public ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
 		Assert.notNull(serviceDiscovery.get(), "serviceDiscovery has not been built");
 		return serviceDiscovery.get();
 	}
