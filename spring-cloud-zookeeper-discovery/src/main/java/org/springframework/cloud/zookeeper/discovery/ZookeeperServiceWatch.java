@@ -54,6 +54,10 @@ public class ZookeeperServiceWatch implements
 		this.publisher = publisher;
 	}
 
+	public TreeCache getCache() {
+		return cache;
+	}
+
 	@Override
 	@SneakyThrows
 	public void onApplicationEvent(InstanceRegisteredEvent event) {

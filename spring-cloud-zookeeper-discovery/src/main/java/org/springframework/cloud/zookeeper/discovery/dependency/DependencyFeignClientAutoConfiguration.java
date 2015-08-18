@@ -54,12 +54,12 @@ public class DependencyFeignClientAutoConfiguration {
 			public Response execute(Request request, Request.Options options) throws IOException {
 				URI asUri = URI.create(request.url());
 				String clientName = asUri.getHost();
-				ZookeeperDependencies.ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
+				ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
 				Map<String, Collection<String>> headers = getUpdatedHeadersIfPossible(request, dependencyForAlias);
 				return ribbonClient.execute(Request.create(request.method(), request.url(), headers, request.body(), request.charset()), options);
 			}
 
-			private Map<String, Collection<String>> getUpdatedHeadersIfPossible(Request request, ZookeeperDependencies.ZookeeperDependency dependencyForAlias) {
+			private Map<String, Collection<String>> getUpdatedHeadersIfPossible(Request request, ZookeeperDependency dependencyForAlias) {
 				if (dependencyForAlias != null) {
 					return Collections.unmodifiableMap(new HashMap<>(dependencyForAlias.getUpdatedHeaders(request.headers())));
 				}

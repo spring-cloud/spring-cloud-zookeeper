@@ -79,6 +79,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 		private ZookeeperDependencies zookeeperDependencies;
 
 		@Bean
+		@ConditionalOnMissingBean
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
 			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery, zookeeperDependencies);
 		}

@@ -21,7 +21,7 @@ import spock.lang.Unroll
 
 class ZookeeperDependenciesSpec extends Specification {
 
-	private static final ZookeeperDependencies.ZookeeperDependency EXPECTED_DEPENDENCY = new ZookeeperDependencies.ZookeeperDependency(
+	private static final ZookeeperDependency EXPECTED_DEPENDENCY = new ZookeeperDependency(
 			'path',
 			LoadBalancerType.RANDOM,
 			'contentTypeTemplate',
@@ -29,7 +29,7 @@ class ZookeeperDependenciesSpec extends Specification {
 			[header: 'value'],
 			false
 	)
-	private static final Map<String, ZookeeperDependencies.ZookeeperDependency> DEPENDENCIES = [
+	private static final Map<String, ZookeeperDependency> DEPENDENCIES = [
 			alias: EXPECTED_DEPENDENCY
 	]
 
@@ -77,7 +77,7 @@ class ZookeeperDependenciesSpec extends Specification {
 
 	def "should successfully replace version in content type template"() {
 		given:
-			ZookeeperDependencies.ZookeeperDependency zookeeperDependency = new ZookeeperDependencies.ZookeeperDependency(
+			ZookeeperDependency zookeeperDependency = new ZookeeperDependency(
 					contentTypeTemplate: 'application/vnd.some-service.$version+json',
 					version: 'v1'
 			)

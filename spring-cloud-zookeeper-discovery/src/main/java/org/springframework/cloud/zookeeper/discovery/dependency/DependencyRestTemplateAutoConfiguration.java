@@ -61,13 +61,13 @@ public class DependencyRestTemplateAutoConfiguration {
 			@Override
 			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 				String clientName = request.getURI().getHost();
-				ZookeeperDependencies.ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
+				ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
 				HttpHeaders headers = getUpdatedHeadersIfPossible(request, dependencyForAlias);
 				request.getHeaders().putAll(headers);
 				return execution.execute(request, body);
 			}
 
-			private HttpHeaders getUpdatedHeadersIfPossible(HttpRequest request, ZookeeperDependencies.ZookeeperDependency dependencyForAlias) {
+			private HttpHeaders getUpdatedHeadersIfPossible(HttpRequest request, ZookeeperDependency dependencyForAlias) {
 				HttpHeaders httpHeaders = new HttpHeaders();
 				if (dependencyForAlias != null) {
 					Map<String, Collection<String>> updatedHeaders = dependencyForAlias.getUpdatedHeaders(convertHeadersFromListToCollection(request.getHeaders()));

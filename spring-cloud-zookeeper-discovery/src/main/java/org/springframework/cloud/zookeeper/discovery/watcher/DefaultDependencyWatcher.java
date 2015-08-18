@@ -20,7 +20,7 @@ import org.apache.curator.x.discovery.ServiceCache;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies.ZookeeperDependency;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependency;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.context.ApplicationListener;
 
