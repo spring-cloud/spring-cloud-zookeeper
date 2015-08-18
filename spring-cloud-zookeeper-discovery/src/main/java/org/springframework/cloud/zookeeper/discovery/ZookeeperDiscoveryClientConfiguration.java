@@ -75,10 +75,12 @@ public class ZookeeperDiscoveryClientConfiguration {
 	protected static class ZookeeperDiscoveryHealthConfig {
 		@Autowired
 		private ZookeeperServiceDiscovery serviceDiscovery;
+		@Autowired(required = false)
+		private ZookeeperDependencies zookeeperDependencies;
 
 		@Bean
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
-			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery);
+			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery, zookeeperDependencies);
 		}
 	}
 

@@ -15,21 +15,21 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import static java.util.Collections.singletonList;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Representation of this service's dependencies in Zookeeper
@@ -211,5 +211,13 @@ public class ZookeeperDependencies {
 			}
 		}
 		return "";
+	}
+
+	public Collection<String> getDependencyNames() {
+		List<String> names = new ArrayList<>();
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+			names.add(zookeeperDependencyEntry.getValue().getPath());
+		}
+		return names;
 	}
 }
