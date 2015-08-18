@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.SneakyThrows;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.client.DefaultServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
+import lombok.SneakyThrows;
+
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 /**
  * @author Spencer Gibb
@@ -67,11 +68,12 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	@SneakyThrows
+	@SuppressWarnings("unchecked")
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
 		String serviceIdToQuery = getServiceIdToQuery(serviceId);
-		Collection<ServiceInstance<?>> zkInstances = serviceDiscovery.getServiceDiscovery()
-				.queryForInstances(serviceIdToQuery);
+		Collection<ServiceInstance<?>> zkInstances = serviceDiscovery
+			.getServiceDiscovery().queryForInstances(serviceIdToQuery);
 
 		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 
@@ -91,6 +93,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<String> getServices() {
 		ArrayList<String> services = null;
 		try {
