@@ -15,14 +15,14 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.details.ServiceCacheListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  *
@@ -31,9 +31,8 @@ import java.util.List;
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Nurkiewicz, 4financeIT
  */
+@Slf4j
 public class DependencyStateChangeListenerRegistry implements ServiceCacheListener {
-
-	private static final Logger log = LoggerFactory.getLogger(DependencyStateChangeListenerRegistry.class);
 
 	private final List<DependencyWatcherListener> listeners;
 	private final String dependencyName;
