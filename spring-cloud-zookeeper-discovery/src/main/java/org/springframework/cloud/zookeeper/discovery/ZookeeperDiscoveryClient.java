@@ -51,11 +51,11 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
-		ServiceInstance<Object> serviceInstance = serviceDiscovery.getServiceInstance();
+		ServiceInstance<ZookeeperInstance> serviceInstance = serviceDiscovery.getServiceInstance();
 		return createServiceInstance(serviceInstance.getId(), serviceInstance);
 	}
 
-	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<Object> serviceInstance) {
+	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
 		boolean secure = serviceInstance.getSslPort() != null;
 		Integer port = serviceInstance.getPort();
 
@@ -72,12 +72,12 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
 		String serviceIdToQuery = getServiceIdToQuery(serviceId);
-		Collection<ServiceInstance<Object>> zkInstances = serviceDiscovery
+		Collection<ServiceInstance<ZookeeperInstance>> zkInstances = serviceDiscovery
 			.getServiceDiscovery().queryForInstances(serviceIdToQuery);
 
 		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 
-		for (ServiceInstance<Object> instance : zkInstances) {
+		for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 			instances.add(createServiceInstance(serviceIdToQuery, instance));
 		}
 

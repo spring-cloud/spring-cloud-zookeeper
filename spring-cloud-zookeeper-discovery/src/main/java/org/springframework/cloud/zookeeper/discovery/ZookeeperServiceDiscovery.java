@@ -47,7 +47,7 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private ZookeeperDiscoveryProperties properties;
 
-	private InstanceSerializer<Object> instanceSerializer;
+	private InstanceSerializer<ZookeeperInstance> instanceSerializer;
 
 	private ApplicationContext context;
 
@@ -55,14 +55,14 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private AtomicInteger port = new AtomicInteger();
 
-	private AtomicReference<ServiceInstance<Object>> serviceInstance = new AtomicReference<>();
+	private AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance = new AtomicReference<>();
 
-	private AtomicReference<ServiceDiscovery<Object>> serviceDiscovery = new AtomicReference<>();
+	private AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery = new AtomicReference<>();
 
 	@Value("${spring.application.name:application}")
 	private String appName;
 
-	public ZookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties properties, InstanceSerializer<Object> instanceSerializer) {
+	public ZookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties properties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
 		this.curator = curator;
 		this.properties = properties;
 		this.instanceSerializer = instanceSerializer;
@@ -105,16 +105,16 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	@SneakyThrows
-	protected void configureServiceInstance(AtomicReference<ServiceInstance<Object>> serviceInstance,
+	protected void configureServiceInstance(AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance,
 											String appName,
 											ApplicationContext context,
 											AtomicInteger port,
 											String host,
 											UriSpec uriSpec) {
 		// @formatter:off
-		serviceInstance.set(ServiceInstance.builder()
+		serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
 				.name(appName)
-				//.payload(new Object(context.getId()))
+				.payload(new ZookeeperInstance(context.getId()))
 				.port(port.get())
 				.address(host)
 				.uriSpec(uriSpec).build());
@@ -122,13 +122,13 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	@SneakyThrows
-	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<Object>> serviceDiscovery,
+	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
 											 CuratorFramework curator,
 											 ZookeeperDiscoveryProperties properties,
-											 InstanceSerializer<Object> instanceSerializer,
-											 AtomicReference<ServiceInstance<Object>> serviceInstance) {
+											 InstanceSerializer<ZookeeperInstance> instanceSerializer,
+											 AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance) {
 		// @formatter:off
-		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(Object.class)
+		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
 				.client(curator)
 				.basePath(properties.getRoot())
 				.serializer(instanceSerializer)
@@ -169,11 +169,11 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		return "unknown";
 	}
 
-	protected AtomicReference<ServiceDiscovery<Object>> getServiceDiscoveryRef() {
+	protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {
 		return this.serviceDiscovery;
 	}
 
-	protected AtomicReference<ServiceInstance<Object>> getServiceInstanceRef() {
+	protected AtomicReference<ServiceInstance<ZookeeperInstance>> getServiceInstanceRef() {
 		return this.serviceInstance;
 	}
 

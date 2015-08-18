@@ -37,9 +37,9 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 
 	private String serviceId;
-	private final ServiceDiscovery<Object> serviceDiscovery;
+	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
-	public ZookeeperServerList(ServiceDiscovery<Object> serviceDiscovery) {
+	public ZookeeperServerList(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		this.serviceDiscovery = serviceDiscovery;
 	}
 
@@ -70,13 +70,13 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 	@SuppressWarnings("unchecked")
 	private List<ZookeeperServer> getServers() {
 		try {
-			Collection<ServiceInstance<Object>> instances = serviceDiscovery
+			Collection<ServiceInstance<ZookeeperInstance>> instances = serviceDiscovery
 					.queryForInstances(serviceId);
 			if (instances == null || instances.isEmpty()) {
 				return Collections.EMPTY_LIST;
 			}
 			List<ZookeeperServer> servers = new ArrayList<>();
-			for (ServiceInstance<Object> instance : instances) {
+			for (ServiceInstance<ZookeeperInstance> instance : instances) {
 				servers.add(new ZookeeperServer(instance));
 			}
 
