@@ -27,7 +27,7 @@ public class ZookeeperServer extends Server {
 
 	private final MetaInfo metaInfo;
 
-	public ZookeeperServer(final ServiceInstance<ZookeeperInstance> instance) {
+	public ZookeeperServer(final ServiceInstance<?> instance) {
 		// TODO: ssl support
 		super(instance.getAddress(), instance.getPort());
 		metaInfo = new MetaInfo() {

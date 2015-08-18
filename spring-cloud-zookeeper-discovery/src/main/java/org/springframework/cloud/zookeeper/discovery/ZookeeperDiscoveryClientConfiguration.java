@@ -18,7 +18,6 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
-import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -67,11 +66,6 @@ public class ZookeeperDiscoveryClientConfiguration {
 	public ZookeeperDiscoveryClient zookeeperDiscoveryClient() {
 		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery(), zookeeperDependencies);
 	}
-
-	/*@Bean
-	public InstanceSerializer<ZookeeperInstance> instanceSerializer() {
-		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
-	}*/
 
 	@Configuration
 	@ConditionalOnClass(Endpoint.class)

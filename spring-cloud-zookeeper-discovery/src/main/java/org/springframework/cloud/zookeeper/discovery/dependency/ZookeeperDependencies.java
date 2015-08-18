@@ -15,16 +15,18 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import lombok.Data;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.StringUtils;
 
 /**
  * Representation of this service's dependencies in Zookeeper

@@ -16,14 +16,15 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author Spencer Gibb
@@ -40,10 +41,11 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
 			Collection<String> names = getNamesToQuery();
-			ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
+			ArrayList<ServiceInstance<?>> allInstances = new ArrayList<>();
 			for (String name : names) {
 				Collection<ServiceInstance> instances = serviceDiscovery
 						.getServiceDiscovery().queryForInstances(name);
@@ -59,6 +61,7 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Collection<String> getNamesToQuery() throws Exception {
 		if (zookeeperDependencies == null) {
 			return serviceDiscovery.getServiceDiscovery().queryForNames();
