@@ -28,6 +28,10 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.StringUtils;
 
 /**
+ * EnvironmentPostProcessor that sets spring.application.name.
+ * Specifically, if spring.application.name doesn't contain a / and
+ * spring.cloud.zookeeper.prefix has text, it sets spring.application.name
+ * to /${spring.cloud.zookeeper.prefix}/${spring.application.name}
  * @author Spencer Gibb
  */
 public class DependencyEnvironmentPostProcessor implements
