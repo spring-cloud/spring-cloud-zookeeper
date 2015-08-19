@@ -18,3 +18,5 @@ spring.cloud.zookeeper:
       contentTypeTemplate: application/vnd.newsletter.$version+json
       version: v1
       required: false
+    aliasIsPath: ''
+    anotherAlias: 'myPath'

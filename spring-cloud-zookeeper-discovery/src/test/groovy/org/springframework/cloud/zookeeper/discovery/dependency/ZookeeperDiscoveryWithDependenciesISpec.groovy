@@ -50,6 +50,7 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 	@Autowired DiscoveryClient discoveryClient
 	@Autowired AliasUsingFeignClient aliasUsingFeignClient
 	@Autowired IdUsingFeignClient idUsingFeignClient
+    @Autowired ZookeeperDependencies zookeeperDependencies
 	PollingConditions conditions = new PollingConditions()
 
 	def 'should find an instance via path when alias is not found'() {
@@ -104,7 +105,28 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			}
 	}
 
-	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
+    def 'should have path equal to alias'() {
+        given:
+            def dependency = zookeeperDependencies.getDependencyForAlias('aliasIsPath')
+        expect:
+            dependency.path == 'aliasIsPath'
+    }
+
+    def 'should have alias equal to path'() {
+        given:
+            def dependency = zookeeperDependencies.getDependencyForPath('aliasIsPath')
+        expect:
+            dependency.path == 'aliasIsPath'
+    }
+
+    def 'should have path set via string constructor'() {
+        given:
+            def dependency = zookeeperDependencies.getDependencyForAlias('anotherAlias')
+        expect:
+            dependency.path == 'myPath'
+    }
+
+    private boolean callingServiceAtBeansEndpointIsNotEmpty() {
 		return !testRibbonClient.callService('someAlias', 'beans').empty
 	}
 

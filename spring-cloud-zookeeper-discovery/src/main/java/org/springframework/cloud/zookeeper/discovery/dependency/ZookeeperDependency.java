@@ -77,6 +77,12 @@ public class ZookeeperDependency {
 	 */
 	private boolean required;
 
+	public ZookeeperDependency(String path) {
+		if (StringUtils.hasText(path)) {
+			this.path = path;
+		}
+	}
+
 	/**
 	 * Function that will replace the placeholder {@link ZookeeperDependency#VERSION_PLACEHOLDER_REGEX} from the
 	 * {@link ZookeeperDependency#contentTypeTemplate} with value from {@link ZookeeperDependency#version}.

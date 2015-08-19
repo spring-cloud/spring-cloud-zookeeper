@@ -52,6 +52,11 @@ public class ZookeeperDependencies {
 	public void init() {
 		for (Map.Entry<String, ZookeeperDependency> entry : this.dependencies.entrySet()) {
 			ZookeeperDependency value = entry.getValue();
+
+			if (!StringUtils.hasText(value.getPath())) {
+				value.setPath(entry.getKey());
+			}
+
 			if (StringUtils.hasText(prefix)) {
 				value.setPath(prefix + value.getPath());
 			}
