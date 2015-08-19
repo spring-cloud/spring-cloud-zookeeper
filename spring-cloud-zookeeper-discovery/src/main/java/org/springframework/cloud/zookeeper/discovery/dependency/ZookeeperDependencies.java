@@ -50,6 +50,9 @@ public class ZookeeperDependencies {
 
 	@PostConstruct
 	public void init() {
+		if (StringUtils.hasText(prefix) && !prefix.endsWith("/")) {
+			prefix = prefix + "/";
+		}
 		for (Map.Entry<String, ZookeeperDependency> entry : this.dependencies.entrySet()) {
 			ZookeeperDependency value = entry.getValue();
 

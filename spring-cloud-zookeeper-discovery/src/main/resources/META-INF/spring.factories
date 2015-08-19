@@ -7,5 +7,9 @@ org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAutoConfi
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyFeignClientAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyRestTemplateAutoConfiguration
 
+# Environment Post Processors
+org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPostProcessor
+
 org.springframework.cloud.client.discovery.EnableDiscoveryClient=\
 org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration
