@@ -1,11 +1,6 @@
 server:
   port: 8080
 
-#TODO: figure out why I need this here and in bootstrap.yml
-spring:
-  application:
-    name: testZookeeperApp
-
 endpoints:
   restart:
     enabled: true
@@ -13,3 +8,6 @@ endpoints:
     enabled: true
   health:
     sensitive: false
+
+logging.level:
+  org.apache.zookeeper.ClientCnxn: WARN

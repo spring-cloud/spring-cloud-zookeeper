@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.zookeeper.config;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -30,11 +32,13 @@ import org.springframework.context.annotation.Import;
 @EnableConfigurationProperties
 public class ZookeeperConfigBootstrapConfiguration {
 	@Bean
-	public ZookeeperPropertySourceLocator zookeeperPropertySourceLocator() {
-		return new ZookeeperPropertySourceLocator();
+	public ZookeeperPropertySourceLocator zookeeperPropertySourceLocator(
+			CuratorFramework curator, ZookeeperConfigProperties properties) {
+		return new ZookeeperPropertySourceLocator(curator, properties);
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public ZookeeperConfigProperties zookeeperConfigProperties() {
 		return new ZookeeperConfigProperties();
 	}

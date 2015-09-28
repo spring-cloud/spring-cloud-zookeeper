@@ -24,7 +24,6 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -36,11 +35,14 @@ import org.springframework.core.env.PropertySource;
  */
 public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
-	@Autowired
 	private ZookeeperConfigProperties properties;
 
-	@Autowired
 	private CuratorFramework curator;
+
+	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
+		this.curator = curator;
+		this.properties = properties;
+	}
 
 	@Override
 	public PropertySource<?> locate(Environment environment) {
@@ -82,7 +84,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	}
 
 	private ZookeeperPropertySource create(String context) {
-		return new ZookeeperPropertySource(context, curator);
+		return new ZookeeperPropertySource(context, curator, properties);
 	}
 
 	private void addProfiles(List<String> contexts, String baseContext,
