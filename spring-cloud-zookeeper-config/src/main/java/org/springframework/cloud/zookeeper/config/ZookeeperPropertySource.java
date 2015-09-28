@@ -20,14 +20,12 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadFactory;
 
 import lombok.SneakyThrows;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.TreeCache;
-import org.apache.curator.utils.ThreadUtils;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.slf4j.Logger;
@@ -42,8 +40,6 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 		implements Lifecycle {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ZookeeperPropertySource.class);
-	public static final ThreadFactory THREAD_FACTORY = ThreadUtils
-			.newThreadFactory("ZookeeperPropertySource");
 
 	private String context;
 	private ZookeeperConfigProperties properties;
