@@ -15,9 +15,9 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
-import org.apache.curator.x.discovery.ServiceInstance;
-
 import java.util.List;
+
+import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
  * The implementation of this interface will be called upon checking if a dependency with a given name
@@ -33,5 +33,5 @@ public interface PresenceChecker {
 	 * @param dependencyName
 	 * @param serviceInstances - instances to check the dependency for
 	 */
-	void checkPresence(String dependencyName, List<ServiceInstance> serviceInstances);
+	void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances);
 }

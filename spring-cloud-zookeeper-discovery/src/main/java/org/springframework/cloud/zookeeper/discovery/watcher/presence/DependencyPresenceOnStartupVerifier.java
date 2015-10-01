@@ -30,7 +30,6 @@ import org.apache.curator.x.discovery.ServiceCache;
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Szymanski, 4financeIT
  */
-@SuppressWarnings("unchecked")
 public abstract class DependencyPresenceOnStartupVerifier {
 	private static final PresenceChecker MANDATORY_DEPENDENCY_CHECKER = new FailOnMissingDependencyChecker();
 	private final PresenceChecker optionalDependencyChecker;
@@ -39,11 +38,12 @@ public abstract class DependencyPresenceOnStartupVerifier {
 		this.optionalDependencyChecker = optionalDependencyChecker;
 	}
 
-	public void verifyDependencyPresence(String dependencyName, ServiceCache serviceCache, boolean required) {
+	@SuppressWarnings("unchecked")
+	public void verifyDependencyPresence(String dependencyName, @SuppressWarnings("rawtypes") ServiceCache serviceCache, boolean required) {
 		if (required) {
 			MANDATORY_DEPENDENCY_CHECKER.checkPresence(dependencyName, serviceCache.getInstances());
 		} else {
-			optionalDependencyChecker.checkPresence(dependencyName, serviceCache.getInstances());
+			this.optionalDependencyChecker.checkPresence(dependencyName, serviceCache.getInstances());
 		}
 	}
 }

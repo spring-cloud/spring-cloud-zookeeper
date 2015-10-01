@@ -15,7 +15,11 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import lombok.SneakyThrows;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.curator.x.discovery.ServiceCache;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
@@ -24,10 +28,7 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.context.ApplicationListener;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import lombok.SneakyThrows;
 
 /**
  * This Dependency Watcher will verify the presence of dependencies upon startup and registers listeners
@@ -39,10 +40,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Marcin Grzejszczak, 4financeIT
  * @author Michal Chmielarz, 4financeIT
  */
-public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent> {
+public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent<?>> {
 
 	private final ZookeeperServiceDiscovery serviceDiscovery;
-	private final Map<String, ServiceCache> dependencyRegistry = new ConcurrentHashMap<>();
+	private final Map<String, ServiceCache<?>> dependencyRegistry = new ConcurrentHashMap<>();
 	private final List<DependencyWatcherListener> listeners;
 	private final DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	private final ZookeeperDependencies zookeeperDependencies;
@@ -59,27 +60,26 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 
 	@Override
 	@SneakyThrows
-	public void onApplicationEvent(InstanceRegisteredEvent event) {
+	public void onApplicationEvent(InstanceRegisteredEvent<?> event) {
 		registerDependencyRegistrationHooks();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void registerDependencyRegistrationHooks() throws Exception {
-		for (ZookeeperDependency zookeeperDependency : zookeeperDependencies.getDependencyConfigurations()) {
+		for (ZookeeperDependency zookeeperDependency : this.zookeeperDependencies.getDependencyConfigurations()) {
 			String dependencyPath = zookeeperDependency.getPath();
-			ServiceCache serviceCache = serviceDiscovery.getServiceDiscovery()
+			ServiceCache<?> serviceCache = this.serviceDiscovery.getServiceDiscovery()
 					.serviceCacheBuilder().name(dependencyPath).build();
 			serviceCache.start();
-			dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
-			dependencyRegistry.put(dependencyPath, serviceCache);
-			serviceCache.addListener(new DependencyStateChangeListenerRegistry(listeners, dependencyPath, serviceCache));
+			this.dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
+			this.dependencyRegistry.put(dependencyPath, serviceCache);
+			serviceCache.addListener(new DependencyStateChangeListenerRegistry(this.listeners, dependencyPath, serviceCache));
 		}
 	}
 
 	@Override
 	public void clearDependencyRegistrationHooks() throws IOException {
-		for (ServiceCache cache : dependencyRegistry.values()) {
+		for (ServiceCache<?> cache : this.dependencyRegistry.values()) {
 			cache.close();
 		}
 	}

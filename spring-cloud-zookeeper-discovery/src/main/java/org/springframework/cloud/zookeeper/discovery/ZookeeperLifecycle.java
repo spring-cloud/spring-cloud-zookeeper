@@ -16,15 +16,13 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle;
+
+import lombok.SneakyThrows;
 
 /**
  * @author Spencer Gibb
  */
-@Slf4j
 public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 
 	private ZookeeperDiscoveryProperties properties;
@@ -55,22 +53,22 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 
 	@Override
 	protected boolean isEnabled() {
-		return properties.isEnabled();
+		return this.properties.isEnabled();
 	}
 
 	@Override
 	protected int getConfiguredPort() {
-		return serviceDiscovery.getPort();
+		return this.serviceDiscovery.getPort();
 	}
 
 	@Override
 	protected void setConfiguredPort(int port) {
-		serviceDiscovery.setPort(port);
-		serviceDiscovery.build();
+		this.serviceDiscovery.setPort(port);
+		this.serviceDiscovery.build();
 	}
 
 	@Override
 	protected Object getConfiguration() {
-		return properties;
+		return this.properties;
 	}
 }

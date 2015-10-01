@@ -15,12 +15,12 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
  *
@@ -31,12 +31,12 @@ import java.util.List;
  */
 public class LogMissingDependencyChecker implements PresenceChecker {
 
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	@Override
-	public void checkPresence(String dependencyName, List<ServiceInstance> serviceInstances) {
+	public void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances) {
 		if (serviceInstances.isEmpty()) {
-			log.warn("Microservice dependency with name [{}] is missing.", dependencyName);
+			log.warn("Microservice dependency with name ["+dependencyName+"] is missing.");
 		}
 	}
 

@@ -27,6 +27,7 @@ import lombok.Data;
 public class ZookeeperInstance {
 	private String id;
 
+	@SuppressWarnings("unused")
 	private ZookeeperInstance() {
 	}
 }

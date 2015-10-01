@@ -20,21 +20,23 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PreDestroy;
 
-import lombok.SneakyThrows;
-
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.cache.*;
+import org.apache.curator.framework.recipes.cache.TreeCache;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
+import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
 
+import lombok.SneakyThrows;
+
 /**
  * @author Spencer Gibb
  */
 public class ZookeeperServiceWatch implements
-		ApplicationListener<InstanceRegisteredEvent>, TreeCacheListener,
+		ApplicationListener<InstanceRegisteredEvent<?>>, TreeCacheListener,
 		ApplicationEventPublisherAware {
 
 	private final CuratorFramework curator;
@@ -55,21 +57,21 @@ public class ZookeeperServiceWatch implements
 	}
 
 	public TreeCache getCache() {
-		return cache;
+		return this.cache;
 	}
 
 	@Override
 	@SneakyThrows
-	public void onApplicationEvent(InstanceRegisteredEvent event) {
-		cache = TreeCache.newBuilder(curator, properties.getRoot()).build();
-		cache.getListenable().addListener(this);
-		cache.start();
+	public void onApplicationEvent(InstanceRegisteredEvent<?> event) {
+		this.cache = TreeCache.newBuilder(this.curator, this.properties.getRoot()).build();
+		this.cache.getListenable().addListener(this);
+		this.cache.start();
 	}
 
 	@PreDestroy
 	public void stop() throws Exception {
-		if (cache != null) {
-			cache.close();
+		if (this.cache != null) {
+			this.cache.close();
 		}
 	}
 
@@ -78,8 +80,8 @@ public class ZookeeperServiceWatch implements
 		if (event.getType().equals(TreeCacheEvent.Type.NODE_ADDED)
 				|| event.getType().equals(TreeCacheEvent.Type.NODE_REMOVED)
 				|| event.getType().equals(TreeCacheEvent.Type.NODE_UPDATED)) {
-			long newCacheChange = cacheChange.incrementAndGet();
-			publisher.publishEvent(new HeartbeatEvent(this, newCacheChange));
+			long newCacheChange = this.cacheChange.incrementAndGet();
+			this.publisher.publishEvent(new HeartbeatEvent(this, newCacheChange));
 		}
 	}
 }

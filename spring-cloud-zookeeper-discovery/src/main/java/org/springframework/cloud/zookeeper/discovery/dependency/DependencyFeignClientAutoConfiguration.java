@@ -16,22 +16,24 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import feign.Client;
-import feign.Request;
-import feign.Response;
-import feign.ribbon.RibbonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import feign.Client;
+import feign.Request;
+import feign.Response;
+import feign.ribbon.RibbonClient;
 
 /**
  *
@@ -42,26 +44,35 @@ import java.util.Map;
 @Configuration
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.headers.enabled", matchIfMissing = true)
-@ConditionalOnClass({Client.class, RibbonClient.class})
+@ConditionalOnClass({ Client.class, RibbonClient.class })
 public class DependencyFeignClientAutoConfiguration {
 
 	@Bean
 	@Primary
-    @SuppressWarnings("deprecation")
-	Client dependencyBasedFeignClient(final RibbonClient ribbonClient, final ZookeeperDependencies zookeeperDependencies) {
+	@SuppressWarnings("deprecation")
+	Client dependencyBasedFeignClient(final LoadBalancerFeignClient ribbonClient,
+			final ZookeeperDependencies zookeeperDependencies) {
+		// TODO: remove dependency on feign-ribbon
 		return new RibbonClient() {
 			@Override
-			public Response execute(Request request, Request.Options options) throws IOException {
+			public Response execute(Request request, Request.Options options)
+					throws IOException {
 				URI asUri = URI.create(request.url());
 				String clientName = asUri.getHost();
-				ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
-				Map<String, Collection<String>> headers = getUpdatedHeadersIfPossible(request, dependencyForAlias);
-				return ribbonClient.execute(Request.create(request.method(), request.url(), headers, request.body(), request.charset()), options);
+				ZookeeperDependency dependencyForAlias = zookeeperDependencies
+						.getDependencyForAlias(clientName);
+				Map<String, Collection<String>> headers = getUpdatedHeadersIfPossible(
+						request, dependencyForAlias);
+				return ribbonClient.execute(Request.create(request.method(),
+						request.url(), headers, request.body(), request.charset()),
+						options);
 			}
 
-			private Map<String, Collection<String>> getUpdatedHeadersIfPossible(Request request, ZookeeperDependency dependencyForAlias) {
+			private Map<String, Collection<String>> getUpdatedHeadersIfPossible(
+					Request request, ZookeeperDependency dependencyForAlias) {
 				if (dependencyForAlias != null) {
-					return Collections.unmodifiableMap(new HashMap<>(dependencyForAlias.getUpdatedHeaders(request.headers())));
+					return Collections.unmodifiableMap(new HashMap<>(
+							dependencyForAlias.getUpdatedHeaders(request.headers())));
 				}
 				return request.headers();
 			}

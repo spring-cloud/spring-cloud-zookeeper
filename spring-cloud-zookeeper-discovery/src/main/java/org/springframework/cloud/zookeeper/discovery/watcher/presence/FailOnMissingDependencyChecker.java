@@ -15,9 +15,9 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
-import org.apache.curator.x.discovery.ServiceInstance;
-
 import java.util.List;
+
+import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
  *
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class FailOnMissingDependencyChecker implements PresenceChecker {
 	@Override
-	public void checkPresence(String dependencyName, List<ServiceInstance> serviceInstances) {
+	public void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances) {
 		if (serviceInstances.isEmpty()) {
 			throw new NoInstancesRunningException(dependencyName);
 		}

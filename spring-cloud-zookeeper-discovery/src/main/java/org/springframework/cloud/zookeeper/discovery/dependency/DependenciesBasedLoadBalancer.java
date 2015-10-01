@@ -16,16 +16,17 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
@@ -40,7 +41,7 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 
 	private final ZookeeperDependencies zookeeperDependencies;
 
-	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList serverList) {
+	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
 		this.zookeeperDependencies = zookeeperDependencies;
 		setServersList(serverList.getInitialListOfServers());
 	}
@@ -48,20 +49,20 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 	@Override
 	public Server chooseServer(Object key) {
 		String keyAsString = (String) key;
-		ZookeeperDependency dependency = zookeeperDependencies.getDependencyForAlias(keyAsString);
+		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);
 		if (dependency == null) {
-			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, rule);
-			return rule.choose(key);
+			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, this.rule);
+			return this.rule.choose(key);
 		};
 		cacheEntryIfMissing(keyAsString, dependency);
-		log.debug("Will try to retrieve dependency for key [{}]. Current cache contents [{}]", keyAsString, ruleCache);
-		return ruleCache.get(keyAsString).choose(key);
+		log.debug("Will try to retrieve dependency for key [{}]. Current cache contents [{}]", keyAsString, this.ruleCache);
+		return this.ruleCache.get(keyAsString).choose(key);
 	}
 
 	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependency dependency) {
-		if (!ruleCache.containsKey(keyAsString)) {
+		if (!this.ruleCache.containsKey(keyAsString)) {
 			log.debug("Cache doesn't contain entry for [{}]", keyAsString);
-			ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
+			this.ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
 		}
 	}
 

@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import com.netflix.client.config.IClientConfig;
-import com.netflix.config.ConfigurationManager;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.ServerList;
+import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
+import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,10 +31,12 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-
-import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
-import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.config.ConfigurationManager;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.ServerList;
 
 /**
  * Preprocessor that configures defaults for zookeeper-discovered ribbon clients. Such as:
@@ -64,7 +65,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
-		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
+		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
 		serverList.initFromDependencies(config, zookeeperDependencies);
 		return serverList;
 	}
@@ -73,14 +74,14 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
-	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList serverList) {
+	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
 		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ServerList<?> ribbonServerList(IClientConfig config) {
-		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery.getServiceDiscovery());
+		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
 		serverList.initWithNiwsConfig(config);
 		return serverList;
 	}

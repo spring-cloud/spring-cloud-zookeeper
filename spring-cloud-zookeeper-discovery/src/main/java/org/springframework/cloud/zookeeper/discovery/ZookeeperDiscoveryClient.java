@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lombok.SneakyThrows;
-
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+
+import lombok.SneakyThrows;
 
 /**
  * @author Spencer Gibb
@@ -51,7 +51,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
-		ServiceInstance<ZookeeperInstance> serviceInstance = serviceDiscovery.getServiceInstance();
+		ServiceInstance<ZookeeperInstance> serviceInstance = this.serviceDiscovery.getServiceInstance();
 		return createServiceInstance(serviceInstance.getId(), serviceInstance);
 	}
 
@@ -68,11 +68,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	@SneakyThrows
-	@SuppressWarnings("unchecked")
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
 		String serviceIdToQuery = getServiceIdToQuery(serviceId);
-		Collection<ServiceInstance<ZookeeperInstance>> zkInstances = serviceDiscovery
+		Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
 			.getServiceDiscovery().queryForInstances(serviceIdToQuery);
 
 		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
@@ -85,19 +84,18 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	private String getServiceIdToQuery(String serviceId) {
-		if (zookeeperDependencies != null && zookeeperDependencies.hasDependencies()) {
-			String pathForAlias = zookeeperDependencies.getPathForAlias(serviceId);
+		if (this.zookeeperDependencies != null && this.zookeeperDependencies.hasDependencies()) {
+			String pathForAlias = this.zookeeperDependencies.getPathForAlias(serviceId);
 			return pathForAlias.isEmpty() ? serviceId : pathForAlias;
 		}
 		return serviceId;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<String> getServices() {
 		ArrayList<String> services = null;
 		try {
-			services = new ArrayList<>(serviceDiscovery.getServiceDiscovery().queryForNames());
+			services = new ArrayList<>(this.serviceDiscovery.getServiceDiscovery().queryForNames());
 		}
 		catch (Exception e) {
 			rethrowRuntimeException(e);

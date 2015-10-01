@@ -16,9 +16,13 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,11 +36,8 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -49,7 +50,6 @@ import java.util.Map;
 @Configuration
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.resttemplate.enabled", matchIfMissing = true)
-@Slf4j
 public class DependencyRestTemplateAutoConfiguration {
 
 	@Autowired @LoadBalanced RestTemplate restTemplate;
@@ -57,11 +57,11 @@ public class DependencyRestTemplateAutoConfiguration {
 
 	@PostConstruct
 	void customizeRestTemplate() {
-		restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
+		this.restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
 			@Override
 			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 				String clientName = request.getURI().getHost();
-				ZookeeperDependency dependencyForAlias = zookeeperDependencies.getDependencyForAlias(clientName);
+				ZookeeperDependency dependencyForAlias = DependencyRestTemplateAutoConfiguration.this.zookeeperDependencies.getDependencyForAlias(clientName);
 				HttpHeaders headers = getUpdatedHeadersIfPossible(request, dependencyForAlias);
 				request.getHeaders().putAll(headers);
 				return execution.execute(request, body);
