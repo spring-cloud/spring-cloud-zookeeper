@@ -14,11 +14,23 @@ class StubsConfigurationSpec extends Specification {
 			path << ['', 'pl/']
 	}
 
-	def "should properly parse the path into group, artifact and classifier"() {
+	def "should properly parse invalid colon separated path into empty notation"() {
 		given:
 			String path = 'pl/a'
 		when:
 			StubsConfiguration stubsConfiguration = new StubsConfiguration(path)
+		then:
+			'' == stubsConfiguration.toColonSeparatedDependencyNotation()
+			'' == stubsConfiguration.stubsGroupId
+			'' == stubsConfiguration.stubsArtifactId
+			'' == stubsConfiguration.stubsClassifier
+	}
+
+	def "should parse the path into group, artifact and classifier"() {
+		given:
+			String path = 'pl/a'
+		when:
+			StubsConfiguration stubsConfiguration = new StubsConfiguration(new StubsConfiguration.DependencyPath(path))
 		then:
 			'pl:a:stubs' == stubsConfiguration.toColonSeparatedDependencyNotation()
 			'pl' == stubsConfiguration.stubsGroupId

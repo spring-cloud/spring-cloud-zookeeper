@@ -16,9 +16,7 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
@@ -32,8 +30,6 @@ import static java.util.Collections.singletonList;
  * @author Spencer Gibb
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ZookeeperDependency {
 
 	private static final String VERSION_PLACEHOLDER_REGEX = "\\$version";
@@ -83,6 +79,20 @@ public class ZookeeperDependency {
 	 * will by default equal {@code stubs}
 	 */
 	private String stubs;
+
+	public ZookeeperDependency() {
+	}
+
+	public ZookeeperDependency(String path, LoadBalancerType loadBalancerType, String contentTypeTemplate,
+							   String version, Map<String, Collection<String>> headers, boolean required, String stubs) {
+		this.path = path;
+		this.loadBalancerType = loadBalancerType;
+		this.contentTypeTemplate = contentTypeTemplate;
+		this.version = version;
+		this.headers = headers;
+		this.required = required;
+		this.stubs = stubs;
+	}
 
 	/**
 	 * Parsed stubs path
