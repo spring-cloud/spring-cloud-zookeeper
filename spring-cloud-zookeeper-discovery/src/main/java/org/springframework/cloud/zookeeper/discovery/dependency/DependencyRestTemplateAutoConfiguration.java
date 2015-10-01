@@ -18,9 +18,9 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +36,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-
 /**
- *
  * Customizes RestTemplate to support passing of params from dependency
  *
  * @author Marcin Grzejszczak, 4financeIT
@@ -79,21 +75,19 @@ public class DependencyRestTemplateAutoConfiguration {
 			}
 
 			private Map<String, Collection<String>> convertHeadersFromListToCollection(HttpHeaders headers) {
-				return Maps.transformValues(headers, new Function<List<String>, Collection<String>>() {
-					@Override
-					public Collection<String> apply(List<String> input) {
-						return input;
-					}
-				});
+				Map<String, Collection<String>> transformedHeaders = new HashMap<>();
+				for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+					transformedHeaders.put(entry.getKey(), entry.getValue());
+				}
+				return transformedHeaders;
 			}
 
-			private Map<String, List<String>> convertHeadersFromCollectionToList(Map<String, Collection<String>>  headers) {
-				return Maps.transformValues(headers, new Function<Collection<String>, List<String>>() {
-					@Override
-					public List<String> apply(Collection<String> input) {
-						return (List<String>) input;
-					}
-				});
+			private Map<String, List<String>> convertHeadersFromCollectionToList(Map<String, Collection<String>> headers) {
+				Map<String, List<String>> transformedHeaders = new HashMap<>();
+				for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
+					transformedHeaders.put(entry.getKey(), (List<String>) entry.getValue());
+				}
+				return transformedHeaders;
 			}
 		});
 	}

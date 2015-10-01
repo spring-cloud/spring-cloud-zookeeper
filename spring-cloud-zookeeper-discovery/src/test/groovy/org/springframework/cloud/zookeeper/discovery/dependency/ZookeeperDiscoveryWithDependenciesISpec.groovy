@@ -52,6 +52,15 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 			}
 	}
 
+	def 'should fill out properly the stub section of a dependency'() {
+		given:
+			StubsConfiguration stubsConfiguration = zookeeperDependencies.dependencies.get('someAlias').stubsConfiguration
+		expect:
+			stubsConfiguration.stubsGroupId == 'org.springframework'
+			stubsConfiguration.stubsArtifactId == 'foo'
+			stubsConfiguration.stubsClassifier == 'stubs'
+	}
+
 	def 'should find an instance using feign via serviceID when alias is not found'() {
 		expect:
 			conditions.eventually willPass {

@@ -15,12 +15,11 @@
  */
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
+
+import lombok.extern.apachecommons.CommonsLog;
 
 /**
  *
@@ -29,9 +28,8 @@ import org.apache.curator.x.discovery.ServiceInstance;
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Dziurko, 4financeIT
  */
+@CommonsLog
 public class LogMissingDependencyChecker implements PresenceChecker {
-
-	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	@Override
 	public void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances) {
