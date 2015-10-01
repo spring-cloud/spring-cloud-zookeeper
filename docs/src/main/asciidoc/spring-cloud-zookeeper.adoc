@@ -112,6 +112,7 @@ spring.cloud.zookeeper:
         header2:
             - value2
       required: false
+      stubs: org.springframework:foo:stubs
     mailing:
       path: /path/where/mailing/has/registered/in/zookeeper
       loadBalancerType: ROUND_ROBIN
@@ -209,6 +210,28 @@ If your application can't localize the required dependency during boot time it w
 In other words your application won't be able to start if the required dependency is not registered in Zookeeper.
 
 You can read more about Spring Cloud Zookeeper Presence Checker in the following sections.
+
+=== Stubs
+
+You can provide a colon separated path to the JAR containing stubs of the dependency. Example
+
+```
+stubs: org.springframework:foo:stubs
+```
+
+means that for a particular dependencies can be found under:
+
+* groupId: `org.springframework`
+* artifactId: `foo`
+* classifier: `stubs` - this is the default value
+
+This is actually equal to
+
+```
+stubs: org.springframework:foo
+```
+
+since `stubs` is the default classifier.
 
 === Configuring Spring Cloud Zookeeper Dependencies
 

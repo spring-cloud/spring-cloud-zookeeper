@@ -77,6 +77,18 @@ public class ZookeeperDependency {
 	 */
 	private boolean required;
 
+	/**
+	 * Colon separated notation of the stubs. E.g. {@code org.springframework:zookeeper-sample:stubs}. If not provided
+	 * the {@code path} will be parsed to try to split it into groupId and artifactId. If not provided the classifier
+	 * will by default equal {@code stubs}
+	 */
+	private String stubs;
+
+	/**
+	 * Parsed stubs path
+	 */
+	private StubsConfiguration stubsConfiguration;
+
 	public ZookeeperDependency(String path) {
 		if (StringUtils.hasText(path)) {
 			this.path = path;

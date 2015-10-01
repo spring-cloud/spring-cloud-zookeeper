@@ -12,6 +12,7 @@ spring.cloud.zookeeper:
         header2:
           - value2
       required: false
+      stubs: org.springframework:foo:stubs
     testInstance2:
       path: somePath2
       loadBalancerType: ROUND_ROBIN
