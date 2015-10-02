@@ -1,11 +1,15 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import com.google.common.base.Joiner;
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+
 
 /**
  * Representation of a stubs location
+ *
+ * @author Marcin Grzejszczak
  */
 @Data
 public class StubsConfiguration {
@@ -20,7 +24,7 @@ public class StubsConfiguration {
 	public StubsConfiguration(String stubsGroupId, String stubsArtifactId, String stubsClassifier) {
 		this.stubsGroupId = stubsGroupId;
 		this.stubsArtifactId = stubsArtifactId;
-		this.stubsClassifier = StringUtils.defaultIfEmpty(stubsClassifier, DEFAULT_STUBS_CLASSIFIER);
+		this.stubsClassifier = StringUtils.hasText(stubsClassifier) ? stubsClassifier : DEFAULT_STUBS_CLASSIFIER;
 	}
 
 	public StubsConfiguration(String stubPath) {
@@ -51,14 +55,14 @@ public class StubsConfiguration {
 	}
 
 	private boolean isDefined() {
-		return StringUtils.isNotBlank(stubsGroupId) && StringUtils.isNotBlank(stubsArtifactId);
+		return StringUtils.hasText(stubsGroupId) && StringUtils.hasText(stubsArtifactId);
 	}
 
 	public String toColonSeparatedDependencyNotation() {
 		if(!isDefined()) {
 			return "";
 		}
-		return Joiner.on(STUB_COLON_DELIMITER).join(getStubsGroupId(), getStubsArtifactId(), getStubsClassifier());
+		return StringUtils.collectionToDelimitedString(Arrays.asList(getStubsGroupId(), getStubsArtifactId(), getStubsClassifier()), STUB_COLON_DELIMITER);
 	}
 
 	/**
