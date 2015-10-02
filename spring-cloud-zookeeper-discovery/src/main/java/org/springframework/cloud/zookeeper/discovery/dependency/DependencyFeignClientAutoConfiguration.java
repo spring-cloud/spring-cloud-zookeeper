@@ -23,8 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.netflix.feign.ribbon.CachingSpringLoadBalancerFactory;
 import org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +35,6 @@ import org.springframework.context.annotation.Primary;
 import feign.Client;
 import feign.Request;
 import feign.Response;
-import feign.ribbon.RibbonClient;
 
 /**
  *
@@ -44,16 +45,21 @@ import feign.ribbon.RibbonClient;
 @Configuration
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.headers.enabled", matchIfMissing = true)
-@ConditionalOnClass({ Client.class, RibbonClient.class })
+@ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
 public class DependencyFeignClientAutoConfiguration {
+	@Autowired
+	private LoadBalancerFeignClient ribbonClient;
+
+	@Autowired
+	private ZookeeperDependencies zookeeperDependencies;
+
+	@Autowired
+	private CachingSpringLoadBalancerFactory loadBalancerFactory;
 
 	@Bean
 	@Primary
-	@SuppressWarnings("deprecation")
-	Client dependencyBasedFeignClient(final LoadBalancerFeignClient ribbonClient,
-			final ZookeeperDependencies zookeeperDependencies) {
-		// TODO: remove dependency on feign-ribbon
-		return new RibbonClient() {
+	Client dependencyBasedFeignClient() {
+		return new LoadBalancerFeignClient(new Client.Default(null, null), loadBalancerFactory) {
 			@Override
 			public Response execute(Request request, Request.Options options)
 					throws IOException {

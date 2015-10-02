@@ -11,3 +11,6 @@ endpoints:
 
 logging.level:
   org.apache.zookeeper.ClientCnxn: WARN
+
+#spring.cloud.zookeeper.dependencies:
+#  - testZookeeperApp: ~
