@@ -71,7 +71,7 @@ public class ZookeeperDependencies {
 		if (!StringUtils.hasText(value.getStubs())) {
 			value.setStubsConfiguration(new StubsConfiguration(new DependencyPath(value.getPath())));
 		} else {
-			value.setStubsConfiguration(new StubsConfiguration(value.getPath()));
+			value.setStubsConfiguration(new StubsConfiguration(value.getStubs()));
 		}
 	}
 
