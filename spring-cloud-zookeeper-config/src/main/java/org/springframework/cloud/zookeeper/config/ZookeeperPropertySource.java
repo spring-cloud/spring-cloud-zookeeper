@@ -20,10 +20,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.SneakyThrows;
 
+import lombok.extern.apachecommons.CommonsLog;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.zookeeper.KeeperException;
@@ -36,6 +40,7 @@ import org.springframework.core.env.EnumerablePropertySource;
 /**
  * @author Spencer Gibb
  */
+@CommonsLog
 public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFramework>
 		implements Lifecycle {
 	private static final Logger LOG = LoggerFactory
@@ -137,6 +142,7 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 	}
 
 	private void findKeysCached(List<String> keys, String path) {
+		log.trace("enter findKeysCached for path: " + path);
 		Map<String, ChildData> children = cache.getCurrentChildren(path);
 
 		if (children == null)
@@ -150,6 +156,7 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 				keys.add(sanitizeKey(child.getPath()));
 			}
 		}
+		log.trace("leaving findKeysCached for path: " + path);
 	}
 
 	private String sanitizeKey(String path) {
@@ -158,6 +165,7 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 
 	@SneakyThrows
 	private void findKeysNoCache(List<String> keys, String path) {
+		log.trace("entering findKeysNoCache for path: " + path);
 		List<String> children = null;
 		try {
 			children = this.getSource().getChildren().forPath(path);
@@ -181,6 +189,7 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 				keys.add(sanitizeKey(childPath));
 			}
 		}
+		log.trace("leaving findKeysNoCache for path: " + path);
 	}
 
 	@Override

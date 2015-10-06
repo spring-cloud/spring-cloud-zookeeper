@@ -142,7 +142,7 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
-	@EnableFeignClients
+	@EnableFeignClients(clients = [AliasUsingFeignClient, IdUsingFeignClient])
 	@Profile('dependencies')
 	static class Config {
 

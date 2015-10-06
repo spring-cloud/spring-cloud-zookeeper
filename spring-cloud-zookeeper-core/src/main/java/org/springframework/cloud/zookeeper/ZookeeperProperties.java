@@ -20,6 +20,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.validation.constraints.NotNull;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Spencer Gibb
@@ -47,4 +48,7 @@ public class ZookeeperProperties {
 	 */
 	private Integer maxSleepMs = 500;
 
+	private Integer blockUntilConnectedWait = 10;
+
+	private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
 }

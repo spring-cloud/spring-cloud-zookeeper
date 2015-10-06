@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.zookeeper;
 
+import lombok.SneakyThrows;
+import lombok.extern.apachecommons.CommonsLog;
+
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
@@ -36,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.enabled", matchIfMissing = true)
 @EnableConfigurationProperties
+@CommonsLog
 public class ZookeeperAutoConfiguration {
 
 	@Autowired(required = false)
@@ -49,7 +53,8 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
-	public CuratorFramework curatorFramework(RetryPolicy retryPolicy) {
+	@SneakyThrows
+	public CuratorFramework curatorFramework(RetryPolicy retryPolicy, ZookeeperProperties properties) {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 		if (ensembleProvider != null) {
 			builder.ensembleProvider(ensembleProvider);
@@ -59,6 +64,10 @@ public class ZookeeperAutoConfiguration {
 				.connectString(zookeeperProperties().getConnectString())
 				.build();
 		curator.start();
+
+		log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait() + properties.getBlockUntilConnectedUnit());
+		curator.blockUntilConnected(properties.getBlockUntilConnectedWait(), properties.getBlockUntilConnectedUnit());
+		log.trace("connected to zookeeper");
 		return curator;
 	}
 

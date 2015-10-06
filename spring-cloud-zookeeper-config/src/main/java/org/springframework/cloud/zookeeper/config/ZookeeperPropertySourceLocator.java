@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PreDestroy;
 
@@ -38,6 +39,8 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	private ZookeeperConfigProperties properties;
 
 	private CuratorFramework curator;
+
+	private ConcurrentHashMap<String, ZookeeperPropertySource> sources = new ConcurrentHashMap<>();
 
 	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
 		this.curator = curator;
@@ -70,6 +73,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 				ZookeeperPropertySource propertySource = create(propertySourceContext);
 				propertySource.start();
 				composite.addPropertySource(propertySource);
+				sources.put(propertySource.getName(), propertySource);
 				// TODO: howto call close when /refresh
 			}
 
@@ -80,7 +84,9 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	@PreDestroy
 	public void destroy() {
-		// TODO: call close on zkps's
+		for (ZookeeperPropertySource source : this.sources.values()) {
+			source.stop();
+		}
 	}
 
 	private ZookeeperPropertySource create(String context) {

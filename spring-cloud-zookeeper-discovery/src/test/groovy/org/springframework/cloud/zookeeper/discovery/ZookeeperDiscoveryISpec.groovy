@@ -98,7 +98,7 @@ class ZookeeperDiscoveryISpec extends Specification implements PollingUtils {
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig)
 	@EnableDiscoveryClient
-	@EnableFeignClients
+	@EnableFeignClients(clients = [IdUsingFeignClient])
 	@Profile('ribbon')
 	static class Config {
 
