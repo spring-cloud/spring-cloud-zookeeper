@@ -17,102 +17,38 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Set;
 
 import lombok.SneakyThrows;
-
 import lombok.extern.apachecommons.CommonsLog;
+
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.imps.CuratorFrameworkState;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.KeeperException.NoNodeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.Lifecycle;
-import org.springframework.core.env.EnumerablePropertySource;
 
 /**
  * @author Spencer Gibb
  */
 @CommonsLog
-public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFramework>
-		implements Lifecycle {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ZookeeperPropertySource.class);
+public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 
-	private String context;
-	private ZookeeperConfigProperties properties;
+	private Map<String, String> properties = new LinkedHashMap<>();
 
-	private TreeCache cache;
-	private boolean running;
-
-	public ZookeeperPropertySource(String context, CuratorFramework source,
-			ZookeeperConfigProperties properties) {
+	public ZookeeperPropertySource(String context, CuratorFramework source) {
 		super(context, source);
-		this.context = context;
-		this.properties = properties;
 
-		if (!this.context.startsWith("/")) {
-			this.context = "/" + this.context;
-		}
-	}
-
-	@Override
-	public void start() {
-		if (!this.properties.isCacheEnabled()) {
-			return;
-		}
-		try {
-			cache = TreeCache.newBuilder(source, context).build();
-			cache.start();
-			running = true;
-			/*
-			 * TODO: race condition since TreeCache.process(..) is invoked asynchronously.
-			 * Methods getProperty and getPropertyNames could be invoked before that
-			 * TreeCache.process(..) receives all the WatchedEvents. see
-			 * https://github.com/spring-cloud/spring-cloud-zookeeper/issues/39
-			 */
-		}
-		catch (NoNodeException e) {
-			// no node, ignore
-		}
-		catch (Exception e) {
-			LOG.error("Error initializing ZookeperPropertySource", e);
-		}
+		findProperties(this.getContext());
 	}
 
 	@Override
 	public Object getProperty(String name) {
-		String fullPath = context + "/" + name.replace(".", "/");
-		byte[] bytes = null;
-		if (this.properties.isCacheEnabled()) {
-			bytes = getPropertyCached(fullPath);
-		}
-		else {
-			bytes = getPropertyNoCache(fullPath);
-		}
-		if (bytes == null)
-			return null;
-		return new String(bytes, Charset.forName("UTF-8"));
-	}
-
-	private byte[] getPropertyCached(String fullPath) {
-		byte[] bytes = null;
-		ChildData data = cache.getCurrentData(fullPath);
-		if (data != null) {
-			bytes = data.getData();
-		}
-		return bytes;
+		return this.properties.get(name);
 	}
 
 	@SneakyThrows
-	private byte[] getPropertyNoCache(String fullPath) {
+	private byte[] getPropertyBytes(String fullPath) {
 		byte[] bytes = null;
 		try {
 			bytes = this.getSource().getData().forPath(fullPath);
@@ -127,45 +63,13 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 
 	@Override
 	public String[] getPropertyNames() {
-		List<String> keys = new ArrayList<>();
-		findKeys(keys, context);
-		return keys.toArray(new String[0]);
-	}
-
-	protected void findKeys(List<String> keys, String path) {
-		if (this.properties.isCacheEnabled()) {
-			findKeysCached(keys, path);
-		}
-		else {
-			findKeysNoCache(keys, path);
-		}
-	}
-
-	private void findKeysCached(List<String> keys, String path) {
-		log.trace("enter findKeysCached for path: " + path);
-		Map<String, ChildData> children = cache.getCurrentChildren(path);
-
-		if (children == null)
-			return;
-		for (Map.Entry<String, ChildData> entry : children.entrySet()) {
-			ChildData child = entry.getValue();
-			if (child.getData() == null || child.getData().length == 0) {
-				findKeysCached(keys, child.getPath());
-			}
-			else {
-				keys.add(sanitizeKey(child.getPath()));
-			}
-		}
-		log.trace("leaving findKeysCached for path: " + path);
-	}
-
-	private String sanitizeKey(String path) {
-		return path.replace(context + "/", "").replace('/', '.');
+		Set<String> strings = this.properties.keySet();
+		return strings.toArray(new String[strings.size()]);
 	}
 
 	@SneakyThrows
-	private void findKeysNoCache(List<String> keys, String path) {
-		log.trace("entering findKeysNoCache for path: " + path);
+	private void findProperties(String path) {
+		log.trace("entering findProperties for path: " + path);
 		List<String> children = null;
 		try {
 			children = this.getSource().getChildren().forPath(path);
@@ -181,28 +85,16 @@ public class ZookeeperPropertySource extends EnumerablePropertySource<CuratorFra
 
 		for (String child : children) {
 			String childPath = path + "/" + child;
-			byte[] property = getPropertyNoCache(childPath);
-			if (property == null || property.length == 0) {
-				findKeysNoCache(keys, childPath);
+			byte[] bytes = getPropertyBytes(childPath);
+			if (bytes == null || bytes.length == 0) {
+				findProperties(childPath);
 			}
 			else {
-				keys.add(sanitizeKey(childPath));
+				String key = sanitizeKey(childPath);
+				this.properties.put(key, new String(bytes, Charset.forName("UTF-8")));
 			}
 		}
-		log.trace("leaving findKeysNoCache for path: " + path);
-	}
-
-	@Override
-	public void stop() {
-		if (this.properties.isCacheEnabled() && cache != null) {
-			cache.close();
-			running = false;
-		}
-	}
-
-	@Override
-	public boolean isRunning() {
-		return running;
+		log.trace("leaving findProperties for path: " + path);
 	}
 
 }

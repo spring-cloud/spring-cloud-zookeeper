@@ -38,7 +38,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 /**
  * @author Spencer Gibb
  */
-public class ZookeeperPropertySourceTests {
+public class ZookeeperPropertySourceLocatorTests {
 
 	private ConfigurableEnvironment environment;
 	public static final String PREFIX = "test__config__";

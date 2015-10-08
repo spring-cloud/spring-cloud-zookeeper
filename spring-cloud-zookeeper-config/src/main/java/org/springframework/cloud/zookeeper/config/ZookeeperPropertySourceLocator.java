@@ -40,7 +40,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	private CuratorFramework curator;
 
-	private ConcurrentHashMap<String, ZookeeperPropertySource> sources = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, ZookeeperTreeCachePropertySource> lifecycleSources = new ConcurrentHashMap<>();
 
 	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
 		this.curator = curator;
@@ -70,10 +70,8 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			Collections.reverse(contexts);
 
 			for (String propertySourceContext : contexts) {
-				ZookeeperPropertySource propertySource = create(propertySourceContext);
-				propertySource.start();
+				PropertySource propertySource = create(propertySourceContext);
 				composite.addPropertySource(propertySource);
-				sources.put(propertySource.getName(), propertySource);
 				// TODO: howto call close when /refresh
 			}
 
@@ -84,13 +82,19 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	@PreDestroy
 	public void destroy() {
-		for (ZookeeperPropertySource source : this.sources.values()) {
+		for (ZookeeperTreeCachePropertySource source : this.lifecycleSources.values()) {
 			source.stop();
 		}
 	}
 
-	private ZookeeperPropertySource create(String context) {
-		return new ZookeeperPropertySource(context, curator, properties);
+	private PropertySource<CuratorFramework> create(String context) {
+		if (this.properties.isCacheEnabled()) {
+			ZookeeperTreeCachePropertySource propertySource = new ZookeeperTreeCachePropertySource(context, curator);
+			propertySource.start();
+			lifecycleSources.put(propertySource.getName(), propertySource);
+			return propertySource;
+		}
+		return new ZookeeperPropertySource(context, curator);
 	}
 
 	private void addProfiles(List<String> contexts, String baseContext,
