@@ -5,6 +5,7 @@
 .classpath
 .project
 .settings/
+.factorypath
 .springBeans
 target/
 _site/
