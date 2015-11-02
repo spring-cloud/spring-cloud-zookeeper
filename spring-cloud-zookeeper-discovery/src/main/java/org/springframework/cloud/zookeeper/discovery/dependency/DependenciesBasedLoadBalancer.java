@@ -19,7 +19,9 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
+import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RoundRobinRule;
@@ -35,15 +37,18 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Slf4j
-public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
+public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer {
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
 
 	private final ZookeeperDependencies zookeeperDependencies;
 
-	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
+	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList, IClientConfig config, IPing iPing) {
+		super(config);
 		this.zookeeperDependencies = zookeeperDependencies;
 		setServersList(serverList.getInitialListOfServers());
+		setPing(iPing);
+		setServerListImpl(serverList);
 	}
 
 	@Override
@@ -56,6 +61,7 @@ public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
 		};
 		cacheEntryIfMissing(keyAsString, dependency);
 		log.debug("Will try to retrieve dependency for key [{}]. Current cache contents [{}]", keyAsString, this.ruleCache);
+		updateListOfServers();
 		return this.ruleCache.get(keyAsString).choose(key);
 	}
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *	  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.watcher
+
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.curator.test.TestingServer
 import org.apache.curator.x.discovery.ServiceCache
-import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
-import org.apache.curator.x.discovery.ServiceInstance
-import org.apache.curator.x.discovery.UriSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier
@@ -39,15 +38,13 @@ import org.springframework.util.SocketUtils
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
-import javax.annotation.PreDestroy
-
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('watcher')
 class DefaultDependencyWatcherSpringISpec extends Specification implements PollingUtils {
 
 	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier
 	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener
-    @Autowired ZookeeperServiceDiscovery serviceDiscovery
+	@Autowired ZookeeperServiceDiscovery serviceDiscovery
 	PollingConditions conditions
 
 	def setup() {
@@ -61,7 +58,7 @@ class DefaultDependencyWatcherSpringISpec extends Specification implements Polli
 
 	def 'should verify that dependency watcher listener is successfully registered and operational'() {
 		when:
-        	serviceDiscovery.serviceDiscovery.unregisterService(serviceDiscovery.serviceInstance)
+			serviceDiscovery.serviceDiscovery.unregisterService(serviceDiscovery.serviceInstance)
 
 		then:
 			conditions.eventually willPass {
@@ -84,10 +81,10 @@ class DefaultDependencyWatcherSpringISpec extends Specification implements Polli
 			return new TestingServer(SocketUtils.findAvailableTcpPort())
 		}
 
-        @Bean
-        ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
-            return new MyZookeeperServiceDiscovery(curatorFramework())
-        }
+		@Bean
+		ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
+			return new MyZookeeperServiceDiscovery(curatorFramework())
+		}
 
 		@Bean(initMethod = 'start', destroyMethod = 'close')
 		CuratorFramework curatorFramework() {
@@ -106,40 +103,11 @@ class DefaultDependencyWatcherSpringISpec extends Specification implements Polli
 
 	}
 
-    static class MyZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
-        MyZookeeperServiceDiscovery(CuratorFramework curator) {
-            super(curator, null, null)
-            build()
-        }
-
-        @Override
-        void build() {
-            setPort(10)
-
-
-            def instance = ServiceInstance.builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
-                    .address('anyUrl')
-                    .port(10)
-                    .name('testInstance')
-                    .build()
-            getServiceInstanceRef().set(instance)
-
-
-            def discovery = ServiceDiscoveryBuilder
-                    .builder(Void)
-                    .basePath('/')
-                    .client(getCurator())
-                    .thisInstance(instance)
-                    .build()
-            getServiceDiscoveryRef().set(discovery)
-            discovery.start()
-        }
-
-        @PreDestroy
-        void close() {
-            getServiceDiscoveryRef().get().close()
-        }
-    }
+	static class MyZookeeperServiceDiscovery extends CustomZookeeperServiceDiscovery {
+		MyZookeeperServiceDiscovery(CuratorFramework curator) {
+			super('testInstance', curator)
+		}
+	}
 
 	static class AssertableDependencyWatcherListener implements DependencyWatcherListener {
 
