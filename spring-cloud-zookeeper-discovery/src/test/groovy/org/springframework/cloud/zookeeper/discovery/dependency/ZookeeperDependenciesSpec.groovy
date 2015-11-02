@@ -26,8 +26,9 @@ class ZookeeperDependenciesSpec extends Specification {
 			LoadBalancerType.RANDOM,
 			'contentTypeTemplate',
 			'version',
-			[header: 'value'],
-			false
+			[header: ['value']],
+			false,
+			""
 	)
 	private static final Map<String, ZookeeperDependency> DEPENDENCIES = [
 			alias: EXPECTED_DEPENDENCY
