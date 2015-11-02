@@ -19,13 +19,13 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,15 +35,19 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Slf4j
-public class DependenciesBasedLoadBalancer extends BaseLoadBalancer {
+public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer {
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
 
 	private final ZookeeperDependencies zookeeperDependencies;
 
+	private final ServerList serverList;
+
 	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
 		this.zookeeperDependencies = zookeeperDependencies;
 		setServersList(serverList.getInitialListOfServers());
+		setPing(new PingUrl(false, "/health"));
+		this.serverList = serverList;
 	}
 
 	@Override
