@@ -23,6 +23,9 @@ import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.NoOpPing;
+import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.ServerList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +60,9 @@ public class ZookeeperRibbonClientConfiguration {
 	@Value("${ribbon.client.name}")
 	private String serviceId = "client";
 
+	@Value("${spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.defaulthealthendpoint:/health}")
+	private String defaultHealthEndpoint;
+
 	public ZookeeperRibbonClientConfiguration() {
 	}
 
@@ -73,8 +79,25 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
-	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
-		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList);
+	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
+											ServerList<?> serverList, IClientConfig config, IPing iPing) {
+		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList, config, iPing);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnDependenciesPassed
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.checkping", havingValue = "false")
+	public IPing noOpHealthCheckingRule() {
+		return new NoOpPing();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnDependenciesPassed
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.checkping", matchIfMissing = true)
+	public IPing healthCheckingRule() {
+		return new PingUrl(false, defaultHealthEndpoint);
 	}
 
 	@Bean

@@ -48,8 +48,7 @@ class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification impleme
 		and:
 			Integer portBeforeDying = callServiceAtPortEndpoint(clientContext)
 		and:
-			serverContext.close()
-			serverContext = contextWithProfile('server')
+			serverContext = restartContext(serverContext, 'server')
 		expect:
 			callServiceAtPortEndpoint(clientContext) != portBeforeDying
 		cleanup:
@@ -60,6 +59,11 @@ class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification impleme
 
 	private ConfigurableApplicationContext contextWithProfile(String profile) {
 		return new SpringApplicationBuilder(Config).profiles(profile).build().run()
+	}
+
+	private ConfigurableApplicationContext restartContext(ConfigurableApplicationContext configurableApplicationContext, String profile) {
+		configurableApplicationContext.close()
+		return contextWithProfile(profile)
 	}
 
 	private Integer callServiceAtPortEndpoint(ApplicationContext applicationContext) {
