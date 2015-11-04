@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *	  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,20 +20,24 @@ import org.springframework.web.client.RestTemplate
 
 class TestRibbonClient extends TestServiceRestClient {
 
-    private final String thisAppName
+	private final String thisAppName
 
-    TestRibbonClient(RestTemplate restTemplate) {
-        super(restTemplate)
-        this.thisAppName = 'someName'
-    }
+	TestRibbonClient(RestTemplate restTemplate) {
+		super(restTemplate)
+		this.thisAppName = 'someName'
+	}
 
-    TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
-        super(restTemplate)
-        this.thisAppName = thisAppName
-    }
+	TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
+		super(restTemplate)
+		this.thisAppName = thisAppName
+	}
 
-    String thisHealthCheck() {
-        return restTemplate.getForObject("http://$thisAppName/health", String)
-    }
+	String thisHealthCheck() {
+		return restTemplate.getForObject("http://$thisAppName/health", String)
+	}
+
+	Integer thisPort() {
+		return restTemplate.getForObject("http://$thisAppName/port", Integer)
+	}
 
 }

@@ -16,11 +16,16 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
-import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
-
 import javax.annotation.PostConstruct;
 
+import com.netflix.client.config.IClientConfig;
+import com.netflix.config.ConfigurationManager;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.PingUrl;
+import com.netflix.loadbalancer.ServerList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,12 +36,8 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.netflix.client.config.IClientConfig;
-import com.netflix.config.ConfigurationManager;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.ServerList;
+import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
+import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
 
 /**
  * Preprocessor that configures defaults for zookeeper-discovered ribbon clients. Such as:
@@ -74,8 +75,16 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
-	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList) {
-		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList);
+	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
+													   ServerList<?> serverList, IClientConfig config, IPing iPing) {
+		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList, config, iPing);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnDependenciesPassed
+	public IPing healthCheckingRule(ZookeeperDependencies zookeeperDependencies) {
+		return new PingUrl(false, zookeeperDependencies.getDefaultHealthEndpoint());
 	}
 
 	@Bean
