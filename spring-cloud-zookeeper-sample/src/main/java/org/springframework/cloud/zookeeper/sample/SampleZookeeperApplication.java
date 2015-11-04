@@ -22,6 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
@@ -50,6 +51,9 @@ public class SampleZookeeperApplication {
 	private LoadBalancerClient loadBalancer;
 
 	@Autowired
+	private DiscoveryClient discovery;
+
+	@Autowired
 	private Environment env;
 
 	@Autowired
@@ -62,7 +66,7 @@ public class SampleZookeeperApplication {
 
 	@RequestMapping("/hi")
 	public String hi() {
-		return "Hello World!";
+		return "Hello World! from " + discovery.getLocalServiceInstance();
 	}
 
 	@RequestMapping("/self")
