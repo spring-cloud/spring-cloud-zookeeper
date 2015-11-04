@@ -56,13 +56,13 @@ public class ZookeeperDiscoveryClientConfiguration {
 	}
 
 	@Bean
-	public ZookeeperLifecycle zookeeperLifecycle() {
-		return new ZookeeperLifecycle(zookeeperDiscoveryProperties(), zookeeperServiceDiscovery());
+	public ZookeeperLifecycle zookeeperLifecycle(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
+		return new ZookeeperLifecycle(zookeeperDiscoveryProperties(), zookeeperServiceDiscovery);
 	}
 
 	@Bean
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClient() {
-		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery(), zookeeperDependencies);
+	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
+		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery, zookeeperDependencies);
 	}
 
 	@Bean

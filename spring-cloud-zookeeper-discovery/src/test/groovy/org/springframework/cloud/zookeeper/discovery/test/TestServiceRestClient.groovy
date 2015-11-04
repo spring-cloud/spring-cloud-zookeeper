@@ -27,8 +27,12 @@ class TestServiceRestClient {
 		this.restTemplate = restTemplate
 	}
 
+	public <T> T callService(String alias, String endpoint, Class<T> clazz) {
+		return restTemplate.getForObject("http://$alias/$endpoint", clazz)
+	}
+
 	String callService(String alias, String endpoint) {
-		return restTemplate.getForObject("http://$alias/$endpoint", String)
+		return callService(alias, endpoint, String)
 	}
 
 	String callOnUrl(String url, String endpoint) {

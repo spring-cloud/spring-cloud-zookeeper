@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.dependency
+import com.netflix.loadbalancer.IPing
+import com.netflix.loadbalancer.NoOpPing
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.test.TestingServer
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
+import spock.util.environment.RestoreSystemProperties
 
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('loadbalancerclient')
@@ -48,7 +51,10 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 		conditions = new PollingConditions()
 	}
 
+	@RestoreSystemProperties
 	def 'should use sticky load balancing strategy taken from Zookeeper dependencies'() {
+		given:
+			System.setProperty('spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.checkping', 'false')
 		expect:
 			thereAreTwoRegisteredServices()
 			URI uri = getUriForAlias()
@@ -91,5 +97,8 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework)
 		}
 
+		@Bean IPing noOpPing() {
+			return new NoOpPing()
+		}
 	}
 }
