@@ -60,9 +60,6 @@ public class ZookeeperRibbonClientConfiguration {
 	@Value("${ribbon.client.name}")
 	private String serviceId = "client";
 
-	@Value("${spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.defaulthealthendpoint:/health}")
-	private String defaultHealthEndpoint;
-
 	public ZookeeperRibbonClientConfiguration() {
 	}
 
@@ -80,7 +77,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
 	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
-											ServerList<?> serverList, IClientConfig config, IPing iPing) {
+													   ServerList<?> serverList, IClientConfig config, IPing iPing) {
 		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList, config, iPing);
 	}
 
@@ -96,8 +93,8 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.checkping", matchIfMissing = true)
-	public IPing healthCheckingRule() {
-		return new PingUrl(false, defaultHealthEndpoint);
+	public IPing healthCheckingRule(ZookeeperDependencies zookeeperDependencies) {
+		return new PingUrl(false, zookeeperDependencies.getDefaultHealthEndpoint());
 	}
 
 	@Bean

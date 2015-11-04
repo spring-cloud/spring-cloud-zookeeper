@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import lombok.Data;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
@@ -47,6 +47,12 @@ public class ZookeeperDependencies {
 	 * is actually serviceID since Ribbon can't accept nested structures in serviceID
 	 */
 	private Map<String, ZookeeperDependency> dependencies = new LinkedHashMap<>();
+
+	/**
+	 * Default health endpoint that will be checked to verify that a dependency is alive
+	 */
+	@Value("${spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.defaulthealthendpoint:/health}")
+	private String defaultHealthEndpoint;
 
 	@PostConstruct
 	public void init() {
