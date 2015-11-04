@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.dependency
+import com.netflix.loadbalancer.IPing
+import com.netflix.loadbalancer.NoOpPing
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.test.TestingServer
 import org.springframework.beans.factory.annotation.Autowired
@@ -95,5 +97,8 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework)
 		}
 
+		@Bean IPing noOpPing() {
+			return new NoOpPing()
+		}
 	}
 }
