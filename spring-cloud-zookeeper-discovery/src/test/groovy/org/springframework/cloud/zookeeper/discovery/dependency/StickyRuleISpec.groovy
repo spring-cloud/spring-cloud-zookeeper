@@ -31,7 +31,6 @@ import org.springframework.cloud.zookeeper.discovery.TestServiceRegistrar
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
@@ -42,7 +41,6 @@ import spock.util.environment.RestoreSystemProperties
 @ContextConfiguration(classes = Config, loader = SpringApplicationContextLoader)
 @ActiveProfiles('loadbalancerclient')
 @WebIntegrationTest(randomPort = true)
-@DirtiesContext
 class StickyRuleISpec extends Specification implements PollingUtils {
 
 	@Autowired LoadBalancerClient loadBalancerClient
