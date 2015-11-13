@@ -57,9 +57,13 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			String root = properties.getRoot();
 			List<String> contexts = new ArrayList<>();
 
-			String defaultContext = root + "/" + properties.getDefaultContext();
-			contexts.add(defaultContext);
-			addProfiles(contexts, defaultContext, profiles);
+			
+			String[] parentContexts=properties.getDefaultContext().split(",");
+			for (String parentContext : parentContexts) {
+				String defaultContext = root + "/" + parentContext.trim();
+				contexts.add(defaultContext);
+				addProfiles(contexts, defaultContext, profiles);
+			}
 
 			String baseContext = root + "/" + appName;
 			contexts.add(baseContext);
