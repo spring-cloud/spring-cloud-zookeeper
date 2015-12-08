@@ -28,7 +28,7 @@ done
 
 if [ "$success" = true ] ; then
   echo "Successfully booted up all the apps. Proceeding with the acceptance tests"
-  sh -e runAcceptanceTests.sh -Dspring.zipkin.enabled=false -Dspring.cloud.zookeeper.maxRetries=5 -Dpresenting.url=$url:9091
+  bash -e runAcceptanceTests.sh -Dspring.zipkin.enabled=false -Dspring.cloud.zookeeper.maxRetries=5 -Dpresenting.url=$url:9091
 else
   echo "Failed to boot the apps. Will now kill the containers and remove them"
 fi
