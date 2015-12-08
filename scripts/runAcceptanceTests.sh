@@ -6,10 +6,10 @@ cd brewery
 ./gradlew clean build docker --parallel
 docker-compose up -d
 
-url="http://localhost"
+url="http://127.0.0.1"
 waitTime=5
 retries=48
-totalWaitingTime=$(($waitTime * $retries))
+totalWaitingTime=240
 n=0
 success=false
 
@@ -26,13 +26,21 @@ do
   sleep $waitTime
 done
 
+acceptancePassed=false
+
 if [ "$success" = true ] ; then
   echo "Successfully booted up all the apps. Proceeding with the acceptance tests"
-  sh runAcceptanceTests.sh -Dspring.zipkin.enabled=false -Dspring.cloud.zookeeper.maxRetries=5 -Dpresenting.url=$url:9091
+  sh runAcceptanceTests.sh -Dspring.zipkin.enabled=false -Dspring.cloud.zookeeper.maxRetries=5 -Dpresenting.url=$url:9091 && acceptancePassed=true
 else
   echo "Failed to boot the apps. Will now kill the containers and remove them"
 fi
 
 docker-compose kill
 docker-compose rm -f
+
+if [ "$acceptancePassed" = false ] ; then
+    echo "Acceptance tests failed to pass"
+    exit 1;
+fi
+
 cd ..
