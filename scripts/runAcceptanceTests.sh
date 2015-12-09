@@ -13,7 +13,7 @@ then
 else
     cd $LOCALREPO
     git reset --hard
-    git pull $REPOSRC
+    git pull $REPOSRC master
 fi
 
 ./gradlew clean build docker --parallel
