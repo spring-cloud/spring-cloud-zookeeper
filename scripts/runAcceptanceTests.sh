@@ -17,6 +17,9 @@ else
 fi
 
 ./gradlew clean build docker --parallel
+docker-compose kill
+docker-compose rm -f
+docker-compose build
 docker-compose up -d
 
 url="http://127.0.0.1"
@@ -30,10 +33,10 @@ echo "Waiting for the apps to boot for [$totalWaitingTime] seconds"
 until [ $n -ge $retries ]
 do
   echo "Pinging applications if they're alive..."
-  curl $url:9091/health &&
-  curl $url:9092/health &&
-  curl $url:9093/health &&
-  curl $url:9094/health && success=true && break
+  curl $url:9991/health &&
+  curl $url:9992/health &&
+  curl $url:9993/health &&
+  curl $url:9994/health && success=true && break
   n=$[$n+1]
   echo "Failed... will try again in [$waitTime] seconds"
   sleep $waitTime
@@ -45,8 +48,5 @@ if [ "$success" = true ] ; then
 else
   echo "Failed to boot the apps. Will now kill the containers and remove them"
 fi
-
-docker-compose kill
-docker-compose rm -f
 
 cd ..
