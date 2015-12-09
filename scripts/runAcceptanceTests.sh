@@ -46,7 +46,8 @@ if [ "$success" = true ] ; then
   echo "Successfully booted up all the apps. Proceeding with the acceptance tests"
   bash -e runAcceptanceTests.sh
 else
-  echo "Failed to boot the apps. Will now kill the containers and remove them"
+  echo "Failed to boot the apps."
+  exit 1
 fi
 
 cd ..
