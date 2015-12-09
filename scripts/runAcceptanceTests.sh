@@ -1,8 +1,21 @@
 #!/bin/sh
+set -e
 
-git clone https://github.com/spring-cloud-samples/brewery.git
+REPOSRC=https://github.com/spring-cloud-samples/brewery.git
+LOCALREPO=brewery
 
-cd brewery
+LOCALREPO_VC_DIR=$LOCALREPO/.git
+
+if [ ! -d $LOCALREPO_VC_DIR ]
+then
+    git clone $REPOSRC $LOCALREPO
+    cd $LOCALREPO
+else
+    cd $LOCALREPO
+    git reset --hard
+    git pull $REPOSRC
+fi
+
 ./gradlew clean build docker --parallel
 docker-compose up -d
 
