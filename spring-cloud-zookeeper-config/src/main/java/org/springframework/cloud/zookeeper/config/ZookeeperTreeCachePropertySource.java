@@ -164,9 +164,9 @@ public class ZookeeperTreeCachePropertySource extends AbstractZookeeperPropertyS
 	}
 
 	private static boolean shouldRefresh(String eventPath, String fullPath) {
-		// don't refresh if then lengths are equal because that means we got an
+		// don't refresh if the lengths are equal because that means we received an
 		// event for the root config, not child data
-		return eventPath.startsWith(fullPath) && eventPath.length() == fullPath.length();
+		return eventPath.startsWith(fullPath) && eventPath.length() != fullPath.length();
 	}
 
 	public void setApplicationContext(ConfigurableApplicationContext context) {
