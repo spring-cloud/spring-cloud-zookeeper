@@ -20,9 +20,15 @@ import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.CompositePropertySource;
+import org.springframework.core.env.PropertySource;
 
 /**
  * @author Spencer Gibb
@@ -41,5 +47,36 @@ public class ZookeeperConfigBootstrapConfiguration {
 	@ConditionalOnMissingBean
 	public ZookeeperConfigProperties zookeeperConfigProperties() {
 		return new ZookeeperConfigProperties();
+	}
+
+	@Bean
+	public ApplicationListener<ContextRefreshedEvent> zookeeperTreeCachePropertySourceContextRefreshedApplicationListener() {
+		return new ApplicationListener<ContextRefreshedEvent>() {
+
+			@Override
+			public void onApplicationEvent(ContextRefreshedEvent event) {
+				ApplicationContext context = event.getApplicationContext();
+				if (!(context instanceof ConfigurableApplicationContext)) {
+					return;
+				}
+				@SuppressWarnings("resource")
+				ConfigurableApplicationContext configurableContext = (ConfigurableApplicationContext) context;
+				for (PropertySource<?> propertySource : configurableContext.getEnvironment().getPropertySources()) {
+					walkPropertySourceTree(propertySource, configurableContext);
+				}
+			}
+
+			private void walkPropertySourceTree(PropertySource<?> propertySource, ConfigurableApplicationContext context) {
+				if (propertySource instanceof CompositePropertySource) {
+					CompositePropertySource compositePropertySource = (CompositePropertySource) propertySource;
+					for (PropertySource<?> childPropertySource : compositePropertySource.getPropertySources()) {
+						walkPropertySourceTree(childPropertySource, context);
+					}
+				} else if (propertySource instanceof ZookeeperTreeCachePropertySource) {
+					ZookeeperTreeCachePropertySource zkPropertySource = (ZookeeperTreeCachePropertySource) propertySource;
+					zkPropertySource.setApplicationContext(context);
+				}
+			}
+		};
 	}
 }
