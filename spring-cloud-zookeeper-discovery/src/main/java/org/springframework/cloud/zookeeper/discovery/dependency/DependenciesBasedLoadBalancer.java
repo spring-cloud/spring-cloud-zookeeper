@@ -55,6 +55,7 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 	public Server chooseServer(Object key) {
 		String keyAsString = (String) key;
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);
+		log.debug("Current dependencies are [{}]", this.zookeeperDependencies);
 		if (dependency == null) {
 			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, this.rule);
 			return this.rule.choose(key);

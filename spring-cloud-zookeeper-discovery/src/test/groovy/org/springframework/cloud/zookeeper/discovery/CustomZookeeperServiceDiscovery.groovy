@@ -10,11 +10,17 @@ import org.apache.curator.x.discovery.UriSpec
 class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 
 	private final String applicationName
+	private final String basePath
 
-	CustomZookeeperServiceDiscovery(String applicationName, CuratorFramework curator) {
+	CustomZookeeperServiceDiscovery(String applicationName, String basePath, CuratorFramework curator) {
 		super(curator, null, null)
 		this.applicationName = applicationName
+		this.basePath = basePath
 		build()
+	}
+
+	CustomZookeeperServiceDiscovery(String applicationName, CuratorFramework curator) {
+		this(applicationName, '/', curator)
 	}
 
 	@Override
@@ -28,7 +34,7 @@ class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 		getServiceInstanceRef().set(instance)
 		def discovery = ServiceDiscoveryBuilder
 				.builder(Void)
-				.basePath('/')
+				.basePath(basePath)
 				.client(getCurator())
 				.thisInstance(instance)
 				.build()

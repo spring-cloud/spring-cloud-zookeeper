@@ -41,7 +41,7 @@ public class ZookeeperProperties {
 	/**
 	 * @param maxRetries max number of times to retry
 	 */
-	private Integer maxRetries = 50;
+	private Integer maxRetries = 10;
 
 	/**
 	 * @param maxSleepMs max time in ms to sleep on each retry

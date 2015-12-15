@@ -16,15 +16,15 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Spencer Gibb
@@ -34,36 +34,25 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 	private ZookeeperDependencies zookeeperDependencies;
+	private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
-	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
+	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery, ZookeeperDependencies zookeeperDependencies,
+											 ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
+		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
 
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
-			Collection<String> names = getNamesToQuery();
-			ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
-			for (String name : names) {
-				Collection<ServiceInstance<ZookeeperInstance>> instances = this.serviceDiscovery
-						.getServiceDiscovery().queryForInstances(name);
-				for (ServiceInstance<ZookeeperInstance> instance : instances) {
-					allInstances.add(instance);
-				}
-			}
+			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(serviceDiscovery,
+					zookeeperDependencies, zookeeperDiscoveryProperties);
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {
 			log.error("Error", e);
 			builder.down(e);
 		}
-	}
-
-	private Collection<String> getNamesToQuery() throws Exception {
-		if (this.zookeeperDependencies == null) {
-			return this.serviceDiscovery.getServiceDiscovery().queryForNames();
-		}
-		return this.zookeeperDependencies.getDependencyNames();
 	}
 }
