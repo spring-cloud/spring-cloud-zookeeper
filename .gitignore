@@ -12,3 +12,4 @@ _site/
 .idea
 *.iml
 *.swp
+*.log
