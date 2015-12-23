@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,9 +51,9 @@ public class ZookeeperDiscoveryClientConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ZookeeperServiceDiscovery zookeeperServiceDiscovery() {
+	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(InetUtils inetUtils) {
 		return new ZookeeperServiceDiscovery(curator, zookeeperDiscoveryProperties(),
-				instanceSerializer());
+				instanceSerializer(), inetUtils);
 	}
 
 	@Bean

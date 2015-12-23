@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.SneakyThrows;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
@@ -25,18 +28,11 @@ import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.util.InetUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import lombok.SneakyThrows;
 
 /**
  * @author Spencer Gibb
@@ -48,6 +44,8 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	private ZookeeperDiscoveryProperties properties;
 
 	private InstanceSerializer<ZookeeperInstance> instanceSerializer;
+
+	private InetUtils inetUtils;
 
 	private ApplicationContext context;
 
@@ -62,10 +60,13 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	@Value("${spring.application.name:application}")
 	private String appName;
 
-	public ZookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties properties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
+	public ZookeeperServiceDiscovery(CuratorFramework curator,
+			ZookeeperDiscoveryProperties properties,
+			InstanceSerializer<ZookeeperInstance> instanceSerializer, InetUtils inetUtils) {
 		this.curator = curator;
 		this.properties = properties;
 		this.instanceSerializer = instanceSerializer;
+		this.inetUtils = inetUtils;
 	}
 
 	public int getPort() {
@@ -135,36 +136,8 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		// @formatter:on
 	}
 
-
-	/**
-	 * Return a non loopback IPv4 address for the machine running this process.
-	 * If the machine has multiple network interfaces, the IP address for the
-	 * first interface returned by {@link java.net.NetworkInterface#getNetworkInterfaces}
-	 * is returned.
-	 *
-	 * @return non loopback IPv4 address for the machine running this process
-	 * @see java.net.NetworkInterface#getNetworkInterfaces
-	 * @see java.net.NetworkInterface#getInetAddresses
-	 */
-	public static String getIpAddress() {
-		try {
-			for (Enumeration<NetworkInterface> enumNic = NetworkInterface.getNetworkInterfaces();
-				 enumNic.hasMoreElements(); ) {
-				NetworkInterface ifc = enumNic.nextElement();
-				if (ifc.isUp()) {
-					for (Enumeration<InetAddress> enumAddr = ifc.getInetAddresses();
-						 enumAddr.hasMoreElements(); ) {
-						InetAddress address = enumAddr.nextElement();
-						if (address instanceof Inet4Address && !address.isLoopbackAddress()) {
-							return address.getHostAddress();
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
-			// ignore
-		}
-		return "unknown";
+	public String getIpAddress() {
+		return this.inetUtils.findFirstNonLoopbackAddress().getHostAddress();
 	}
 
 	protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {

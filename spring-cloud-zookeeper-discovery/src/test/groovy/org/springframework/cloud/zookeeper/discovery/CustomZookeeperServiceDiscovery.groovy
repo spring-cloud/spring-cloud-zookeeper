@@ -1,5 +1,8 @@
 package org.springframework.cloud.zookeeper.discovery
 
+import org.springframework.cloud.util.InetUtils
+import org.springframework.cloud.util.InetUtilsProperties
+
 import javax.annotation.PreDestroy
 
 import org.apache.curator.framework.CuratorFramework
@@ -13,7 +16,7 @@ class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 	private final String basePath
 
 	CustomZookeeperServiceDiscovery(String applicationName, String basePath, CuratorFramework curator) {
-		super(curator, null, null)
+		super(curator, null, null, new InetUtils(new InetUtilsProperties()))
 		this.applicationName = applicationName
 		this.basePath = basePath
 		build()
