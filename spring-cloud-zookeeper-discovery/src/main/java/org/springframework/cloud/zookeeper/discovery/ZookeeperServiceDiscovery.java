@@ -113,7 +113,7 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		// @formatter:off
 		serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
 				.name(appName)
-				.payload(new ZookeeperInstance(context.getId()))
+				.payload(new ZookeeperInstance(context.getId(), appName))
 				.port(port.get())
 				.address(host)
 				.uriSpec(uriSpec).build());

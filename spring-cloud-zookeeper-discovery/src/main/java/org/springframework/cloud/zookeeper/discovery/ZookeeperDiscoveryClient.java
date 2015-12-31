@@ -52,7 +52,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
 		ServiceInstance<ZookeeperInstance> serviceInstance = this.serviceDiscovery.getServiceInstance();
-		return serviceInstance == null ? null : createServiceInstance(serviceInstance.getId(), serviceInstance);
+		return serviceInstance == null ? null : createServiceInstance(serviceInstance.getName(), serviceInstance);
 	}
 
 	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {

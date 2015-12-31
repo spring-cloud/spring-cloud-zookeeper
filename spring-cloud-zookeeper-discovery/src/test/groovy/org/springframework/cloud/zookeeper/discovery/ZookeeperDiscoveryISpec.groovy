@@ -68,6 +68,13 @@ class ZookeeperDiscoveryISpec extends Specification implements PollingUtils {
 			'UP' == registeredServiceStatus(instance)
 	}
 
+	def 'should present application name as id of the service instance'() {
+		given:
+			ServiceInstance instance = discoveryClient.getLocalServiceInstance()
+		expect:
+			springAppName == instance.serviceId
+	}
+
 	def 'should find an instance using feign via service id'() {
 		expect:
 			conditions.eventually willPass {
