@@ -31,6 +31,7 @@
 	</scm>
 
 	<modules>
+		<module>spring-cloud-zookeeper-dependencies</module>
 		<module>spring-cloud-zookeeper-core</module>
 		<module>spring-cloud-zookeeper-config</module>
 		<module>spring-cloud-zookeeper-discovery</module>
@@ -84,110 +85,10 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-zookeeper-core</artifactId>
+				<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-zookeeper-config</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-zookeeper-discovery</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-zookeeper</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-zookeeper-all</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-zookeeper-config</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-commons</artifactId>
-				<version>${spring-cloud-commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-context</artifactId>
-				<version>${spring-cloud-commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-netflix-core</artifactId>
-				<version>${spring-cloud-netflix.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-framework</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-recipes</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-x-discovery</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-test</artifactId>
-				<version>${curator.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.archaius</groupId>
-				<artifactId>archaius-core</artifactId>
-				<version>${archaius.version}</version>
-			</dependency>
-			<!-- archaius dep -->
-			<dependency>
-				<groupId>commons-configuration</groupId>
-				<artifactId>commons-configuration</artifactId>
-				<version>1.8</version>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.ribbon</groupId>
-				<artifactId>ribbon</artifactId>
-				<version>${ribbon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.ribbon</groupId>
-				<artifactId>ribbon-core</artifactId>
-				<version>${ribbon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.ribbon</groupId>
-				<artifactId>ribbon-loadbalancer</artifactId>
-				<version>${ribbon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.ribbon</groupId>
-				<artifactId>ribbon-httpclient</artifactId>
-				<version>${ribbon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.netflix.feign</groupId>
-				<artifactId>feign-core</artifactId>
-				<version>${feign.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- Spock -->
 			<dependency>
@@ -224,19 +125,11 @@
 				<groupId>org.codehaus.groovy</groupId>
 				<artifactId>groovy-all</artifactId>
 				<version>2.4.4</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<properties>
-		<spring-cloud-commons.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-netflix.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<curator.version>2.8.0</curator.version>
-		<!-- TODO: How to not maintain version here AND in spring-cloud-netflix -->
-		<archaius.version>0.7.1</archaius.version>
-		<ribbon.version>2.1.0</ribbon.version>
-		<feign.version>8.10.0</feign.version>
 		<spock.version>1.0-groovy-2.4</spock.version>
 	</properties>
 

@@ -162,7 +162,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-feign</artifactId>
-			<version>${spring-cloud-netflix.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
