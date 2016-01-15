@@ -16,23 +16,25 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import lombok.SneakyThrows;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * @author Spencer Gibb
  * @author Marcin Grzejszczak, 4financeIT
  */
+@Slf4j
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
@@ -93,7 +95,11 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public List<String> getServices() {
-		ArrayList<String> services = null;
+		List<String> services = null;
+		if (this.serviceDiscovery.getServiceDiscovery() == null) {
+			log.warn("Service Discovery is not yet ready - returning empty list of services");
+			return Collections.emptyList();
+		}
 		try {
 			services = new ArrayList<>(this.serviceDiscovery.getServiceDiscovery().queryForNames());
 		}
