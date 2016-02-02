@@ -1,8 +1,5 @@
 sudo: true
 
-services:
-  - docker
-
 cache:
   directories:
   - $HOME/.m2
@@ -20,7 +17,6 @@ install:
 script:
 - '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || ./mvnw --settings .settings.xml clean deploy -nsu'
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || ./mvnw clean install -nsu'
-- sh -e scripts/runAcceptanceTests.sh
 env:
   global:
   - GIT_NAME="Spencer Gibb"
