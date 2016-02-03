@@ -17,7 +17,7 @@
 		<spring-cloud-zookeeper.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-commons.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-netflix.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<curator.version>2.8.0</curator.version>
+		<curator.version>2.9.1</curator.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
