@@ -36,6 +36,4 @@ public class ZookeeperConfigProperties {
 
 	@NotEmpty
 	private String profileSeparator = ",";
-
-	private boolean cacheEnabled = true;
 }
