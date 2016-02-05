@@ -30,11 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
+import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import lombok.SneakyThrows;
@@ -58,24 +59,31 @@ public class ZookeeperPropertySourceLocatorTests {
 	@EnableAutoConfiguration
 	static class Config {
 		@Bean
-		public TestEventListener testEventListener() {
-			return new TestEventListener();
+		public CountDownLatch countDownLatch() {
+			return new CountDownLatch(1);
+		}
+
+		@Bean
+		public RefreshEndpoint refreshEndpoint(ConfigurableApplicationContext context,
+											   RefreshScope scope) {
+			RefreshEndpoint endpoint = new TestRefreshEndpoint(context, scope, countDownLatch());
+			return endpoint;
 		}
 	}
 
-	static class TestEventListener {
+	static class TestRefreshEndpoint extends RefreshEndpoint {
+		private CountDownLatch latch;
 
-		private CountDownLatch latch = new CountDownLatch(1);
-
-		@EventListener
-		public void handle(ZookeeperConfigRefreshEvent event) {
-			if (event.getEvent().getData().getPath().equals(KEY)) {
-				this.latch.countDown();
-			}
+		public TestRefreshEndpoint( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
+			super(context, scope);
+			this.latch = latch;
 		}
 
-		public CountDownLatch getLatch() {
-			return latch;
+		@Override
+		public synchronized String[] refresh() {
+			String[] keys = super.refresh();
+			this.latch.countDown();
+			return keys;
 		}
 	}
 
@@ -141,8 +149,11 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		this.curator.setData().forPath(KEY, "testPropValUpdate".getBytes());
 
-		TestEventListener listener = this.context.getBean(TestEventListener.class);
-		boolean receivedEvent = listener.getLatch().await(1500, TimeUnit.MILLISECONDS);
+		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
+		boolean receivedEvent = latch.await(5, TimeUnit.SECONDS);
 		assertThat("listener didn't receive event", receivedEvent, is(true));
+
+		testProp = this.environment.getProperty("testProp");
+		assertThat("testProp was wrong after update", testProp, is(equalTo("testPropValUpdate")));
 	}
 }
