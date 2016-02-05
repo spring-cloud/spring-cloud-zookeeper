@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PreDestroy;
 
@@ -40,11 +39,15 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	private CuratorFramework curator;
 
-	private ConcurrentHashMap<String, ZookeeperTreeCachePropertySource> lifecycleSources = new ConcurrentHashMap<>();
+	private List<String> contexts;
 
 	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
 		this.curator = curator;
 		this.properties = properties;
+	}
+
+	public List<String> getContexts() {
+		return contexts;
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
 
 			String root = properties.getRoot();
-			List<String> contexts = new ArrayList<>();
+			contexts = new ArrayList<>();
 
 			String defaultContext = root + "/" + properties.getDefaultContext();
 			contexts.add(defaultContext);
@@ -82,18 +85,9 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	@PreDestroy
 	public void destroy() {
-		for (ZookeeperTreeCachePropertySource source : this.lifecycleSources.values()) {
-			source.stop();
-		}
 	}
 
 	private PropertySource<CuratorFramework> create(String context) {
-		if (this.properties.isCacheEnabled()) {
-			ZookeeperTreeCachePropertySource propertySource = new ZookeeperTreeCachePropertySource(context, curator);
-			propertySource.start();
-			lifecycleSources.put(propertySource.getName(), propertySource);
-			return propertySource;
-		}
 		return new ZookeeperPropertySource(context, curator);
 	}
 

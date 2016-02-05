@@ -16,24 +16,33 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.List;
 import java.util.UUID;
-
-import lombok.SneakyThrows;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.KeeperException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
+import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+
+import lombok.SneakyThrows;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Spencer Gibb
@@ -44,50 +53,78 @@ public class ZookeeperPropertySourceLocatorTests {
 	public static final String PREFIX = "test__config__";
 	public static final String ROOT = "/"+PREFIX + UUID.randomUUID();
 	private ConfigurableApplicationContext context;
+	public static final String KEY = ROOT + "/application/testProp";
 
+	@Configuration
+	@EnableAutoConfiguration
 	static class Config {
+		@Bean
+		public CountDownLatch countDownLatch() {
+			return new CountDownLatch(1);
+		}
+
+		@Bean
+		public RefreshEndpoint refreshEndpoint(ConfigurableApplicationContext context,
+											   RefreshScope scope) {
+			RefreshEndpoint endpoint = new TestRefreshEndpoint(context, scope, countDownLatch());
+			return endpoint;
+		}
+	}
+
+	static class TestRefreshEndpoint extends RefreshEndpoint {
+		private CountDownLatch latch;
+
+		public TestRefreshEndpoint( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
+			super(context, scope);
+			this.latch = latch;
+		}
+
+		@Override
+		public synchronized String[] refresh() {
+			String[] keys = super.refresh();
+			this.latch.countDown();
+			return keys;
+		}
 	}
 
 	CuratorFramework curator;
 
 	ZookeeperConfigProperties properties;
 
+	@Before
 	@SneakyThrows
-	public void setup(boolean cacheEnabled) {
-		curator = CuratorFrameworkFactory.builder()
+	public void setup() {
+		this.curator = CuratorFrameworkFactory.builder()
 				.retryPolicy(new RetryOneTime(500))
 				.connectString(new ZookeeperProperties().getConnectString())
 				.build();
-		curator.start();
+		this.curator.start();
 
-		List<String> children = curator.getChildren().forPath("/");
+		List<String> children = this.curator.getChildren().forPath("/");
 		for (String child : children) {
 			if (child.startsWith(PREFIX) && child.length() > PREFIX.length()) {
 				delete("/" + child);
 			}
 		}
 
-		String key = ROOT + "/application/testProp";
-		String create = curator.create().creatingParentsIfNeeded().forPath(key, "testPropVal".getBytes());
-		curator.close();
+		String create = this.curator.create().creatingParentsIfNeeded().forPath(KEY, "testPropVal".getBytes());
+		this.curator.close();
 		System.out.println(create);
 
-		context = new SpringApplicationBuilder(Config.class)
+		this.context = new SpringApplicationBuilder(Config.class)
 				.web(false)
 				.run("--spring.spring.application.name=testZkPropertySource",
-						"--spring.cloud.zookeeper.config.cacheEnabled="+ cacheEnabled,
 						"--spring.cloud.zookeeper.config.root="+ROOT);
 
-		curator = context.getBean(CuratorFramework.class);
-		properties = context.getBean(ZookeeperConfigProperties.class);
-		environment = context.getEnvironment();
-
+		this.curator = context.getBean(CuratorFramework.class);
+		this.properties = context.getBean(ZookeeperConfigProperties.class);
+		this.environment = context.getEnvironment();
 	}
 
 	@SneakyThrows
 	public void delete(String path) {
 		try {
-			curator.delete().deletingChildrenIfNeeded().forPath(path);
+			this.curator.delete().deletingChildrenIfNeeded().forPath(path);
 		} catch (KeeperException e) {
 			if (e.code() != KeeperException.Code.NONODE) {
 				throw e;
@@ -95,6 +132,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		}
 	}
 
+	@After
 	@SneakyThrows
 	public void after() {
 		try {
@@ -105,18 +143,17 @@ public class ZookeeperPropertySourceLocatorTests {
 	}
 
 	@Test
-	public void propertyLoadedCached() {
-		setup(true);
+	public void propertyLoadedAndUpdated() throws Exception {
 		String testProp = this.environment.getProperty("testProp");
 		assertThat("testProp was wrong", testProp, is(equalTo("testPropVal")));
-		after();
-	}
 
-	@Test
-	public void propertyLoadedNoCache() {
-		setup(false);
-		String testProp = this.environment.getProperty("testProp");
-		assertThat("testProp was wrong", testProp, is(equalTo("testPropVal")));
-		after();
+		this.curator.setData().forPath(KEY, "testPropValUpdate".getBytes());
+
+		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
+		boolean receivedEvent = latch.await(5, TimeUnit.SECONDS);
+		assertThat("listener didn't receive event", receivedEvent, is(true));
+
+		testProp = this.environment.getProperty("testProp");
+		assertThat("testProp was wrong after update", testProp, is(equalTo("testPropValUpdate")));
 	}
 }
