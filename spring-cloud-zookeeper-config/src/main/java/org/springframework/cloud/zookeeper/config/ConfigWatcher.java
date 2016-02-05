@@ -61,7 +61,7 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	@PostConstruct
 	public void start() {
 		if (this.running.compareAndSet(false, true)) {
-			caches = new HashMap<>();
+			this.caches = new HashMap<>();
 			for (String context : contexts) {
 				if (!context.startsWith("/")) {
 					context = "/" + context;
@@ -71,7 +71,7 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 					TreeCache cache = TreeCache.newBuilder(this.source, context).build();
 					cache.getListenable().addListener(this);
 					cache.start();
-					caches.put(context, cache);
+					this.caches.put(context, cache);
 					// no race condition since ZookeeperAutoConfiguration.curatorFramework
 					// calls curator.blockUntilConnected
 				} catch (KeeperException.NoNodeException e) {
@@ -96,10 +96,8 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	@Override
 	public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
 		TreeCacheEvent.Type eventType = event.getType();
-		if (eventType != NODE_ADDED && eventType != NODE_REMOVED && eventType != NODE_UPDATED) {
-			return;
+		if (eventType == NODE_ADDED || eventType == NODE_REMOVED || eventType == NODE_UPDATED) {
+			this.publisher.publishEvent(new ZookeeperConfigRefreshEvent(this, event));
 		}
-
-		this.publisher.publishEvent(new ZookeeperConfigRefreshEvent(this, event));
 	}
 }

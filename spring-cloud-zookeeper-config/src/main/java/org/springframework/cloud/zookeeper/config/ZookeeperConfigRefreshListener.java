@@ -30,12 +30,10 @@ import lombok.extern.apachecommons.CommonsLog;
  */
 @CommonsLog
 public class ZookeeperConfigRefreshListener {
-	private String contextName;
 	private RefreshEndpoint refresh;
 	private AtomicBoolean ready = new AtomicBoolean(false);
 
-	public ZookeeperConfigRefreshListener(String contextName, RefreshEndpoint refresh) {
-		this.contextName = contextName;
+	public ZookeeperConfigRefreshListener(RefreshEndpoint refresh) {
 		this.refresh = refresh;
 	}
 
@@ -47,7 +45,7 @@ public class ZookeeperConfigRefreshListener {
 	@EventListener
 	public void handle(ZookeeperConfigRefreshEvent event) {
 		if (this.ready.get()) { // don't handle events before app is ready
-			log.debug(contextName + " " + event.getEventDesc());
+			log.debug("Event received " + event.getEventDesc());
 			if (this.refresh != null) {
 				String[] keys = this.refresh.refresh();
 				log.info("Refresh keys changed: " + Arrays.asList(keys));

@@ -37,7 +37,7 @@ public class ZookeeperConfigAutoConfiguration {
 		@ConditionalOnBean(RefreshEndpoint.class)
 		public ZookeeperConfigRefreshListener zookeeperConfigRefreshListener(
 				RefreshEndpoint refreshEndpoint) {
-			return new ZookeeperConfigRefreshListener("application", refreshEndpoint);
+			return new ZookeeperConfigRefreshListener(refreshEndpoint);
 		}
 
 		@Bean
