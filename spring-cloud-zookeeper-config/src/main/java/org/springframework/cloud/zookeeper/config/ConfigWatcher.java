@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.io.Closeable;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,6 +28,7 @@ import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.zookeeper.KeeperException;
+import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
@@ -97,7 +99,18 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
 		TreeCacheEvent.Type eventType = event.getType();
 		if (eventType == NODE_ADDED || eventType == NODE_REMOVED || eventType == NODE_UPDATED) {
-			this.publisher.publishEvent(new ZookeeperConfigRefreshEvent(this, event));
+			this.publisher.publishEvent(new RefreshEvent(this, event, getEventDesc(event)));
 		}
+	}
+
+	public String getEventDesc(TreeCacheEvent event) {
+		StringBuffer out = new StringBuffer();
+		out.append("type="+event.getType());
+		out.append(", path="+event.getData().getPath());
+		byte[] data = event.getData().getData();
+		if (data != null && data.length > 0) {
+			out.append(", data="+new String(data, Charset.forName("UTF-8")));
+		}
+		return out.toString();
 	}
 }

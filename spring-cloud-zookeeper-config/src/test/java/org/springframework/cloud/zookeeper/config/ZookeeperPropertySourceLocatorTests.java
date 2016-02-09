@@ -150,7 +150,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		this.curator.setData().forPath(KEY, "testPropValUpdate".getBytes());
 
 		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
-		boolean receivedEvent = latch.await(5, TimeUnit.SECONDS);
+		boolean receivedEvent = latch.await(15, TimeUnit.SECONDS);
 		assertThat("listener didn't receive event", receivedEvent, is(true));
 
 		testProp = this.environment.getProperty("testProp");
