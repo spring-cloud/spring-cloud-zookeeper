@@ -1,14 +1,13 @@
 package org.springframework.cloud.zookeeper.discovery
 
-import org.springframework.cloud.util.InetUtils
-import org.springframework.cloud.util.InetUtilsProperties
-
 import javax.annotation.PreDestroy
 
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
 import org.apache.curator.x.discovery.ServiceInstance
 import org.apache.curator.x.discovery.UriSpec
+import org.springframework.cloud.commons.util.InetUtils
+import org.springframework.cloud.commons.util.InetUtilsProperties
 
 class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 

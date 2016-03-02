@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Spencer Gibb
@@ -82,8 +83,15 @@ public class SampleZookeeperApplication {
 
 	@FeignClient("testZookeeperApp")
 	interface AppClient {
-		@RequestMapping(value = "/hi", method = RequestMethod.GET)
+		@RequestMapping(path = "/hi", method = RequestMethod.GET)
 		String hi();
+	}
+
+	@Autowired
+	RestTemplate rest;
+
+	public String rt() {
+		return rest.getForObject("http://"+appName+"/hi", String.class);
 	}
 
 	public static void main(String[] args) {
