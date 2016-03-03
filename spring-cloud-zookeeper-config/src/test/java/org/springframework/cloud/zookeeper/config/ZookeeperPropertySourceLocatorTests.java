@@ -113,7 +113,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		this.context = new SpringApplicationBuilder(Config.class)
 				.web(false)
-				.run("--spring.spring.application.name=testZkPropertySource",
+				.run("--spring.application.name=testZkPropertySource",
 						"--spring.cloud.zookeeper.config.root="+ROOT);
 
 		this.curator = context.getBean(CuratorFramework.class);
