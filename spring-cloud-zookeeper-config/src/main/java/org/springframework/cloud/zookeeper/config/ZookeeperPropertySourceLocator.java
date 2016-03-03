@@ -64,9 +64,13 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			contexts.add(defaultContext);
 			addProfiles(contexts, defaultContext, profiles);
 
-			String baseContext = root + "/" + appName;
-			contexts.add(baseContext);
-			addProfiles(contexts, baseContext, profiles);
+			StringBuilder baseContext = new StringBuilder(root);
+			if (!appName.startsWith("/")) {
+				baseContext.append("/");
+			}
+			baseContext.append(appName);
+			contexts.add(baseContext.toString());
+			addProfiles(contexts, baseContext.toString(), profiles);
 
 			CompositePropertySource composite = new CompositePropertySource("zookeeper");
 
