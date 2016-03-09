@@ -22,12 +22,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.netflix.feign.ribbon.CachingSpringLoadBalancerFactory;
+import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -46,8 +50,9 @@ import feign.Response;
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.headers.enabled", matchIfMissing = true)
 @ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
+@AutoConfigureAfter({ RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class })
 public class DependencyFeignClientAutoConfiguration {
-	@Autowired
+	@Autowired(required = false)
 	private LoadBalancerFeignClient ribbonClient;
 
 	@Autowired
@@ -59,19 +64,29 @@ public class DependencyFeignClientAutoConfiguration {
 	@Bean
 	@Primary
 	Client dependencyBasedFeignClient() {
-		return new LoadBalancerFeignClient(new Client.Default(null, null), loadBalancerFactory) {
+		return new LoadBalancerFeignClient(new Client.Default(null, null), this.loadBalancerFactory) {
+
 			@Override
 			public Response execute(Request request, Request.Options options)
 					throws IOException {
 				URI asUri = URI.create(request.url());
 				String clientName = asUri.getHost();
-				ZookeeperDependency dependencyForAlias = zookeeperDependencies
+				ZookeeperDependency dependencyForAlias =
+						DependencyFeignClientAutoConfiguration.this.zookeeperDependencies
 						.getDependencyForAlias(clientName);
 				Map<String, Collection<String>> headers = getUpdatedHeadersIfPossible(
 						request, dependencyForAlias);
-				return ribbonClient.execute(Request.create(request.method(),
-						request.url(), headers, request.body(), request.charset()),
-						options);
+				if (DependencyFeignClientAutoConfiguration.this.ribbonClient != null) {
+					return DependencyFeignClientAutoConfiguration.this.ribbonClient.execute(
+							request(request, headers), options);
+				}
+				return super.execute(request(request, headers), options);
+			}
+
+			private Request request(Request request,
+					Map<String, Collection<String>> headers) {
+				return Request.create(request.method(), request.url(), headers,
+						request.body(), request.charset());
 			}
 
 			private Map<String, Collection<String>> getUpdatedHeadersIfPossible(

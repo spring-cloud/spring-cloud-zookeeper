@@ -23,6 +23,7 @@ import org.apache.curator.x.discovery.ServiceCache
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery
 import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery
@@ -35,6 +36,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
+import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -70,6 +72,12 @@ class DefaultDependencyWatcherSpringISpec extends Specification implements Polli
 	@EnableAutoConfiguration
 	@Profile('watcher')
 	static class Config {
+
+		@Bean
+		@LoadBalanced
+		RestTemplate loadBalancedRestTemplate() {
+			return new RestTemplate()
+		}
 
 		@Bean
 		static PropertySourcesPlaceholderConfigurer propertiesConfigurer() {

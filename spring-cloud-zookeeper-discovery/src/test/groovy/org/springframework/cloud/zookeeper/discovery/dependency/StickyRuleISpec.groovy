@@ -24,6 +24,7 @@ import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.cloud.zookeeper.discovery.PollingUtils
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.SocketUtils
+import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 import spock.util.environment.RestoreSystemProperties
@@ -79,6 +81,12 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 	@EnableDiscoveryClient
 	@Profile('loadbalancerclient')
 	static class Config {
+
+		@Bean
+		@LoadBalanced
+		RestTemplate loadBalancedRestTemplate() {
+			return new RestTemplate()
+		}
 
 		@Bean(destroyMethod = 'close')
 		TestingServer testingServer() {

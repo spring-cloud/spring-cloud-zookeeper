@@ -18,15 +18,24 @@ package org.springframework.cloud.zookeeper.discovery.test
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.apache.curator.test.TestingServer
+import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.zookeeper.ZookeeperProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.SocketUtils
+import org.springframework.web.client.RestTemplate
 
 @PackageScope
 @CompileStatic
 @Configuration
 class CommonTestConfig {
+
+	@Bean
+	@LoadBalanced
+	RestTemplate loadBalancedRestTemplate() {
+		return new RestTemplate()
+	}
+
 	@Bean(destroyMethod = 'close')
 	TestingServer testingServer() {
 		return new TestingServer(SocketUtils.findAvailableTcpPort())
