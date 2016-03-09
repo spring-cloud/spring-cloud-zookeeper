@@ -43,7 +43,7 @@ class ZookeeperDiscoveryWithDependenciesISpec extends Specification implements P
 	@Autowired ZookeeperDependencies zookeeperDependencies
 	@Autowired Config dependencyConfig
 	@Autowired CuratorFramework curatorFramework
-	PollingConditions conditions = new PollingConditions()
+	PollingConditions conditions = new PollingConditions(timeout: 2)
 
 	def 'should find an instance via path when alias is not found'() {
 		expect:

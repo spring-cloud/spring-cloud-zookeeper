@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 package org.springframework.cloud.zookeeper.discovery.dependency
+
 import org.apache.curator.test.TestingServer
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ConfigurableApplicationContext
@@ -27,12 +27,9 @@ import org.springframework.context.annotation.Import
 import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
 import spock.util.environment.RestoreSystemProperties
 
-class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification implements PollingUtils {
-
-	PollingConditions conditions = new PollingConditions()
+class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification {
 
 	@Issue("#45")
 	@RestoreSystemProperties
