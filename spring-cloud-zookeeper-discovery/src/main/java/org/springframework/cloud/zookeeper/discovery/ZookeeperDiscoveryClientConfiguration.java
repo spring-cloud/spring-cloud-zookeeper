@@ -52,7 +52,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(InetUtils inetUtils) {
-		return new ZookeeperServiceDiscovery(curator, zookeeperDiscoveryProperties(),
+		return new ZookeeperServiceDiscovery(this.curator, zookeeperDiscoveryProperties(),
 				instanceSerializer(), inetUtils);
 	}
 
@@ -63,7 +63,7 @@ public class ZookeeperDiscoveryClientConfiguration {
 
 	@Bean
 	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
-		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery, zookeeperDependencies);
+		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery, this.zookeeperDependencies);
 	}
 
 	@Bean
@@ -84,13 +84,14 @@ public class ZookeeperDiscoveryClientConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
-			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery, zookeeperDependencies, zookeeperDiscoveryProperties);
+			return new ZookeeperDiscoveryHealthIndicator(this.serviceDiscovery,
+					this.zookeeperDependencies, this.zookeeperDiscoveryProperties);
 		}
 	}
 
 	@Bean
 	public ZookeeperServiceWatch zookeeperServiceWatch() {
-		return new ZookeeperServiceWatch(curator, zookeeperDiscoveryProperties());
+		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties());
 	}
 
 }

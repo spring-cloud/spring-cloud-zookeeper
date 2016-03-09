@@ -65,7 +65,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		@Bean
 		public RefreshEndpoint refreshEndpoint(ConfigurableApplicationContext context,
-											   RefreshScope scope) {
+				RefreshScope scope) {
 			RefreshEndpoint endpoint = new TestRefreshEndpoint(context, scope, countDownLatch());
 			return endpoint;
 		}
@@ -116,9 +116,9 @@ public class ZookeeperPropertySourceLocatorTests {
 				.run("--spring.application.name=testZkPropertySource",
 						"--spring.cloud.zookeeper.config.root="+ROOT);
 
-		this.curator = context.getBean(CuratorFramework.class);
-		this.properties = context.getBean(ZookeeperConfigProperties.class);
-		this.environment = context.getEnvironment();
+		this.curator = this.context.getBean(CuratorFramework.class);
+		this.properties = this.context.getBean(ZookeeperConfigProperties.class);
+		this.environment = this.context.getEnvironment();
 	}
 
 	@SneakyThrows
@@ -136,9 +136,9 @@ public class ZookeeperPropertySourceLocatorTests {
 	@SneakyThrows
 	public void after() {
 		try {
-			delete(properties.getRoot());
+			delete(this.properties.getRoot());
 		} finally {
-			context.close();
+			this.context.close();
 		}
 	}
 

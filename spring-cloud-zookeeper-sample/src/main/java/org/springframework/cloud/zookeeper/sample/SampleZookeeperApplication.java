@@ -62,23 +62,22 @@ public class SampleZookeeperApplication {
 
 	@RequestMapping("/")
 	public ServiceInstance lb() {
-		return loadBalancer.choose(appName);
+		return this.loadBalancer.choose(this.appName);
 	}
 
 	@RequestMapping("/hi")
 	public String hi() {
-		return "Hello World! from " + discovery.getLocalServiceInstance();
+		return "Hello World! from " + this.discovery.getLocalServiceInstance();
 	}
 
 	@RequestMapping("/self")
 	public String self() {
-		return appClient.hi();
+		return this.appClient.hi();
 	}
 
 	@RequestMapping("/myenv")
 	public String env(@RequestParam("prop") String prop) {
-		String property = new RelaxedPropertyResolver(env).getProperty(prop, "Not Found");
-		return property;
+		return new RelaxedPropertyResolver(this.env).getProperty(prop, "Not Found");
 	}
 
 	@FeignClient("testZookeeperApp")
@@ -91,7 +90,7 @@ public class SampleZookeeperApplication {
 	RestTemplate rest;
 
 	public String rt() {
-		return rest.getForObject("http://"+appName+"/hi", String.class);
+		return this.rest.getForObject("http://" + this.appName + "/hi", String.class);
 	}
 
 	public static void main(String[] args) {

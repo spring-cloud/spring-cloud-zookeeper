@@ -16,15 +16,12 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Spencer Gibb
@@ -36,8 +33,9 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 	private ZookeeperDependencies zookeeperDependencies;
 	private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
-	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery, ZookeeperDependencies zookeeperDependencies,
-											 ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery,
+			ZookeeperDependencies zookeeperDependencies,
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
@@ -46,8 +44,8 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
-			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(serviceDiscovery,
-					zookeeperDependencies, zookeeperDiscoveryProperties);
+			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(
+					this.serviceDiscovery, this.zookeeperDependencies, this.zookeeperDiscoveryProperties);
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {

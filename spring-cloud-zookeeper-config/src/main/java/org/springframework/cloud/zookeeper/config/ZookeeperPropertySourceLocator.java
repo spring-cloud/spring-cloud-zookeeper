@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.zookeeper.config;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.PreDestroy;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -47,7 +46,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	}
 
 	public List<String> getContexts() {
-		return contexts;
+		return this.contexts;
 	}
 
 	@Override
@@ -57,26 +56,26 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			String appName = env.getProperty("spring.application.name");
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
 
-			String root = properties.getRoot();
-			contexts = new ArrayList<>();
+			String root = this.properties.getRoot();
+			this.contexts = new ArrayList<>();
 
-			String defaultContext = root + "/" + properties.getDefaultContext();
-			contexts.add(defaultContext);
-			addProfiles(contexts, defaultContext, profiles);
+			String defaultContext = root + "/" + this.properties.getDefaultContext();
+			this.contexts.add(defaultContext);
+			addProfiles(this.contexts, defaultContext, profiles);
 
 			StringBuilder baseContext = new StringBuilder(root);
 			if (!appName.startsWith("/")) {
 				baseContext.append("/");
 			}
 			baseContext.append(appName);
-			contexts.add(baseContext.toString());
-			addProfiles(contexts, baseContext.toString(), profiles);
+			this.contexts.add(baseContext.toString());
+			addProfiles(this.contexts, baseContext.toString(), profiles);
 
 			CompositePropertySource composite = new CompositePropertySource("zookeeper");
 
-			Collections.reverse(contexts);
+			Collections.reverse(this.contexts);
 
-			for (String propertySourceContext : contexts) {
+			for (String propertySourceContext : this.contexts) {
 				PropertySource propertySource = create(propertySourceContext);
 				composite.addPropertySource(propertySource);
 				// TODO: howto call close when /refresh
@@ -92,13 +91,13 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	}
 
 	private PropertySource<CuratorFramework> create(String context) {
-		return new ZookeeperPropertySource(context, curator);
+		return new ZookeeperPropertySource(context, this.curator);
 	}
 
 	private void addProfiles(List<String> contexts, String baseContext,
 			List<String> profiles) {
 		for (String profile : profiles) {
-			contexts.add(baseContext + properties.getProfileSeparator() + profile);
+			contexts.add(baseContext + this.properties.getProfileSeparator() + profile);
 		}
 	}
 }

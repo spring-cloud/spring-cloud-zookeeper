@@ -32,18 +32,18 @@ public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
-			if (curator.getState() != CuratorFrameworkState.STARTED) {
+			if (this.curator.getState() != CuratorFrameworkState.STARTED) {
 				builder.down().withDetail("error", "Client not started");
 			}
-			else if (curator.checkExists().forPath("/") == null) {
+			else if (this.curator.checkExists().forPath("/") == null) {
 				builder.down().withDetail("error", "Root for namespace does not exist");
 			}
 			else {
 				builder.up();
 			}
 			builder.withDetail("connectionString",
-					curator.getZookeeperClient().getCurrentConnectionString())
-					.withDetail("state", curator.getState());
+					this.curator.getZookeeperClient().getCurrentConnectionString())
+					.withDetail("state", this.curator.getState());
 		}
 		catch (Exception e) {
 			builder.down(e);

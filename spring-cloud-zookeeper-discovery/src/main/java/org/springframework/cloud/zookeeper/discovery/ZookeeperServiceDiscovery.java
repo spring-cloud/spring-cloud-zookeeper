@@ -78,11 +78,11 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	public ServiceInstance<ZookeeperInstance> getServiceInstance() {
-		return serviceInstance.get();
+		return this.serviceInstance.get();
 	}
 
 	public ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		return serviceDiscovery.get();
+		return this.serviceDiscovery.get();
 	}
 
 	@Override
@@ -92,14 +92,17 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	@SneakyThrows
 	public void build() {
-		if (built.compareAndSet(false, true)) {
-			if (port.get() <= 0) {
+		if (this.built.compareAndSet(false, true)) {
+			if (this.port.get() <= 0) {
 				throw new IllegalStateException("Cannot create instance whose port is not greater than 0");
 			}
-			String host = properties.getInstanceHost() == null? getIpAddress() : properties.getInstanceHost();
-			UriSpec uriSpec = new UriSpec(properties.getUriSpec());
-			configureServiceInstance(serviceInstance, appName, context, port, host, uriSpec);
-			configureServiceDiscovery(serviceDiscovery, curator, properties, instanceSerializer, serviceInstance);
+			String host = this.properties.getInstanceHost() == null ? getIpAddress() :
+					this.properties.getInstanceHost();
+			UriSpec uriSpec = new UriSpec(this.properties.getUriSpec());
+			configureServiceInstance(this.serviceInstance, this.appName,
+					this.context, this.port, host, uriSpec);
+			configureServiceDiscovery(this.serviceDiscovery, this.curator, this.properties,
+					this.instanceSerializer, this.serviceInstance);
 		}
 	}
 
@@ -122,10 +125,9 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	@SneakyThrows
 	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
-											 CuratorFramework curator,
-											 ZookeeperDiscoveryProperties properties,
-											 InstanceSerializer<ZookeeperInstance> instanceSerializer,
-											 AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance) {
+			CuratorFramework curator, ZookeeperDiscoveryProperties properties,
+			InstanceSerializer<ZookeeperInstance> instanceSerializer,
+			AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance) {
 		// @formatter:off
 		serviceDiscovery.set(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
 				.client(curator)
@@ -153,6 +155,6 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	}
 
 	protected CuratorFramework getCurator() {
-		return curator;
+		return this.curator;
 	}
 }

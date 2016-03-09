@@ -1,13 +1,14 @@
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ZookeeperServiceInstances implements Iterable<ServiceInstance<ZookeeperInstance>> {
@@ -18,7 +19,7 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	private final List<ServiceInstance<ZookeeperInstance>> allInstances;
 
 	public ZookeeperServiceInstances(ZookeeperServiceDiscovery serviceDiscovery, ZookeeperDependencies zookeeperDependencies,
-									 ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
@@ -95,8 +96,9 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 		return serviceInstances;
 	}
 
-	private List<ServiceInstance<ZookeeperInstance>> iterateOverChildren(List<ServiceInstance<ZookeeperInstance>> accumulator,
-																		 String parentPath, List<String> children) throws Exception {
+	private List<ServiceInstance<ZookeeperInstance>> iterateOverChildren(
+			List<ServiceInstance<ZookeeperInstance>> accumulator,
+			String parentPath, List<String> children) throws Exception {
 		List<ServiceInstance<ZookeeperInstance>> lists = new ArrayList<>();
 		for (String child : children) {
 			lists.addAll(nestedInstances(accumulator, parentPath + "/" + child));
@@ -113,6 +115,6 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 
 	@Override
 	public Iterator<ServiceInstance<ZookeeperInstance>> iterator() {
-		return allInstances.iterator();
+		return this.allInstances.iterator();
 	}
 }

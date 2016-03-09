@@ -15,12 +15,12 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -57,8 +57,8 @@ public class ZookeeperDependencies {
 
 	@PostConstruct
 	public void init() {
-		if (StringUtils.hasText(prefix) && !prefix.endsWith("/")) {
-			prefix = prefix + "/";
+		if (StringUtils.hasText(this.prefix) && !this.prefix.endsWith("/")) {
+			this.prefix = this.prefix + "/";
 		}
 		for (Map.Entry<String, ZookeeperDependency> entry : this.dependencies.entrySet()) {
 			ZookeeperDependency value = entry.getValue();
@@ -67,8 +67,8 @@ public class ZookeeperDependencies {
 				value.setPath(entry.getKey());
 			}
 
-			if (StringUtils.hasText(prefix)) {
-				value.setPath(prefix + value.getPath());
+			if (StringUtils.hasText(this.prefix)) {
+				value.setPath(this.prefix + value.getPath());
 			}
 
 			setStubDefinition(value);
@@ -84,15 +84,15 @@ public class ZookeeperDependencies {
 	}
 
 	public Collection<ZookeeperDependency> getDependencyConfigurations() {
-		return dependencies.values();
+		return this.dependencies.values();
 	}
 
 	public boolean hasDependencies() {
-		return !dependencies.isEmpty();
+		return !this.dependencies.isEmpty();
 	}
 
 	public ZookeeperDependency getDependencyForPath(final String path) {
-		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : this.dependencies.entrySet()) {
 			if (zookeeperDependencyEntry.getValue().getPath().equals(path)) {
 				return zookeeperDependencyEntry.getValue();
 			}
@@ -101,7 +101,7 @@ public class ZookeeperDependencies {
 	}
 
 	public ZookeeperDependency getDependencyForAlias(final String alias) {
-		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : this.dependencies.entrySet()) {
 			if (zookeeperDependencyEntry.getKey().equals(alias)) {
 				return zookeeperDependencyEntry.getValue();
 			}
@@ -118,7 +118,7 @@ public class ZookeeperDependencies {
 	}
 
 	public String getAliasForPath(final String path) {
-		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : this.dependencies.entrySet()) {
 			if (zookeeperDependencyEntry.getValue().getPath().equals(path)) {
 				return zookeeperDependencyEntry.getKey();
 			}
@@ -128,7 +128,7 @@ public class ZookeeperDependencies {
 
 	public Collection<String> getDependencyNames() {
 		List<String> names = new ArrayList<>();
-		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : dependencies.entrySet()) {
+		for (Map.Entry<String, ZookeeperDependency> zookeeperDependencyEntry : this.dependencies.entrySet()) {
 			names.add(zookeeperDependencyEntry.getValue().getPath());
 		}
 		return names;

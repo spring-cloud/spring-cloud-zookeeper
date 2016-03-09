@@ -55,7 +55,7 @@ public class StubsConfiguration {
 	}
 
 	private boolean isDefined() {
-		return StringUtils.hasText(stubsGroupId) && StringUtils.hasText(stubsArtifactId);
+		return StringUtils.hasText(this.stubsGroupId) && StringUtils.hasText(this.stubsArtifactId);
 	}
 
 	public String toColonSeparatedDependencyNotation() {

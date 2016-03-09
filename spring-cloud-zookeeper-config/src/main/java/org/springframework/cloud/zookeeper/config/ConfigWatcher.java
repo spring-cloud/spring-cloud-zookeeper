@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.zookeeper.config;
 
+import javax.annotation.PostConstruct;
 import java.io.Closeable;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.PostConstruct;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
@@ -64,7 +64,7 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	public void start() {
 		if (this.running.compareAndSet(false, true)) {
 			this.caches = new HashMap<>();
-			for (String context : contexts) {
+			for (String context : this.contexts) {
 				if (!context.startsWith("/")) {
 					context = "/" + context;
 				}

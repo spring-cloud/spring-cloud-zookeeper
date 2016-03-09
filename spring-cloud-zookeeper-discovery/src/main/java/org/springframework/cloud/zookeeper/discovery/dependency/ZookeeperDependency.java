@@ -85,7 +85,7 @@ public class ZookeeperDependency {
 	}
 
 	public ZookeeperDependency(String path, LoadBalancerType loadBalancerType, String contentTypeTemplate,
-							   String version, Map<String, Collection<String>> headers, boolean required, String stubs) {
+			String version, Map<String, Collection<String>> headers, boolean required, String stubs) {
 		this.path = path;
 		this.loadBalancerType = loadBalancerType;
 		this.contentTypeTemplate = contentTypeTemplate;
@@ -121,10 +121,10 @@ public class ZookeeperDependency {
 	 * @return content type template with version
 	 */
 	public String getContentTypeWithVersion() {
-		if (!StringUtils.hasText(contentTypeTemplate) || !StringUtils.hasText(version)) {
+		if (!StringUtils.hasText(this.contentTypeTemplate) || !StringUtils.hasText(this.version)) {
 			return "";
 		}
-		return contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX, version);
+		return this.contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX, this.version);
 	}
 
 	public Map<String, Collection<String>> getUpdatedHeaders(Map<String, Collection<String>> headers) {
@@ -148,7 +148,7 @@ public class ZookeeperDependency {
 	}
 
 	private void addPredefinedHeaders(Map<String, Collection<String>> newHeaders) {
-		for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
+		for (Map.Entry<String, Collection<String>> entry : this.headers.entrySet()) {
 			Collection<String> value = newHeaders.get(entry.getKey());
 			if (value == null || value.isEmpty()) {
 				newHeaders.put(entry.getKey(), entry.getValue());
@@ -159,11 +159,11 @@ public class ZookeeperDependency {
 	}
 
 	private boolean hasContentTypeTemplate() {
-		return StringUtils.hasText(contentTypeTemplate);
+		return StringUtils.hasText(this.contentTypeTemplate);
 	}
 
 	private boolean hasHeadersSet() {
-		return !headers.isEmpty();
+		return !this.headers.isEmpty();
 	}
 
 }

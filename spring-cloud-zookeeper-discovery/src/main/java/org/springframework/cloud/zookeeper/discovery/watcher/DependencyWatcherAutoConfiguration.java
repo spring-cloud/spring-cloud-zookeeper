@@ -62,7 +62,7 @@ public class DependencyWatcherAutoConfiguration {
 																ZookeeperDependencies zookeeperDependencies) {
 		return new DefaultDependencyWatcher(serviceDiscovery,
 				dependencyPresenceOnStartupVerifier,
-				dependencyWatcherListeners,
+				this.dependencyWatcherListeners,
 				zookeeperDependencies);
 	}
 }

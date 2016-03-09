@@ -16,15 +16,16 @@
 
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Load balancing rule that returns always the same instance.
@@ -52,18 +53,18 @@ public class StickyRule extends AbstractLoadBalancerRule {
 	public Server choose(Object key) {
 		final List<Server> instances = getLoadBalancer().getServerList(true);
 		log.debug("Instances taken from load balancer {}", instances);
-		Server localOurInstance = ourInstance.get();
+		Server localOurInstance = this.ourInstance.get();
 		log.debug("Current saved instance [{}]", localOurInstance);
 		if (!instances.contains(localOurInstance)) {
-			ourInstance.compareAndSet(localOurInstance, null);
+			this.ourInstance.compareAndSet(localOurInstance, null);
 		}
-		if (ourInstance.get() == null) {
-			Server instance = masterStrategy.choose(key);
-			if (ourInstance.compareAndSet(null, instance)) {
-				instanceNumber.incrementAndGet();
+		if (this.ourInstance.get() == null) {
+			Server instance = this.masterStrategy.choose(key);
+			if (this.ourInstance.compareAndSet(null, instance)) {
+				this.instanceNumber.incrementAndGet();
 			}
 		}
-		return ourInstance.get();
+		return this.ourInstance.get();
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class StickyRule extends AbstractLoadBalancerRule {
 	 * @return instance number
 	 */
 	public int getInstanceNumber() {
-		return instanceNumber.get();
+		return this.instanceNumber.get();
 	}
 
 }

@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.zookeeper;
 
-import lombok.SneakyThrows;
-import lombok.extern.apachecommons.CommonsLog;
-
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,6 +29,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import lombok.SneakyThrows;
+import lombok.extern.apachecommons.CommonsLog;
 
 /**
  * @author Spencer Gibb
@@ -56,15 +56,14 @@ public class ZookeeperAutoConfiguration {
 	@SneakyThrows
 	public CuratorFramework curatorFramework(RetryPolicy retryPolicy, ZookeeperProperties properties) {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
-		if (ensembleProvider != null) {
-			builder.ensembleProvider(ensembleProvider);
+		if (this.ensembleProvider != null) {
+			builder.ensembleProvider(this.ensembleProvider);
 		}
 		CuratorFramework curator = builder
 				.retryPolicy(retryPolicy)
 				.connectString(zookeeperProperties().getConnectString())
 				.build();
 		curator.start();
-
 		log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait() + properties.getBlockUntilConnectedUnit());
 		curator.blockUntilConnected(properties.getBlockUntilConnectedWait(), properties.getBlockUntilConnectedUnit());
 		log.trace("connected to zookeeper");
@@ -87,10 +86,11 @@ public class ZookeeperAutoConfiguration {
 		public ZookeeperEndpoint zookeeperEndpoint() {
 			return new ZookeeperEndpoint();
 		}
-        @Bean
-        @ConditionalOnMissingBean
-        public ZookeeperHealthIndicator zookeeperHealthIndicator() {
-		return new ZookeeperHealthIndicator();
+
+		@Bean
+		@ConditionalOnMissingBean
+		public ZookeeperHealthIndicator zookeeperHealthIndicator() {
+			return new ZookeeperHealthIndicator();
+		}
 	}
-    }
 }

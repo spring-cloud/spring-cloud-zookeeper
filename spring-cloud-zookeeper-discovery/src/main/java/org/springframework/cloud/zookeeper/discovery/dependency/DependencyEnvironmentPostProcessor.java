@@ -32,21 +32,21 @@ import org.springframework.util.StringUtils;
  * Specifically, if spring.application.name doesn't contain a / and
  * spring.cloud.zookeeper.prefix has text, it sets spring.application.name
  * to /${spring.cloud.zookeeper.prefix}/${spring.application.name}
+ *
  * @author Spencer Gibb
  */
-public class DependencyEnvironmentPostProcessor implements
-		EnvironmentPostProcessor, Ordered {
+public class DependencyEnvironmentPostProcessor
+		implements EnvironmentPostProcessor, Ordered {
 
-    // after ConfigFileEnvironmentPostProcessorr
-    private int order = ConfigFileApplicationListener.DEFAULT_ORDER + 1;
+	// after ConfigFileEnvironmentPostProcessorr
+	private int order = ConfigFileApplicationListener.DEFAULT_ORDER + 1;
 
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
+	@Override public int getOrder() {
+		return this.order;
+	}
 
-	@Override
-	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+	@Override public void postProcessEnvironment(ConfigurableEnvironment environment,
+			SpringApplication application) {
 		RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(environment);
 		String appName = resolver.getProperty("spring.application.name");
 		if (StringUtils.hasText(appName) && !appName.contains("/")) {
@@ -62,10 +62,11 @@ public class DependencyEnvironmentPostProcessor implements
 				}
 				prefixedName.append(appName);
 				MapPropertySource propertySource = new MapPropertySource(
-						"zookeeperDependencyEnvironment", Collections.singletonMap(
-						"spring.application.name", (Object)prefixedName.toString()));
+						"zookeeperDependencyEnvironment", Collections
+						.singletonMap("spring.application.name",
+								(Object) prefixedName.toString()));
 				environment.getPropertySources().addFirst(propertySource);
 			}
 		}
-    }
+	}
 }
