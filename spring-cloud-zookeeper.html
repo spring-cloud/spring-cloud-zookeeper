@@ -421,12 +421,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_how_to_activate">How to activate</a></li>
 <li><a href="#_registering_with_zookeeper">Registering with Zookeeper</a></li>
 <li><a href="#_using_the_discoveryclient">Using the DiscoveryClient</a></li>
-<li><a href="#spring-cloud-zookeeper-dependencies">Using the Zookeeper Dependencies</a></li>
+</ul>
+</li>
+<li><a href="#spring-cloud-zookeeper-dependencies">Zookeeper Dependencies</a>
+<ul class="sectlevel2">
+<li><a href="#_using_the_zookeeper_dependencies">Using the Zookeeper Dependencies</a></li>
 <li><a href="#_how_to_activate_zookeeper_dependencies">How to activate Zookeeper Dependencies</a></li>
 <li><a href="#_setting_up_zookeeper_dependencies">Setting up Zookeeper Dependencies</a></li>
-<li><a href="#_stubs">Stubs</a></li>
 <li><a href="#_configuring_spring_cloud_zookeeper_dependencies">Configuring Spring Cloud Zookeeper Dependencies</a></li>
-<li><a href="#spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</a></li>
+</ul>
+</li>
+<li><a href="#spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</a>
+<ul class="sectlevel2">
 <li><a href="#_how_to_activate_2">How to activate</a></li>
 <li><a href="#_registering_a_listener">Registering a listener</a></li>
 <li><a href="#_presence_checker">Presence Checker</a></li>
@@ -556,8 +562,13 @@ public String serviceUrl() {
 </div>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spring-cloud-zookeeper-dependencies">Zookeeper Dependencies</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="spring-cloud-zookeeper-dependencies">Using the Zookeeper Dependencies</h3>
+<h3 id="_using_the_zookeeper_dependencies">Using the Zookeeper Dependencies</h3>
 <div class="paragraph">
 <p>Spring Cloud Zookeeper gives you a possibility to provide dependencies of your application as properties. As dependencies you can understand other applications that are registered
 in Zookeeper and which you would like to call via <a href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign">Feign</a> (a REST client builder)
@@ -743,9 +754,8 @@ In other words your application won&#8217;t be able to start if the required dep
 <p>You can read more about Spring Cloud Zookeeper Presence Checker in the following sections.</p>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_stubs">Stubs</h3>
+<div class="sect3">
+<h4 id="_stubs">Stubs</h4>
 <div class="paragraph">
 <p>You can provide a colon separated path to the JAR containing stubs of the dependency. Example</p>
 </div>
@@ -782,6 +792,7 @@ In other words your application won&#8217;t be able to start if the required dep
 <p>since <code>stubs</code> is the default classifier.</p>
 </div>
 </div>
+</div>
 <div class="sect2">
 <h3 id="_configuring_spring_cloud_zookeeper_dependencies">Configuring Spring Cloud Zookeeper Dependencies</h3>
 <div class="paragraph">
@@ -812,12 +823,14 @@ headers and content type with version set in Dependency configuration. Wihtout t
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The Dependency Watcher mechanism allows you to register listeners to your dependencies. The functionality is in fact an implementation of the <code>Observator</code> pattern. When a dependency changes
 its state (UP or DOWN) then some custom logic can be applied.</p>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_how_to_activate_2">How to activate</h3>
@@ -833,13 +846,7 @@ The interface gives you one method:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>    /**
-    * Method executed upon state change of a dependency
-    *
-    * @param dependencyName - alias from microservice configuration {@see ZookeeperDependencies}
-    * @param newState
-    */
-    void stateChanged(String dependencyName, DependencyState newState);</pre>
+<pre>    void stateChanged(String dependencyName, DependencyState newState);</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -939,7 +946,7 @@ config/application</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-10 11:42:19 +01:00
+Last updated 2016-03-10 14:38:19 +01:00
 </div>
 </div>
 </body>
