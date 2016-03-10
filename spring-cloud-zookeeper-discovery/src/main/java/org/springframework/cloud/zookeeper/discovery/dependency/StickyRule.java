@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 /**
  * Load balancing rule that returns always the same instance.
  *
- * Ported from {@link org.apache.curator.x.discovery.strategies.StickyStrategy}
+ * Ported from {@code org.apache.curator.x.discovery.strategies.StickyStrategy}
  *
  * author: Marcin Grzejszczak, 4financeIT
  */
