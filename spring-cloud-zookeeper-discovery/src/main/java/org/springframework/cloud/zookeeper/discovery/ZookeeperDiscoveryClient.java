@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import lombok.SneakyThrows;
+import lombok.extern.apachecommons.CommonsLog;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
@@ -34,7 +35,7 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
  * @author Spencer Gibb
  * @author Marcin Grzejszczak, 4financeIT
  */
-@Slf4j
+@CommonsLog
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private ZookeeperServiceDiscovery serviceDiscovery;

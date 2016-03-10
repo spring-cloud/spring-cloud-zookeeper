@@ -24,7 +24,8 @@ import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.ServerList;
-import lombok.extern.slf4j.Slf4j;
+
+import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,7 +52,7 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Configuration
-@Slf4j
+@CommonsLog
 public class ZookeeperRibbonClientConfiguration {
 	protected static final String VALUE_NOT_SET = "__not__set__";
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
@@ -71,7 +72,7 @@ public class ZookeeperRibbonClientConfiguration {
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
 		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
 		serverList.initFromDependencies(config, zookeeperDependencies);
-		log.debug("Server list for Ribbon's dependencies based load balancing is [{}]", serverList);
+		log.debug(String.format("Server list for Ribbon's dependencies based load balancing is [%s]", serverList));
 		return serverList;
 	}
 
@@ -97,7 +98,7 @@ public class ZookeeperRibbonClientConfiguration {
 	public ServerList<?> ribbonServerList(IClientConfig config) {
 		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
 		serverList.initWithNiwsConfig(config);
-		log.debug("Server list for Ribbon's non-dependency based load balancing is [{}]", serverList);
+		log.debug(String.format("Server list for Ribbon's non-dependency based load balancing is [%s]", serverList));
 		return serverList;
 	}
 

@@ -25,7 +25,7 @@ import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.apachecommons.CommonsLog;
 
 /**
  * Load balancing rule that returns always the same instance.
@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * author: Marcin Grzejszczak, 4financeIT
  */
-@Slf4j
+@CommonsLog
 public class StickyRule extends AbstractLoadBalancerRule {
 	private final IRule masterStrategy;
 	private final AtomicReference<Server> ourInstance = new AtomicReference<>(null);
@@ -52,9 +52,9 @@ public class StickyRule extends AbstractLoadBalancerRule {
 	@Override
 	public Server choose(Object key) {
 		final List<Server> instances = getLoadBalancer().getServerList(true);
-		log.debug("Instances taken from load balancer {}", instances);
+		log.debug(String.format("Instances taken from load balancer [%s]", instances));
 		Server localOurInstance = this.ourInstance.get();
-		log.debug("Current saved instance [{}]", localOurInstance);
+		log.debug(String.format("Current saved instance [%s]", localOurInstance));
 		if (!instances.contains(localOurInstance)) {
 			this.ourInstance.compareAndSet(localOurInstance, null);
 		}

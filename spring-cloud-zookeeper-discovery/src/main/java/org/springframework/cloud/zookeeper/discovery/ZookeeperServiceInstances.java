@@ -8,9 +8,9 @@ import java.util.List;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.apachecommons.CommonsLog;
 
-@Slf4j
+@CommonsLog
 public class ZookeeperServiceInstances implements Iterable<ServiceInstance<ZookeeperInstance>> {
 
 	private final ZookeeperServiceDiscovery serviceDiscovery;

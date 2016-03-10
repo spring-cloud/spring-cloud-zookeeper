@@ -18,7 +18,8 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
-import lombok.extern.slf4j.Slf4j;
+
+import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnRibbonZookeeper
 @Configuration
 @ConditionalOnDependenciesPassed
-@Slf4j
+@CommonsLog
 public class DependencyRibbonAutoConfiguration {
 
 	@Autowired ApplicationContext applicationContext;
@@ -60,9 +61,9 @@ public class DependencyRibbonAutoConfiguration {
 			}
 
 			private Server chooseServerByServiceIdOrDefault(ILoadBalancer loadBalancer, String serviceId) {
-				log.debug("Dependencies are set - will try to load balance via provided load balancer [{}] for key [{}]", loadBalancer, serviceId);
+				log.debug(String.format("Dependencies are set - will try to load balance via provided load balancer [%s] for key [%s]", loadBalancer, serviceId));
 				Server server = loadBalancer.chooseServer(serviceId);
-				log.debug("Retrieved server [{}] via load balancer", server);
+				log.debug(String.format("Retrieved server [%s] via load balancer", server));
 				return server != null ? server : loadBalancer.chooseServer("default");
 			}
 		};

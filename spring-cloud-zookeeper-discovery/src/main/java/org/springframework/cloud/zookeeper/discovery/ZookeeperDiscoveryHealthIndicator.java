@@ -21,12 +21,12 @@ import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.apachecommons.CommonsLog;
 
 /**
  * @author Spencer Gibb
  */
-@Slf4j
+@CommonsLog
 public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 
 	private ZookeeperServiceDiscovery serviceDiscovery;

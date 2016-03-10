@@ -28,7 +28,7 @@ import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.apachecommons.CommonsLog;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Marcin Grzejszczak, 4financeIT
  */
-@Slf4j
+@CommonsLog
 public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer {
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
@@ -55,20 +55,20 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 	public Server chooseServer(Object key) {
 		String keyAsString = (String) key;
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);
-		log.debug("Current dependencies are [{}]", this.zookeeperDependencies);
+		log.debug(String.format("Current dependencies are [%s]", this.zookeeperDependencies));
 		if (dependency == null) {
-			log.debug("No dependency found for alias [{}] - will use the default rule which is [{}]", keyAsString, this.rule);
+			log.debug(String.format("No dependency found for alias [%s] - will use the default rule which is [%s]", keyAsString, this.rule));
 			return this.rule.choose(key);
 		};
 		cacheEntryIfMissing(keyAsString, dependency);
-		log.debug("Will try to retrieve dependency for key [{}]. Current cache contents [{}]", keyAsString, this.ruleCache);
+		log.debug(String.format("Will try to retrieve dependency for key [%s]. Current cache contents [%s]", keyAsString, this.ruleCache));
 		updateListOfServers();
 		return this.ruleCache.get(keyAsString).choose(key);
 	}
 
 	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependency dependency) {
 		if (!this.ruleCache.containsKey(keyAsString)) {
-			log.debug("Cache doesn't contain entry for [{}]", keyAsString);
+			log.debug(String.format("Cache doesn't contain entry for [%s]", keyAsString));
 			this.ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
 		}
 	}
