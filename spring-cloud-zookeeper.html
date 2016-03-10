@@ -409,9 +409,37 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .show-for-print{display:inherit!important}}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>Spring Cloud Zookeeper</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#spring-cloud-zookeeper-install">Install Zookeeper</a></li>
+<li><a href="#spring-cloud-zookeeper-discovery">Service Discovery with Zookeeper</a>
+<ul class="sectlevel2">
+<li><a href="#_how_to_activate">How to activate</a></li>
+<li><a href="#_registering_with_zookeeper">Registering with Zookeeper</a></li>
+<li><a href="#_using_the_discoveryclient">Using the DiscoveryClient</a></li>
+<li><a href="#spring-cloud-zookeeper-dependencies">Using the Zookeeper Dependencies</a></li>
+<li><a href="#_how_to_activate_zookeeper_dependencies">How to activate Zookeeper Dependencies</a></li>
+<li><a href="#_setting_up_zookeeper_dependencies">Setting up Zookeeper Dependencies</a></li>
+<li><a href="#_stubs">Stubs</a></li>
+<li><a href="#_configuring_spring_cloud_zookeeper_dependencies">Configuring Spring Cloud Zookeeper Dependencies</a></li>
+<li><a href="#spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</a></li>
+<li><a href="#_how_to_activate_2">How to activate</a></li>
+<li><a href="#_registering_a_listener">Registering a listener</a></li>
+<li><a href="#_presence_checker">Presence Checker</a></li>
+</ul>
+</li>
+<li><a href="#spring-cloud-zookeeper-config">Distributed Configuration with Zookeeper</a>
+<ul class="sectlevel2">
+<li><a href="#_how_to_activate_3">How to activate</a></li>
+<li><a href="#_customizing">Customizing</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -421,9 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 and binding to the Spring Environment and other Spring programming model idioms. With a few
 simple annotations you can quickly enable and configure the common patterns inside your
 application and build large distributed systems with Zookeeper based components. The
-patterns provided include Service Discovery, Circuit Breaker and Configuration.
-Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon) are provided by
-integration with Spring Cloud Netflix.</p>
+patterns provided include Service Discovery and Configuration.
+Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon), Circuit Breaker
+(Hystrix) are provided by integration with Spring Cloud Netflix.</p>
 </div>
 </div>
 </div>
@@ -431,7 +459,7 @@ integration with Spring Cloud Netflix.</p>
 <h2 id="spring-cloud-zookeeper-install">Install Zookeeper</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO: document zookeeper installation</p>
+<p>Please see the <a href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation documentation</a> for instructions on how to install Zookeeper.</p>
 </div>
 </div>
 </div>
@@ -439,7 +467,409 @@ integration with Spring Cloud Netflix.</p>
 <h2 id="spring-cloud-zookeeper-discovery">Service Discovery with Zookeeper</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO: document zookeeper service discovery</p>
+<p>Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. <a href="http://curator.apache.org">Curator</a>(A java library for Zookeeper) provides Service Discovery services via <a href="http://curator.apache.org/curator-x-discovery/">Service Discovery Extension</a>. Spring Cloud Zookeeper leverages this extension for service registration and discovery.</p>
+</div>
+<div class="sect2">
+<h3 id="_how_to_activate">How to activate</h3>
+<div class="paragraph">
+<p>Including a dependency on <code>org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Discovery.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registering_with_zookeeper">Registering with Zookeeper</h3>
+<div class="paragraph">
+<p>When a client registers with Zookeeper, it provides meta-data about itself such as host and port, id and name.</p>
+</div>
+<div class="paragraph">
+<p>Example Zookeeper client:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@SpringBootApplication
+@EnableDiscoveryClient
+@RestController
+public class Application {
+
+    @RequestMapping("/")
+    public String home() {
+        return "Hello world";
+    }
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(Application.class).web(true).run(args);
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(i.e. utterly normal Spring Boot app).  If Zookeeper is located somewhere other than <code>localhost:2181</code>, the configuration is required to locate the server. Example:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre>spring:
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181</pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+If you use <a href="#spring-cloud-zookeeper-config">Spring Cloud Zookeeper Config</a>, the above values will need to be placed in <code>bootstrap.yml</code> instead of <code>application.yml</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The default service name, instance id and port, taken from the <code>Environment</code>, are <code>${spring.application.name}</code>, the Spring Context ID and <code>${server.port}</code> respectively.</p>
+</div>
+<div class="paragraph">
+<p><code>@EnableDiscoveryClient</code> makes the app into both a Zookeeper "service" (i.e. it registers itself) and a "client" (i.e. it can query Zookeeper to locate other services).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_the_discoveryclient">Using the DiscoveryClient</h3>
+<div class="paragraph">
+<p>Spring Cloud has support for <a href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign">Feign</a> (a REST client builder) and also <a href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon">Spring <code>RestTemplate</code></a> using the logical service names instead of physical URLs.</p>
+</div>
+<div class="paragraph">
+<p>You can also use the <code>org.springframework.cloud.client.discovery.DiscoveryClient</code> which provides a simple API for discovery clients that is not specific to Netflix, e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@Autowired
+private DiscoveryClient discoveryClient;
+
+public String serviceUrl() {
+    List&lt;ServiceInstance&gt; list = discoveryClient.getInstances("STORES");
+    if (list != null &amp;&amp; list.size() &gt; 0 ) {
+        return list.get(0).getUri().toString();
+    }
+    return null;
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="spring-cloud-zookeeper-dependencies">Using the Zookeeper Dependencies</h3>
+<div class="paragraph">
+<p>Spring Cloud Zookeeper gives you a possibility to provide dependencies of your application as properties. As dependencies you can understand other applications that are registered
+in Zookeeper and which you would like to call via <a href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign">Feign</a> (a REST client builder)
+and also <a href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon">Spring <code>RestTemplate</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>You can also benefit from the Zookeeper Dependency Watchers functionality that lets you control and monitor what is the state of your dependencies and decide what to do with that.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_to_activate_zookeeper_dependencies">How to activate Zookeeper Dependencies</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Including a dependency on <code>org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Dependencies.</p>
+</li>
+<li>
+<p>In addition to that you have to set the property <code>spring.cloud.zookeeper.dependencies.enabled</code> to true (defaults to <code>true</code> if not set explicitly).</p>
+</li>
+<li>
+<p>You have to have the <code>spring.cloud.zookeeper.dependencies</code> section properly set up - check the subsequent section for more details.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_setting_up_zookeeper_dependencies">Setting up Zookeeper Dependencies</h3>
+<div class="paragraph">
+<p>Let&#8217;s take a closer look at an example of dependencies representation:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre>spring.application.name: yourServiceName
+spring.cloud.zookeeper:
+  dependencies:
+    newsletter:
+      path: /path/where/newsletter/has/registered/in/zookeeper
+      loadBalancerType: ROUND_ROBIN
+      contentTypeTemplate: application/vnd.newsletter.$version+json
+      version: v1
+      headers:
+        header1:
+            - value1
+        header2:
+            - value2
+      required: false
+      stubs: org.springframework:foo:stubs
+    mailing:
+      path: /path/where/mailing/has/registered/in/zookeeper
+      loadBalancerType: ROUND_ROBIN
+      contentTypeTemplate: application/vnd.mailing.$version+json
+      version: v1
+      required: true</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s now go through each part of the dependency one by one. The root property name is <code>spring.cloud.zookeeper.dependencies</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_aliases">Aliases</h4>
+<div class="paragraph">
+<p>Below the root property you have to represent each dependency has by an alias due to the constraints of Ribbon (the application id has to be placed in the URL
+thus you can&#8217;t pass any complex path like /foo/bar/name). The alias will be the name that you will use instead of serviceId for <code>DiscoveryClient</code>, <code>Feign</code> or <code>RestTemplate</code>.</p>
+</div>
+<div class="paragraph">
+<p>In the aforementioned examples the aliases are <code>newsletter</code> and <code>mailing</code>. Example of Feign usage with <code>newsletter</code> would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@FeignClient("newsletter")
+public interface NewsletterService {
+        @RequestMapping(method = RequestMethod.GET, value = "/newsletter")
+        String getNewsletters();
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_path">Path</h4>
+<div class="paragraph">
+<p>Represented by <code>path</code> yaml property.</p>
+</div>
+<div class="paragraph">
+<p>Path is the path under which the dependency is registered under Zookeeper. Like presented before Ribbon operates on URLs thus this path is not compliant with its requirement.
+That is why Spring Cloud Zookeeper maps the alias to the proper path.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_load_balancer_type">Load balancer type</h4>
+<div class="paragraph">
+<p>Represented by <code>loadBalancerType</code> yaml property.</p>
+</div>
+<div class="paragraph">
+<p>If you know what kind of load balancing strategy has to be applied when calling this particular dependency then you can provide it in the yaml file and it will be automatically applied.
+You can choose one of the following load balancing strategies</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>STICKY - once chosen the instance will always be called</p>
+</li>
+<li>
+<p>RANDOM - picks an instance randomly</p>
+</li>
+<li>
+<p>ROUND_ROBIN - iterates over instances over and over again</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_content_type_template_and_version">Content-Type template and version</h4>
+<div class="paragraph">
+<p>Represented by <code>contentTypeTemplate</code> and <code>version</code> yaml property.</p>
+</div>
+<div class="paragraph">
+<p>If you version your api via the <code>Content-Type</code> header then you don&#8217;t want to add this header to each of your requests. Also if you want to call a new version of the API you don&#8217;t want to
+roam around your code to bump up the API version. That&#8217;s why you can provide a <code>contentTypeTemplate</code> with a special <code>$version</code> placeholder. That placeholder will be filled by the value of the
+<code>version</code> yaml property. Let&#8217;s take a look at an example.</p>
+</div>
+<div class="paragraph">
+<p>Having the following <code>contentTypeTemplate</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>application/vnd.newsletter.$version+json</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the following <code>version</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>v1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Will result in setting up of a <code>Content-Type</code> header for each request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>application/vnd.newsletter.v1+json</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_default_headers">Default headers</h4>
+<div class="paragraph">
+<p>Represented by <code>headers</code> map in yaml</p>
+</div>
+<div class="paragraph">
+<p>Sometimes each call to a dependency requires setting up of some default headers. In order not to do that in code you can set them up in the yaml file.
+Having the following <code>headers</code> section:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>headers:
+    Accept:
+        - text/html
+        - application/xhtml+xml
+    Cache-Control:
+        - no-cache</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Results in adding the <code>Accept</code> and <code>Cache-Control</code> headers with appropriate list of values in your HTTP request.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_obligatory_dependencies">Obligatory dependencies</h4>
+<div class="paragraph">
+<p>Represented by <code>required</code> property in yaml</p>
+</div>
+<div class="paragraph">
+<p>If one of your dependencies is required to be up and running when your application is booting then it&#8217;s enough to set up the <code>required: true</code> property in the yaml file.</p>
+</div>
+<div class="paragraph">
+<p>If your application can&#8217;t localize the required dependency during boot time it will throw an exception and the Spring Context will fail to set up.
+In other words your application won&#8217;t be able to start if the required dependency is not registered in Zookeeper.</p>
+</div>
+<div class="paragraph">
+<p>You can read more about Spring Cloud Zookeeper Presence Checker in the following sections.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stubs">Stubs</h3>
+<div class="paragraph">
+<p>You can provide a colon separated path to the JAR containing stubs of the dependency. Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>stubs: org.springframework:foo:stubs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>means that for a particular dependencies can be found under:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>groupId: <code>org.springframework</code></p>
+</li>
+<li>
+<p>artifactId: <code>foo</code></p>
+</li>
+<li>
+<p>classifier: <code>stubs</code> - this is the default value</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is actually equal to</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>stubs: org.springframework:foo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>since <code>stubs</code> is the default classifier.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuring_spring_cloud_zookeeper_dependencies">Configuring Spring Cloud Zookeeper Dependencies</h3>
+<div class="paragraph">
+<p>There is a bunch of properties that you can set to enable / disable parts of Zookeeper Dependencies functionalities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>spring.cloud.zookeeper.dependencies</code> - if you don&#8217;t set this property you won&#8217;t benefit from Zookeeper Dependencies</p>
+</li>
+<li>
+<p><code>spring.cloud.zookeeper.dependencies.ribbon.enabled</code> (enabled by default) - Ribbon requires explicit global configuration or a particular one for a dependency. By turning on this property
+runtime load balancing strategy resolution is possible and you can profit from the <code>loadBalancerType</code> section of the Zookeeper Dependencies. The configuration that needs this property
+has an implementation of <code>LoadBalancerClient</code> that delegates to the <code>ILoadBalancer</code> presented in the next bullet</p>
+</li>
+<li>
+<p><code>spring.cloud.zookeeper.dependencies.ribbon.loadbalancer</code> (enabled by default) - thanks to this property the custom <code>ILoadBalancer</code> knows that the part of the URI passed to Ribbon might
+actually be the alias that has to be resolved to a proper path in Zookeeper. Without this property you won&#8217;t be able to register applications under nested paths.</p>
+</li>
+<li>
+<p><code>spring.cloud.zookeeper.dependencies.headers.enabled</code> (enabled by default) - this property registers such a <code>RibbonClient</code> that automatically will append appropriate headers and content
+types with version as presented in the Dependency configuration. Without this setting of those two parameters will not be operational.</p>
+</li>
+<li>
+<p><code>spring.cloud.zookeeper.dependencies.resttemplate.enabled</code> (enabled by default) - when enabled will modify the request headers of <code>@LoadBalanced</code> annotated <code>RestTemplate</code> so that it passes
+headers and content type with version set in Dependency configuration. Wihtout this setting of those two parameters will not be operational.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="spring-cloud-zookeeper-dependency-watcher">Spring Cloud Zookeeper Dependency Watcher</h3>
+<div class="paragraph">
+<p>The Dependency Watcher mechanism allows you to register listeners to your dependencies. The functionality is in fact an implementation of the <code>Observator</code> pattern. When a dependency changes
+its state (UP or DOWN) then some custom logic can be applied.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_to_activate_2">How to activate</h3>
+<div class="paragraph">
+<p>Spring Cloud Zookeeper Dependencies functionality needs to be enabled to profit from Dependency Watcher mechanism.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registering_a_listener">Registering a listener</h3>
+<div class="paragraph">
+<p>In order to register a listener you have to implement an interface <code>org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherListener</code> and register it as a bean.
+The interface gives you one method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>    /**
+    * Method executed upon state change of a dependency
+    *
+    * @param dependencyName - alias from microservice configuration {@see ZookeeperDependencies}
+    * @param newState
+    */
+    void stateChanged(String dependencyName, DependencyState newState);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you want to register a listener for a particular dependency then the <code>dependencyName</code> would be the discriminator for your concrete implementation. <code>newState</code> will provide you with information
+ whether your dependency has changed to <code>CONNECTED</code> or <code>DISCONNECTED</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_presence_checker">Presence Checker</h3>
+<div class="paragraph">
+<p>Bound with Dependency Watcher is the functionality called Presence Checker. It allows you to provide custom behaviour upon booting of your application to react accordingly to the state
+of your dependencies.</p>
+</div>
+<div class="paragraph">
+<p>The default implementation of the abstract <code>org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier</code> class is the
+<code>org.springframework.cloud.zookeeper.discovery.watcher.presence.DefaultDependencyPresenceOnStartupVerifier</code> which works in the following way.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the dependency is marked us <code>required</code> and it&#8217;s not in Zookeeper then upon booting your application will throw an exception and shutdown</p>
+</li>
+<li>
+<p>If dependency is not <code>required</code> the <code>org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker</code> will log that application is missing at <code>WARN</code> level</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The functionality can be overriden since the <code>DefaultDependencyPresenceOnStartupVerifier</code> is registered only when there is no bean of <code>DependencyPresenceOnStartupVerifier</code>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -447,14 +877,69 @@ integration with Spring Cloud Netflix.</p>
 <h2 id="spring-cloud-zookeeper-config">Distributed Configuration with Zookeeper</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO: document zookeeper config</p>
+<p>Zookeeper provides a <a href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</a> that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the <a href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</a>.  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the <code>/config</code> namespace by default.  Multiple <code>PropertySource</code> instances are created based on the application&#8217;s name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>config/testApp,dev
+config/testApp
+config/application,dev
+config/application</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The most specific property source is at the top, with the least specific at the bottom.  Properties is the <code>config/application</code> namespace are applicable to all applications using zookeeper for configuration.  Properties in the <code>config/testApp</code> namespace are only available to the instances of the service named "testApp".</p>
+</div>
+<div class="paragraph">
+<p>Configuration is currently read on startup of the application.  Sending a HTTP POST to <code>/refresh</code> will cause the configuration to be reloaded.  Watching the configuration namespace (which Zookeeper supports) is not currently implemented, but will be a future addition to this project.</p>
+</div>
+<div class="sect2">
+<h3 id="_how_to_activate_3">How to activate</h3>
+<div class="paragraph">
+<p>Including a dependency on <code>org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Config.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_customizing">Customizing</h3>
+<div class="paragraph">
+<p>Zookeeper Config may be customized using the following properties:</p>
+</div>
+<div class="listingblock">
+<div class="title">bootstrap.yml</div>
+<div class="content">
+<pre>spring:
+  cloud:
+    zookeeper:
+      config:
+        enabled: true
+        root: configuration
+        defaultContext: apps
+        profileSeparator: '::'</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>enabled</code> setting this value to "false" disables Zookeeper Config</p>
+</li>
+<li>
+<p><code>root</code> sets the base namespace for configuration values</p>
+</li>
+<li>
+<p><code>defaultContext</code> sets the name used by all applications</p>
+</li>
+<li>
+<p><code>profileSeparator</code> sets the value of the separator used to separate the profile name in property sources with profiles</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-28 15:00:03 MDT
+Last updated 2016-03-10 11:42:19 +01:00
 </div>
 </div>
 </body>
