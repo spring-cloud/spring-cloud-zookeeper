@@ -22,15 +22,12 @@ import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
-import lombok.Data;
-
 import static java.util.Collections.singletonList;
 
 /**
  * @author Marcin Grzejszczak, 4financeIT
  * @author Spencer Gibb
  */
-@Data
 public class ZookeeperDependency {
 
 	private static final String VERSION_PLACEHOLDER_REGEX = "\\$version";
@@ -166,4 +163,67 @@ public class ZookeeperDependency {
 		return !this.headers.isEmpty();
 	}
 
+	public String getPath() {
+		return this.path;
+	}
+
+	public LoadBalancerType getLoadBalancerType() {
+		return this.loadBalancerType;
+	}
+
+	public String getContentTypeTemplate() {
+		return this.contentTypeTemplate;
+	}
+
+	public String getVersion() {
+		return this.version;
+	}
+
+	public Map<String, Collection<String>> getHeaders() {
+		return this.headers;
+	}
+
+	public boolean isRequired() {
+		return this.required;
+	}
+
+	public String getStubs() {
+		return this.stubs;
+	}
+
+	public StubsConfiguration getStubsConfiguration() {
+		return this.stubsConfiguration;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void setLoadBalancerType(LoadBalancerType loadBalancerType) {
+		this.loadBalancerType = loadBalancerType;
+	}
+
+	public void setContentTypeTemplate(String contentTypeTemplate) {
+		this.contentTypeTemplate = contentTypeTemplate;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public void setHeaders(Map<String, Collection<String>> headers) {
+		this.headers = headers;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	public void setStubs(String stubs) {
+		this.stubs = stubs;
+	}
+
+	public void setStubsConfiguration(StubsConfiguration stubsConfiguration) {
+		this.stubsConfiguration = stubsConfiguration;
+	}
 }

@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import javax.annotation.PostConstruct;
+
 import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
@@ -25,7 +27,7 @@ import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.ServerList;
 
-import lombok.extern.apachecommons.CommonsLog;
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,8 +38,6 @@ import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBase
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
 import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
@@ -52,8 +52,10 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
  * @author Marcin Grzejszczak, 4financeIT
  */
 @Configuration
-@CommonsLog
 public class ZookeeperRibbonClientConfiguration {
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ZookeeperRibbonClientConfiguration.class);
+
 	protected static final String VALUE_NOT_SET = "__not__set__";
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
 

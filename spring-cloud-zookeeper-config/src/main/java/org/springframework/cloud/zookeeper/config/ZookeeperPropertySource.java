@@ -22,17 +22,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.SneakyThrows;
-import lombok.extern.apachecommons.CommonsLog;
-
+import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.KeeperException;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Spencer Gibb
  */
-@CommonsLog
 public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ZookeeperPropertySource.class);
 
 	private Map<String, String> properties = new LinkedHashMap<>();
 
@@ -47,18 +48,22 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 		return this.properties.get(name);
 	}
 
-	@SneakyThrows
 	private byte[] getPropertyBytes(String fullPath) {
-		byte[] bytes = null;
 		try {
-			bytes = this.getSource().getData().forPath(fullPath);
-		}
-		catch (KeeperException e) {
-			if (e.code() != KeeperException.Code.NONODE) { // not found
-				throw e;
+			byte[] bytes = null;
+			try {
+				bytes = this.getSource().getData().forPath(fullPath);
 			}
+			catch (KeeperException e) {
+				if (e.code() != KeeperException.Code.NONODE) { // not found
+					throw e;
+				}
+			}
+			return bytes;
+		} catch (Exception exception) {
+			ReflectionUtils.rethrowRuntimeException(exception);
 		}
-		return bytes;
+		return null;
 	}
 
 	@Override
@@ -67,34 +72,37 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 		return strings.toArray(new String[strings.size()]);
 	}
 
-	@SneakyThrows
 	private void findProperties(String path) {
-		log.trace("entering findProperties for path: " + path);
-		List<String> children = null;
 		try {
-			children = this.getSource().getChildren().forPath(path);
-		}
-		catch (KeeperException e) {
-			if (e.code() != KeeperException.Code.NONODE) { // not found
-				throw e;
+			log.trace("entering findProperties for path: " + path);
+			List<String> children = null;
+			try {
+				children = this.getSource().getChildren().forPath(path);
 			}
-		}
-		if (children == null || children.isEmpty()) {
-			return;
-		}
+			catch (KeeperException e) {
+				if (e.code() != KeeperException.Code.NONODE) { // not found
+					throw e;
+				}
+			}
+			if (children == null || children.isEmpty()) {
+				return;
+			}
 
-		for (String child : children) {
-			String childPath = path + "/" + child;
-			byte[] bytes = getPropertyBytes(childPath);
-			if (bytes == null || bytes.length == 0) {
-				findProperties(childPath);
+			for (String child : children) {
+				String childPath = path + "/" + child;
+				byte[] bytes = getPropertyBytes(childPath);
+				if (bytes == null || bytes.length == 0) {
+					findProperties(childPath);
+				}
+				else {
+					String key = sanitizeKey(childPath);
+					this.properties.put(key, new String(bytes, Charset.forName("UTF-8")));
+				}
 			}
-			else {
-				String key = sanitizeKey(childPath);
-				this.properties.put(key, new String(bytes, Charset.forName("UTF-8")));
-			}
+			log.trace("leaving findProperties for path: " + path);
+		} catch (Exception exception) {
+			ReflectionUtils.rethrowRuntimeException(exception);
 		}
-		log.trace("leaving findProperties for path: " + path);
 	}
 
 }

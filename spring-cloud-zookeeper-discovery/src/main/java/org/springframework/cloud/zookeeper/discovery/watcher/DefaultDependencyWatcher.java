@@ -27,8 +27,7 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependency;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.context.ApplicationListener;
-
-import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * This Dependency Watcher will verify the presence of dependencies upon startup and registers listeners
@@ -59,18 +58,22 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 	}
 
 	@Override
-	@SneakyThrows
 	public void onApplicationEvent(InstanceRegisteredEvent<?> event) {
 		registerDependencyRegistrationHooks();
 	}
 
 	@Override
-	public void registerDependencyRegistrationHooks() throws Exception {
+	public void registerDependencyRegistrationHooks() {
 		for (ZookeeperDependency zookeeperDependency : this.zookeeperDependencies.getDependencyConfigurations()) {
 			String dependencyPath = zookeeperDependency.getPath();
 			ServiceCache<?> serviceCache = this.serviceDiscovery.getServiceDiscovery()
 					.serviceCacheBuilder().name(dependencyPath).build();
-			serviceCache.start();
+			try {
+				serviceCache.start();
+			}
+			catch (Exception e) {
+				ReflectionUtils.rethrowRuntimeException(e);
+			}
 			this.dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
 			this.dependencyRegistry.put(dependencyPath, serviceCache);
 			serviceCache.addListener(new DependencyStateChangeListenerRegistry(this.listeners, dependencyPath, serviceCache));

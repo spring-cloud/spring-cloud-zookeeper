@@ -31,8 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Spencer Gibb
@@ -90,7 +89,6 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		this.context = context;
 	}
 
-	@SneakyThrows
 	public void build() {
 		if (this.built.compareAndSet(false, true)) {
 			if (this.port.get() <= 0) {
@@ -106,7 +104,6 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		}
 	}
 
-	@SneakyThrows
 	protected void configureServiceInstance(AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance,
 											String appName,
 											ApplicationContext context,
@@ -114,16 +111,20 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 											String host,
 											UriSpec uriSpec) {
 		// @formatter:off
-		serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
-				.name(appName)
-				.payload(new ZookeeperInstance(context.getId(), appName))
-				.port(port.get())
-				.address(host)
-				.uriSpec(uriSpec).build());
+		try {
+			serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
+					.name(appName)
+					.payload(new ZookeeperInstance(context.getId(), appName))
+					.port(port.get())
+					.address(host)
+					.uriSpec(uriSpec).build());
+		}
+		catch (Exception e) {
+			ReflectionUtils.rethrowRuntimeException(e);
+		}
 		// @formatter:on
 	}
 
-	@SneakyThrows
 	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
 			CuratorFramework curator, ZookeeperDiscoveryProperties properties,
 			InstanceSerializer<ZookeeperInstance> instanceSerializer,

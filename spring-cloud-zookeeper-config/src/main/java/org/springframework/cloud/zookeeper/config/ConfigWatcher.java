@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
@@ -32,8 +33,6 @@ import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
-import lombok.extern.apachecommons.CommonsLog;
-
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_ADDED;
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_REMOVED;
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_UPDATED;
@@ -41,8 +40,10 @@ import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NOD
 /**
  * @author Spencer Gibb
  */
-@CommonsLog
 public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationEventPublisherAware{
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ConfigWatcher.class);
 
 	private AtomicBoolean running = new AtomicBoolean(false);
 	private List<String> contexts;

@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import lombok.Data;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -25,7 +23,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Spencer Gibb
  */
 @ConfigurationProperties("spring.cloud.zookeeper.config")
-@Data
 public class ZookeeperConfigProperties {
 	private boolean enabled = true;
 
@@ -36,4 +33,36 @@ public class ZookeeperConfigProperties {
 
 	@NotEmpty
 	private String profileSeparator = ",";
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public String getRoot() {
+		return this.root;
+	}
+
+	public String getDefaultContext() {
+		return this.defaultContext;
+	}
+
+	public String getProfileSeparator() {
+		return this.profileSeparator;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public void setRoot(String root) {
+		this.root = root;
+	}
+
+	public void setDefaultContext(String defaultContext) {
+		this.defaultContext = defaultContext;
+	}
+
+	public void setProfileSeparator(String profileSeparator) {
+		this.profileSeparator = profileSeparator;
+	}
 }

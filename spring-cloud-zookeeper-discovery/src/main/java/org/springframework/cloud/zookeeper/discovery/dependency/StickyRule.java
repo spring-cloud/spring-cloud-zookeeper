@@ -25,7 +25,7 @@ import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
 
-import lombok.extern.apachecommons.CommonsLog;
+import org.apache.commons.logging.Log;
 
 /**
  * Load balancing rule that returns always the same instance.
@@ -34,8 +34,9 @@ import lombok.extern.apachecommons.CommonsLog;
  *
  * author: Marcin Grzejszczak, 4financeIT
  */
-@CommonsLog
 public class StickyRule extends AbstractLoadBalancerRule {
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(StickyRule.class);
 	private final IRule masterStrategy;
 	private final AtomicReference<Server> ourInstance = new AtomicReference<>(null);
 	private final AtomicInteger instanceNumber = new AtomicInteger(-1);

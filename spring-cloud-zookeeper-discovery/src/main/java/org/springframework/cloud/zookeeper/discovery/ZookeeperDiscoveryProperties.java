@@ -16,15 +16,12 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.Data;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Spencer Gibb
  */
 @ConfigurationProperties("spring.cloud.zookeeper.discovery")
-@Data
 public class ZookeeperDiscoveryProperties {
 	private boolean enabled = true;
 
@@ -33,4 +30,36 @@ public class ZookeeperDiscoveryProperties {
 	private String uriSpec = "{scheme}://{address}:{port}";
 
 	private String instanceHost;
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public String getRoot() {
+		return this.root;
+	}
+
+	public String getUriSpec() {
+		return this.uriSpec;
+	}
+
+	public String getInstanceHost() {
+		return this.instanceHost;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public void setRoot(String root) {
+		this.root = root;
+	}
+
+	public void setUriSpec(String uriSpec) {
+		this.uriSpec = uriSpec;
+	}
+
+	public void setInstanceHost(String instanceHost) {
+		this.instanceHost = instanceHost;
+	}
 }

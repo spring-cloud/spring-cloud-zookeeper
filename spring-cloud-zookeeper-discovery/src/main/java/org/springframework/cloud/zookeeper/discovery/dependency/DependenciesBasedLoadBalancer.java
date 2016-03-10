@@ -28,7 +28,7 @@ import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
 
-import lombok.extern.apachecommons.CommonsLog;
+import org.apache.commons.logging.Log;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
@@ -36,8 +36,10 @@ import lombok.extern.apachecommons.CommonsLog;
  *
  * @author Marcin Grzejszczak, 4financeIT
  */
-@CommonsLog
 public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(DependenciesBasedLoadBalancer.class);
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
 

@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.zookeeper;
 
-import lombok.Data;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,11 +33,9 @@ public class ZookeeperEndpoint extends AbstractEndpoint<ZookeeperEndpoint.Zookee
 
 	@Override
 	public ZookeeperData invoke() {
-		ZookeeperData data = new ZookeeperData();
-		return data;
+		return new ZookeeperData();
 	}
 
-	@Data
 	public static class ZookeeperData {
 	}
 }

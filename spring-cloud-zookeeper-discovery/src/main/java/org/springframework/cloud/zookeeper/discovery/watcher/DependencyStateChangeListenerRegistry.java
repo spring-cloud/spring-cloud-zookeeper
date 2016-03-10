@@ -17,12 +17,11 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.details.ServiceCacheListener;
-
-import lombok.extern.apachecommons.CommonsLog;
 
 /**
  *
@@ -31,8 +30,10 @@ import lombok.extern.apachecommons.CommonsLog;
  * @author Marcin Grzejszczak, 4financeIT
  * @author Tomasz Nurkiewicz, 4financeIT
  */
-@CommonsLog
 public class DependencyStateChangeListenerRegistry implements ServiceCacheListener {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(DependencyStateChangeListenerRegistry.class);
 
 	private final List<DependencyWatcherListener> listeners;
 	private final String dependencyName;

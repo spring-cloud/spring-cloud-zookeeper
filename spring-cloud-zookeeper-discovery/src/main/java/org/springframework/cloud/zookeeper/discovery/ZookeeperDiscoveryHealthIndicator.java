@@ -16,18 +16,19 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import lombok.extern.apachecommons.CommonsLog;
-
 /**
  * @author Spencer Gibb
  */
-@CommonsLog
 public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 	private ZookeeperDependencies zookeeperDependencies;

@@ -16,18 +16,17 @@
 
 package org.springframework.cloud.zookeeper;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Spencer Gibb
  */
 @ConfigurationProperties("spring.cloud.zookeeper")
-@Data
 public class ZookeeperProperties {
+
 	@NotNull
 	private String connectString = "localhost:2181";
 
@@ -51,4 +50,60 @@ public class ZookeeperProperties {
 	private Integer blockUntilConnectedWait = 10;
 
 	private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
+
+	public String getConnectString() {
+		return this.connectString;
+	}
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public Integer getBaseSleepTimeMs() {
+		return this.baseSleepTimeMs;
+	}
+
+	public Integer getMaxRetries() {
+		return this.maxRetries;
+	}
+
+	public Integer getMaxSleepMs() {
+		return this.maxSleepMs;
+	}
+
+	public Integer getBlockUntilConnectedWait() {
+		return this.blockUntilConnectedWait;
+	}
+
+	public TimeUnit getBlockUntilConnectedUnit() {
+		return this.blockUntilConnectedUnit;
+	}
+
+	public void setConnectString(String connectString) {
+		this.connectString = connectString;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public void setBaseSleepTimeMs(Integer baseSleepTimeMs) {
+		this.baseSleepTimeMs = baseSleepTimeMs;
+	}
+
+	public void setMaxRetries(Integer maxRetries) {
+		this.maxRetries = maxRetries;
+	}
+
+	public void setMaxSleepMs(Integer maxSleepMs) {
+		this.maxSleepMs = maxSleepMs;
+	}
+
+	public void setBlockUntilConnectedWait(Integer blockUntilConnectedWait) {
+		this.blockUntilConnectedWait = blockUntilConnectedWait;
+	}
+
+	public void setBlockUntilConnectedUnit(TimeUnit blockUntilConnectedUnit) {
+		this.blockUntilConnectedUnit = blockUntilConnectedUnit;
+	}
 }

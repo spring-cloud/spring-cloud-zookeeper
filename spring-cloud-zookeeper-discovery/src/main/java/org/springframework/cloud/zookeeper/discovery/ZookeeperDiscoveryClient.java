@@ -21,13 +21,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-
-import lombok.SneakyThrows;
-import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.util.ReflectionUtils;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
@@ -35,8 +34,10 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
  * @author Spencer Gibb
  * @author Marcin Grzejszczak, 4financeIT
  */
-@CommonsLog
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ZookeeperDiscoveryClient.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 
@@ -70,20 +71,24 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	@Override
-	@SneakyThrows
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
-		String serviceIdToQuery = getServiceIdToQuery(serviceId);
-		Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
-			.getServiceDiscovery().queryForInstances(serviceIdToQuery);
+		try {
+			String serviceIdToQuery = getServiceIdToQuery(serviceId);
+			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
+				.getServiceDiscovery().queryForInstances(serviceIdToQuery);
 
-		ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
+			ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 
-		for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
-			instances.add(createServiceInstance(serviceIdToQuery, instance));
+			for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
+				instances.add(createServiceInstance(serviceIdToQuery, instance));
+			}
+
+			return instances;
+		} catch (Exception exception) {
+			ReflectionUtils.rethrowRuntimeException(exception);
 		}
-
-		return instances;
+		return new ArrayList<>();
 	}
 
 	private String getServiceIdToQuery(String serviceId) {

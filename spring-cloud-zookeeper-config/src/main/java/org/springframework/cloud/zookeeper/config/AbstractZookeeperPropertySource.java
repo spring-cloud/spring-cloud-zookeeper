@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import lombok.Getter;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.core.env.EnumerablePropertySource;
 
@@ -25,7 +24,6 @@ import org.springframework.core.env.EnumerablePropertySource;
  */
 public abstract class AbstractZookeeperPropertySource extends EnumerablePropertySource<CuratorFramework> {
 
-	@Getter
 	private String context;
 
 	public AbstractZookeeperPropertySource(String context, CuratorFramework source) {
@@ -40,5 +38,9 @@ public abstract class AbstractZookeeperPropertySource extends EnumerableProperty
 
 	protected String sanitizeKey(String path) {
 		return path.replace(this.context + "/", "").replace('/', '.');
+	}
+
+	public String getContext() {
+		return this.context;
 	}
 }

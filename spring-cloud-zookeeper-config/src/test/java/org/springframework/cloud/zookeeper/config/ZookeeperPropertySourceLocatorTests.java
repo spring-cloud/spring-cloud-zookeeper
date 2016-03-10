@@ -38,8 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import lombok.SneakyThrows;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -66,8 +64,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		@Bean
 		public RefreshEndpoint refreshEndpoint(ConfigurableApplicationContext context,
 				RefreshScope scope) {
-			RefreshEndpoint endpoint = new TestRefreshEndpoint(context, scope, countDownLatch());
-			return endpoint;
+			return new TestRefreshEndpoint(context, scope, countDownLatch());
 		}
 	}
 
@@ -92,8 +89,7 @@ public class ZookeeperPropertySourceLocatorTests {
 	ZookeeperConfigProperties properties;
 
 	@Before
-	@SneakyThrows
-	public void setup() {
+	public void setup() throws Exception {
 		this.curator = CuratorFrameworkFactory.builder()
 				.retryPolicy(new RetryOneTime(500))
 				.connectString(new ZookeeperProperties().getConnectString())
@@ -121,8 +117,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		this.environment = this.context.getEnvironment();
 	}
 
-	@SneakyThrows
-	public void delete(String path) {
+	public void delete(String path) throws Exception {
 		try {
 			this.curator.delete().deletingChildrenIfNeeded().forPath(path);
 		} catch (KeeperException e) {
@@ -133,8 +128,7 @@ public class ZookeeperPropertySourceLocatorTests {
 	}
 
 	@After
-	@SneakyThrows
-	public void after() {
+	public void after() throws Exception {
 		try {
 			delete(this.properties.getRoot());
 		} finally {

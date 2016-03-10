@@ -19,7 +19,7 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 
-import lombok.extern.apachecommons.CommonsLog;
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,8 +44,10 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnRibbonZookeeper
 @Configuration
 @ConditionalOnDependenciesPassed
-@CommonsLog
 public class DependencyRibbonAutoConfiguration {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(DependencyRibbonAutoConfiguration.class);
 
 	@Autowired ApplicationContext applicationContext;
 

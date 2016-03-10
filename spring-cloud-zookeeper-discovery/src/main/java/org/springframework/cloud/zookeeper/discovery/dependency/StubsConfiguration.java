@@ -4,14 +4,11 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 
-import lombok.Data;
-
 /**
  * Representation of a stubs location
  *
  * @author Marcin Grzejszczak
  */
-@Data
 public class StubsConfiguration {
 	private static final String DEFAULT_STUBS_CLASSIFIER = "stubs";
 	private static final String STUB_COLON_DELIMITER = ":";
@@ -65,11 +62,30 @@ public class StubsConfiguration {
 		return StringUtils.collectionToDelimitedString(Arrays.asList(getStubsGroupId(), getStubsArtifactId(), getStubsClassifier()), STUB_COLON_DELIMITER);
 	}
 
+	public String getStubsGroupId() {
+		return this.stubsGroupId;
+	}
+
+	public String getStubsArtifactId() {
+		return this.stubsArtifactId;
+	}
+
+	public String getStubsClassifier() {
+		return this.stubsClassifier;
+	}
+
 	/**
 	 * Marker class to discern between the stubs location and dependency registration path
 	 */
-	@Data
 	static class DependencyPath {
 		private final String path;
+
+		public DependencyPath(String path) {
+			this.path = path;
+		}
+
+		public String getPath() {
+			return this.path;
+		}
 	}
 }

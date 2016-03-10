@@ -27,14 +27,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.dependency.StubsConfiguration.DependencyPath;
 import org.springframework.util.StringUtils;
 
-import lombok.Data;
-
 /**
  * Representation of this service's dependencies in Zookeeper
  *
  * @author Marcin Grzejszczak, 4financeIT
  */
-@Data
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperDependencies {
 
@@ -132,5 +129,29 @@ public class ZookeeperDependencies {
 			names.add(zookeeperDependencyEntry.getValue().getPath());
 		}
 		return names;
+	}
+
+	public String getPrefix() {
+		return this.prefix;
+	}
+
+	public Map<String, ZookeeperDependency> getDependencies() {
+		return this.dependencies;
+	}
+
+	public String getDefaultHealthEndpoint() {
+		return this.defaultHealthEndpoint;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public void setDependencies(Map<String, ZookeeperDependency> dependencies) {
+		this.dependencies = dependencies;
+	}
+
+	public void setDefaultHealthEndpoint(String defaultHealthEndpoint) {
+		this.defaultHealthEndpoint = defaultHealthEndpoint;
 	}
 }

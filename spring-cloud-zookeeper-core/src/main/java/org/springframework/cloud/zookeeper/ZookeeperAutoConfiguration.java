@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.zookeeper;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
@@ -30,17 +31,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.SneakyThrows;
-import lombok.extern.apachecommons.CommonsLog;
-
 /**
  * @author Spencer Gibb
  */
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.enabled", matchIfMissing = true)
 @EnableConfigurationProperties
-@CommonsLog
 public class ZookeeperAutoConfiguration {
+
+	private static final Log log = org.apache.commons.logging.LogFactory
+			.getLog(ZookeeperAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private EnsembleProvider ensembleProvider;
@@ -53,8 +53,7 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
-	@SneakyThrows
-	public CuratorFramework curatorFramework(RetryPolicy retryPolicy, ZookeeperProperties properties) {
+	public CuratorFramework curatorFramework(RetryPolicy retryPolicy, ZookeeperProperties properties) throws Exception {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 		if (this.ensembleProvider != null) {
 			builder.ensembleProvider(this.ensembleProvider);

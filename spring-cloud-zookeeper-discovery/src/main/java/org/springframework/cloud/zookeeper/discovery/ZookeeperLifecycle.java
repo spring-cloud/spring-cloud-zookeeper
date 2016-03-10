@@ -17,8 +17,7 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle;
-
-import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Spencer Gibb
@@ -35,18 +34,26 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 	}
 
 	@Override
-	@SneakyThrows
 	protected void register() {
-		this.serviceDiscovery.getServiceDiscovery().start();
+		try {
+			this.serviceDiscovery.getServiceDiscovery().start();
+		}
+		catch (Exception e) {
+			ReflectionUtils.rethrowRuntimeException(e);
+		}
 	}
 
 	// TODO: implement registerManagement
 
 	@Override
-	@SneakyThrows
 	protected void deregister() {
-		this.serviceDiscovery.getServiceDiscovery().unregisterService(
-				this.serviceDiscovery.getServiceInstance());
+		try {
+			this.serviceDiscovery.getServiceDiscovery().unregisterService(
+					this.serviceDiscovery.getServiceInstance());
+		}
+		catch (Exception e) {
+			ReflectionUtils.rethrowRuntimeException(e);
+		}
 	}
 
 	// TODO: implement deregisterManagement

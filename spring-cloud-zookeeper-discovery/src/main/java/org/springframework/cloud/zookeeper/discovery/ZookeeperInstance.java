@@ -16,19 +16,35 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 /**
  * @author Spencer Gibb
  */
-@Data
-@AllArgsConstructor
 public class ZookeeperInstance {
 	private String id;
 	private String name;
 
 	@SuppressWarnings("unused")
 	private ZookeeperInstance() {
+	}
+
+	public ZookeeperInstance(String id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

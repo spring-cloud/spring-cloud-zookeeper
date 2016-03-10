@@ -16,9 +16,8 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import javax.annotation.PreDestroy;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
@@ -29,8 +28,7 @@ import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
-
-import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Spencer Gibb
@@ -61,11 +59,15 @@ public class ZookeeperServiceWatch implements
 	}
 
 	@Override
-	@SneakyThrows
 	public void onApplicationEvent(InstanceRegisteredEvent<?> event) {
 		this.cache = TreeCache.newBuilder(this.curator, this.properties.getRoot()).build();
 		this.cache.getListenable().addListener(this);
-		this.cache.start();
+		try {
+			this.cache.start();
+		}
+		catch (Exception e) {
+			ReflectionUtils.rethrowRuntimeException(e);
+		}
 	}
 
 	@PreDestroy
