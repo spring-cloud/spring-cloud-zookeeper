@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Import;
 @EnableConfigurationProperties
 public class ZookeeperConfigBootstrapConfiguration {
 	@Bean
+	@ConditionalOnMissingBean
 	public ZookeeperPropertySourceLocator zookeeperPropertySourceLocator(
 			CuratorFramework curator, ZookeeperConfigProperties properties) {
 		return new ZookeeperPropertySourceLocator(curator, properties);
