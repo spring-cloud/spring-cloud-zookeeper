@@ -18,8 +18,33 @@ package org.springframework.cloud.zookeeper.discovery;
 
 /**
  * @author Spencer Gibb
- *
- * Markup interface for zookeeper payload
  */
-public interface ZookeeperInstance {
+public class ZookeeperDefaultInstance implements ZookeeperInstance {
+	private String id;
+	private String name;
+
+	@SuppressWarnings("unused")
+	private ZookeeperDefaultInstance() {
+	}
+
+	public ZookeeperDefaultInstance(String id, String name) {
+			this.id = id;
+			this.name = name;
+	}
+
+	public String getId() {
+			return this.id;
+	}
+
+	public String getName() {
+			return this.name;
+	}
+
+	public void setId(String id) {
+			this.id = id;
+	}
+
+	public void setName(String name) {
+			this.name = name;
+	}
 }
