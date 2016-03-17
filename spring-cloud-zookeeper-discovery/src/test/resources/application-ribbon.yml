@@ -1,1 +1,8 @@
-spring.application.name: ribbonApp
+spring:
+  application:
+    name: ribbonApp
+  cloud:
+    zookeeper:
+      discovery:
+        metadata:
+          testMetadataKey: testMetadataValue

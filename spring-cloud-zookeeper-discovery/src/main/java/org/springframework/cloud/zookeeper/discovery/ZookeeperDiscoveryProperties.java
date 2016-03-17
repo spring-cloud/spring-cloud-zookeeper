@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,6 +33,12 @@ public class ZookeeperDiscoveryProperties {
 	private String uriSpec = "{scheme}://{address}:{port}";
 
 	private String instanceHost;
+
+	/**
+	 * Gets the metadata name/value pairs associated with this instance. This information
+	 * is sent to zookeeper and can be used by other instances.
+	 */
+	private Map<String, String> metadata = new HashMap<>();
 
 	public boolean isEnabled() {
 		return this.enabled;
@@ -61,5 +70,25 @@ public class ZookeeperDiscoveryProperties {
 
 	public void setInstanceHost(String instanceHost) {
 		this.instanceHost = instanceHost;
+	}
+
+	public Map<String, String> getMetadata() {
+		return this.metadata;
+	}
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("ZookeeperDiscoveryProperties{");
+		sb.append("enabled=").append(this.enabled);
+		sb.append(", root='").append(this.root).append('\'');
+		sb.append(", uriSpec='").append(this.uriSpec).append('\'');
+		sb.append(", instanceHost='").append(this.instanceHost).append('\'');
+		sb.append(", metadata=").append(this.metadata);
+		sb.append('}');
+		return sb.toString();
 	}
 }

@@ -16,20 +16,25 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Spencer Gibb
  */
 public class ZookeeperInstance {
 	private String id;
 	private String name;
+	private Map<String, String> metadata = new HashMap<>();
 
 	@SuppressWarnings("unused")
 	private ZookeeperInstance() {
 	}
 
-	public ZookeeperInstance(String id, String name) {
+	public ZookeeperInstance(String id, String name, Map<String, String> metadata) {
 		this.id = id;
 		this.name = name;
+		this.metadata = metadata;
 	}
 
 	public String getId() {
@@ -46,5 +51,23 @@ public class ZookeeperInstance {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Map<String, String> getMetadata() {
+		return this.metadata;
+	}
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("ZookeeperInstance{");
+		sb.append("id='").append(this.id).append('\'');
+		sb.append(", name='").append(this.name).append('\'');
+		sb.append(", metadata=").append(this.metadata);
+		sb.append('}');
+		return sb.toString();
 	}
 }

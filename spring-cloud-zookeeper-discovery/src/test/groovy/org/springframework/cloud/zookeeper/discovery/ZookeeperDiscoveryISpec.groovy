@@ -66,6 +66,7 @@ class ZookeeperDiscoveryISpec extends Specification implements PollingUtils {
 			ServiceInstance instance = instances.first()
 		expect:
 			'UP' == registeredServiceStatus(instance)
+            'testMetadataValue' == instance.metadata.get('testMetadataKey')
 	}
 
 	def 'should present application name as id of the service instance'() {

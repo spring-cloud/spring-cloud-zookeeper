@@ -19,7 +19,9 @@ package org.springframework.cloud.zookeeper.discovery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -67,7 +69,13 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			port = serviceInstance.getSslPort();
 		}
 
-		return new DefaultServiceInstance(serviceId, serviceInstance.getAddress(), port, secure);
+		Map<String, String> metadata;
+		if (serviceInstance.getPayload() != null) {
+			metadata = serviceInstance.getPayload().getMetadata();
+		} else {
+			metadata = new HashMap<>();
+		}
+		return new DefaultServiceInstance(serviceId, serviceInstance.getAddress(), port, secure, metadata);
 	}
 
 	@Override
