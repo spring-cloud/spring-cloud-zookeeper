@@ -31,6 +31,7 @@ import org.springframework.cloud.netflix.feign.ribbon.CachingSpringLoadBalancerF
 import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -51,19 +52,16 @@ import feign.Response;
 @ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
 @AutoConfigureAfter({ RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class })
 public class DependencyFeignClientAutoConfiguration {
-	@Autowired(required = false)
-	private LoadBalancerFeignClient ribbonClient;
-
-	@Autowired
-	private ZookeeperDependencies zookeeperDependencies;
-
-	@Autowired
-	private CachingSpringLoadBalancerFactory loadBalancerFactory;
+	@Autowired(required = false) private LoadBalancerFeignClient ribbonClient;
+	@Autowired private ZookeeperDependencies zookeeperDependencies;
+	@Autowired private CachingSpringLoadBalancerFactory loadBalancerFactory;
+	@Autowired private SpringClientFactory springClientFactory;
 
 	@Bean
 	@Primary
 	Client dependencyBasedFeignClient() {
-		return new LoadBalancerFeignClient(new Client.Default(null, null), this.loadBalancerFactory) {
+		return new LoadBalancerFeignClient(
+				new Client.Default(null, null), this.loadBalancerFactory, this.springClientFactory) {
 
 			@Override
 			public Response execute(Request request, Request.Options options)
