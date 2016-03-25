@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
+import org.apache.curator.test.TestingServer;
 import org.apache.zookeeper.KeeperException;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.util.SocketUtils;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -49,9 +51,10 @@ public class ZookeeperPropertySourceLocatorTests {
 
 	private ConfigurableEnvironment environment;
 	public static final String PREFIX = "test__config__";
-	public static final String ROOT = "/"+PREFIX + UUID.randomUUID();
+	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
 	private ConfigurableApplicationContext context;
 	public static final String KEY = ROOT + "/application/testProp";
+	private TestingServer testingServer;
 
 	@Configuration
 	@EnableAutoConfiguration
@@ -90,9 +93,12 @@ public class ZookeeperPropertySourceLocatorTests {
 
 	@Before
 	public void setup() throws Exception {
+		int port = SocketUtils.findAvailableTcpPort();
+		this.testingServer = new TestingServer(port);
+		String connectString = "localhost:" + port;
 		this.curator = CuratorFrameworkFactory.builder()
 				.retryPolicy(new RetryOneTime(500))
-				.connectString(new ZookeeperProperties().getConnectString())
+				.connectString(connectString)
 				.build();
 		this.curator.start();
 
@@ -109,7 +115,8 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		this.context = new SpringApplicationBuilder(Config.class)
 				.web(false)
-				.run("--spring.application.name=testZkPropertySource",
+				.run("--spring.cloud.zookeeper.connectString=" + connectString,
+						"--spring.application.name=testZkPropertySource",
 						"--spring.cloud.zookeeper.config.root="+ROOT);
 
 		this.curator = this.context.getBean(CuratorFramework.class);
