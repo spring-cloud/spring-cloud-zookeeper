@@ -5,9 +5,10 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 
 /**
- * Representation of a stubs location
+ * Representation of a stubs location.
  *
  * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class StubsConfiguration {
 	private static final String DEFAULT_STUBS_CLASSIFIER = "stubs";

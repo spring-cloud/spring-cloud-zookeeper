@@ -17,18 +17,22 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 /**
+ * {@link org.springframework.boot.actuate.health.HealthIndicator} that presents
+ * the status of all instances registered in Zookeeper.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperDiscoveryHealthIndicator.class);
+	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 	private ZookeeperDependencies zookeeperDependencies;

@@ -19,7 +19,10 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
  * Performs logic upon change of state of a dependency {@link DependencyState}
  * in the service discovery system.
  *
- * @author <a href="http://www.4financeit.com>4financeIT</a>
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
+ *
+ * @see org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies
  */
 public interface DependencyWatcherListener {
 
@@ -28,8 +31,6 @@ public interface DependencyWatcherListener {
 	 *
 	 * @param dependencyName - alias from microservice configuration
 	 * @param newState - new state of the dependency
-	 *
-	 * @see org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies
 	 */
 	void stateChanged(String dependencyName, DependencyState newState);
 }

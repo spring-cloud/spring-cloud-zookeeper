@@ -33,11 +33,12 @@ import org.springframework.util.ReflectionUtils;
  * This Dependency Watcher will verify the presence of dependencies upon startup and registers listeners
  * to changing of state of dependencies during the application's lifecycle.
  *
+ * @author Marcin Grzejszczak
+ * @author Michal Chmielarz, 4financeIT
+ * @since 1.0.0
+ *
  * @see DependencyPresenceOnStartupVerifier
  * @see DependencyWatcherListener
- *
- * @author Marcin Grzejszczak, 4financeIT
- * @author Michal Chmielarz, 4financeIT
  */
 public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent<?>> {
 

@@ -34,7 +34,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * Service discovery for Zookeeper that sets up {@link ServiceDiscovery}
+ * and {@link ServiceInstance}.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
@@ -104,6 +108,10 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		}
 	}
 
+	/**
+	 * One can override this method to provide custom way of registering a service
+	 * instance (e.g. when no payload is required).
+	 */
 	protected void configureServiceInstance(AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance,
 											String appName,
 											ApplicationContext context,
@@ -124,7 +132,9 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		}
 		// @formatter:on
 	}
-
+	/**
+	 * One can override this method to provide custom way of registering {@link ServiceDiscovery}
+	 */
 	protected void configureServiceDiscovery(AtomicReference<ServiceDiscovery<ZookeeperInstance>> serviceDiscovery,
 			CuratorFramework curator, ZookeeperDiscoveryProperties properties,
 			InstanceSerializer<ZookeeperInstance> instanceSerializer,

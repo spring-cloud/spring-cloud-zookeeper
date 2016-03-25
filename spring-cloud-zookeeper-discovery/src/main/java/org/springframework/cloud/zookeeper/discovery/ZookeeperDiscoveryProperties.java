@@ -22,16 +22,29 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Properties related to Zookeeper's Service Discovery.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.cloud.zookeeper.discovery")
 public class ZookeeperDiscoveryProperties {
 	private boolean enabled = true;
 
+	/**
+	 * Root Zookeeper folder in which all instances are registered
+	 */
 	private String root = "/services";
 
+	/**
+	 * The URI specification to resolve during service registration in Zookeeper
+	 */
 	private String uriSpec = "{scheme}://{address}:{port}";
 
+	/**
+	 * Predefined host with which a service can register itself in Zookeeper. Corresponds
+	 * to the {code address} from the URI spec.
+	 */
 	private String instanceHost;
 
 	/**
@@ -82,13 +95,11 @@ public class ZookeeperDiscoveryProperties {
 
 	@Override
 	public String toString() {
-		final StringBuffer sb = new StringBuffer("ZookeeperDiscoveryProperties{");
-		sb.append("enabled=").append(this.enabled);
-		sb.append(", root='").append(this.root).append('\'');
-		sb.append(", uriSpec='").append(this.uriSpec).append('\'');
-		sb.append(", instanceHost='").append(this.instanceHost).append('\'');
-		sb.append(", metadata=").append(this.metadata);
-		sb.append('}');
-		return sb.toString();
+		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
+				", root='" + this.root + '\'' +
+				", uriSpec='" + this.uriSpec + '\'' +
+				", instanceHost='" + this.instanceHost + '\'' +
+				", metadata=" + this.metadata +
+				'}';
 	}
 }

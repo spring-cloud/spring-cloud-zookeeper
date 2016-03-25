@@ -29,17 +29,18 @@ import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
  * in the {@link ZookeeperDependency#getLoadBalancerType()}
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(DependenciesBasedLoadBalancer.class);
+	private static final Log log = LogFactory.getLog(DependenciesBasedLoadBalancer.class);
 
 	private final Map<String, IRule> ruleCache = new ConcurrentHashMap<>();
 

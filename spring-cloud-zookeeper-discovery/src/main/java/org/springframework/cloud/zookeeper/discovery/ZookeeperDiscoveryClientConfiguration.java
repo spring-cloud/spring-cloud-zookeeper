@@ -31,7 +31,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * {@link org.springframework.cloud.client.discovery.DiscoveryClient} configuration
+ * for Zookeeper.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.discovery.enabled", matchIfMissing = true)

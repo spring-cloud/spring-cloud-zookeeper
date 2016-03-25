@@ -20,11 +20,11 @@ import java.util.List;
 import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
- *
  * Will result in throwing an exception if there are no running instances of the dependency
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
  * @author Adam Chudzik, 4financeIT
+ * @since 1.0.0
  */
 public class FailOnMissingDependencyChecker implements PresenceChecker {
 	@Override

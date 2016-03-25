@@ -16,9 +16,10 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 /**
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public enum LoadBalancerType {
-	STICKY, RANDOM, ROUND_ROBIN;
+	STICKY, RANDOM, ROUND_ROBIN
 }

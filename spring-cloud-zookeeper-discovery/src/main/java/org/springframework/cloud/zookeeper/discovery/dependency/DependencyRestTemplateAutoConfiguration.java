@@ -37,9 +37,10 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Customizes RestTemplate to support passing of params from dependency
+ * Customizes RestTemplate to support passing of params from dependency.
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @AutoConfigureAfter(DependencyRibbonAutoConfiguration.class)
 @ConditionalOnRibbonZookeeper

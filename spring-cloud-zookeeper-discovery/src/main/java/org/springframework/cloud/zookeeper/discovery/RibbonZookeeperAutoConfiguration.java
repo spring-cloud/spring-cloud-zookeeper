@@ -25,7 +25,11 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
+ * that sets up Ribbon for Zookeeper.
+ *
  * @author Dave Syer
+ * @since 1.0.0
  */
 @Configuration
 @EnableConfigurationProperties
@@ -34,6 +38,4 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
 @RibbonClients(defaultConfiguration = ZookeeperRibbonClientConfiguration.class)
 public class RibbonZookeeperAutoConfiguration {
-
-
 }

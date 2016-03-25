@@ -20,6 +20,7 @@ import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,7 +39,8 @@ import org.springframework.context.annotation.Configuration;
  * Provides LoadBalancerClient that at runtime can pick proper load balancing strategy
  * basing on the Zookeeper dependencies from properties
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @AutoConfigureBefore(RibbonAutoConfiguration.class)
 @ConditionalOnRibbonZookeeper
@@ -46,8 +48,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnDependenciesPassed
 public class DependencyRibbonAutoConfiguration {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(DependencyRibbonAutoConfiguration.class);
+	private static final Log log = LogFactory.getLog(DependencyRibbonAutoConfiguration.class);
 
 	@Autowired ApplicationContext applicationContext;
 

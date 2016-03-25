@@ -18,24 +18,25 @@ package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
- *
  * Will log the missing microservice dependency
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
  * @author Tomasz Dziurko, 4financeIT
+ * @since 1.0.0
  */
 public class LogMissingDependencyChecker implements PresenceChecker {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(LogMissingDependencyChecker.class);
+	private static final Log log = LogFactory.getLog(LogMissingDependencyChecker.class);
 
 	@Override
 	public void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances) {
 		if (serviceInstances.isEmpty()) {
-			log.warn("Microservice dependency with name ["+dependencyName+"] is missing.");
+			log.warn("Microservice dependency with name [" + dependencyName
+					+ "] is missing.");
 		}
 	}
 

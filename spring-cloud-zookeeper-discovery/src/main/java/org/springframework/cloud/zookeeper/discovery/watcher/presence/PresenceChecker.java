@@ -23,7 +23,8 @@ import org.apache.curator.x.discovery.ServiceInstance;
  * The implementation of this interface will be called upon checking if a dependency with a given name
  * is present upon startup within the provided service instances.
  *
- * @author <a href="http://www.4financeit.com>4financeIT</a>
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public interface PresenceChecker {
 

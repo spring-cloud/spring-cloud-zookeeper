@@ -35,9 +35,10 @@ import java.util.List;
  * Provides hooks for observing dependency lifecycle in Zookeeper.
  * Needs custom dependencies to be set in order to work.
  *
- * @see ZookeeperDependencies
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @see ZookeeperDependencies
  */
 @Configuration
 @EnableConfigurationProperties
@@ -58,8 +59,8 @@ public class DependencyWatcherAutoConfiguration {
 	@ConditionalOnMissingBean
 	public DependencyRegistrationHookProvider dependencyWatcher(
 			ZookeeperServiceDiscovery serviceDiscovery,
-																DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
-																ZookeeperDependencies zookeeperDependencies) {
+			DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
+			ZookeeperDependencies zookeeperDependencies) {
 		return new DefaultDependencyWatcher(serviceDiscovery,
 				dependencyPresenceOnStartupVerifier,
 				this.dependencyWatcherListeners,

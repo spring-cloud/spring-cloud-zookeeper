@@ -21,7 +21,8 @@ import java.io.IOException;
  * Implementations of this interface are required to register dependency registration hooks
  * on startup and their cleaning upon application context shutdown.
  *
- * @author <a href="http://www.4financeit.com>4financeIT</a>
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public interface DependencyRegistrationHookProvider {
 

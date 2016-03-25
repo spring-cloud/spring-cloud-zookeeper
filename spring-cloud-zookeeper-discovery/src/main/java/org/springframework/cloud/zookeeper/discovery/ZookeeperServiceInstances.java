@@ -6,13 +6,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
+/**
+ * An {@link Iterable} representing registered Zookeeper instances. If using
+ * {@link ZookeeperDependencies} it will return a list of registered Zookeeper instances
+ * corresponding to the ones defined in the dependencies.
+ *
+ * @since 1.0.0
+ */
 public class ZookeeperServiceInstances implements Iterable<ServiceInstance<ZookeeperInstance>> {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperServiceInstances.class);
+	private static final Log log = LogFactory.getLog(ZookeeperServiceInstances.class);
 
 	private final ZookeeperServiceDiscovery serviceDiscovery;
 	private final ZookeeperDependencies zookeeperDependencies;

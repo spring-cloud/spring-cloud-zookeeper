@@ -21,7 +21,10 @@ import com.netflix.loadbalancer.Server;
 import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
+ * A Zookeeper version of a {@link Server Ribbon Server}
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperServer extends Server {
 

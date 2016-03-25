@@ -24,6 +24,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * was turned on
  *
  * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class DependenciesNotPassedCondition extends DependenciesPassedCondition {
 

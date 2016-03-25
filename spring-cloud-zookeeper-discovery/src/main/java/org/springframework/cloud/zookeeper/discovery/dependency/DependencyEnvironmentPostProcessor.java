@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
  * to /${spring.cloud.zookeeper.prefix}/${spring.application.name}
  *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class DependencyEnvironmentPostProcessor
 		implements EnvironmentPostProcessor, Ordered {

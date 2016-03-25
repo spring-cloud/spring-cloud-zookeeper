@@ -41,10 +41,11 @@ import feign.Request;
 import feign.Response;
 
 /**
+ * Configuration for ensuring that headers are set for a given dependency when
+ * Feign is used.
  *
- * Configuration for ensuring that headers are set for a given dependency.
- *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @Configuration
 @ConditionalOnDependenciesPassed

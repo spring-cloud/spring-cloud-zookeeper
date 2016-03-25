@@ -31,7 +31,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * A {@link TreeCacheListener} that sends {@link HeartbeatEvent} when an
+ * entry inside Zookeeper has changed.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperServiceWatch implements
 		ApplicationListener<InstanceRegisteredEvent<?>>, TreeCacheListener,

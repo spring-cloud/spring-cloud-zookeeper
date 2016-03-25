@@ -18,22 +18,22 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.details.ServiceCacheListener;
 
 /**
- *
  * Informs all the DependencyWatcherListeners that a dependency's state has changed
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
  * @author Tomasz Nurkiewicz, 4financeIT
+ * @since 1.0.0
  */
 public class DependencyStateChangeListenerRegistry implements ServiceCacheListener {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(DependencyStateChangeListenerRegistry.class);
+	private static final Log log = LogFactory.getLog(DependencyStateChangeListenerRegistry.class);
 
 	private final List<DependencyWatcherListener> listeners;
 	private final String dependencyName;

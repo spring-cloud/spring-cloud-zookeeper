@@ -20,7 +20,11 @@ import org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * Zookeeper {@link org.springframework.cloud.client.discovery.DiscoveryLifecycle}
+ * that uses {@link ZookeeperServiceDiscovery} to register and de-register instances.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 

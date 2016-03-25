@@ -32,8 +32,13 @@ import org.springframework.util.StringUtils;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
+ * Zookeeper version of {@link AbstractServerList} that returns the list of
+ * servers on which instances are ran. The implementation is capable of resolving
+ * the servers from {@link ZookeeperDependencies}.
+ *
  * @author Spencer Gibb
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 
@@ -80,7 +85,6 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			for (ServiceInstance<ZookeeperInstance> instance : instances) {
 				servers.add(new ZookeeperServer(instance));
 			}
-
 			return servers;
 		}
 		catch (Exception e) {

@@ -18,17 +18,17 @@ package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 import org.apache.curator.x.discovery.ServiceCache;
 
 /**
- *
  * Verifier that checks for presence of mandatory dependencies and delegates to an optional
  * presence checker verification of presence of optional dependencies.
  *
  * The default implementation of required dependencies will result in shutting down of the application
  * if the dependency is missing.
  *
- * @see FailOnMissingDependencyChecker
- *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
  * @author Tomasz Szymanski, 4financeIT
+ * @version 1.0.0
+ *
+ * @see FailOnMissingDependencyChecker
  */
 public abstract class DependencyPresenceOnStartupVerifier {
 	private static final PresenceChecker MANDATORY_DEPENDENCY_CHECKER = new FailOnMissingDependencyChecker();

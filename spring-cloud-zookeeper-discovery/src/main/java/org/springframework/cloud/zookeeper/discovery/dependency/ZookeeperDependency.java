@@ -25,8 +25,11 @@ import org.springframework.util.StringUtils;
 import static java.util.Collections.singletonList;
 
 /**
- * @author Marcin Grzejszczak, 4financeIT
+ * Represents a particular dependency of Zookeeper instance.
+ *
+ * @author Marcin Grzejszczak
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperDependency {
 

@@ -28,6 +28,7 @@ import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.ServerList;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,16 +46,16 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
 /**
  * Preprocessor that configures defaults for zookeeper-discovered ribbon clients. Such as:
  * <code>@zone</code>, NIWSServerListClassName, DeploymentContextBasedVipAddresses,
- * NFLoadBalancerRuleClassName, NIWSServerListFilterClassName and more
+ * NFLoadBalancerRuleClassName, NIWSServerListFilterClassName and more.
  *
  * @author Spencer Gibb
  * @author Dave Syer
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @Configuration
 public class ZookeeperRibbonClientConfiguration {
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperRibbonClientConfiguration.class);
+	private static final Log log = LogFactory.getLog(ZookeeperRibbonClientConfiguration.class);
 
 	protected static final String VALUE_NOT_SET = "__not__set__";
 	protected static final String DEFAULT_NAMESPACE = "ribbon";

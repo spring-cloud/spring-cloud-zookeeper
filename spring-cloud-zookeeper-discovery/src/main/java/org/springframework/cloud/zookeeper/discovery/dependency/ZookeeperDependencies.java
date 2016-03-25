@@ -30,7 +30,8 @@ import org.springframework.util.StringUtils;
 /**
  * Representation of this service's dependencies in Zookeeper
  *
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperDependencies {

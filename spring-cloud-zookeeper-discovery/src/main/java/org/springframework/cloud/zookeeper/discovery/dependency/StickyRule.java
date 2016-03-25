@@ -26,17 +26,18 @@ import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Load balancing rule that returns always the same instance.
  *
  * Ported from {@code org.apache.curator.x.discovery.strategies.StickyStrategy}
  *
- * author: Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class StickyRule extends AbstractLoadBalancerRule {
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(StickyRule.class);
+	private static final Log log = LogFactory.getLog(StickyRule.class);
 	private final IRule masterStrategy;
 	private final AtomicReference<Server> ourInstance = new AtomicReference<>(null);
 	private final AtomicInteger instanceNumber = new AtomicInteger(-1);

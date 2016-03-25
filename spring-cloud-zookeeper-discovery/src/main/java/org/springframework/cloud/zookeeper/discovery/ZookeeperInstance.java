@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Represents the default payload of a registered service in Zookeeper.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperInstance {
 	private String id;
@@ -63,11 +66,9 @@ public class ZookeeperInstance {
 
 	@Override
 	public String toString() {
-		final StringBuffer sb = new StringBuffer("ZookeeperInstance{");
-		sb.append("id='").append(this.id).append('\'');
-		sb.append(", name='").append(this.name).append('\'');
-		sb.append(", metadata=").append(this.metadata);
-		sb.append('}');
-		return sb.toString();
+		return "ZookeeperInstance{" + "id='" + this.id + '\'' +
+				", name='" + this.name + '\'' +
+				", metadata=" + this.metadata +
+				'}';
 	}
 }

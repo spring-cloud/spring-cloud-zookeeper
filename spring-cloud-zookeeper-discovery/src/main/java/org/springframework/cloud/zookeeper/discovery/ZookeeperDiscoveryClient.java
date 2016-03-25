@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -33,13 +34,16 @@ import org.springframework.util.ReflectionUtils;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
+ * Zookeeper version of {@link DiscoveryClient}. Capable of resolving aliases from
+ * {@link ZookeeperDependencies} to service names in Zookeeper.
+ *
  * @author Spencer Gibb
- * @author Marcin Grzejszczak, 4financeIT
+ * @author Marcin Grzejszczak
+ * @since 1.0.0
  */
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperDiscoveryClient.class);
+	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 
@@ -64,11 +68,9 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
 		boolean secure = serviceInstance.getSslPort() != null;
 		Integer port = serviceInstance.getPort();
-
 		if (secure) {
 			port = serviceInstance.getSslPort();
 		}
-
 		Map<String, String> metadata;
 		if (serviceInstance.getPayload() != null) {
 			metadata = serviceInstance.getPayload().getMetadata();
@@ -85,13 +87,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			String serviceIdToQuery = getServiceIdToQuery(serviceId);
 			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
 				.getServiceDiscovery().queryForInstances(serviceIdToQuery);
-
-			ArrayList<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
-
+			List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
 			}
-
 			return instances;
 		} catch (Exception exception) {
 			ReflectionUtils.rethrowRuntimeException(exception);
