@@ -22,33 +22,48 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Properties related to connecting to Zookeeper
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperProperties {
 
+	/**
+	 * Connection string to the Zookeeper cluster
+	 */
 	@NotNull
 	private String connectString = "localhost:2181";
 
+	/**
+	 * Is Zookeeper enabled
+	 */
 	private boolean enabled = true;
 
 	/**
-	 * @param baseSleepTimeMs initial amount of time to wait between retries
+	 * Initial amount of time to wait between retries
 	 */
 	private Integer baseSleepTimeMs = 50;
 
 	/**
-	 * @param maxRetries max number of times to retry
+	 * Max number of times to retry
 	 */
 	private Integer maxRetries = 10;
 
 	/**
-	 * @param maxSleepMs max time in ms to sleep on each retry
+	 * Max time in ms to sleep on each retry
 	 */
 	private Integer maxSleepMs = 500;
 
+	/**
+	 * Wait time to block on connection to Zookeeper
+	 */
 	private Integer blockUntilConnectedWait = 10;
 
+	/**
+	 * The unit of time related to blocking on connection to Zookeeper
+	 */
 	private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
 
 	public String getConnectString() {

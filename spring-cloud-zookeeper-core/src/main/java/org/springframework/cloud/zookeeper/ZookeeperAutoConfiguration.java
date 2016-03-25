@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,15 +33,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
+ * that sets up Zookeeper discovery.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.enabled", matchIfMissing = true)
 @EnableConfigurationProperties
 public class ZookeeperAutoConfiguration {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperAutoConfiguration.class);
+	private static final Log log = LogFactory.getLog(ZookeeperAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private EnsembleProvider ensembleProvider;
@@ -88,8 +92,8 @@ public class ZookeeperAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		public ZookeeperHealthIndicator zookeeperHealthIndicator() {
-			return new ZookeeperHealthIndicator();
+		public ZookeeperHealthIndicator zookeeperHealthIndicator(CuratorFramework curator) {
+			return new ZookeeperHealthIndicator(curator);
 		}
 	}
 }

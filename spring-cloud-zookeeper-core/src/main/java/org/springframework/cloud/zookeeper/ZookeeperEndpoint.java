@@ -21,7 +21,11 @@ import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * A Zookeeper {@link org.springframework.boot.actuate.endpoint.Endpoint} that returns
+ * {@link ZookeeperData}.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @ConfigurationProperties(prefix = "endpoints.zookeeper", ignoreUnknownFields = false)
 public class ZookeeperEndpoint extends AbstractEndpoint<ZookeeperEndpoint.ZookeeperData> {

@@ -18,16 +18,22 @@ package org.springframework.cloud.zookeeper;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
 /**
+ * A {@link org.springframework.boot.actuate.health.HealthIndicator} that checks the
+ * status of the Zookeeper connection.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
-	@Autowired
-	CuratorFramework curator;
+	private final CuratorFramework curator;
+
+	public ZookeeperHealthIndicator(CuratorFramework curator) {
+		this.curator = curator;
+	}
 
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {

@@ -15,6 +15,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<properties>
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
