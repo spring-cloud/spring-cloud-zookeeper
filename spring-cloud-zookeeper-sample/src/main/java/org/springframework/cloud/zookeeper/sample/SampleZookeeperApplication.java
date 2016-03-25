@@ -24,9 +24,11 @@ import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,4 +98,11 @@ public class SampleZookeeperApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SampleZookeeperApplication.class, args);
 	}
+
+	@Bean
+	@LoadBalanced
+	RestTemplate loadBalancedRestTemplate() {
+		return new RestTemplate();
+	}
+
 }

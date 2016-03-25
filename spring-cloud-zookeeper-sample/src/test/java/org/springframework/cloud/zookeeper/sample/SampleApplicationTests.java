@@ -16,6 +16,11 @@
 
 package org.springframework.cloud.zookeeper.sample;
 
+import java.io.IOException;
+
+import org.apache.curator.test.TestingServer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -24,6 +29,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SampleZookeeperApplication.class)
 public class SampleApplicationTests {
+
+	static TestingServer testingServer;
+
+	@BeforeClass
+	public static void before() throws Exception {
+		testingServer = new TestingServer(2181);
+	}
+
+	@AfterClass
+	public static void clean() throws IOException {
+		testingServer.close();
+	}
 
 	@Test public void contextLoads() {
 	}

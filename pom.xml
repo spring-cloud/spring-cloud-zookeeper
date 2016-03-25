@@ -74,8 +74,15 @@
 					<configuration>
 						<useFile>false</useFile>
 						<includes>
-							<include>**/*Spec.java</include>
+							<include>**/*Spec.*</include>
+							<include>**/*Tests.*</include>
+							<include>**/*Test.*</include>
 						</includes>
+						<excludes>
+							<exclude>**/Abstract*Spec.*</exclude>
+							<exclude>**/Abstract*Tests.*</exclude>
+							<exclude>**/Abstract*Test.*</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
