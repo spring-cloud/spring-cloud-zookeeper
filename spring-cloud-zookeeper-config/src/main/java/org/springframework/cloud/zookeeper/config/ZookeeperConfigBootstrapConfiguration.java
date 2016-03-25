@@ -25,12 +25,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
+ * Bootstrap Configuration for Zookeeper Configuration
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @Configuration
 @Import(ZookeeperAutoConfiguration.class)
 @EnableConfigurationProperties
 public class ZookeeperConfigBootstrapConfiguration {
+
 	@Bean
 	@ConditionalOnMissingBean
 	public ZookeeperPropertySourceLocator zookeeperPropertySourceLocator(

@@ -23,23 +23,26 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.KeeperException;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * {@link org.springframework.core.env.PropertySource} that stores properties
+ * from Zookeeper inside a map. Properties are loaded upon class initialization.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ZookeeperPropertySource.class);
+	private static final Log log = LogFactory.getLog(ZookeeperPropertySource.class);
 
 	private Map<String, String> properties = new LinkedHashMap<>();
 
 	public ZookeeperPropertySource(String context, CuratorFramework source) {
 		super(context, source);
-
 		findProperties(this.getContext());
 	}
 
@@ -87,7 +90,6 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 			if (children == null || children.isEmpty()) {
 				return;
 			}
-
 			for (String child : children) {
 				String childPath = path + "/" + child;
 				byte[] bytes = getPropertyBytes(childPath);

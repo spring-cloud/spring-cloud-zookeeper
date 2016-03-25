@@ -20,17 +20,31 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Properties related to keeping configuration in Zookeeper.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
+ *
+ * @see ZookeeperPropertySourceLocator
  */
 @ConfigurationProperties("spring.cloud.zookeeper.config")
 public class ZookeeperConfigProperties {
 	private boolean enabled = true;
 
+	/**
+	 * Root folder where the configuration for Zookeeper is kept
+	 */
 	private String root = "config";
 
+	/**
+	 * The name of the default context
+	 */
 	@NotEmpty
 	private String defaultContext = "application";
 
+	/**
+	 * Separator for profile appended to the application name
+	 */
 	@NotEmpty
 	private String profileSeparator = ",";
 

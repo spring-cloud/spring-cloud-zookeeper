@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
@@ -38,12 +39,15 @@ import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NOD
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_UPDATED;
 
 /**
+ * Class that registers a {@link TreeCache} for each context.
+ * It publishes events upon element change in Zookeeper.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationEventPublisherAware{
 
-	private static final Log log = org.apache.commons.logging.LogFactory
-			.getLog(ConfigWatcher.class);
+	private static final Log log = LogFactory.getLog(ConfigWatcher.class);
 
 	private AtomicBoolean running = new AtomicBoolean(false);
 	private List<String> contexts;
@@ -69,7 +73,6 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 				if (!context.startsWith("/")) {
 					context = "/" + context;
 				}
-
 				try {
 					TreeCache cache = TreeCache.newBuilder(this.source, context).build();
 					cache.getListenable().addListener(this);
@@ -105,12 +108,12 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	}
 
 	public String getEventDesc(TreeCacheEvent event) {
-		StringBuffer out = new StringBuffer();
-		out.append("type="+event.getType());
-		out.append(", path="+event.getData().getPath());
+		StringBuilder out = new StringBuilder();
+		out.append("type=").append(event.getType());
+		out.append(", path=").append(event.getData().getPath());
 		byte[] data = event.getData().getData();
 		if (data != null && data.length > 0) {
-			out.append(", data="+new String(data, Charset.forName("UTF-8")));
+			out.append(", data=").append(new String(data, Charset.forName("UTF-8")));
 		}
 		return out.toString();
 	}

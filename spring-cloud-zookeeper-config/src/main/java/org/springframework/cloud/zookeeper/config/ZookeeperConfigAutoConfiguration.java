@@ -24,7 +24,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
+ * that registers a Zookeeper configuration watcher.
+ *
  * @author Spencer Gibb
+ * @since 1.0.0
  */
 @Configuration
 public class ZookeeperConfigAutoConfiguration {
