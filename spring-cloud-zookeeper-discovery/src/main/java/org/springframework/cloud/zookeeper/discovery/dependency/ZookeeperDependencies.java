@@ -50,7 +50,7 @@ public class ZookeeperDependencies {
 	/**
 	 * Default health endpoint that will be checked to verify that a dependency is alive
 	 */
-	@Value("${spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.defaulthealthendpoint:/health}")
+	@Value("${spring.cloud.zookeeper.dependency.ribbon.loadbalancer.defaulthealthendpoint:/health}")
 	private String defaultHealthEndpoint;
 
 	@PostConstruct

@@ -35,7 +35,7 @@ public class DependenciesNotPassedCondition extends DependenciesPassedCondition 
 			return ConditionOutcome.inverse(propertiesSet);
 		}
 		Boolean dependenciesEnabled = context.getEnvironment()
-				.getProperty("spring.cloud.zookeeper.dependencies.enabled", Boolean.class, false);
+				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, false);
 		if (dependenciesEnabled) {
 			return ConditionOutcome.noMatch("Dependencies are defined in configuration and switch is turned on");
 		}

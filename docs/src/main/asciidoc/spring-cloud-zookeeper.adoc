@@ -96,7 +96,7 @@ You can also benefit from the Zookeeper Dependency Watchers functionality that l
 === How to activate Zookeeper Dependencies
 
 - Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` will enable auto-configuration that will setup Spring Cloud Zookeeper Dependencies.
-- In addition to that you have to set the property `spring.cloud.zookeeper.dependencies.enabled` to true (defaults to `true` if not set explicitly).
+- In addition to that you have to set the property `spring.cloud.zookeeper.dependency.enabled` to true (defaults to `true` if not set explicitly).
 - You have to have the `spring.cloud.zookeeper.dependencies` section properly set up - check the subsequent section for more details.
 
 === Setting up Zookeeper Dependencies
@@ -245,14 +245,14 @@ since `stubs` is the default classifier.
 There is a bunch of properties that you can set to enable / disable parts of Zookeeper Dependencies functionalities.
 
 - `spring.cloud.zookeeper.dependencies` - if you don't set this property you won't benefit from Zookeeper Dependencies
-- `spring.cloud.zookeeper.dependencies.ribbon.enabled` (enabled by default) - Ribbon requires explicit global configuration or a particular one for a dependency. By turning on this property
+- `spring.cloud.zookeeper.dependency.ribbon.enabled` (enabled by default) - Ribbon requires explicit global configuration or a particular one for a dependency. By turning on this property
  runtime load balancing strategy resolution is possible and you can profit from the `loadBalancerType` section of the Zookeeper Dependencies. The configuration that needs this property
  has an implementation of `LoadBalancerClient` that delegates to the `ILoadBalancer` presented in the next bullet
-- `spring.cloud.zookeeper.dependencies.ribbon.loadbalancer` (enabled by default) - thanks to this property the custom `ILoadBalancer` knows that the part of the URI passed to Ribbon might
+- `spring.cloud.zookeeper.dependency.ribbon.loadbalancer` (enabled by default) - thanks to this property the custom `ILoadBalancer` knows that the part of the URI passed to Ribbon might
 actually be the alias that has to be resolved to a proper path in Zookeeper. Without this property you won't be able to register applications under nested paths.
-- `spring.cloud.zookeeper.dependencies.headers.enabled` (enabled by default) - this property registers such a `RibbonClient` that automatically will append appropriate headers and content
+- `spring.cloud.zookeeper.dependency.headers.enabled` (enabled by default) - this property registers such a `RibbonClient` that automatically will append appropriate headers and content
 types with version as presented in the Dependency configuration. Without this setting of those two parameters will not be operational.
-- `spring.cloud.zookeeper.dependencies.resttemplate.enabled` (enabled by default) - when enabled will modify the request headers of `@LoadBalanced` annotated `RestTemplate` so that it passes
+- `spring.cloud.zookeeper.dependency.resttemplate.enabled` (enabled by default) - when enabled will modify the request headers of `@LoadBalanced` annotated `RestTemplate` so that it passes
 headers and content type with version set in Dependency configuration. Wihtout this setting of those two parameters will not be operational.
 
 

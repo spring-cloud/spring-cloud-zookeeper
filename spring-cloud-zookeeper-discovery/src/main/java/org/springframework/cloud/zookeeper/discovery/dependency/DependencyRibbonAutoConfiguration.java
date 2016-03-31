@@ -54,7 +54,7 @@ public class DependencyRibbonAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.enabled", matchIfMissing = true)
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.ribbon.enabled", matchIfMissing = true)
 	public LoadBalancerClient loadBalancerClient(SpringClientFactory springClientFactory) {
 		return new RibbonLoadBalancerClient(springClientFactory) {
 			@Override
