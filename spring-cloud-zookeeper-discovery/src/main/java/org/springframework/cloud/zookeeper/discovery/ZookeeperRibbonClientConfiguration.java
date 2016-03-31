@@ -82,7 +82,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
-	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.ribbon.loadbalancer", matchIfMissing = true)
+	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.ribbon.loadbalancer", matchIfMissing = true)
 	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
 			ServerList<?> serverList, IClientConfig config, IPing iPing) {
 		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList, config, iPing);

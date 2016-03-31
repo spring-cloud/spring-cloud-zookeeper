@@ -56,7 +56,7 @@ class StickyRuleISpec extends Specification implements PollingUtils {
 	@RestoreSystemProperties
 	def 'should use sticky load balancing strategy taken from Zookeeper dependencies'() {
 		given:
-			System.setProperty('spring.cloud.zookeeper.dependencies.ribbon.loadbalancer.checkping', 'false')
+			System.setProperty('spring.cloud.zookeeper.dependency.ribbon.loadbalancer.checkping', 'false')
 		expect:
 			thereAreTwoRegisteredServices()
 			URI uri = getUriForAlias()

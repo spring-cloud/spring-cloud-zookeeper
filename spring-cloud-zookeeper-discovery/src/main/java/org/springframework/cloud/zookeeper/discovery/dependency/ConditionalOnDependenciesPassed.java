@@ -33,6 +33,6 @@ import org.springframework.context.annotation.Conditional;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Conditional(DependenciesPassedCondition.class)
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.enabled", matchIfMissing = true)
 public @interface ConditionalOnDependenciesPassed {
 }

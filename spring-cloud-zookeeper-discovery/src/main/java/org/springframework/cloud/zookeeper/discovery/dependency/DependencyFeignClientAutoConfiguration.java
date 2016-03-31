@@ -49,7 +49,7 @@ import feign.Response;
  */
 @Configuration
 @ConditionalOnDependenciesPassed
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.headers.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.headers.enabled", matchIfMissing = true)
 @ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
 @AutoConfigureAfter({ RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class })
 public class DependencyFeignClientAutoConfiguration {

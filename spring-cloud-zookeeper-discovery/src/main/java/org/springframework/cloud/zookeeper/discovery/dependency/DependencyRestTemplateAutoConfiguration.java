@@ -46,7 +46,7 @@ import org.springframework.web.client.RestTemplate;
 @ConditionalOnRibbonZookeeper
 @Configuration
 @ConditionalOnDependenciesPassed
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependencies.resttemplate.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.resttemplate.enabled", matchIfMissing = true)
 public class DependencyRestTemplateAutoConfiguration {
 
 	@Autowired @LoadBalanced RestTemplate restTemplate;
