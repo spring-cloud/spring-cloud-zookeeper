@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
@@ -75,7 +76,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		private CountDownLatch latch;
 
 		public TestRefreshEndpoint( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
-			super(context, scope);
+			super(new ContextRefresher(context, scope));
 			this.latch = latch;
 		}
 
