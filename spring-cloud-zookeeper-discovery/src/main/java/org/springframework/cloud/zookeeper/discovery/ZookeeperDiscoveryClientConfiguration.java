@@ -49,20 +49,20 @@ public class ZookeeperDiscoveryClientConfiguration {
 	private CuratorFramework curator;
 
 	@Bean
-	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties() {
-		return new ZookeeperDiscoveryProperties();
+	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(InetUtils inetUtils) {
+		return new ZookeeperDiscoveryProperties(inetUtils);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(InetUtils inetUtils) {
-		return new ZookeeperServiceDiscovery(this.curator, zookeeperDiscoveryProperties(),
-				instanceSerializer(), inetUtils);
+	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
+		return new ZookeeperServiceDiscovery(this.curator, zookeeperDiscoveryProperties,
+				instanceSerializer);
 	}
 
 	@Bean
-	public ZookeeperLifecycle zookeeperLifecycle(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
-		return new ZookeeperLifecycle(zookeeperDiscoveryProperties(), zookeeperServiceDiscovery);
+	public ZookeeperLifecycle zookeeperLifecycle(ZookeeperServiceDiscovery zookeeperServiceDiscovery, ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperLifecycle(zookeeperDiscoveryProperties, zookeeperServiceDiscovery);
 	}
 
 	@Bean
@@ -94,8 +94,8 @@ public class ZookeeperDiscoveryClientConfiguration {
 	}
 
 	@Bean
-	public ZookeeperServiceWatch zookeeperServiceWatch() {
-		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties());
+	public ZookeeperServiceWatch zookeeperServiceWatch(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
 	}
 
 }

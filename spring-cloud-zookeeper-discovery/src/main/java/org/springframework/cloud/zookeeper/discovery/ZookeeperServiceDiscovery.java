@@ -28,10 +28,10 @@ import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Service discovery for Zookeeper that sets up {@link ServiceDiscovery}
@@ -48,8 +48,6 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private InstanceSerializer<ZookeeperInstance> instanceSerializer;
 
-	private InetUtils inetUtils;
-
 	private ApplicationContext context;
 
 	private AtomicBoolean built = new AtomicBoolean(false);
@@ -65,11 +63,10 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	public ZookeeperServiceDiscovery(CuratorFramework curator,
 			ZookeeperDiscoveryProperties properties,
-			InstanceSerializer<ZookeeperInstance> instanceSerializer, InetUtils inetUtils) {
+			InstanceSerializer<ZookeeperInstance> instanceSerializer) {
 		this.curator = curator;
 		this.properties = properties;
 		this.instanceSerializer = instanceSerializer;
-		this.inetUtils = inetUtils;
 	}
 
 	public int getPort() {
@@ -98,8 +95,10 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 			if (this.port.get() <= 0) {
 				throw new IllegalStateException("Cannot create instance whose port is not greater than 0");
 			}
-			String host = this.properties.getInstanceHost() == null ? getIpAddress() :
-					this.properties.getInstanceHost();
+			String host = this.properties.getInstanceHost();
+			if (!StringUtils.hasText(host)) {
+				throw new IllegalStateException("instanceHost must not be empty");
+			}
 			UriSpec uriSpec = new UriSpec(this.properties.getUriSpec());
 			configureServiceInstance(this.serviceInstance, this.appName,
 					this.context, this.port, host, uriSpec);
@@ -147,10 +146,6 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 				.thisInstance(serviceInstance.get())
 				.build());
 		// @formatter:on
-	}
-
-	public String getIpAddress() {
-		return this.inetUtils.findFirstNonLoopbackAddress().getHostAddress();
 	}
 
 	protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {

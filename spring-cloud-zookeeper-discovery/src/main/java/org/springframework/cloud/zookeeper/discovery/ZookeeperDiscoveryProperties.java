@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.commons.util.InetUtils;
 
 /**
  * Properties related to Zookeeper's Service Discovery.
@@ -29,6 +30,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties("spring.cloud.zookeeper.discovery")
 public class ZookeeperDiscoveryProperties {
+
+	private InetUtils.HostInfo hostInfo;
+
 	private boolean enabled = true;
 
 	/**
@@ -47,11 +51,27 @@ public class ZookeeperDiscoveryProperties {
 	 */
 	private String instanceHost;
 
+	/** Port to register the service under (defaults to listening port) */
+	private Integer instancePort;
+
+	/**
+	 * Register as a service in zookeeper.
+	 */
+	private boolean register = true;
+
 	/**
 	 * Gets the metadata name/value pairs associated with this instance. This information
 	 * is sent to zookeeper and can be used by other instances.
 	 */
 	private Map<String, String> metadata = new HashMap<>();
+
+	@SuppressWarnings("unused")
+	private ZookeeperDiscoveryProperties() {}
+
+	public ZookeeperDiscoveryProperties(InetUtils inetUtils) {
+		this.hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
+		this.instanceHost = this.hostInfo.getIpAddress();
+	}
 
 	public boolean isEnabled() {
 		return this.enabled;
@@ -83,6 +103,7 @@ public class ZookeeperDiscoveryProperties {
 
 	public void setInstanceHost(String instanceHost) {
 		this.instanceHost = instanceHost;
+		this.hostInfo.override = true;
 	}
 
 	public Map<String, String> getMetadata() {
@@ -93,13 +114,31 @@ public class ZookeeperDiscoveryProperties {
 		this.metadata = metadata;
 	}
 
+	public boolean isRegister() {
+		return this.register;
+	}
+
+	public void setRegister(boolean register) {
+		this.register = register;
+	}
+
+	public Integer getInstancePort() {
+		return this.instancePort;
+	}
+
+	public void setInstancePort(Integer instancePort) {
+		this.instancePort = instancePort;
+	}
+
 	@Override
 	public String toString() {
 		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
 				", root='" + this.root + '\'' +
 				", uriSpec='" + this.uriSpec + '\'' +
 				", instanceHost='" + this.instanceHost + '\'' +
+				", instancePort='" + this.instancePort + '\'' +
 				", metadata=" + this.metadata +
+				", register=" + this.register +
 				'}';
 	}
 }

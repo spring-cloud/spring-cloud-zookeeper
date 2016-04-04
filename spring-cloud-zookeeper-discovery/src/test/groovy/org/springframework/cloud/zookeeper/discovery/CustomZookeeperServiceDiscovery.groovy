@@ -6,8 +6,6 @@ import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
 import org.apache.curator.x.discovery.ServiceInstance
 import org.apache.curator.x.discovery.UriSpec
-import org.springframework.cloud.commons.util.InetUtils
-import org.springframework.cloud.commons.util.InetUtilsProperties
 
 class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 
@@ -15,7 +13,7 @@ class CustomZookeeperServiceDiscovery extends ZookeeperServiceDiscovery {
 	private final String basePath
 
 	CustomZookeeperServiceDiscovery(String applicationName, String basePath, CuratorFramework curator) {
-		super(curator, null, null, new InetUtils(new InetUtilsProperties()))
+		super(curator, null, null)
 		this.applicationName = applicationName
 		this.basePath = basePath
 		build()
