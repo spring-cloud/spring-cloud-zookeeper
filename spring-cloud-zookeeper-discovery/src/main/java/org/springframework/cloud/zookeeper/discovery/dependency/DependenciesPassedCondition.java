@@ -15,13 +15,13 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import java.util.Map;
-
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+
+import java.util.Map;
 
 /**
  * Condition that verifies if the Dependencies have been passed in an appropriate
@@ -37,9 +37,15 @@ public class DependenciesPassedCondition extends SpringBootCondition {
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		Map<String, Object> subProperties = new RelaxedPropertyResolver(context.getEnvironment()).getSubProperties(ZOOKEEPER_DEPENDENCIES_PROP);
-		return subProperties.isEmpty() ?
-				ConditionOutcome.noMatch("No dependencies have been passed for the service") :
-				ConditionOutcome.match();
+		if (!subProperties.isEmpty()) {
+			ConditionOutcome.match("Dependencies are defined in configuration");
+		}
+		Boolean dependenciesEnabled = context.getEnvironment()
+				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, false);
+		if (dependenciesEnabled) {
+			ConditionOutcome.match("Dependencies are not defined in configuration, but switch is turned on");
+		}
+		return ConditionOutcome.noMatch("No dependencies have been passed for the service");
 	}
 
 }
