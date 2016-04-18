@@ -5,18 +5,18 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>1.1.0.RC2</version>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
-	<version>1.0.0.RC2</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
 	<properties>
-		<spring-cloud-zookeeper.version>1.0.0.RC2</spring-cloud-zookeeper.version>
-		<spring-cloud-commons.version>1.1.0.RC3</spring-cloud-commons.version>
-		<spring-cloud-netflix.version>1.1.0.RC2</spring-cloud-netflix.version>
+		<spring-cloud-zookeeper.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-commons.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-netflix.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
 		<curator.version>2.9.1</curator.version>
 	</properties>
 	<dependencyManagement>
