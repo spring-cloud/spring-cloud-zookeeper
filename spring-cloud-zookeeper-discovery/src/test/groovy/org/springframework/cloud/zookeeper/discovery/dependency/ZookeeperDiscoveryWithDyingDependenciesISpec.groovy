@@ -19,6 +19,7 @@ import org.apache.curator.test.TestingServer
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.zookeeper.discovery.PollingUtils
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ConfigurableApplicationContext
@@ -27,9 +28,12 @@ import org.springframework.context.annotation.Import
 import org.springframework.util.SocketUtils
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 import spock.util.environment.RestoreSystemProperties
 
-class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification {
+class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification implements PollingUtils {
+
+	PollingConditions pollingConditions = new PollingConditions()
 
 	@Issue("#45")
 	@RestoreSystemProperties
@@ -43,11 +47,14 @@ class ZookeeperDiscoveryWithDyingDependenciesISpec extends Specification {
 			ConfigurableApplicationContext serverContext = contextWithProfile('server')
 			ConfigurableApplicationContext clientContext = contextWithProfile('client')
 		and:
-			Integer portBeforeDying = callServiceAtPortEndpoint(clientContext)
+			Integer serverPortBeforeDying = callServiceAtPortEndpoint(clientContext)
 		and:
 			serverContext = restartContext(serverContext, 'server')
 		expect:
-			callServiceAtPortEndpoint(clientContext) != portBeforeDying
+			pollingConditions.within 5, willPass {
+				assert callServiceAtPortEndpoint(clientContext) != serverPortBeforeDying
+			}
+
 		cleanup:
 			serverContext?.close()
 			clientContext?.close()
