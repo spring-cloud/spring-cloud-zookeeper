@@ -16,9 +16,11 @@
 package org.springframework.cloud.zookeeper.discovery.test
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
 import org.springframework.web.client.RestTemplate
 
 @CompileStatic
+@Commons
 class TestServiceRestClient {
 
 	final RestTemplate restTemplate;
@@ -28,7 +30,9 @@ class TestServiceRestClient {
 	}
 
 	public <T> T callService(String alias, String endpoint, Class<T> clazz) {
-		return restTemplate.getForObject("http://$alias/$endpoint", clazz)
+		String url = "http://$alias/$endpoint"
+		log.info("Calling [$url]")
+		return restTemplate.getForObject(url, clazz)
 	}
 
 	String callService(String alias, String endpoint) {
