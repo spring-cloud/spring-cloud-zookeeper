@@ -62,7 +62,7 @@ public class ZookeeperLifecycleRegistrationDisabledTests {
 
 	@Test
 	public void contextLoads() {
-		List<ServiceInstance> instances = client.getInstances("myTestNotRegisteredService");
+		List<ServiceInstance> instances = this.client.getInstances("myTestNotRegisteredService");
 		assertTrue("service was registered", instances.isEmpty());
 	}
 

@@ -96,8 +96,8 @@ You can also benefit from the Zookeeper Dependency Watchers functionality that l
 === How to activate Zookeeper Dependencies
 
 - Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` will enable auto-configuration that will setup Spring Cloud Zookeeper Dependencies.
-- In addition to that you have to set the property `spring.cloud.zookeeper.dependency.enabled` to true (defaults to `true` if not set explicitly).
-- You have to have the `spring.cloud.zookeeper.dependencies` section properly set up - check the subsequent section for more details.
+- If you have to have the `spring.cloud.zookeeper.dependencies` section properly set up - check the subsequent section for more details then the feature is active
+- You can have the dependencies turned off even if you've provided the dependencies in your properties. Just set the property `spring.cloud.zookeeper.dependency.enabled` to false (defaults to `true`).
 
 === Setting up Zookeeper Dependencies
 
