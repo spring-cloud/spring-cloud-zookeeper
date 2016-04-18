@@ -38,12 +38,12 @@ public class DependenciesPassedCondition extends SpringBootCondition {
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		Map<String, Object> subProperties = new RelaxedPropertyResolver(context.getEnvironment()).getSubProperties(ZOOKEEPER_DEPENDENCIES_PROP);
 		if (!subProperties.isEmpty()) {
-			ConditionOutcome.match("Dependencies are defined in configuration");
+			return ConditionOutcome.match("Dependencies are defined in configuration");
 		}
 		Boolean dependenciesEnabled = context.getEnvironment()
 				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, true);
 		if (dependenciesEnabled) {
-			ConditionOutcome.match("Dependencies are not defined in configuration, but switch is turned on");
+			return ConditionOutcome.match("Dependencies are not defined in configuration, but switch is turned on");
 		}
 		return ConditionOutcome.noMatch("No dependencies have been passed for the service");
 	}
