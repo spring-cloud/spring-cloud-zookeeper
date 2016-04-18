@@ -41,7 +41,7 @@ public class DependenciesPassedCondition extends SpringBootCondition {
 			ConditionOutcome.match("Dependencies are defined in configuration");
 		}
 		Boolean dependenciesEnabled = context.getEnvironment()
-				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, false);
+				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, true);
 		if (dependenciesEnabled) {
 			ConditionOutcome.match("Dependencies are not defined in configuration, but switch is turned on");
 		}
