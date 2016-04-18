@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ZookeeperLifecycleRegistrationDisabledTests.TestPropsConfig.class)
 @WebIntegrationTest(value = { "spring.application.name=myTestNotRegisteredService",
-		"spring.cloud.zookeeper.discovery.register=false"}, randomPort = true)
+		"spring.cloud.zookeeper.discovery.register=false", "spring.cloud.zookeeper.dependency.enabled=false"}, randomPort = true)
 public class ZookeeperLifecycleRegistrationDisabledTests {
 
 	static TestingServer testingServer;

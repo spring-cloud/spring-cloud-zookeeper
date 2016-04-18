@@ -20,8 +20,7 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * Inverse of the {@link ConditionalOnDependenciesPassed} condition. Also checks if switch for zookeeper dependencies
- * was turned on
+ * Inverse of the {@link ConditionalOnDependenciesPassed} condition. 
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -31,15 +30,7 @@ public class DependenciesNotPassedCondition extends DependenciesPassedCondition 
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		ConditionOutcome propertiesSet = super.getMatchOutcome(context, metadata);
-		if (propertiesSet.isMatch()) {
-			return ConditionOutcome.inverse(propertiesSet);
-		}
-		Boolean dependenciesEnabled = context.getEnvironment()
-				.getProperty("spring.cloud.zookeeper.dependency.enabled", Boolean.class, false);
-		if (dependenciesEnabled) {
-			return ConditionOutcome.noMatch("Dependencies are defined in configuration and switch is turned on");
-		}
-		return ConditionOutcome.match("Dependencies are not defined in configuration and switch is turned off");
+		return ConditionOutcome.inverse(propertiesSet);
 	}
 
 }
