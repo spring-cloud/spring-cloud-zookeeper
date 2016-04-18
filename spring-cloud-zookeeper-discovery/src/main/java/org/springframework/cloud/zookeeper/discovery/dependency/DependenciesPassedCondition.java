@@ -15,13 +15,13 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import java.util.Map;
+
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-
-import java.util.Map;
 
 /**
  * Condition that verifies if the Dependencies have been passed in an appropriate
