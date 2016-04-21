@@ -55,6 +55,7 @@ public class ZookeeperAutoConfiguration {
 		return new ZookeeperProperties();
 	}
 
+
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
 	public CuratorFramework curatorFramework(RetryPolicy retryPolicy, ZookeeperProperties properties) throws Exception {
@@ -64,7 +65,7 @@ public class ZookeeperAutoConfiguration {
 		}
 		CuratorFramework curator = builder
 				.retryPolicy(retryPolicy)
-				.connectString(zookeeperProperties().getConnectString())
+				.connectString(properties.getConnectString())
 				.build();
 		curator.start();
 		log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait() + properties.getBlockUntilConnectedUnit());
@@ -75,10 +76,10 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public RetryPolicy exponentialBackoffRetry() {
-		return new ExponentialBackoffRetry(zookeeperProperties().getBaseSleepTimeMs(),
-				zookeeperProperties().getMaxRetries(),
-				zookeeperProperties().getMaxSleepMs());
+	public RetryPolicy exponentialBackoffRetry(ZookeeperProperties properties) {
+		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(),
+				properties.getMaxRetries(),
+				properties.getMaxSleepMs());
 	}
 
 	@Configuration
