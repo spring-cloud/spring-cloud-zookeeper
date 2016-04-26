@@ -88,12 +88,6 @@ public class ZookeeperAutoConfiguration {
 	protected static class ZookeeperHealthConfig {
 		@Bean
 		@ConditionalOnMissingBean
-		public ZookeeperEndpoint zookeeperEndpoint() {
-			return new ZookeeperEndpoint();
-		}
-
-		@Bean
-		@ConditionalOnMissingBean
 		@ConditionalOnEnabledHealthIndicator("zookeeper")
 		public ZookeeperHealthIndicator zookeeperHealthIndicator(CuratorFramework curator) {
 			return new ZookeeperHealthIndicator(curator);
