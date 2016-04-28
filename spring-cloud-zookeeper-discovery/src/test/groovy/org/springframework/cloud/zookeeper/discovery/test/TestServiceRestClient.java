@@ -12,7 +12,7 @@ public class TestServiceRestClient {
 
 	protected final RestTemplate restTemplate;
 
-	TestServiceRestClient(RestTemplate restTemplate) {
+	public TestServiceRestClient(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 
@@ -22,11 +22,11 @@ public class TestServiceRestClient {
 		return this.restTemplate.getForObject(url, clazz);
 	}
 
-	String callService(String alias, String endpoint) {
+	public String callService(String alias, String endpoint) {
 		return callService(alias, endpoint, String.class);
 	}
 
-	String callOnUrl(String url, String endpoint) {
+	public String callOnUrl(String url, String endpoint) {
 		return new RestTemplate().getForObject("http://" + url + "/" + endpoint, String.class);
 	}
 }

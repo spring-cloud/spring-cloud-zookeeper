@@ -1,9 +1,8 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -28,11 +27,7 @@ public class ZookeeperDependenciesTests {
 	private static final Map<String, ZookeeperDependency> DEPENDENCIES = defaultDependencies();
 
 	private static Map<String, Collection<String>> defaultHeader() {
-		Map<String, Collection<String>> map = new HashMap<>();
-		List<String> list = new ArrayList<>();
-		list.add("value");
-		map.put("header", list);
-		return map;
+		return Collections.singletonMap("header", (Collection<String>) Collections.singletonList("value"));
 	}
 
 	private static Map<String, ZookeeperDependency> defaultDependencies() {
