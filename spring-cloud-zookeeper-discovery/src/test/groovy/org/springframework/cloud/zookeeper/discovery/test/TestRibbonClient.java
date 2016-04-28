@@ -9,22 +9,22 @@ public class TestRibbonClient extends TestServiceRestClient {
 
 	private final String thisAppName;
 
-	TestRibbonClient(RestTemplate restTemplate) {
+	public TestRibbonClient(RestTemplate restTemplate) {
 		super(restTemplate);
 		this.thisAppName = "someName";
 	}
 
-	TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
+	public TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
 		super(restTemplate);
 		this.thisAppName = thisAppName;
 	}
 
-	String thisHealthCheck() {
+	public String thisHealthCheck() {
 		return this.restTemplate
 				.getForObject("http://" + this.thisAppName + "/health", String.class);
 	}
 
-	Integer thisPort() {
+	public Integer thisPort() {
 		return this.restTemplate
 				.getForObject("http://" + this.thisAppName + "/port", Integer.class);
 	}
