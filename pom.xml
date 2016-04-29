@@ -203,6 +203,12 @@
 				<version>1.7.0</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.toomuchcoding.jsonassert</groupId>
+				<artifactId>jsonassert</artifactId>
+				<version>0.4.1</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

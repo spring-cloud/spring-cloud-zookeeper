@@ -169,6 +169,11 @@
 			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.toomuchcoding.jsonassert</groupId>
+			<artifactId>jsonassert</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
