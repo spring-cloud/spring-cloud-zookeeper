@@ -3,8 +3,6 @@ package org.springframework.cloud.zookeeper.discovery;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import com.toomuchcoding.jsonassert.JsonAssertion;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +22,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
-
-import groovy.json.JsonSlurper;
-import spock.lang.Issue;
 
 import static com.toomuchcoding.jsonassert.JsonAssertion.*;
 

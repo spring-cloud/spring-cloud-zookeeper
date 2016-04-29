@@ -3,10 +3,10 @@ package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 import java.util.Collections;
 
 import org.apache.curator.x.discovery.ServiceCache;
-import org.assertj.core.api.BDDAssertions;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -28,7 +28,7 @@ public class DefaultDependencyPresenceOnStartupVerifierTests {
 			Assert.fail("Should throw no instances running exception");
 		} catch (Exception e) {
 			//then:
-			BDDAssertions.then(e).isInstanceOf(NoInstancesRunningException.class);
+			then(e).isInstanceOf(NoInstancesRunningException.class);
 		}
 	}
 }

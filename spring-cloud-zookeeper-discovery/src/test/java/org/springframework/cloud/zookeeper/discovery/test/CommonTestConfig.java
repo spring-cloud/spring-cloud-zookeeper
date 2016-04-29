@@ -20,9 +20,9 @@ public class CommonTestConfig {
 		return new TestingServer(SocketUtils.findAvailableTcpPort());
 	}
 
-	@Bean ZookeeperProperties zookeeperProperties() throws Exception {
+	@Bean ZookeeperProperties zookeeperProperties(TestingServer testingServer) throws Exception {
 		ZookeeperProperties zookeeperProperties = new ZookeeperProperties();
-		zookeeperProperties.setConnectString("localhost:" + testingServer().getPort());
+		zookeeperProperties.setConnectString("localhost:" + testingServer.getPort());
 		return zookeeperProperties;
 	}
 }

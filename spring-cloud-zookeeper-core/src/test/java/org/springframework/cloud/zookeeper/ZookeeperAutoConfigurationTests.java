@@ -27,13 +27,13 @@ public class ZookeeperAutoConfigurationTests {
 
 	static class TestConfig {
 		@Bean
-		ZookeeperProperties zookeeperProperties() throws Exception {
+		ZookeeperProperties zookeeperProperties(TestingServer testingServer) throws Exception {
 			ZookeeperProperties properties = new ZookeeperProperties();
-			properties.setConnectString(testingServer().getConnectString());
+			properties.setConnectString(testingServer.getConnectString());
 			return properties;
 		}
 
-		@Bean TestingServer testingServer() throws Exception {
+		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
 			return new TestingServer();
 		}
 	}
