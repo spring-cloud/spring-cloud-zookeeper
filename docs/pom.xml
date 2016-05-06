@@ -5,15 +5,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-build</artifactId>
-		<version>1.1.0.RELEASE</version>
-		<relativePath/>
+		<artifactId>spring-cloud-zookeeper</artifactId>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
 	<artifactId>spring-cloud-zookeeper-docs</artifactId>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Zookeeper Docs</name>
 	<description>Spring Cloud Docs</description>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<properties>
 		<docs.main>spring-cloud-zookeeper</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
