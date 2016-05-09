@@ -14,3 +14,4 @@ _site/
 *.swp
 *.log
 .checkstyle
+.DS_Store
