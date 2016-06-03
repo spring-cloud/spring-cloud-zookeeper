@@ -34,7 +34,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
-import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +42,7 @@ import org.springframework.util.SocketUtils;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -54,7 +54,23 @@ public class ZookeeperPropertySourceLocatorTests {
 	public static final String PREFIX = "test__config__";
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
 	private ConfigurableApplicationContext context;
-	public static final String KEY = ROOT + "/application/testProp";
+	public static final String CONTEXT = ROOT + "/application/";
+
+	public static final String KEY_BASIC = "testProp";
+	public static final String KEY_BASIC_PATH = CONTEXT + KEY_BASIC;
+	public static final String VAL_BASIC = "testPropVal";
+
+	public static final String KEY_WITH_DOT = "testProp.dot";
+	public static final String KEY_WITH_DOT_PATH = CONTEXT + KEY_WITH_DOT;
+	public static final String VAL_WITH_DOT = "withDotVal";
+
+	public static final String KEY_NESTED = "testProp.nested";
+	public static final String KEY_NESTED_PATH = CONTEXT + KEY_NESTED.replace('.','/');
+	public static final String VAL_NESTED = "nestedVal";
+
+	public static final String KEY_WITHOUT_VALUE = "testProp.novalue";
+	public static final String KEY_WITHOUT_VALUE_PATH = CONTEXT + KEY_WITHOUT_VALUE;
+
 	private TestingServer testingServer;
 
 	@Configuration
@@ -110,7 +126,18 @@ public class ZookeeperPropertySourceLocatorTests {
 			}
 		}
 
-		String create = this.curator.create().creatingParentsIfNeeded().forPath(KEY, "testPropVal".getBytes());
+		StringBuilder create = new StringBuilder(1024);
+		create.append(
+				this.curator.create().creatingParentsIfNeeded().forPath(KEY_BASIC_PATH, VAL_BASIC.getBytes())).append(
+				'\n');
+		create.append(this.curator.create().creatingParentsIfNeeded().forPath(KEY_WITH_DOT_PATH,
+				VAL_WITH_DOT.getBytes())).append('\n');
+		create.append(
+				this.curator.create().creatingParentsIfNeeded().forPath(KEY_NESTED_PATH, VAL_NESTED.getBytes()))
+				.append(
+				'\n');
+		create.append(this.curator.create().creatingParentsIfNeeded().forPath(KEY_WITHOUT_VALUE_PATH, null)).append(
+				'\n');
 		this.curator.close();
 		System.out.println(create);
 
@@ -145,17 +172,32 @@ public class ZookeeperPropertySourceLocatorTests {
 	}
 
 	@Test
-	public void propertyLoadedAndUpdated() throws Exception {
-		String testProp = this.environment.getProperty("testProp");
-		assertThat("testProp was wrong", testProp, is(equalTo("testPropVal")));
+	public void checkKeyValues() throws Exception {
+		String propValue = this.environment.getProperty(KEY_BASIC);
+		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_BASIC)));
 
-		this.curator.setData().forPath(KEY, "testPropValUpdate".getBytes());
+		propValue = this.environment.getProperty(KEY_NESTED);
+		assertThat(KEY_NESTED + " was wrong", propValue, is(equalTo(VAL_NESTED)));
+
+		propValue = this.environment.getProperty(KEY_WITH_DOT);
+		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_WITH_DOT)));
+
+		propValue = this.environment.getProperty(KEY_WITHOUT_VALUE);
+		assertThat(KEY_BASIC + " was wrong", propValue, is(isEmptyString()));
+	}
+
+	@Test
+	public void propertyLoadedAndUpdated() throws Exception {
+		String testProp = this.environment.getProperty(KEY_BASIC);
+		assertThat("testProp was wrong", testProp, is(equalTo(VAL_BASIC)));
+
+		this.curator.setData().forPath(KEY_BASIC_PATH, "testPropValUpdate".getBytes());
 
 		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
 		boolean receivedEvent = latch.await(15, TimeUnit.SECONDS);
 		assertThat("listener didn't receive event", receivedEvent, is(true));
 
-		testProp = this.environment.getProperty("testProp");
+		testProp = this.environment.getProperty(KEY_BASIC);
 		assertThat("testProp was wrong after update", testProp, is(equalTo("testPropValUpdate")));
 	}
 }
