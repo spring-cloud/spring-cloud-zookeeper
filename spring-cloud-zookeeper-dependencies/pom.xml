@@ -14,7 +14,6 @@
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
 	<properties>
-		<spring-cloud-zookeeper.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-commons.version>1.1.2.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-netflix.version>1.1.2.BUILD-SNAPSHOT</spring-cloud-netflix.version>
 		<curator.version>2.10.0</curator.version>
