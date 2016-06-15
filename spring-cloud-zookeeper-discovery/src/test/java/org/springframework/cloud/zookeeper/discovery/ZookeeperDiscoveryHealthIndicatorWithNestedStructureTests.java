@@ -45,8 +45,8 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	}
 
 	private boolean twoServicesArePresentedInHealthEndpoint(String response) {
-		assertThat(response).field("zookeeperDiscovery").array("services").field("name").isEqualTo("me");
-		assertThat(response).field("zookeeperDiscovery").array("services").field("name").isEqualTo("/a/b/c/d/anotherservice");
+		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("me");
+		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("/a/b/c/d/anotherservice");
 		return true;
 	}
 	

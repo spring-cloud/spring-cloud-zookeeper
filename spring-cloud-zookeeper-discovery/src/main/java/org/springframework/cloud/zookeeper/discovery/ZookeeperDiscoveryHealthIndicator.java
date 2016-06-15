@@ -19,8 +19,8 @@ package org.springframework.cloud.zookeeper.discovery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 /**
@@ -30,9 +30,9 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
  * @author Spencer Gibb
  * @since 1.0.0
  */
-public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
+public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicator {
 
-	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryHealthIndicator.class);
+	private static final Log log = LogFactory .getLog(ZookeeperDiscoveryHealthIndicator.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
 	private ZookeeperDependencies zookeeperDependencies;
@@ -47,15 +47,25 @@ public class ZookeeperDiscoveryHealthIndicator extends AbstractHealthIndicator {
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	public String getName() {
+		return "zookeeper";
+	}
+
+	@Override
+	public Health health() {
+		Health.Builder builder = Health.unknown();
 		try {
 			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(
-					this.serviceDiscovery, this.zookeeperDependencies, this.zookeeperDiscoveryProperties);
+					this.serviceDiscovery, this.zookeeperDependencies,
+					this.zookeeperDiscoveryProperties);
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {
 			log.error("Error", e);
 			builder.down(e);
 		}
+
+		return builder.build();
 	}
+
 }
