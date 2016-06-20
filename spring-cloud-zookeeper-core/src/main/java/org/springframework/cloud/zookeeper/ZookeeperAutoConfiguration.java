@@ -63,11 +63,10 @@ public class ZookeeperAutoConfiguration {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 		if (this.ensembleProvider != null) {
 			builder.ensembleProvider(this.ensembleProvider);
+		} else {
+			builder.connectString(properties.getConnectString());
 		}
-		CuratorFramework curator = builder
-				.retryPolicy(retryPolicy)
-				.connectString(properties.getConnectString())
-				.build();
+		CuratorFramework curator = builder.retryPolicy(retryPolicy).build();
 		curator.start();
 		log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait() + properties.getBlockUntilConnectedUnit());
 		curator.blockUntilConnected(properties.getBlockUntilConnectedWait(), properties.getBlockUntilConnectedUnit());
