@@ -3,6 +3,7 @@
 :github-raw: http://raw.github.com/{github-repo}/{github-tag}
 :github-code: http://github.com/{github-repo}/tree/{github-tag}
 :toc: left
+:nofooter:
 
 = Spring Cloud Zookeeper
 
@@ -334,4 +335,3 @@ spring:
 * `root` sets the base namespace for configuration values
 * `defaultContext` sets the name used by all applications
 * `profileSeparator` sets the value of the separator used to separate the profile name in property sources with profiles
-
