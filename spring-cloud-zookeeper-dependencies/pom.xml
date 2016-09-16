@@ -14,8 +14,6 @@
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
 	<properties>
-		<spring-cloud-commons.version>1.1.2.BUILD-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-netflix.version>1.1.5.BUILD-SNAPSHOT</spring-cloud-netflix.version>
 		<curator.version>2.10.0</curator.version>
 	</properties>
 	<dependencyManagement>
@@ -54,21 +52,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-commons</artifactId>
-				<version>${spring-cloud-commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-context</artifactId>
-				<version>${spring-cloud-commons.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-netflix-core</artifactId>
-				<version>${spring-cloud-netflix.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.curator</groupId>
@@ -130,13 +113,6 @@
 						<artifactId>netty</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-netflix-dependencies</artifactId>
-				<version>${spring-cloud-netflix.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
