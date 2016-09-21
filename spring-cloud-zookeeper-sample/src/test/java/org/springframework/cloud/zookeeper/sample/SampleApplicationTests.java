@@ -16,34 +16,19 @@
 
 package org.springframework.cloud.zookeeper.sample;
 
-import java.io.IOException;
-
 import org.apache.curator.test.TestingServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = SampleZookeeperApplication.class)
-@WebIntegrationTest(randomPort = true)
 public class SampleApplicationTests {
 
-	static TestingServer testingServer;
+	@Test public void contextLoads() throws Exception {
+		TestingServer server = new TestingServer(2181);
 
-	@BeforeClass
-	public static void before() throws Exception {
-		testingServer = new TestingServer(2181);
-	}
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run("--server.port=0");
 
-	@AfterClass
-	public static void clean() throws IOException {
-		testingServer.close();
-	}
-
-	@Test public void contextLoads() {
+		context.close();
+		server.close();
 	}
 }
