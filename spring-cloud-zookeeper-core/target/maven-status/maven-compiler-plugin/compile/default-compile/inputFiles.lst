@@ -1,0 +1,3 @@
+/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperHealthIndicator.java
+/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java
+/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperProperties.java

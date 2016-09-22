@@ -1,0 +1,5 @@
+META-INF/spring-configuration-metadata.json
+org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.class
+org/springframework/cloud/zookeeper/ZookeeperHealthIndicator.class
+org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration$ZookeeperHealthConfig.class
+org/springframework/cloud/zookeeper/ZookeeperProperties.class

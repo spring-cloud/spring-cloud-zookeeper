@@ -1,0 +1,4 @@
+org.springframework.cloud.zookeeper.discovery
+org.springframework.cloud.zookeeper.discovery.dependency
+org.springframework.cloud.zookeeper.discovery.watcher
+org.springframework.cloud.zookeeper.discovery.watcher.presence

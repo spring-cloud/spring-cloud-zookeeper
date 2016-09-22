@@ -1,0 +1,1 @@
+provides: spring-cloud-zookeeper-core, curator-framework

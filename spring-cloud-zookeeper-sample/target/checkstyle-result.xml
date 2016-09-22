@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="6.11.2">
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-sample/src/main/java/org/springframework/cloud/zookeeper/sample/SampleZookeeperApplication.java">
+</file>
+</checkstyle>

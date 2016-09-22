@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: false
+
+logging.level:
+  org.apache.zookeeper.ClientCnxn: WARN
+
+#spring.cloud.zookeeper.dependencies:
+#  - testZookeeperApp: ~

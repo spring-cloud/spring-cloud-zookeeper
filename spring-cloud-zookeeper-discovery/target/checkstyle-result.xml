@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="6.11.2">
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ConditionalOnRibbonZookeeper.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/RibbonZookeeperAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperDiscoveryClient.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperDiscoveryClientConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperDiscoveryHealthIndicator.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperDiscoveryProperties.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperInstance.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperLifecycle.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperRibbonClientConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperServer.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperServerList.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperServiceDiscovery.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperServiceInstances.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/ZookeeperServiceWatch.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/ConditionalOnDependenciesNotPassed.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/ConditionalOnDependenciesPassed.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependenciesBasedLoadBalancer.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependenciesNotPassedCondition.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependenciesPassedCondition.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependencyEnvironmentPostProcessor.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependencyFeignClientAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependencyRestTemplateAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/DependencyRibbonAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/LoadBalancerType.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/StickyRule.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/StubsConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/ZookeeperDependencies.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/ZookeeperDependenciesAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/dependency/ZookeeperDependency.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DefaultDependencyWatcher.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DependencyRegistrationHookProvider.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DependencyState.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DependencyStateChangeListenerRegistry.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DependencyWatcherAutoConfiguration.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/DependencyWatcherListener.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/DefaultDependencyPresenceOnStartupVerifier.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/DependencyPresenceOnStartupVerifier.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/FailOnMissingDependencyChecker.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/LogMissingDependencyChecker.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/NoInstancesRunningException.java">
+</file>
+<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-discovery/src/main/java/org/springframework/cloud/zookeeper/discovery/watcher/presence/PresenceChecker.java">
+</file>
+</checkstyle>
