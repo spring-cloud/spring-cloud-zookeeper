@@ -1,8 +1,5 @@
 package org.springframework.cloud.zookeeper.discovery;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +20,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static com.toomuchcoding.jsonassert.JsonAssertion.*;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.List;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Marcin Grzejszczak
@@ -39,17 +40,58 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	// Issue: #54 - ZookeeperDiscoveryHealthIndicator fails on nested structure
 	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present() {
 		// when:
-		String response = this.testRibbonClient.callService("me", "health");
+		Response response = this.testRibbonClient.callService("me", "health", Response.class);
 		// then:
-		twoServicesArePresentedInHealthEndpoint(response);
+		then(response.discoveryComposite.zookeeper.services).extracting("name").contains("me", "/a/b/c/d/anotherservice");
 	}
 
-	private boolean twoServicesArePresentedInHealthEndpoint(String response) {
-		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("me");
-		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("/a/b/c/d/anotherservice");
-		return true;
+	public static class Response {
+		DiscoveryComposite discoveryComposite;
+
+		public DiscoveryComposite getDiscoveryComposite() {
+			return this.discoveryComposite;
+		}
+
+		public void setDiscoveryComposite(DiscoveryComposite discoveryComposite) {
+			this.discoveryComposite = discoveryComposite;
+		}
 	}
-	
+
+	public static class DiscoveryComposite {
+		Zoo zookeeper;
+
+		public Zoo getZookeeper() {
+			return this.zookeeper;
+		}
+
+		public void setZookeeper(Zoo zookeeper) {
+			this.zookeeper = zookeeper;
+		}
+	}
+
+	public static class Zoo {
+		List<Service> services;
+
+		public List<Service> getServices() {
+			return this.services;
+		}
+
+		public void setServices(List<Service> services) {
+			this.services = services;
+		}
+	}
+
+	public static class Service {
+		String name;
+
+		public String getName() {
+			return this.name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
 	
 	@Configuration
 	@EnableAutoConfiguration

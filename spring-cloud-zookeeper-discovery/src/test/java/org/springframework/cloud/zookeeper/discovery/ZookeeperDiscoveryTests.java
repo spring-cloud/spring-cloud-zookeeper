@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.jayway.awaitility.Awaitility;
-import com.toomuchcoding.jsonassert.JsonAssertion;
 import com.toomuchcoding.jsonassert.JsonPath;
 
 import org.junit.Test;
