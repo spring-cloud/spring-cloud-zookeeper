@@ -37,9 +37,8 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	private List<ServiceInstance<ZookeeperInstance>> getZookeeperInstances() {
 		ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
 		try {
-			Collection<String> names = getNamesToQuery();
-			for (String name : names) {
-				allInstances.addAll(nestedInstances(allInstances, name));
+			for (String name : getNamesToQuery()) {
+				allInstances.addAll(nestedInstances(allInstances, sanitizePath(name)));
 			}
 			return allInstances;
 		}
@@ -66,25 +65,24 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	}
 
 	private String prepareQueryName(String name) {
-		if (name.startsWith(this.zookeeperDiscoveryProperties.getRoot())) {
-			return name;
-		}
-		String queryName = this.zookeeperDiscoveryProperties.getRoot();
-		if (!queryName.endsWith("/")) {
-			queryName = queryName + "/";
-		}
-		return queryName + name;
+		return name.startsWith(getDiscoveryRoot()) ? name : getDiscoveryRoot() + name;
+	}
+
+	private String getDiscoveryRoot() {
+		return sanitizePath(this.zookeeperDiscoveryProperties.getRoot());
 	}
 
 	private Collection<ServiceInstance<ZookeeperInstance>> tryToGetInstances(String path) {
 		try {
-			return this.serviceDiscovery
-					.getServiceDiscovery().queryForInstances(path.substring(
-							this.zookeeperDiscoveryProperties.getRoot().length()));
+			return this.serviceDiscovery.getServiceDiscovery().queryForInstances(getPathWithoutRoot(path));
 		} catch (Exception e) {
 			log.trace("Exception occurred while trying to retrieve instances of [" + path + "]", e);
 			return null;
 		}
+	}
+
+	private String getPathWithoutRoot(String path) {
+		return path.substring(getDiscoveryRoot().length());
 	}
 
 	private List<ServiceInstance<ZookeeperInstance>> injectZookeeperServiceInstances(
@@ -124,5 +122,17 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	@Override
 	public Iterator<ServiceInstance<ZookeeperInstance>> iterator() {
 		return this.allInstances.iterator();
+	}
+
+	private String sanitizePath(String value) {
+		return withLeadingSlash(withoutSlashAtEnd(value));
+	}
+
+	private String withLeadingSlash(String value) {
+		return value.startsWith("/") ? value : "/" + value;
+	}
+
+	private String withoutSlashAtEnd(String value) {
+		return value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
 	}
 }
