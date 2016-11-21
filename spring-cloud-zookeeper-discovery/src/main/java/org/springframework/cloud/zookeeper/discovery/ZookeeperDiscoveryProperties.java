@@ -22,6 +22,8 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.commons.util.InetUtils;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Properties related to Zookeeper's Service Discovery.
  *
@@ -71,6 +73,11 @@ public class ZookeeperDiscoveryProperties {
 	public ZookeeperDiscoveryProperties(InetUtils inetUtils) {
 		this.hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
 		this.instanceHost = this.hostInfo.getIpAddress();
+	}
+
+	@PostConstruct
+	public void init() {
+		this.root = DependencyPathUtils.sanitize(this.root);
 	}
 
 	public boolean isEnabled() {
