@@ -30,7 +30,6 @@ public class ZookeeperDiscoveryPropertiesTest {
         ZookeeperDiscoveryProperties zookeeperDiscoveryProperties = new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()));
         // when:
         zookeeperDiscoveryProperties.setRoot(root);
-        zookeeperDiscoveryProperties.init();
         // then:
         then(zookeeperDiscoveryProperties.getRoot()).isEqualTo("/es");
     }
