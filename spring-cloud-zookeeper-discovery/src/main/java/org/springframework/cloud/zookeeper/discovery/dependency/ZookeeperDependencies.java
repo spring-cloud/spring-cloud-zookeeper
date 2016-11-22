@@ -27,6 +27,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.dependency.StubsConfiguration.DependencyPath;
 import org.springframework.util.StringUtils;
 
+import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.sanitize;
+
 /**
  * Representation of this service's dependencies in Zookeeper
  *
@@ -55,8 +57,8 @@ public class ZookeeperDependencies {
 
 	@PostConstruct
 	public void init() {
-		if (StringUtils.hasText(this.prefix) && !this.prefix.endsWith("/")) {
-			this.prefix = this.prefix + "/";
+		if (StringUtils.hasText(this.prefix)) {
+			this.prefix = sanitize(this.prefix);
 		}
 		for (Map.Entry<String, ZookeeperDependency> entry : this.dependencies.entrySet()) {
 			ZookeeperDependency value = entry.getValue();
@@ -64,6 +66,8 @@ public class ZookeeperDependencies {
 			if (!StringUtils.hasText(value.getPath())) {
 				value.setPath(entry.getKey());
 			}
+
+			value.setPath(sanitize(value.getPath()));
 
 			if (StringUtils.hasText(this.prefix)) {
 				value.setPath(this.prefix + value.getPath());

@@ -3,7 +3,6 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.curator.framework.CuratorFramework;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	@Autowired AliasUsingFeignClient aliasUsingFeignClient;
 	@Autowired IdUsingFeignClient idUsingFeignClient;
 	@Autowired ZookeeperDependencies zookeeperDependencies;
-	@Autowired Config dependencyConfig;
-	@Autowired CuratorFramework curatorFramework;
 
 	@Test public void should_find_an_instance_via_path_when_alias_is_not_found() {
 		// given:
@@ -127,25 +124,25 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		});
 	}
 
-	@Test public void should_have_path_equal_to_alias() {
+	@Test public void should_have_path_equal_to_prefixed_alias() {
 		// given:
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias("aliasIsPath");
 		// expect:
-		then(dependency.getPath()).isEqualTo("aliasIsPath");
+		then(dependency.getPath()).isEqualTo("/aliasIsPath");
 	}
 
-	@Test public void should_have_alias_equal_to_path() {
+	@Test public void should_have_prefixed_alias_equal_to_path() {
 		// given:
-		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForPath("aliasIsPath");
+		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForPath("/aliasIsPath");
 		// expect:
-		then(dependency.getPath()).isEqualTo("aliasIsPath");
+		then(dependency.getPath()).isEqualTo("/aliasIsPath");
 	}
 
 	@Test public void should_have_path_set_via_string_constructor() {
 		// given:
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias("anotherAlias");
 		// expect:
-		then(dependency.getPath()).isEqualTo("myPath");
+		then(dependency.getPath()).isEqualTo("/myPath");
 	}
 
 	private boolean callingServiceAtBeansEndpointIsNotEmpty() {

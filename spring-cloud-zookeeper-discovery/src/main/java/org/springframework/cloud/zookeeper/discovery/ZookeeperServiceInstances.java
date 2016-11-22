@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
+import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.sanitize;
+
 /**
  * An {@link Iterable} representing registered Zookeeper instances. If using
  * {@link ZookeeperDependencies} it will return a list of registered Zookeeper instances
@@ -37,8 +39,7 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	private List<ServiceInstance<ZookeeperInstance>> getZookeeperInstances() {
 		ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
 		try {
-			Collection<String> names = getNamesToQuery();
-			for (String name : names) {
+			for (String name : getNamesToQuery()) {
 				allInstances.addAll(nestedInstances(allInstances, name));
 			}
 			return allInstances;
@@ -66,25 +67,21 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	}
 
 	private String prepareQueryName(String name) {
-		if (name.startsWith(this.zookeeperDiscoveryProperties.getRoot())) {
-			return name;
-		}
-		String queryName = this.zookeeperDiscoveryProperties.getRoot();
-		if (!queryName.endsWith("/")) {
-			queryName = queryName + "/";
-		}
-		return queryName + name;
+		String root = this.zookeeperDiscoveryProperties.getRoot();
+		return name.startsWith(root) ? name : root + name;
 	}
 
 	private Collection<ServiceInstance<ZookeeperInstance>> tryToGetInstances(String path) {
 		try {
-			return this.serviceDiscovery
-					.getServiceDiscovery().queryForInstances(path.substring(
-							this.zookeeperDiscoveryProperties.getRoot().length()));
+			return this.serviceDiscovery.getServiceDiscovery().queryForInstances(getPathWithoutRoot(path));
 		} catch (Exception e) {
 			log.trace("Exception occurred while trying to retrieve instances of [" + path + "]", e);
 			return null;
 		}
+	}
+
+	private String getPathWithoutRoot(String path) {
+		return path.substring(this.zookeeperDiscoveryProperties.getRoot().length());
 	}
 
 	private List<ServiceInstance<ZookeeperInstance>> injectZookeeperServiceInstances(
@@ -116,7 +113,11 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 
 	private Collection<String> getNamesToQuery() throws Exception {
 		if (this.zookeeperDependencies == null) {
-			return this.serviceDiscovery.getServiceDiscovery().queryForNames();
+			List<String> names = new ArrayList<>();
+			for (String name : this.serviceDiscovery.getServiceDiscovery().queryForNames()) {
+				names.add(sanitize(name));
+			}
+			return names;
 		}
 		return this.zookeeperDependencies.getDependencyNames();
 	}
@@ -125,4 +126,5 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	public Iterator<ServiceInstance<ZookeeperInstance>> iterator() {
 		return this.allInstances.iterator();
 	}
+
 }
