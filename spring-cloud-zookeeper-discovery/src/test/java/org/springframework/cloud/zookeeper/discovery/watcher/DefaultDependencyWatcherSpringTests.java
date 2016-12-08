@@ -2,8 +2,6 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
 
 import java.util.concurrent.Callable;
 
-import com.jayway.awaitility.Awaitility;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -13,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
@@ -24,17 +22,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
+
+import com.jayway.awaitility.Awaitility;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DefaultDependencyWatcherSpringTests.Config.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class)
 @ActiveProfiles("watcher")
 public class DefaultDependencyWatcherSpringTests {
 

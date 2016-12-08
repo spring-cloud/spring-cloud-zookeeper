@@ -4,18 +4,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.jayway.awaitility.Awaitility;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.NoOpPing;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.test.TestingServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -27,17 +22,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
+
+import com.jayway.awaitility.Awaitility;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.NoOpPing;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StickyRuleTests.Config.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StickyRuleTests.Config.class,
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("loadbalancerclient")
-@WebIntegrationTest(randomPort = true)
 public class StickyRuleTests {
 
 	@Autowired LoadBalancerClient loadBalancerClient;

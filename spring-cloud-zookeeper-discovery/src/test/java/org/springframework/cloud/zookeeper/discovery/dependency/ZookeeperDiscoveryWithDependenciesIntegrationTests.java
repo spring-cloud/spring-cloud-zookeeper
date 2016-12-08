@@ -7,8 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -24,10 +23,11 @@ import static org.assertj.core.api.BDDAssertions.then;
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class,
+		properties = "feign.hystrix.enabled=false",
+	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dependencies")
-@WebIntegrationTest(randomPort = true)
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 
 	@Autowired TestRibbonClient testRibbonClient;

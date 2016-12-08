@@ -22,24 +22,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertTrue;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * @author Spencer Gibb
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ZookeeperLifecycleRegistrationDisabledTests.TestPropsConfig.class)
-@WebIntegrationTest(value = { "spring.application.name=myTestNotRegisteredService",
-		"spring.cloud.zookeeper.discovery.register=false", "spring.cloud.zookeeper.dependency.enabled=false"}, randomPort = true)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ZookeeperLifecycleRegistrationDisabledTests.TestPropsConfig.class,
+	properties = { "spring.application.name=myTestNotRegisteredService",
+		"spring.cloud.zookeeper.discovery.register=false", "spring.cloud.zookeeper.dependency.enabled=false"},
+		webEnvironment = RANDOM_PORT)
 public class ZookeeperLifecycleRegistrationDisabledTests {
 
 

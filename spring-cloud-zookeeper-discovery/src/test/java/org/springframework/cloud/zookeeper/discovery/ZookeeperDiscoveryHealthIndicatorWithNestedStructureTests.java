@@ -1,5 +1,7 @@
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -11,8 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
@@ -22,20 +23,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.invoke.MethodHandles;
-
-import static com.toomuchcoding.jsonassert.JsonAssertion.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThat;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
-@WebIntegrationTest(randomPort = true)
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());

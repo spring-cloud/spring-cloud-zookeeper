@@ -6,3 +6,6 @@ spring:
       discovery:
         metadata:
           testMetadataKey: testMetadataValue
+management:
+  security:
+    enabled: false

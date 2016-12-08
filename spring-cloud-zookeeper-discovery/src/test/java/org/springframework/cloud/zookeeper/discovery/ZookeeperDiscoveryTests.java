@@ -3,16 +3,12 @@ package org.springframework.cloud.zookeeper.discovery;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.jayway.awaitility.Awaitility;
-import com.toomuchcoding.jsonassert.JsonPath;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -27,20 +23,24 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
+
+import com.jayway.awaitility.Awaitility;
+import com.toomuchcoding.jsonassert.JsonPath;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Marcin Grzejszczak
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(ZookeeperDiscoveryTests.Config.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class,
+		properties = "feign.hystrix.enabled=false",
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("ribbon")
-@WebIntegrationTest(randomPort = true)
 public class ZookeeperDiscoveryTests {
 
 	@Autowired TestRibbonClient testRibbonClient;

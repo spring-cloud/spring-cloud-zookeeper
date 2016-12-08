@@ -21,3 +21,6 @@ spring.cloud.zookeeper:
       required: false
     aliasIsPath: ''
     anotherAlias: 'myPath'
+management:
+  security:
+    enabled: false
