@@ -37,6 +37,7 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDep
 import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBasedLoadBalancer;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -61,7 +62,7 @@ public class ZookeeperRibbonClientConfiguration {
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
 
 	@Autowired
-	private ZookeeperServiceDiscovery serviceDiscovery;
+	private ZookeeperServiceRegistry registry;
 
 	@Value("${ribbon.client.name}")
 	private String serviceId = "client";
@@ -73,7 +74,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
-		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
+		ZookeeperServerList serverList = new ZookeeperServerList(this.registry.getServiceDiscoveryRef().get());
 		serverList.initFromDependencies(config, zookeeperDependencies);
 		log.debug(String.format("Server list for Ribbon's dependencies based load balancing is [%s]", serverList));
 		return serverList;
@@ -99,7 +100,7 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesNotPassed
 	public ServerList<?> ribbonServerList(IClientConfig config) {
-		ZookeeperServerList serverList = new ZookeeperServerList(this.serviceDiscovery.getServiceDiscovery());
+		ZookeeperServerList serverList = new ZookeeperServerList(this.registry.getServiceDiscoveryRef().get());
 		serverList.initWithNiwsConfig(config);
 		log.debug(String.format("Server list for Ribbon's non-dependency based load balancing is [%s]", serverList));
 		return serverList;

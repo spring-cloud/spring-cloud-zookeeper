@@ -27,7 +27,9 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Spencer Gibb
  * @since 1.0.0
+ * @deprecated replaced by {@link org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistration} . Remove in Edgware
  */
+@Deprecated
 public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 
 	private static final Log log = LogFactory.getLog(ZookeeperLifecycle.class);
@@ -53,7 +55,8 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 			return;
 		}
 		try {
-			this.serviceDiscovery.getServiceDiscovery().start();
+			this.serviceDiscovery.getServiceDiscoveryRef().get().start();
+			this.serviceDiscovery.getServiceDiscoveryRef().get().registerService(this.serviceDiscovery.getServiceInstanceRef().get());
 		}
 		catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
@@ -68,8 +71,8 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 			return;
 		}
 		try {
-			this.serviceDiscovery.getServiceDiscovery().unregisterService(
-					this.serviceDiscovery.getServiceInstance());
+			this.serviceDiscovery.getServiceDiscoveryRef().get().unregisterService(
+					this.serviceDiscovery.getServiceInstanceRef().get());
 		}
 		catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);

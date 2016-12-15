@@ -22,26 +22,38 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 
 /**
- * {@link org.springframework.boot.actuate.health.HealthIndicator} that presents
- * the status of all instances registered in Zookeeper.
+ * {@link org.springframework.boot.actuate.health.HealthIndicator} that presents the
+ * status of all instances registered in Zookeeper.
  *
  * @author Spencer Gibb
  * @since 1.0.0
  */
 public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicator {
 
-	private static final Log log = LogFactory .getLog(ZookeeperDiscoveryHealthIndicator.class);
+	private static final Log log = LogFactory
+			.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
 	private ZookeeperServiceDiscovery serviceDiscovery;
+	private ZookeeperServiceRegistry serviceRegistry;
 	private ZookeeperDependencies zookeeperDependencies;
 	private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
+	@Deprecated
 	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery,
 			ZookeeperDependencies zookeeperDependencies,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.serviceDiscovery = serviceDiscovery;
+		this.zookeeperDependencies = zookeeperDependencies;
+		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
+	}
+
+	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceRegistry serviceRegistry,
+			ZookeeperDependencies zookeeperDependencies,
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		this.serviceRegistry = serviceRegistry;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
@@ -55,9 +67,16 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	public Health health() {
 		Health.Builder builder = Health.unknown();
 		try {
-			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(
-					this.serviceDiscovery, this.zookeeperDependencies,
-					this.zookeeperDiscoveryProperties);
+			Iterable<ServiceInstance<ZookeeperInstance>> allInstances;
+			if (this.serviceDiscovery != null) {
+				allInstances = new ZookeeperServiceInstances(
+						this.serviceDiscovery, this.zookeeperDependencies,
+						this.zookeeperDiscoveryProperties);
+			} else {
+				allInstances = new ZookeeperServiceInstances(
+						this.serviceRegistry, this.zookeeperDependencies,
+						this.zookeeperDiscoveryProperties);
+			}
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {

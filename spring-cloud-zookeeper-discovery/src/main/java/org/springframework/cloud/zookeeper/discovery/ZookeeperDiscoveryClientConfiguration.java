@@ -16,16 +16,7 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.details.InstanceSerializer;
-import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.Endpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.commons.util.InetUtils;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,60 +31,11 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.discovery.enabled", matchIfMissing = true)
 public class ZookeeperDiscoveryClientConfiguration {
 
-	@Autowired(required = false)
-	private ZookeeperDependencies zookeeperDependencies;
-
-	@Autowired
-	private CuratorFramework curator;
+	class Marker {}
 
 	@Bean
-	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(InetUtils inetUtils) {
-		return new ZookeeperDiscoveryProperties(inetUtils);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
-		return new ZookeeperServiceDiscovery(this.curator, zookeeperDiscoveryProperties,
-				instanceSerializer);
-	}
-
-	@Bean
-	public ZookeeperLifecycle zookeeperLifecycle(ZookeeperServiceDiscovery zookeeperServiceDiscovery, ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperLifecycle(zookeeperDiscoveryProperties, zookeeperServiceDiscovery);
-	}
-
-	@Bean
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
-		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery, this.zookeeperDependencies);
-	}
-
-	@Bean
-	public InstanceSerializer<ZookeeperInstance> instanceSerializer() {
-		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
-	}
-
-	@Configuration
-	@ConditionalOnClass(Endpoint.class)
-	protected static class ZookeeperDiscoveryHealthConfig {
-		@Autowired
-		private ZookeeperServiceDiscovery serviceDiscovery;
-		@Autowired
-		private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
-		@Autowired(required = false)
-		private ZookeeperDependencies zookeeperDependencies;
-
-		@Bean
-		@ConditionalOnMissingBean
-		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator() {
-			return new ZookeeperDiscoveryHealthIndicator(this.serviceDiscovery,
-					this.zookeeperDependencies, this.zookeeperDiscoveryProperties);
-		}
-	}
-
-	@Bean
-	public ZookeeperServiceWatch zookeeperServiceWatch(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
+	public Marker zookeeperDiscoveryClientMarker() {
+		return new Marker();
 	}
 
 }

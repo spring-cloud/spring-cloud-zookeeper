@@ -1,2 +1,5 @@
 spring.cloud.zookeeper.dependency.enabled: false
 spring.application.name: me
+management:
+  security:
+    enabled: false

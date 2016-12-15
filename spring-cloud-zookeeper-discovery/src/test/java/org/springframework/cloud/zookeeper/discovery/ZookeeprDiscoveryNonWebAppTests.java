@@ -1,4 +1,20 @@
-package org.springframework.cloud.zookeeper.discovery.issues.issue91;
+/*
+ * Copyright 2013-2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.curator.test.TestingServer;
 import org.junit.After;
@@ -25,9 +41,10 @@ import com.jayway.awaitility.Awaitility;
 import static org.assertj.core.api.BDDAssertions.then;
 
 /**
+ * Test for gh-91, using s-c-zookeeper in a non-web app.
  * @author Marcin Grzejszczak
  */
-public class Issue91Tests {
+public class ZookeeprDiscoveryNonWebAppTests {
 
 	TestingServer server;
 	String connectionString;
@@ -71,31 +88,34 @@ public class Issue91Tests {
 			}
 		}
 	}
-}
 
-@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
-		JmxAutoConfiguration.class})
-@EnableDiscoveryClient
-@Configuration
-class HelloClient {
-	@LoadBalanced @Bean RestTemplate restTemplate() {
-		return new RestTemplate();
+	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
+			JmxAutoConfiguration.class})
+	@EnableDiscoveryClient
+	@Configuration
+	static class HelloClient {
+		@LoadBalanced
+		@Bean
+		RestTemplate restTemplate() {
+			return new RestTemplate();
+		}
+
+		@Autowired
+		DiscoveryClient discoveryClient;
+
+		@Autowired RestTemplate restTemplate;
 	}
 
-	@Autowired DiscoveryClient discoveryClient;
+	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
+			JmxAutoConfiguration.class})
+	@EnableDiscoveryClient
+	@RestController
+	static class HelloProducer {
 
-	@Autowired RestTemplate restTemplate;
-}
+		@RequestMapping("/")
+		public String foo() {
+			return "foo";
+		}
 
-@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
-		JmxAutoConfiguration.class})
-@EnableDiscoveryClient
-@RestController
-class HelloProducer {
-
-	@RequestMapping("/")
-	public String foo() {
-		return "foo";
 	}
-
 }

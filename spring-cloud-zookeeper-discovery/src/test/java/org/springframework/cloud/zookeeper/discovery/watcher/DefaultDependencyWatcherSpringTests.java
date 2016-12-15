@@ -12,13 +12,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,18 +33,20 @@ import org.springframework.web.client.RestTemplate;
 import com.jayway.awaitility.Awaitility;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class)
+@SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("watcher")
 public class DefaultDependencyWatcherSpringTests {
 
 	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener;
 	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
+
 
 	@Test public void should_verify_that_presence_of_a_dependency_has_been_checked() {
 		then(this.dependencyPresenceOnStartupVerifier.startupPresenceVerified).isTrue();
@@ -49,7 +55,7 @@ public class DefaultDependencyWatcherSpringTests {
 	@Test public void should_verify_that_dependency_watcher_listener_is_successfully_registered_and_operational()
 			throws Exception {
 		//when:
-		this.serviceDiscovery.getServiceDiscovery().unregisterService(this.serviceDiscovery.getServiceInstance());
+		this.serviceDiscovery.getServiceDiscoveryRef().get().unregisterService(this.serviceDiscovery.getServiceInstanceRef().get());
 
 		//then:
 		Awaitility.await().until(new Callable<Boolean>() {
@@ -61,9 +67,14 @@ public class DefaultDependencyWatcherSpringTests {
 	}
 
 	@Configuration
+	@EnableDiscoveryClient
 	@EnableAutoConfiguration
 	@Profile("watcher")
 	static class Config {
+		@Bean
+		public ZookeeperLifecycle zookeeperLifecycle(ZookeeperDiscoveryProperties properties, ZookeeperServiceDiscovery serviceDiscovery) {
+			return new ZookeeperLifecycle(properties, serviceDiscovery);
+		}
 
 		@Bean
 		@LoadBalanced RestTemplate loadBalancedRestTemplate() {
@@ -79,6 +90,7 @@ public class DefaultDependencyWatcherSpringTests {
 			return new TestingServer(SocketUtils.findAvailableTcpPort());
 		}
 
+		@Primary
 		@Bean ZookeeperServiceDiscovery zookeeperServiceDiscovery() throws Exception {
 			return new MyZookeeperServiceDiscovery(curatorFramework());
 		}
