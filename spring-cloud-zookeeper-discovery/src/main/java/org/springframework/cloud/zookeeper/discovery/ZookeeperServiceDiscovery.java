@@ -52,6 +52,8 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private AtomicBoolean built = new AtomicBoolean(false);
 
+	private AtomicBoolean serviceDiscoveryBuilt = new AtomicBoolean(false);
+
 	private AtomicInteger port = new AtomicInteger();
 
 	private AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance = new AtomicReference<>();
@@ -90,9 +92,13 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 		this.context = context;
 	}
 
+	/**
+	 * Builds Service Instance - needs to be used when you want to register your application
+	 * in Zookeeper
+	 */
 	public void build() {
 		if (this.built.compareAndSet(false, true)) {
-			if (this.port.get() <= 0) {
+			if (this.port.get() <= 0 && this.properties.isRegister()) {
 				throw new IllegalStateException("Cannot create instance whose port is not greater than 0");
 			}
 			String host = this.properties.getInstanceHost();
@@ -100,11 +106,20 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 				throw new IllegalStateException("instanceHost must not be empty");
 			}
 			UriSpec uriSpec = new UriSpec(this.properties.getUriSpec());
-			configureServiceInstance(this.serviceInstance, this.appName,
-					this.context, this.port, host, uriSpec);
-			configureServiceDiscovery(this.serviceDiscovery, this.curator, this.properties,
-					this.instanceSerializer, this.serviceInstance);
+			if (this.properties.isRegister()) {
+				configureServiceInstance(this.serviceInstance, this.appName,
+						this.context, this.port, host, uriSpec);
+			}
 		}
+	}
+
+	/**
+	 * Builds Service Discovery - needs to be used if you want to use Zookeeper as a client application.
+	 * You don't have to register in Zookeeper to use Service Discovery.
+	 */
+	public void buildServiceDiscovery() {
+		configureServiceDiscovery(this.serviceDiscovery, this.curator, this.properties,
+				this.instanceSerializer, this.serviceInstance);
 	}
 
 	/**

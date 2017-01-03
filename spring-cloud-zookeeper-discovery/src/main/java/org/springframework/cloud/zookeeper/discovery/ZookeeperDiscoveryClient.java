@@ -84,6 +84,9 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
 		try {
+			if (this.serviceDiscovery.getServiceDiscovery() == null) {
+				return Collections.EMPTY_LIST;
+			}
 			String serviceIdToQuery = getServiceIdToQuery(serviceId);
 			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
 				.getServiceDiscovery().queryForInstances(serviceIdToQuery);
