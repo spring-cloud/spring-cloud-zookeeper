@@ -43,6 +43,7 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 			this.serviceDiscovery.setPort(this.properties.getInstancePort());
 			this.serviceDiscovery.build();
 		}
+		this.serviceDiscovery.buildServiceDiscovery();
 	}
 
 	@Override
@@ -91,6 +92,7 @@ public class ZookeeperLifecycle extends AbstractDiscoveryLifecycle {
 	protected void setConfiguredPort(int port) {
 		this.serviceDiscovery.setPort(port);
 		this.serviceDiscovery.build();
+		this.serviceDiscovery.buildServiceDiscovery();
 	}
 
 	@Override

@@ -21,13 +21,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.AbstractServerList;
-
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.util.StringUtils;
+
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.AbstractServerList;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
@@ -76,6 +76,9 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 	@SuppressWarnings("unchecked")
 	private List<ZookeeperServer> getServers() {
 		try {
+			if (this.serviceDiscovery == null) {
+				return Collections.EMPTY_LIST;
+			}
 			Collection<ServiceInstance<ZookeeperInstance>> instances = this.serviceDiscovery
 					.queryForInstances(this.serviceId);
 			if (instances == null || instances.isEmpty()) {
