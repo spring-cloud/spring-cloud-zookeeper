@@ -52,6 +52,8 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 
 	private AtomicBoolean built = new AtomicBoolean(false);
 
+	private AtomicBoolean serviceDiscoveryBuilt = new AtomicBoolean(false);
+
 	private AtomicInteger port = new AtomicInteger();
 
 	private AtomicReference<ServiceInstance<ZookeeperInstance>> serviceInstance = new AtomicReference<>();
