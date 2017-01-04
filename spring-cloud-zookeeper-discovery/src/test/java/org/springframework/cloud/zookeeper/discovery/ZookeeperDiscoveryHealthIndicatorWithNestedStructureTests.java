@@ -27,6 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThat;
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Marcin Grzejszczak
@@ -40,20 +41,17 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	@Autowired TestRibbonClient testRibbonClient;
+	@Autowired CuratorFramework curatorFramework;
 
 	// Issue: #54 - ZookeeperDiscoveryHealthIndicator fails on nested structure
-	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present() {
+	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
+			throws Exception {
 		// when:
 		String response = this.testRibbonClient.callService("me", "health");
 		// then:
 		log.info("Received response [" + response + "]");
-		twoServicesArePresentedInHealthEndpoint(response);
-	}
-
-	private boolean twoServicesArePresentedInHealthEndpoint(String response) {
-		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("me");
-		assertThat(response).field("discoveryComposite").field("zookeeper").array("services").field("name").isEqualTo("/a/b/c/d/anotherservice");
-		return true;
+		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();
+		then(this.curatorFramework.getChildren().forPath("/services/a/b/c/d/anotherservice")).isNotEmpty();
 	}
 	
 	@Configuration
