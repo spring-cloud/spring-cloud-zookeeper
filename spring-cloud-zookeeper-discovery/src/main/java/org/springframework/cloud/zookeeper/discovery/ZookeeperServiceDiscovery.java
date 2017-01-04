@@ -16,10 +16,13 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
@@ -41,6 +44,8 @@ import org.springframework.util.StringUtils;
  * @since 1.0.0
  */
 public class ZookeeperServiceDiscovery implements ApplicationContextAware {
+
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	private CuratorFramework curator;
 
@@ -116,6 +121,9 @@ public class ZookeeperServiceDiscovery implements ApplicationContextAware {
 	 * You don't have to register in Zookeeper to use Service Discovery.
 	 */
 	public void buildServiceDiscovery() {
+		if (log.isDebugEnabled()) {
+			log.debug("Configuring service discovery for service instance [" + this.serviceInstance + "]");
+		}
 		configureServiceDiscovery(this.serviceDiscovery, this.curator, this.properties,
 				this.instanceSerializer, this.serviceInstance);
 	}
