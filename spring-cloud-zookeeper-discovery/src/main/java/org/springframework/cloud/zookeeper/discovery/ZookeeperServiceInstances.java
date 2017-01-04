@@ -39,7 +39,11 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 	private List<ServiceInstance<ZookeeperInstance>> getZookeeperInstances() {
 		ArrayList<ServiceInstance<ZookeeperInstance>> allInstances = new ArrayList<>();
 		try {
-			for (String name : getNamesToQuery()) {
+			Collection<String> namesToQuery = getNamesToQuery();
+			if (log.isDebugEnabled()) {
+				log.debug("Querying the following names [" + namesToQuery + "]");
+			}
+			for (String name : namesToQuery) {
 				allInstances.addAll(nestedInstances(allInstances, name));
 			}
 			return allInstances;
@@ -61,7 +65,9 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 			List<String> children = this.serviceDiscovery.getCurator().getChildren().forPath(parentPath);
 			return iterateOverChildren(accumulator, parentPath, children);
 		} catch (Exception e) {
-			log.trace("Exception occurred while trying to retrieve children of [" + parentPath + "]", e);
+			if (log.isTraceEnabled()) {
+				log.trace("Exception occurred while trying to retrieve children of [" + parentPath + "]", e);
+			}
 			return injectZookeeperServiceInstances(accumulator, parentPath);
 		}
 	}
@@ -113,11 +119,17 @@ public class ZookeeperServiceInstances implements Iterable<ServiceInstance<Zooke
 
 	private Collection<String> getNamesToQuery() throws Exception {
 		if (this.zookeeperDependencies == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Using direct name resolution instead of dependency based one");
+			}
 			List<String> names = new ArrayList<>();
 			for (String name : this.serviceDiscovery.getServiceDiscovery().queryForNames()) {
 				names.add(sanitize(name));
 			}
 			return names;
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Using dependency based names to query");
 		}
 		return this.zookeeperDependencies.getDependencyNames();
 	}
