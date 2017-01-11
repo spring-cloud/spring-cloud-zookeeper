@@ -61,7 +61,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		this.zookeeperDependencies = zookeeperDependencies;
 	}
 
-	public ZookeeperDiscoveryClient(ZookeeperServiceRegistry registry, ZookeeperRegistration registration, ZookeeperDependencies zookeeperDependencies) {
+	public ZookeeperDiscoveryClient(ZookeeperServiceRegistry registry, ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = registry;
 		this.serviceInstanceHolder = null;
 		this.zookeeperDependencies = zookeeperDependencies;
