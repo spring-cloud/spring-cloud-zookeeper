@@ -43,8 +43,8 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
 	public ZookeeperDiscoveryHealthIndicator(CuratorFramework curatorFramework,
-											 ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
-											 ZookeeperDependencies zookeeperDependencies,
+			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
+			ZookeeperDependencies zookeeperDependencies,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.curatorFramework = curatorFramework;
 		this.serviceDiscovery = serviceDiscovery;
