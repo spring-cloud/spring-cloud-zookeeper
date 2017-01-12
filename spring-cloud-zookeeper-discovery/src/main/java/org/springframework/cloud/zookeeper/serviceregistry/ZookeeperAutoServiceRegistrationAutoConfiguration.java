@@ -53,8 +53,8 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperRegistration zookeeperRegistration(ApplicationContext context, ZookeeperDiscoveryProperties properties) {
+	@ConditionalOnMissingBean(ZookeeperRegistration.class)
+	public ServiceInstanceRegistration zookeeperRegistration(ApplicationContext context, ZookeeperDiscoveryProperties properties) {
 		String host = properties.getInstanceHost();
 		if (!StringUtils.hasText(host)) {
 			throw new IllegalStateException("instanceHost must not be empty");
