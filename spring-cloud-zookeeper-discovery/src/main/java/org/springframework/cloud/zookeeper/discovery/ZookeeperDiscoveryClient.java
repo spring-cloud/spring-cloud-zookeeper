@@ -25,13 +25,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.compat.ServiceDiscoveryHolder;
 import org.springframework.cloud.zookeeper.compat.ServiceInstanceHolder;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 import org.springframework.util.ReflectionUtils;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
@@ -48,20 +48,21 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
-	private ServiceDiscoveryHolder serviceDiscovery;
+	private ServiceDiscoveryHolder serviceDiscoveryHolder;
 	private ServiceInstanceHolder serviceInstanceHolder;
 
 	private ZookeeperDependencies zookeeperDependencies;
+	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
 	@Deprecated
-	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
-		this.serviceDiscovery = serviceDiscovery;
-		this.serviceInstanceHolder = serviceDiscovery;
+	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery serviceDiscoveryHolder, ZookeeperDependencies zookeeperDependencies) {
+		this.serviceDiscoveryHolder = serviceDiscoveryHolder;
+		this.serviceInstanceHolder = serviceDiscoveryHolder;
 		this.zookeeperDependencies = zookeeperDependencies;
 	}
 
-	public ZookeeperDiscoveryClient(ZookeeperServiceRegistry registry, ZookeeperDependencies zookeeperDependencies) {
-		this.serviceDiscovery = registry;
+	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
+		this.serviceDiscovery = serviceDiscovery;
 		this.serviceInstanceHolder = null;
 		this.zookeeperDependencies = zookeeperDependencies;
 	}
@@ -99,12 +100,11 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	public List<org.springframework.cloud.client.ServiceInstance> getInstances(
 			final String serviceId) {
 		try {
-			if (this.serviceDiscovery.getServiceDiscoveryRef().get() == null) {
+			if (getServiceDiscovery() == null) {
 				return Collections.EMPTY_LIST;
 			}
 			String serviceIdToQuery = getServiceIdToQuery(serviceId);
-			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = this.serviceDiscovery
-				.getServiceDiscoveryRef().get().queryForInstances(serviceIdToQuery);
+			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = getServiceDiscovery().queryForInstances(serviceIdToQuery);
 			List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
@@ -114,6 +114,13 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 		return new ArrayList<>();
+	}
+
+	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
+		if (this.serviceDiscovery != null) {
+			return this.serviceDiscovery;
+		}
+		return this.serviceDiscoveryHolder.getServiceDiscoveryRef().get();
 	}
 
 	private String getServiceIdToQuery(String serviceId) {
@@ -127,12 +134,12 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	@Override
 	public List<String> getServices() {
 		List<String> services = null;
-		if (this.serviceDiscovery.getServiceDiscoveryRef() == null) {
+		if (this.serviceDiscoveryHolder.getServiceDiscoveryRef() == null) {
 			log.warn("Service Discovery is not yet ready - returning empty list of services");
 			return Collections.emptyList();
 		}
 		try {
-			services = new ArrayList<>(this.serviceDiscovery.getServiceDiscoveryRef().get().queryForNames());
+			services = new ArrayList<>(getServiceDiscovery().queryForNames());
 		}
 		catch (Exception e) {
 			rethrowRuntimeException(e);

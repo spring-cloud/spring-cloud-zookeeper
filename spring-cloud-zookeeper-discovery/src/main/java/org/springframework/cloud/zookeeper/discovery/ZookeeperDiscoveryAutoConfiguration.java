@@ -17,8 +17,7 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.details.InstanceSerializer;
-import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -65,14 +64,8 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(ZookeeperServiceDiscovery.class)
 	// currently means auto-registration is false. That will change when ZookeeperServiceDiscovery is gone
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ZookeeperServiceRegistry registry) {
-		return new ZookeeperDiscoveryClient(registry, this.zookeeperDependencies);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public InstanceSerializer<ZookeeperInstance> instanceSerializer() {
-		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
+	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
+		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies);
 	}
 
 	@Configuration

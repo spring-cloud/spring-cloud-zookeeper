@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.serviceregistry;
 
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.BeansException;
@@ -47,19 +48,20 @@ public class ZookeeperServiceRegistryAutoConfiguration implements ApplicationCon
 	}
 
 	@Bean
+	@SuppressWarnings("unchecked")
 	public ZookeeperServiceRegistry zookeeperServiceRegistry(
-			ZookeeperDiscoveryProperties properties, CuratorFramework curator,
-			InstanceSerializer<ZookeeperInstance> instanceSerializer) {
+			ZookeeperDiscoveryProperties properties, CuratorFramework curator) {
 
 		try {
 			ZookeeperServiceDiscovery serviceDiscovery = this.context.getBean(ZookeeperServiceDiscovery.class);
+			InstanceSerializer instanceSerializer = this.context.getBean(InstanceSerializer.class);
 			return new ZookeeperServiceRegistry(serviceDiscovery, curator, properties,
 					instanceSerializer);
 		} catch (NoSuchBeanDefinitionException e) {
 		}
 
 		// for when auto-registration == false
-		return new ZookeeperServiceRegistry(curator, properties, instanceSerializer);
+		return new ZookeeperServiceRegistry(this.context.getBean(ServiceDiscovery.class));
 	}
 
 	@Bean

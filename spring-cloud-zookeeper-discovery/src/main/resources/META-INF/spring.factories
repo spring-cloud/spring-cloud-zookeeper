@@ -8,7 +8,8 @@ org.springframework.cloud.zookeeper.discovery.dependency.DependencyRestTemplateA
 org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAutoConfiguration,\
 org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration,\
-org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration
+org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration,\
+org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration
 
 # Environment Post Processors
 org.springframework.boot.env.EnvironmentPostProcessor=\
