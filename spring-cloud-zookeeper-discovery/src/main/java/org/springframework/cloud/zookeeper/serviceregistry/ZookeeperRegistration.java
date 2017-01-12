@@ -17,49 +17,17 @@
 package org.springframework.cloud.zookeeper.serviceregistry;
 
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.ServiceInstanceBuilder;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
 /**
  * @author Spencer Gibb
  */
-public class ZookeeperBuilderRegistration implements ZookeeperRegistration {
+public interface ZookeeperRegistration extends Registration {
 
-	protected ServiceInstance<ZookeeperInstance> serviceInstance;
-	protected ServiceInstanceBuilder<ZookeeperInstance> builder;
+	ServiceInstance<ZookeeperInstance> getServiceInstance();
 
-	public ZookeeperBuilderRegistration(ServiceInstanceBuilder<ZookeeperInstance> builder) {
-		this.builder = builder;
-	}
+	int getPort();
 
-	public ServiceInstance<ZookeeperInstance> getServiceInstance() {
-		if (this.serviceInstance == null) {
-			build();
-		}
-		return this.serviceInstance;
-	}
-
-	protected void build() {
-		this.serviceInstance = this.builder.build();
-	}
-
-	public int getPort() {
-		if (this.serviceInstance == null) {
-			return 0;
-		}
-		return this.serviceInstance.getPort();
-	}
-
-	public void setPort(int port) {
-		this.builder.port(port);
-		this.build();
-	}
-
-	@Override
-	public String toString() {
-		if (this.serviceInstance == null) {
-			return super.toString() + ", builder: "+ this.builder.toString();
-		}
-		return this.serviceInstance.toString();
-	}
+	void setPort(int port);
 }
