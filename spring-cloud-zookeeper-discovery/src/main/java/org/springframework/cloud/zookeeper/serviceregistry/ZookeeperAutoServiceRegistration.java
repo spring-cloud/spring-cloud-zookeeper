@@ -22,8 +22,8 @@ import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegis
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 
 /**
- * Zookeeper {@link org.springframework.cloud.client.discovery.DiscoveryLifecycle}
- * that uses {@link org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery} to register and de-register instances.
+ * Zookeeper {@link AbstractAutoServiceRegistration}
+ * that uses {@link ZookeeperServiceRegistry} to register and de-register instances.
  *
  * @author Spencer Gibb
  * @since 1.0.0
