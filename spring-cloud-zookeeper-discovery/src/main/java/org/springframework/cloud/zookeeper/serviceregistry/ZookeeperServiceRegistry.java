@@ -26,7 +26,6 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
-import org.springframework.cloud.zookeeper.compat.ServiceDiscoveryHolder;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
@@ -37,7 +36,7 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
  * @author Spencer Gibb
  */
 public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegistration>, SmartInitializingSingleton,
-		Closeable, ServiceDiscoveryHolder {
+		Closeable {
 
 	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
 	private AtomicBoolean started = new AtomicBoolean();

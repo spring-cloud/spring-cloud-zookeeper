@@ -15,7 +15,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.cloud.zookeeper.compat.ServiceInstanceHolder;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +46,7 @@ public class ZookeeperDiscoveryTests {
 
 	@Autowired TestRibbonClient testRibbonClient;
 	@Autowired DiscoveryClient discoveryClient;
-	@Autowired ServiceInstanceHolder serviceDiscovery;
+	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
 	@Value("${spring.application.name}") String springAppName;
 	@Autowired IdUsingFeignClient idUsingFeignClient;
 

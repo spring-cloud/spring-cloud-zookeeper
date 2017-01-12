@@ -18,11 +18,12 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 
 /**
  * {@link org.springframework.boot.actuate.health.HealthIndicator} that presents the
@@ -36,24 +37,27 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	private static final Log log = LogFactory
 			.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
-	private ZookeeperServiceDiscovery serviceDiscovery;
-	private ZookeeperServiceRegistry serviceRegistry;
-	private ZookeeperDependencies zookeeperDependencies;
-	private ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
+	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
+	private CuratorFramework curatorFramework;
+	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private final ZookeeperDependencies zookeeperDependencies;
+	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
 	@Deprecated
-	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery serviceDiscovery,
+	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery zookeeperServiceDiscovery,
 			ZookeeperDependencies zookeeperDependencies,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.serviceDiscovery = serviceDiscovery;
+		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
 
-	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceRegistry serviceRegistry,
+	public ZookeeperDiscoveryHealthIndicator(CuratorFramework curatorFramework,
+			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 			ZookeeperDependencies zookeeperDependencies,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.serviceRegistry = serviceRegistry;
+		this.curatorFramework = curatorFramework;
+		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
@@ -68,13 +72,13 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 		Health.Builder builder = Health.unknown();
 		try {
 			Iterable<ServiceInstance<ZookeeperInstance>> allInstances;
-			if (this.serviceDiscovery != null) {
+			if (this.zookeeperServiceDiscovery != null) {
 				allInstances = new ZookeeperServiceInstances(
-						this.serviceDiscovery, this.zookeeperDependencies,
+						this.zookeeperServiceDiscovery, this.zookeeperDependencies,
 						this.zookeeperDiscoveryProperties);
 			} else {
-				allInstances = new ZookeeperServiceInstances(
-						this.serviceRegistry, this.zookeeperDependencies,
+				allInstances = new ZookeeperServiceInstances(this.curatorFramework,
+						this.serviceDiscovery, this.zookeeperDependencies,
 						this.zookeeperDiscoveryProperties);
 			}
 			builder.up().withDetail("services", allInstances);

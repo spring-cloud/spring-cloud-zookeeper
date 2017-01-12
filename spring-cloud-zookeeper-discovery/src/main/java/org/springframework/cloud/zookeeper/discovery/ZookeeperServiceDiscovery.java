@@ -31,8 +31,6 @@ import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.cloud.zookeeper.compat.ServiceDiscoveryHolder;
-import org.springframework.cloud.zookeeper.compat.ServiceInstanceHolder;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,7 +47,7 @@ import org.springframework.util.StringUtils;
  * and {@link org.springframework.cloud.zookeeper.serviceregistry.ZookeeperBuilderRegistration}. Remove in Edgware
  */
 @Deprecated
-public class ZookeeperServiceDiscovery implements ZookeeperRegistration, ApplicationContextAware, ServiceDiscoveryHolder, ServiceInstanceHolder {
+public class ZookeeperServiceDiscovery implements ZookeeperRegistration, ApplicationContextAware {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 

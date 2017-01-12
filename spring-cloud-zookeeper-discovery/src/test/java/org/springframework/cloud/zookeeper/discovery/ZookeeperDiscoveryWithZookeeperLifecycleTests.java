@@ -30,7 +30,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.zookeeper.compat.ServiceInstanceHolder;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +61,7 @@ public class ZookeeperDiscoveryWithZookeeperLifecycleTests {
 
 	@Autowired TestRibbonClient testRibbonClient;
 	@Autowired DiscoveryClient discoveryClient;
-	@Autowired ServiceInstanceHolder serviceDiscovery;
+	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
 	@Value("${spring.application.name}") String springAppName;
 
 	@Test public void should_find_the_app_by_its_name_via_Ribbon() {

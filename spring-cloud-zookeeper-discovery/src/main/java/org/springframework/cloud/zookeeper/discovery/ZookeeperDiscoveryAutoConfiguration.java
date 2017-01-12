@@ -29,7 +29,6 @@ import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClientAutoConfiguration;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -84,11 +83,14 @@ public class ZookeeperDiscoveryAutoConfiguration {
 		}
 
 		@Bean
-		@ConditionalOnMissingBean({ZookeeperDiscoveryHealthIndicator.class, ZookeeperServiceDiscovery.class})
-		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator(ZookeeperServiceRegistry registry,
-																				ZookeeperDiscoveryProperties properties) {
-			return new ZookeeperDiscoveryHealthIndicator(registry,
-					this.zookeeperDependencies, properties);
+		@ConditionalOnMissingBean({ ZookeeperDiscoveryHealthIndicator.class,
+				ZookeeperServiceDiscovery.class })
+		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator(
+				CuratorFramework curatorFramework,
+				ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
+				ZookeeperDiscoveryProperties properties) {
+			return new ZookeeperDiscoveryHealthIndicator(curatorFramework,
+					serviceDiscovery, this.zookeeperDependencies, properties);
 		}
 	}
 

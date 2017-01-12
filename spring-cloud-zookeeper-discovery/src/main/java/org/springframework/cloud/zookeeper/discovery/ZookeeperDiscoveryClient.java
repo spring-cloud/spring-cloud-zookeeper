@@ -29,8 +29,6 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.zookeeper.compat.ServiceDiscoveryHolder;
-import org.springframework.cloud.zookeeper.compat.ServiceInstanceHolder;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.util.ReflectionUtils;
 
@@ -48,22 +46,19 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
-	private ServiceDiscoveryHolder serviceDiscoveryHolder;
-	private ServiceInstanceHolder serviceInstanceHolder;
+	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
 
 	private ZookeeperDependencies zookeeperDependencies;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
 	@Deprecated
-	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery serviceDiscoveryHolder, ZookeeperDependencies zookeeperDependencies) {
-		this.serviceDiscoveryHolder = serviceDiscoveryHolder;
-		this.serviceInstanceHolder = serviceDiscoveryHolder;
+	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery, ZookeeperDependencies zookeeperDependencies) {
+		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
 	}
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = serviceDiscovery;
-		this.serviceInstanceHolder = null;
 		this.zookeeperDependencies = zookeeperDependencies;
 	}
 
@@ -74,10 +69,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
-		if (this.serviceInstanceHolder == null) {
+		if (this.zookeeperServiceDiscovery == null) {
 			return null;
 		}
-		ServiceInstance<ZookeeperInstance> serviceInstance = this.serviceInstanceHolder.getServiceInstanceRef().get();
+		ServiceInstance<ZookeeperInstance> serviceInstance = this.zookeeperServiceDiscovery.getServiceInstanceRef().get();
 		return serviceInstance == null ? null : createServiceInstance(serviceInstance.getName(), serviceInstance);
 	}
 
@@ -120,7 +115,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		if (this.serviceDiscovery != null) {
 			return this.serviceDiscovery;
 		}
-		return this.serviceDiscoveryHolder.getServiceDiscoveryRef().get();
+		if (this.zookeeperServiceDiscovery.getServiceDiscoveryRef() == null) {
+			return null;
+		}
+		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
 	}
 
 	private String getServiceIdToQuery(String serviceId) {
@@ -134,7 +132,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	@Override
 	public List<String> getServices() {
 		List<String> services = null;
-		if (this.serviceDiscoveryHolder.getServiceDiscoveryRef() == null) {
+		if (getServiceDiscovery() == null) {
 			log.warn("Service Discovery is not yet ready - returning empty list of services");
 			return Collections.emptyList();
 		}
