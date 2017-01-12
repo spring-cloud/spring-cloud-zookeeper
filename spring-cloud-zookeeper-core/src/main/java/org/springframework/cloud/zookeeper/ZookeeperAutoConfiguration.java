@@ -28,7 +28,6 @@ import org.springframework.boot.actuate.autoconfigure.ConditionalOnEnabledHealth
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.enabled", matchIfMissing = true)
+@ConditionalOnZookeeperEnabled
 @EnableConfigurationProperties
 public class ZookeeperAutoConfiguration {
 
