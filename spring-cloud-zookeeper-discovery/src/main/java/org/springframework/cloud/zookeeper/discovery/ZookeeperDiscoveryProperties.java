@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Properties related to Zookeeper's Service Discovery.
@@ -53,6 +54,15 @@ public class ZookeeperDiscoveryProperties {
 	 */
 	private String instanceHost;
 
+	/** IP address to use when accessing service (must also set preferIpAddress
+            to use) */
+	private String instanceIpAddress;
+
+	/**
+	 * Use ip address rather than hostname during registration
+	 */
+	private boolean preferIpAddress = false;
+
 	/** Port to register the service under (defaults to listening port) */
 	private Integer instancePort;
 
@@ -72,7 +82,8 @@ public class ZookeeperDiscoveryProperties {
 
 	public ZookeeperDiscoveryProperties(InetUtils inetUtils) {
 		this.hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
-		this.instanceHost = this.hostInfo.getIpAddress();
+		this.instanceHost = this.hostInfo.getHostname();
+		this.instanceIpAddress = this.hostInfo.getIpAddress();
 	}
 
 	public boolean isEnabled() {
@@ -88,6 +99,9 @@ public class ZookeeperDiscoveryProperties {
 	}
 
 	public String getInstanceHost() {
+		if (this.preferIpAddress && StringUtils.hasText(this.instanceIpAddress)) {
+			return this.instanceIpAddress;
+		}
 		return this.instanceHost;
 	}
 
@@ -106,6 +120,15 @@ public class ZookeeperDiscoveryProperties {
 	public void setInstanceHost(String instanceHost) {
 		this.instanceHost = instanceHost;
 		this.hostInfo.override = true;
+	}
+
+	public void setInstanceIpAddress(String instanceIpAddress) {
+		this.instanceIpAddress = instanceIpAddress;
+		this.hostInfo.override = true;
+	}
+
+	public void setPreferIpAddress(boolean preferIpAddress) {
+		this.preferIpAddress = preferIpAddress;
 	}
 
 	public Map<String, String> getMetadata() {
