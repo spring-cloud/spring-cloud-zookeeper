@@ -24,6 +24,7 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryPropertie
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
 /**
+ * TODO: add test for custom customizer
  * @author Spencer Gibb
  */
 public class DefaultServiceDiscoveryCustomizer implements ServiceDiscoveryCustomizer{

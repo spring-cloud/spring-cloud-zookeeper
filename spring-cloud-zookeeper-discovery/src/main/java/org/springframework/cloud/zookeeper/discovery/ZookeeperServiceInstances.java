@@ -26,24 +26,11 @@ public class ZookeeperServiceInstances
 
 	private static final Log log = LogFactory.getLog(ZookeeperServiceInstances.class);
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
-	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 	private final List<ServiceInstance<ZookeeperInstance>> allInstances;
 	private final CuratorFramework curator;
-
-	@Deprecated
-	public ZookeeperServiceInstances(ZookeeperServiceDiscovery zookeeperServiceDiscovery,
-			ZookeeperDependencies zookeeperDependencies,
-			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.curator = zookeeperServiceDiscovery.getCurator();
-		this.zookeeperDependencies = zookeeperDependencies;
-		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
-		this.allInstances = getZookeeperInstances();
-
-	}
 
 	public ZookeeperServiceInstances(CuratorFramework curator,
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
@@ -103,7 +90,7 @@ public class ZookeeperServiceInstances
 	private Collection<ServiceInstance<ZookeeperInstance>> tryToGetInstances(
 			String path) {
 		try {
-			return getServiceDiscovery()
+			return this.serviceDiscovery
 					.queryForInstances(getPathWithoutRoot(path));
 		}
 		catch (Exception e) {
@@ -113,13 +100,6 @@ public class ZookeeperServiceInstances
 		}
 	}
 
-	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
-	}
-
 	private String getPathWithoutRoot(String path) {
 		return path.substring(this.zookeeperDiscoveryProperties.getRoot().length());
 	}
@@ -127,7 +107,7 @@ public class ZookeeperServiceInstances
 	private List<ServiceInstance<ZookeeperInstance>> injectZookeeperServiceInstances(
 			List<ServiceInstance<ZookeeperInstance>> accumulator, String name)
 			throws Exception {
-		Collection<ServiceInstance<ZookeeperInstance>> instances = getServiceDiscovery().queryForInstances(name);
+		Collection<ServiceInstance<ZookeeperInstance>> instances = this.serviceDiscovery.queryForInstances(name);
 		accumulator.addAll(convertCollectionToList(instances));
 		return accumulator;
 	}
@@ -157,7 +137,7 @@ public class ZookeeperServiceInstances
 				log.debug("Using direct name resolution instead of dependency based one");
 			}
 			List<String> names = new ArrayList<>();
-			for (String name : getServiceDiscovery().queryForNames()) {
+			for (String name : this.serviceDiscovery.queryForNames()) {
 				names.add(sanitize(name));
 			}
 			return names;

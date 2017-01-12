@@ -27,7 +27,6 @@ import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDisco
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,16 +54,11 @@ public class CuratorServiceDiscoveryAutoConfiguration {
 		return new JsonInstanceSerializer<>(ZookeeperInstance.class);
 	}
 
-	@Configuration
-	@ConditionalOnMissingBean(ZookeeperServiceDiscovery.class)
-	protected static class CuratorServiceDiscoveryConfiguration {
-
-		@Bean
-		@ConditionalOnMissingBean
-		public ServiceDiscovery<ZookeeperInstance> curatorServiceDiscovery(
-				ServiceDiscoveryCustomizer customizer) {
-			return customizer
-					.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
-		}
+	@Bean
+	@ConditionalOnMissingBean
+	public ServiceDiscovery<ZookeeperInstance> curatorServiceDiscovery(
+			ServiceDiscoveryCustomizer customizer) {
+		return customizer
+				.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
 	}
 }

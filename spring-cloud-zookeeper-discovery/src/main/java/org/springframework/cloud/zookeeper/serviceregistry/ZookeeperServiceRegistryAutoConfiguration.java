@@ -16,19 +16,16 @@
 
 package org.springframework.cloud.zookeeper.serviceregistry;
 
-import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -51,19 +48,9 @@ public class ZookeeperServiceRegistryAutoConfiguration implements ApplicationCon
 
 	@Bean
 	@SuppressWarnings("unchecked")
-	public ZookeeperServiceRegistry zookeeperServiceRegistry(
-			ZookeeperDiscoveryProperties properties, CuratorFramework curator) {
-
-		try {
-			ZookeeperServiceDiscovery serviceDiscovery = this.context.getBean(ZookeeperServiceDiscovery.class);
-			InstanceSerializer instanceSerializer = this.context.getBean(InstanceSerializer.class);
-			return new ZookeeperServiceRegistry(serviceDiscovery, curator, properties,
-					instanceSerializer);
-		} catch (NoSuchBeanDefinitionException e) {
-		}
-
-		// for when auto-registration == false
-		return new ZookeeperServiceRegistry(this.context.getBean(ServiceDiscovery.class));
+	public ZookeeperServiceRegistry zookeeperServiceRegistry(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
+		//return new ZookeeperServiceRegistry(this.context.getBean(ServiceDiscovery.class));
+		return new ZookeeperServiceRegistry(serviceDiscovery);
 	}
 
 	@Bean

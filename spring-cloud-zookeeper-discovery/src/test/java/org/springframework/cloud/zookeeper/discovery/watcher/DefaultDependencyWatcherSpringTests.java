@@ -7,6 +7,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.x.discovery.ServiceCache;
+import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ActiveProfiles;
@@ -45,7 +43,8 @@ public class DefaultDependencyWatcherSpringTests {
 
 	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener;
-	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
+	@Autowired ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	@Autowired ZookeeperRegistration registration;
 
 
 	@Test public void should_verify_that_presence_of_a_dependency_has_been_checked() {
@@ -55,7 +54,7 @@ public class DefaultDependencyWatcherSpringTests {
 	@Test public void should_verify_that_dependency_watcher_listener_is_successfully_registered_and_operational()
 			throws Exception {
 		//when:
-		this.serviceDiscovery.getServiceDiscoveryRef().get().unregisterService(this.serviceDiscovery.getServiceInstanceRef().get());
+		this.serviceDiscovery.unregisterService(this.registration.getServiceInstance());
 
 		//then:
 		Awaitility.await().until(new Callable<Boolean>() {
@@ -72,11 +71,6 @@ public class DefaultDependencyWatcherSpringTests {
 	@Profile("watcher")
 	static class Config {
 		@Bean
-		public ZookeeperLifecycle zookeeperLifecycle(ZookeeperDiscoveryProperties properties, ZookeeperServiceDiscovery serviceDiscovery) {
-			return new ZookeeperLifecycle(properties, serviceDiscovery);
-		}
-
-		@Bean
 		@LoadBalanced RestTemplate loadBalancedRestTemplate() {
 			return new RestTemplate();
 		}
@@ -88,11 +82,6 @@ public class DefaultDependencyWatcherSpringTests {
 
 		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
 			return new TestingServer(SocketUtils.findAvailableTcpPort());
-		}
-
-		@Primary
-		@Bean ZookeeperServiceDiscovery zookeeperServiceDiscovery() throws Exception {
-			return new MyZookeeperServiceDiscovery(curatorFramework());
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "close")
@@ -110,12 +99,6 @@ public class DefaultDependencyWatcherSpringTests {
 			return new AssertableDependencyPresenceOnStartupVerifier();
 		}
 
-	}
-
-	static class MyZookeeperServiceDiscovery extends CustomZookeeperServiceDiscovery {
-		MyZookeeperServiceDiscovery(CuratorFramework curator) {
-			super("testInstance", curator);
-		}
 	}
 
 	static class AssertableDependencyWatcherListener implements DependencyWatcherListener {

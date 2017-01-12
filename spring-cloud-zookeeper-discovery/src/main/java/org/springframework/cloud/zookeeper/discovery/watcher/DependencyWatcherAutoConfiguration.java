@@ -21,11 +21,9 @@ import java.util.List;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration;
@@ -59,20 +57,7 @@ public class DependencyWatcherAutoConfiguration {
 	}
 
 	@Bean(destroyMethod = "clearDependencyRegistrationHooks")
-	@ConditionalOnBean(ZookeeperServiceDiscovery.class)
 	@ConditionalOnMissingBean
-	public DependencyRegistrationHookProvider dependencyWatcherDeprecated(
-			ZookeeperServiceDiscovery serviceDiscovery,
-			DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
-			ZookeeperDependencies zookeeperDependencies) {
-		return new DefaultDependencyWatcher(serviceDiscovery,
-				dependencyPresenceOnStartupVerifier,
-				this.dependencyWatcherListeners,
-				zookeeperDependencies);
-	}
-
-	@Bean(destroyMethod = "clearDependencyRegistrationHooks")
-	@ConditionalOnMissingBean({ DependencyRegistrationHookProvider.class, ZookeeperServiceDiscovery.class })
 	public DependencyRegistrationHookProvider dependencyWatcher(
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 			DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,

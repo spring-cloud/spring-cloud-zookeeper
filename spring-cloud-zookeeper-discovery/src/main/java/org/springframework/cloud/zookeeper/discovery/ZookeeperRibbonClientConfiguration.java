@@ -18,6 +18,19 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesNotPassed;
+import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
+import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBasedLoadBalancer;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
@@ -26,20 +39,6 @@ import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.PingUrl;
 import com.netflix.loadbalancer.ServerList;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesNotPassed;
-import org.springframework.cloud.zookeeper.discovery.dependency.ConditionalOnDependenciesPassed;
-import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBasedLoadBalancer;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
 import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
@@ -61,9 +60,6 @@ public class ZookeeperRibbonClientConfiguration {
 	protected static final String VALUE_NOT_SET = "__not__set__";
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
 
-	@Autowired
-	private ZookeeperServiceRegistry registry;
-
 	@Value("${ribbon.client.name}")
 	private String serviceId = "client";
 
@@ -73,8 +69,8 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
-	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies) {
-		ZookeeperServerList serverList = new ZookeeperServerList(this.registry.getServiceDiscoveryRef().get());
+	public ServerList<?> ribbonServerListFromDependencies(IClientConfig config, ZookeeperDependencies zookeeperDependencies, ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
+		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		serverList.initFromDependencies(config, zookeeperDependencies);
 		log.debug(String.format("Server list for Ribbon's dependencies based load balancing is [%s]", serverList));
 		return serverList;
@@ -99,8 +95,8 @@ public class ZookeeperRibbonClientConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesNotPassed
-	public ServerList<?> ribbonServerList(IClientConfig config) {
-		ZookeeperServerList serverList = new ZookeeperServerList(this.registry.getServiceDiscoveryRef().get());
+	public ServerList<?> ribbonServerList(IClientConfig config, ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
+		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		serverList.initWithNiwsConfig(config);
 		log.debug(String.format("Server list for Ribbon's non-dependency based load balancing is [%s]", serverList));
 		return serverList;

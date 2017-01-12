@@ -20,26 +20,20 @@ package org.springframework.cloud.zookeeper.serviceregistry;
  * @author Spencer Gibb
  */
 
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnBean(AutoServiceRegistrationProperties.class)
-@ConditionalOnMissingBean(type = "org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle")
 @ConditionalOnZookeeperDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.service-registry.auto-registration.enabled", matchIfMissing = true)
 @AutoConfigureAfter(ZookeeperServiceRegistryAutoConfiguration.class)
@@ -50,13 +44,5 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 	public ZookeeperAutoServiceRegistration zookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry, ZookeeperRegistration registration,
 			ZookeeperDiscoveryProperties properties) {
 		return new ZookeeperAutoServiceRegistration(registry, registration, properties);
-	}
-
-
-	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperServiceDiscovery zookeeperServiceDiscovery(CuratorFramework curator, ZookeeperDiscoveryProperties zookeeperDiscoveryProperties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
-		return new ZookeeperServiceDiscovery(curator, zookeeperDiscoveryProperties,
-				instanceSerializer);
 	}
 }

@@ -48,7 +48,6 @@ public class ZookeeperDiscoveryTests {
 
 	@Autowired TestRibbonClient testRibbonClient;
 	@Autowired DiscoveryClient discoveryClient;
-	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
 	@Value("${spring.application.name}") String springAppName;
 	@Autowired IdUsingFeignClient idUsingFeignClient;
 
@@ -92,12 +91,6 @@ public class ZookeeperDiscoveryTests {
 		return JsonPath.builder(this.testRibbonClient.callOnUrl(instance.getHost()+":"+instance.getPort(), "health")).field("status").read(String.class);
 	}
 
-	@Test public void should_properly_find_local_instance() {
-		//expect:
-		then(this.serviceDiscovery.getServiceInstanceRef().get().getAddress()).isEqualTo(this.discoveryClient.getLocalServiceInstance().getHost());
-	}
-	
-	
 	@FeignClient("ribbonApp")
 	public static interface IdUsingFeignClient {
 		@RequestMapping(method = RequestMethod.GET, value = "/beans")

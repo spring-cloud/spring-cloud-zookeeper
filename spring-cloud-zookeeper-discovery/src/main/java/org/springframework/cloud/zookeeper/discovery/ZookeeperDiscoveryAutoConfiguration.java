@@ -54,14 +54,7 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnBean(ZookeeperServiceDiscovery.class)
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClientDeprecated(ZookeeperServiceDiscovery zookeeperServiceDiscovery) {
-		return new ZookeeperDiscoveryClient(zookeeperServiceDiscovery, this.zookeeperDependencies);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(ZookeeperServiceDiscovery.class)
-	// currently means auto-registration is false. That will change when ZookeeperServiceDiscovery is gone
+	@ConditionalOnMissingBean
 	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies);
 	}
@@ -74,16 +67,6 @@ public class ZookeeperDiscoveryAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		@ConditionalOnBean(ZookeeperServiceDiscovery.class)
-		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicatorDeprecated(ZookeeperServiceDiscovery serviceDiscovery,
-				ZookeeperDiscoveryProperties properties) {
-			return new ZookeeperDiscoveryHealthIndicator(serviceDiscovery,
-					this.zookeeperDependencies, properties);
-		}
-
-		@Bean
-		@ConditionalOnMissingBean({ ZookeeperDiscoveryHealthIndicator.class,
-				ZookeeperServiceDiscovery.class })
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator(
 				CuratorFramework curatorFramework,
 				ServiceDiscovery<ZookeeperInstance> serviceDiscovery,

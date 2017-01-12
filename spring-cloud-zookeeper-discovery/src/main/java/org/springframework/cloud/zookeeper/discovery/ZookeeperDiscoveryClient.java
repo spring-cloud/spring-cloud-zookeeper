@@ -46,16 +46,8 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
-
 	private ZookeeperDependencies zookeeperDependencies;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
-
-	@Deprecated
-	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery, ZookeeperDependencies zookeeperDependencies) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.zookeeperDependencies = zookeeperDependencies;
-	}
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = serviceDiscovery;
@@ -69,11 +61,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
-		if (this.zookeeperServiceDiscovery == null) {
-			return null;
-		}
-		ServiceInstance<ZookeeperInstance> serviceInstance = this.zookeeperServiceDiscovery.getServiceInstanceRef().get();
-		return serviceInstance == null ? null : createServiceInstance(serviceInstance.getName(), serviceInstance);
+		throw new UnsupportedOperationException("getLocalServiceInstance() will be deprecated by the time this is merged");
 	}
 
 	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
@@ -112,13 +100,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		if (this.zookeeperServiceDiscovery.getServiceDiscoveryRef() == null) {
-			return null;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
+		return this.serviceDiscovery;
 	}
 
 	private String getServiceIdToQuery(String serviceId) {

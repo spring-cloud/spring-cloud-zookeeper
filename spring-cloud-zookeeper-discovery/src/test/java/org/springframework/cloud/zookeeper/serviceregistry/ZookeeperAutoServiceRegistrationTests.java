@@ -48,14 +48,13 @@ public class ZookeeperAutoServiceRegistrationTests {
 	private ZookeeperRegistration registration;
 
 	@Autowired
-	private ZookeeperServiceRegistry registry;
+	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
 	@Autowired
 	private ZookeeperDiscoveryProperties properties;
 
 	@Test
 	public void contextLoads() throws Exception {
-		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = registry.getServiceDiscoveryRef().get();
 		Collection<ServiceInstance<ZookeeperInstance>> instances = serviceDiscovery.queryForInstances("myTestService1-F");
 		assertThat(instances).hasSize(1);
 
