@@ -65,13 +65,6 @@ public class ZookeeperDiscoveryTests {
 		then(instance.getMetadata().get("testMetadataKey")).isEqualTo("testMetadataValue");
 	}
 
-	@Test public void should_present_application_name_as_id_of_the_service_instance() {
-		//given:
-		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
-		//expect:
-		then(this.springAppName).isEqualTo(instance.getServiceId());
-	}
-
 	@Test public void should_find_an_instance_using_feign_via_service_id() {
 		final IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
 		//expect:

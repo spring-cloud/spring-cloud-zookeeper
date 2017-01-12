@@ -8,6 +8,9 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.apache.curator.x.discovery.ServiceInstanceBuilder;
+import org.apache.curator.x.discovery.UriSpec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperBuilderRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +86,15 @@ public class DefaultDependencyWatcherSpringTests {
 
 		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
 			return new TestingServer(SocketUtils.findAvailableTcpPort());
+		}
+
+		@Bean
+		public ZookeeperRegistration zookeeperRegistration() throws Exception {
+			ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.<ZookeeperInstance>builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
+					.address("anyUrl")
+					.port(10)
+					.name("testInstance");
+			return new ZookeeperBuilderRegistration(builder);
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "close")
