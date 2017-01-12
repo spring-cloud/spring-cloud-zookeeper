@@ -31,6 +31,8 @@ import org.springframework.cloud.commons.util.InetUtils;
 @ConfigurationProperties("spring.cloud.zookeeper.discovery")
 public class ZookeeperDiscoveryProperties {
 
+	public static final String DEFAULT_URI_SPEC = "{scheme}://{address}:{port}";
+
 	private InetUtils.HostInfo hostInfo;
 
 	private boolean enabled = true;
@@ -43,7 +45,7 @@ public class ZookeeperDiscoveryProperties {
 	/**
 	 * The URI specification to resolve during service registration in Zookeeper
 	 */
-	private String uriSpec = "{scheme}://{address}:{port}";
+	private String uriSpec = DEFAULT_URI_SPEC;
 
 	/**
 	 * Predefined host with which a service can register itself in Zookeeper. Corresponds

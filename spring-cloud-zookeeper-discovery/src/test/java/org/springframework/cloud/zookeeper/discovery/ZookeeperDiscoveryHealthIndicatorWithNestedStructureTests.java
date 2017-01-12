@@ -8,9 +8,6 @@ import javax.annotation.PreDestroy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.ServiceInstanceBuilder;
-import org.apache.curator.x.discovery.UriSpec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +18,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperBuilderRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
+import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,18 +70,16 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 		@PostConstruct
 		void registerNestedDependency() {
 			try {
-				ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.<ZookeeperInstance>builder()
-						.uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
+				this.registration = ServiceInstanceRegistration.builder()
+						.defaultUriSpec()
 						.address("anyUrl")
 						.port(10)
-						.name("/a/b/c/d/anotherservice");
-				this.registration = new ZookeeperBuilderRegistration(builder);
+						.name("/a/b/c/d/anotherservice")
+						.build();
 				this.serviceRegistry.register(registration);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			//this.customZookeeperServiceDiscovery = new CustomZookeeperServiceDiscovery(,
-			//		"/services", this.curatorFramework);
 		}
 
 		@PreDestroy

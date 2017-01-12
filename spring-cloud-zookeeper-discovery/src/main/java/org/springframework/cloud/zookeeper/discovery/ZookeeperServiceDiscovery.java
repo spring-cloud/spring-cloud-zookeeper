@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  * @author Spencer Gibb
  * @since 1.0.0
  * @deprecated replaced by {@link org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry}
- * and {@link org.springframework.cloud.zookeeper.serviceregistry.ZookeeperBuilderRegistration}. Remove in Edgware
+ * and {@link org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration}. Remove in Edgware
  */
 @Deprecated
 public class ZookeeperServiceDiscovery implements ZookeeperRegistration, ApplicationContextAware {

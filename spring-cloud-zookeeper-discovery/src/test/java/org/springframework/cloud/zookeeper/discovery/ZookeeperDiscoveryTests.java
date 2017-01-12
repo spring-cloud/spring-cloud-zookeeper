@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		properties = "feign.hystrix.enabled=false",
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
+@DirtiesContext
 public class ZookeeperDiscoveryTests {
 
 	@Autowired TestRibbonClient testRibbonClient;
