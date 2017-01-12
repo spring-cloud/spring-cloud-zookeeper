@@ -20,17 +20,25 @@ package org.springframework.cloud.zookeeper.serviceregistry;
  * @author Spencer Gibb
  */
 
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.apache.curator.x.discovery.ServiceInstanceBuilder;
+import org.apache.curator.x.discovery.UriSpec;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 @Configuration
 @ConditionalOnBean(AutoServiceRegistrationProperties.class)
@@ -44,5 +52,30 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 	public ZookeeperAutoServiceRegistration zookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry, ZookeeperRegistration registration,
 			ZookeeperDiscoveryProperties properties) {
 		return new ZookeeperAutoServiceRegistration(registry, registration, properties);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public ZookeeperRegistration zookeeperRegistration(ApplicationContext context, ZookeeperDiscoveryProperties properties) {
+		String host = properties.getInstanceHost();
+		if (!StringUtils.hasText(host)) {
+			throw new IllegalStateException("instanceHost must not be empty");
+		}
+
+		UriSpec uriSpec = new UriSpec(properties.getUriSpec());
+
+		RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment());
+		String appName = resolver.getProperty("spring.application.name", "application");
+
+		try {
+			ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.<ZookeeperInstance>builder()
+					.name(appName)
+					.payload(new ZookeeperInstance(context.getId(), appName, properties.getMetadata()))
+					.address(host)
+					.uriSpec(uriSpec);
+			return new ZookeeperBuilderRegistration(builder);
+		} catch (Exception e) {
+			throw new RuntimeException("Error building ZookeeperRegistration", e);
+		}
 	}
 }
