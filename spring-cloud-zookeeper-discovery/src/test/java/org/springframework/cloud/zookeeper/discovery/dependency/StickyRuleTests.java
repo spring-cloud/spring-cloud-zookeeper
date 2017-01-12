@@ -101,7 +101,8 @@ public class StickyRuleTests {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework);
 		}
 
-		@Bean(initMethod = "start", destroyMethod = "stop") TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
+		@Bean(initMethod = "start", destroyMethod = "stop")
+		TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework);
 		}
 

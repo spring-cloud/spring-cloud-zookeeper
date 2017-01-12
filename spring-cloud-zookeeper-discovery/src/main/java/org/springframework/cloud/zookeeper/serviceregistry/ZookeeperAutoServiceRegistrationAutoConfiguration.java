@@ -20,8 +20,6 @@ package org.springframework.cloud.zookeeper.serviceregistry;
  * @author Spencer Gibb
  */
 
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.ServiceInstanceBuilder;
 import org.apache.curator.x.discovery.UriSpec;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -68,12 +66,12 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 		String appName = resolver.getProperty("spring.application.name", "application");
 
 		try {
-			ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.<ZookeeperInstance>builder()
+			return ServiceInstanceRegistration.builder()
 					.name(appName)
 					.payload(new ZookeeperInstance(context.getId(), appName, properties.getMetadata()))
 					.address(host)
-					.uriSpec(uriSpec);
-			return new ZookeeperBuilderRegistration(builder);
+					.uriSpec(uriSpec)
+					.build();
 		} catch (Exception e) {
 			throw new RuntimeException("Error building ZookeeperRegistration", e);
 		}
