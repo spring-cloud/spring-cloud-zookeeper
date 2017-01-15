@@ -22,12 +22,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Zookeeper provides a <a href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</a> that allows
@@ -61,6 +64,8 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	private CuratorFramework curator;
 
 	private List<String> contexts;
+
+	private static final Log log = LogFactory.getLog(ConfigWatcher.class);
 
 	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
 		this.curator = curator;
@@ -98,9 +103,17 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			Collections.reverse(this.contexts);
 
 			for (String propertySourceContext : this.contexts) {
-				PropertySource propertySource = create(propertySourceContext);
-				composite.addPropertySource(propertySource);
-				// TODO: howto call close when /refresh
+				try {
+					PropertySource propertySource = create(propertySourceContext);
+					composite.addPropertySource(propertySource);
+					// TODO: howto call close when /refresh
+				} catch (Exception e) {
+					if (this.properties.isFailFast()) {
+						ReflectionUtils.rethrowRuntimeException(e);
+					} else {
+						log.warn("Unable to load zookeeper config from " + propertySourceContext, e);
+					}
+				}
 			}
 
 			return composite;
