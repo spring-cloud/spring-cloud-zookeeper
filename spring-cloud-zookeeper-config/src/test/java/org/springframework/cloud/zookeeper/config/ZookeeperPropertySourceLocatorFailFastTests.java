@@ -39,8 +39,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 
 	@After
 	public void tearDown() throws Exception {
-		// Put back the default timeout for curator, which is 15 seconds.
-		System.setProperty("curator-default-connection-timeout", "15000");
+		System.clearProperty("curator-default-connection-timeout");
 	}
 
 	@Test
