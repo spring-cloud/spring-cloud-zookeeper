@@ -48,6 +48,11 @@ public class ZookeeperConfigProperties {
 	@NotEmpty
 	private String profileSeparator = ",";
 
+	/**
+	 * Throw exceptions during config lookup if true, otherwise, log warnings.
+	 */
+	private boolean failFast = true;
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -64,6 +69,10 @@ public class ZookeeperConfigProperties {
 		return this.profileSeparator;
 	}
 
+	public boolean isFailFast() {
+		return this.failFast;
+	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
@@ -78,5 +87,9 @@ public class ZookeeperConfigProperties {
 
 	public void setProfileSeparator(String profileSeparator) {
 		this.profileSeparator = profileSeparator;
+	}
+
+	public void setFailFast(boolean failFast) {
+		this.failFast = failFast;
 	}
 }
