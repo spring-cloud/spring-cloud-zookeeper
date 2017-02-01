@@ -120,7 +120,7 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 				configureServiceInstance(this.serviceInstance, this.appName,
 						this.context, this.port, host, uriSpec);
 			}
-			if (this.serviceDiscovery.get() != null) {
+			if (this.serviceDiscovery.get() == null) {
 				configureServiceDiscovery(this.serviceDiscovery, this.curator, this.properties,
 						this.instanceSerializer, this.serviceInstance);
 			}
