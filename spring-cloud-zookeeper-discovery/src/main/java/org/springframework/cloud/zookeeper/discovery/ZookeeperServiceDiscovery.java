@@ -102,6 +102,11 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 		this.appName = resolver.getProperty("spring.application.name", "application");
 	}
 
+	@Override
+	public String getServiceId() {
+		return this.appName;
+	}
+
 	/**
 	 * Builds Service Instance - needs to be used when you want to register your application
 	 * in Zookeeper

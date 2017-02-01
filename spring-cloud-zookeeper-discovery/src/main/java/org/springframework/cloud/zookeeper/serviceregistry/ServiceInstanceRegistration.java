@@ -130,6 +130,14 @@ public class ServiceInstanceRegistration implements ZookeeperRegistration {
 		this.serviceInstance = this.builder.build();
 	}
 
+	@Override
+	public String getServiceId() {
+		if (this.serviceInstance == null) {
+			return null;
+		}
+		return this.serviceInstance.getName();
+	}
+
 	public int getPort() {
 		if (this.serviceInstance == null) {
 			return 0;
