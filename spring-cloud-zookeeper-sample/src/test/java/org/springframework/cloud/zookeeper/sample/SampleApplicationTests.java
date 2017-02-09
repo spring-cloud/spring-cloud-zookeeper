@@ -20,13 +20,15 @@ import org.apache.curator.test.TestingServer;
 import org.junit.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.SocketUtils;
 
 public class SampleApplicationTests {
 
 	@Test public void contextLoads() throws Exception {
-		TestingServer server = new TestingServer(2181);
+		int port = SocketUtils.findAvailableTcpPort();
+		TestingServer server = new TestingServer(port);
 
-		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run("--server.port=0");
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run("--server.port=0", "--spring.cloud.zookeeper.connectString=localhost:" + port);
 
 		context.close();
 		server.close();
