@@ -32,6 +32,7 @@ import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfi
 import org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -49,6 +50,7 @@ import feign.Response;
  */
 @Configuration
 @ConditionalOnDependenciesPassed
+@ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.headers.enabled", matchIfMissing = true)
 @ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
 @AutoConfigureAfter({ RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class })

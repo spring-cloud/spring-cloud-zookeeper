@@ -29,6 +29,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnRibbonZookeeper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -42,10 +43,11 @@ import org.springframework.context.annotation.Configuration;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@AutoConfigureBefore(RibbonAutoConfiguration.class)
-@ConditionalOnRibbonZookeeper
 @Configuration
+@ConditionalOnZookeeperEnabled
+@ConditionalOnRibbonZookeeper
 @ConditionalOnDependenciesPassed
+@AutoConfigureBefore(RibbonAutoConfiguration.class)
 public class DependencyRibbonAutoConfiguration {
 
 	private static final Log log = LogFactory.getLog(DependencyRibbonAutoConfiguration.class);

@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties
+@ConditionalOnZookeeperEnabled
 @ConditionalOnBean(SpringClientFactory.class)
 @ConditionalOnRibbonZookeeper
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
