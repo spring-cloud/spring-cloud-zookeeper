@@ -12,5 +12,9 @@ endpoints:
 logging.level:
   org.apache.zookeeper.ClientCnxn: WARN
 
+management:
+  security:
+    enabled: false
+
 #spring.cloud.zookeeper.dependencies:
 #  - testZookeeperApp: ~

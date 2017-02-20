@@ -22,6 +22,8 @@ Service Discovery is one of the key tenets of a microservice based architecture.
 
 Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` will enable auto-configuration that will setup Spring Cloud Zookeeper Discovery.
 
+NOTE: You still need to include `org.springframework.boot:spring-boot-starter-web` for web functionality.
+
 === Registering with Zookeeper
 
 When a client registers with Zookeeper, it provides meta-data about itself such as host and port, id and name.
