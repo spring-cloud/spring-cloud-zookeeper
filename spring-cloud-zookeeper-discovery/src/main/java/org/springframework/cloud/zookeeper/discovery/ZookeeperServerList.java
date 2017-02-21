@@ -29,6 +29,8 @@ import org.springframework.util.StringUtils;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
 
+import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
+import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
@@ -74,7 +76,7 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ZookeeperServer> getServers() {
+	protected List<ZookeeperServer> getServers() {
 		try {
 			if (this.serviceDiscovery == null) {
 				return Collections.EMPTY_LIST;
@@ -86,7 +88,14 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			}
 			List<ZookeeperServer> servers = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : instances) {
-				servers.add(new ZookeeperServer(instance));
+				String instanceStatus = null;
+				if (instance.getPayload() != null && instance.getPayload().getMetadata() != null) {
+					instanceStatus = instance.getPayload().getMetadata().get(INSTANCE_STATUS_KEY);
+				}
+				if (!StringUtils.hasText(instanceStatus) // backwards compatibility
+						|| instanceStatus.equalsIgnoreCase(STATUS_UP)) {
+					servers.add(new ZookeeperServer(instance));
+				}
 			}
 			return servers;
 		}

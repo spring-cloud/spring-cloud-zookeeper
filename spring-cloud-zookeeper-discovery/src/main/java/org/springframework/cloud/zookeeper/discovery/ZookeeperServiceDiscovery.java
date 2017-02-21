@@ -37,6 +37,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
+
 /**
  * Service discovery for Zookeeper that sets up {@link ServiceDiscovery}
  * and {@link ServiceInstance}.
@@ -156,9 +158,13 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 											UriSpec uriSpec) {
 		// @formatter:off
 		try {
+			ZookeeperInstance zookeeperInstance = new ZookeeperInstance(context.getId(), appName, this.properties.getMetadata());
+			if (StringUtils.hasText(this.properties.getInitialStatus())) {
+				zookeeperInstance.getMetadata().put(INSTANCE_STATUS_KEY, this.properties.getInitialStatus());
+			}
 			serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
 					.name(appName)
-					.payload(new ZookeeperInstance(context.getId(), appName, this.properties.getMetadata()))
+					.payload(zookeeperInstance)
 					.port(port.get())
 					.address(host)
 					.uriSpec(uriSpec).build());
