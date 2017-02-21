@@ -66,7 +66,7 @@ public class ZookeeperServer extends Server {
 	}
 
 	public ServiceInstance<ZookeeperInstance> getInstance() {
-		return instance;
+		return this.instance;
 	}
 
 	@Override
@@ -75,12 +75,12 @@ public class ZookeeperServer extends Server {
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 		ZookeeperServer that = (ZookeeperServer) o;
-		return Objects.equals(metaInfo, that.metaInfo) &&
-				Objects.equals(instance, that.instance);
+		return Objects.equals(this.metaInfo, that.metaInfo) &&
+				Objects.equals(this.instance, that.instance);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), metaInfo, instance);
+		return Objects.hash(super.hashCode(), this.metaInfo, this.instance);
 	}
 }
