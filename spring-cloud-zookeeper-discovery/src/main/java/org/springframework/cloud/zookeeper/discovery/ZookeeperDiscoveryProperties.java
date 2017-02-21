@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.zookeeper.support.StatusConstants;
 import org.springframework.util.StringUtils;
 
 /**
@@ -76,6 +77,11 @@ public class ZookeeperDiscoveryProperties {
 	 * is sent to zookeeper and can be used by other instances.
 	 */
 	private Map<String, String> metadata = new HashMap<>();
+
+	/**
+	 * The initial status of this instance (defaults to {@link StatusConstants#STATUS_UP}).
+	 */
+	private String initialStatus = StatusConstants.STATUS_UP;
 
 	@SuppressWarnings("unused")
 	private ZookeeperDiscoveryProperties() {}
@@ -155,6 +161,14 @@ public class ZookeeperDiscoveryProperties {
 		this.instancePort = instancePort;
 	}
 
+	public String getInitialStatus() {
+		return this.initialStatus;
+	}
+
+	public void setInitialStatus(String initialStatus) {
+		this.initialStatus = initialStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
@@ -164,6 +178,7 @@ public class ZookeeperDiscoveryProperties {
 				", instancePort='" + this.instancePort + '\'' +
 				", metadata=" + this.metadata +
 				", register=" + this.register +
+				", initialStatus=" + this.initialStatus +
 				'}';
 	}
 }

@@ -20,6 +20,8 @@ import com.netflix.loadbalancer.Server;
 
 import org.apache.curator.x.discovery.ServiceInstance;
 
+import java.util.Objects;
+
 /**
  * A Zookeeper version of a {@link Server Ribbon Server}
  *
@@ -29,6 +31,7 @@ import org.apache.curator.x.discovery.ServiceInstance;
 public class ZookeeperServer extends Server {
 
 	private final MetaInfo metaInfo;
+	private ServiceInstance<ZookeeperInstance> instance;
 
 	public ZookeeperServer(final ServiceInstance<ZookeeperInstance> instance) {
 		// TODO: ssl support
@@ -54,10 +57,30 @@ public class ZookeeperServer extends Server {
 				return instance.getId();
 			}
 		};
+		this.instance = instance;
 	}
 
 	@Override
 	public MetaInfo getMetaInfo() {
 		return this.metaInfo;
+	}
+
+	public ServiceInstance<ZookeeperInstance> getInstance() {
+		return instance;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		ZookeeperServer that = (ZookeeperServer) o;
+		return Objects.equals(metaInfo, that.metaInfo) &&
+				Objects.equals(instance, that.instance);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), metaInfo, instance);
 	}
 }

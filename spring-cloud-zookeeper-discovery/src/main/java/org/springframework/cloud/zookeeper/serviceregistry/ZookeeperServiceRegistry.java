@@ -23,13 +23,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
+import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
+import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
@@ -116,13 +121,25 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 
 	@Override
 	public void setStatus(ZookeeperRegistration registration, String status) {
-		//TODO:
+		ServiceInstance<ZookeeperInstance> serviceInstance = registration.getServiceInstance();
+		ZookeeperInstance instance = serviceInstance.getPayload();
+		instance.getMetadata().put(INSTANCE_STATUS_KEY, status);
+		try {
+			getServiceDiscovery().updateService(serviceInstance);
+		} catch (Exception e) {
+			ReflectionUtils.rethrowRuntimeException(e);
+		}
 	}
 
 	@Override
 	public Object getStatus(ZookeeperRegistration registration) {
-		//TODO:
-		return null;
+		ZookeeperInstance instance = registration.getServiceInstance().getPayload();
+		String instanceStatus = instance.getMetadata().get(INSTANCE_STATUS_KEY);
+
+		if (!StringUtils.hasText(instanceStatus)) {
+			instanceStatus = STATUS_UP;
+		}
+		return instanceStatus;
 	}
 
 	/**
