@@ -16,11 +16,9 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import com.netflix.loadbalancer.Server;
-
 import org.apache.curator.x.discovery.ServiceInstance;
 
-import java.util.Objects;
+import com.netflix.loadbalancer.Server;
 
 /**
  * A Zookeeper version of a {@link Server Ribbon Server}
@@ -67,20 +65,5 @@ public class ZookeeperServer extends Server {
 
 	public ServiceInstance<ZookeeperInstance> getInstance() {
 		return this.instance;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		ZookeeperServer that = (ZookeeperServer) o;
-		return Objects.equals(this.metaInfo, that.metaInfo) &&
-				Objects.equals(this.instance, that.instance);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), this.metaInfo, this.instance);
 	}
 }

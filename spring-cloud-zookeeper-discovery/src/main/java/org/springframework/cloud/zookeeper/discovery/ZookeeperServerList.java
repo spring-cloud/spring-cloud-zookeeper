@@ -88,7 +88,10 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			}
 			List<ZookeeperServer> servers = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : instances) {
-				String instanceStatus = instance.getPayload().getMetadata().get(INSTANCE_STATUS_KEY);
+				String instanceStatus = null;
+				if (instance.getPayload() != null && instance.getPayload().getMetadata() != null) {
+					instanceStatus = instance.getPayload().getMetadata().get(INSTANCE_STATUS_KEY);
+				}
 				if (!StringUtils.hasText(instanceStatus) // backwards compatibility
 						|| instanceStatus.equalsIgnoreCase(STATUS_UP)) {
 					servers.add(new ZookeeperServer(instance));
