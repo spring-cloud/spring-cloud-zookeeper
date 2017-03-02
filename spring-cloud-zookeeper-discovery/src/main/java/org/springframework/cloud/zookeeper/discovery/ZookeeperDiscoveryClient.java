@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import static org.springframework.util.ReflectionUtils.*;
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
