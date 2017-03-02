@@ -29,4 +29,9 @@ public interface StatusConstants {
 	 * UP value for {@link StatusConstants#INSTANCE_STATUS_KEY} key.
 	 */
 	String STATUS_UP = "UP";
+
+	/**
+	 * OUT_OF_SERVICE value for {@link StatusConstants#INSTANCE_STATUS_KEY} key.
+	 */
+	String STATUS_OUT_OF_SERVICE = "OUT_OF_SERVICE";
 }
