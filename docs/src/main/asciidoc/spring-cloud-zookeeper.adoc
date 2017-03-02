@@ -71,6 +71,7 @@ Spring Cloud has support for https://github.com/spring-cloud/spring-cloud-netfli
 
 You can also use the `org.springframework.cloud.client.discovery.DiscoveryClient` which provides a simple API for discovery clients that is not specific to Netflix, e.g.
 
+[source,java,indent=0]
 ----
 @Autowired
 private DiscoveryClient discoveryClient;
@@ -83,6 +84,48 @@ public String serviceUrl() {
     return null;
 }
 ----
+
+[[spring-cloud-zookeeper-netflix]]
+== Using Spring Cloud Zookeeper with Spring Cloud Netflix Components
+
+Spring Cloud Netflix supplies useful tools that work regardless of which `DiscoveryClient` implementation is used. Feign, Turbine, Ribbon and Zuul all work with Spring Cloud Zookeeper.
+
+=== Ribbon with Zookeeper
+
+Spring Cloud Zookeeper provides an implementation of Ribbon's `ServerList`. When the `spring-cloud-starter-zookeeper-discovery` is used, Ribbon is auto-configured to use the `ZookeeperServerList` by default.
+
+[[spring-cloud-zookeeper-service-registry]]
+== Spring Cloud Zookeeper and Service Registry
+
+Spring Cloud Zookeeper implements the `ServiceRegistry` interface allowing developers to register arbitrary service in a programmatic way.
+
+The `ServiceInstanceRegistration` class offers a `builder()` method to create a `Registration` object that can be used by the `ServiceRegistry`.
+
+[source,java,indent=0]
+----
+@Autowired
+private ZookeeperServiceRegistry serviceRegistry;
+
+public void registerThings() {
+    ZookeeperRegistration registration = ServiceInstanceRegistration.builder()
+            .defaultUriSpec()
+            .address("anyUrl")
+            .port(10)
+            .name("/a/b/c/d/anotherservice")
+            .build();
+    this.serviceRegistry.register(registration);
+}
+----
+
+=== Instance Status
+
+Netflix Eureka supports having instances registered with the server that are `OUT_OF_SERVICE` and not returned as active service instances. This is very useful for behaviors such as blue/green deployments. The Curator Service Discovery recipe does not support this behavior. Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement `OUT_OF_SERVICE` by updating some specific metadata and then filtering on that metadata in the Ribbon `ZookeeperServerList`. The `ZookeeperServerList` filters out all non-null instance statuses that do not equal `UP`. If the instance status field is empty, it is considered `UP` for backwards compatibility. To change the status of an instance POST `OUT_OF_SERVICE` to the `ServiceRegistry` instance status actuator endpoint.
+
+ ----
+ $ echo -n OUT_OF_SERVICE | http POST http://localhost:8081/service-registry/instance-status
+ ----
+
+ NOTE: The above example uses the `http` command from https://httpie.org
 
 [[spring-cloud-zookeeper-dependencies]]
 
