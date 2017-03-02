@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +28,8 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.util.ReflectionUtils;
+
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * Zookeeper version of {@link DiscoveryClient}. Capable of resolving aliases from
