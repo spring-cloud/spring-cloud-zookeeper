@@ -40,7 +40,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class,
-		properties = "feign.hystrix.enabled=false",
+		properties = {
+			"feign.hystrix.enabled=false",
+			"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath"
+		},
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
 @DirtiesContext
@@ -71,6 +74,13 @@ public class ZookeeperDiscoveryTests {
 		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
 		then(this.springAppName).isEqualTo(instance.getServiceId());
+	}
+
+	@Test public void should_service_instance_uri_match_uriSpec() {
+		//given:
+		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
+		//expect:
+		then(instance.getUri()).hasPath("/contextPath");
 	}
 
 	@Test public void should_find_an_instance_using_feign_via_service_id() {
