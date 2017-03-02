@@ -8,9 +8,9 @@ import org.springframework.cloud.client.ServiceInstance;
 
 /**
  * A specific {@link ServiceInstance} describing a zookeeper service instance
- * Created on 01/03/17.
  *
  * @author Reda.Housni-Alaoui
+ * @since 1.1.0
  */
 public class ZookeeperServiceInstance implements ServiceInstance {
 
