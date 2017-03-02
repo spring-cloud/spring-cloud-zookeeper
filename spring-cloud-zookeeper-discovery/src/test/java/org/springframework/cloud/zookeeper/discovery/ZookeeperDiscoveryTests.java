@@ -38,7 +38,7 @@ import static org.assertj.core.api.BDDAssertions.then;
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(ZookeeperDiscoveryTests.Config.class)
+@SpringApplicationConfiguration(classes = ZookeeperDiscoveryTests.Config.class)
 @ActiveProfiles("ribbon")
 @WebIntegrationTest(randomPort = true)
 public class ZookeeperDiscoveryTests {
@@ -68,6 +68,13 @@ public class ZookeeperDiscoveryTests {
 		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
 		then(this.springAppName).isEqualTo(instance.getServiceId());
+	}
+
+	@Test public void should_service_instance_uri_match_uriSpec() {
+		//given:
+		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
+		//expect:
+		then(instance.getUri()).hasPath("/contextPath");
 	}
 
 	@Test public void should_find_an_instance_using_feign_via_service_id() {
