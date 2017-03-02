@@ -6,3 +6,4 @@ spring:
       discovery:
         metadata:
           testMetadataKey: testMetadataValue
+        uriSpec: "{scheme}://{address}:{port}/contextPath"
