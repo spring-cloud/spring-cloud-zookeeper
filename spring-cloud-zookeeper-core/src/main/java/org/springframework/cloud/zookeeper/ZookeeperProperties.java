@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Properties related to connecting to Zookeeper
@@ -27,6 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Spencer Gibb
  * @since 1.0.0
  */
+@Validated
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperProperties {
 
