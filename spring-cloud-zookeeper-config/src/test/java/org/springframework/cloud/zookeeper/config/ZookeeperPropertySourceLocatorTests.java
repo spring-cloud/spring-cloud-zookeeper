@@ -17,9 +17,11 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -31,12 +33,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
-import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.SocketUtils;
 
@@ -76,29 +79,38 @@ public class ZookeeperPropertySourceLocatorTests {
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {
+		private AtomicBoolean ready = new AtomicBoolean(false);
+
 		@Bean
 		public CountDownLatch countDownLatch() {
 			return new CountDownLatch(1);
 		}
 
 		@Bean
-		public RefreshEndpoint refreshEndpoint(ConfigurableApplicationContext context,
-				RefreshScope scope) {
-			return new TestRefreshEndpoint(context, scope, countDownLatch());
+		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
+												 RefreshScope scope) {
+			return new ContextRefresher(context, scope);
+		}
+
+		@EventListener
+		public void handle(EnvironmentChangeEvent event) {
+			if (event.getKeys().contains(KEY_BASIC)) {
+				countDownLatch().countDown();
+			}
 		}
 	}
 
-	static class TestRefreshEndpoint extends RefreshEndpoint {
+	static class TestContextRefresher extends ContextRefresher {
 		private CountDownLatch latch;
 
-		public TestRefreshEndpoint( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
-			super(new ContextRefresher(context, scope));
+		public TestContextRefresher( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
+			super(context, scope);
 			this.latch = latch;
 		}
 
 		@Override
-		public synchronized String[] refresh() {
-			String[] keys = super.refresh();
+		public synchronized Set<String> refresh() {
+			Set<String> keys = super.refresh();
 			this.latch.countDown();
 			return keys;
 		}
@@ -177,13 +189,13 @@ public class ZookeeperPropertySourceLocatorTests {
 		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_BASIC)));
 
 		propValue = this.environment.getProperty(KEY_NESTED);
-		assertThat(KEY_NESTED + " was wrong", propValue, is(equalTo(VAL_NESTED)));
+		assertThat(VAL_NESTED + " was wrong", propValue, is(equalTo(VAL_NESTED)));
 
 		propValue = this.environment.getProperty(KEY_WITH_DOT);
-		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_WITH_DOT)));
+		assertThat(VAL_WITH_DOT + " was wrong", propValue, is(equalTo(VAL_WITH_DOT)));
 
 		propValue = this.environment.getProperty(KEY_WITHOUT_VALUE);
-		assertThat(KEY_BASIC + " was wrong", propValue, is(isEmptyString()));
+		assertThat(KEY_WITHOUT_VALUE + " was wrong", propValue, is(isEmptyString()));
 	}
 
 	@Test
