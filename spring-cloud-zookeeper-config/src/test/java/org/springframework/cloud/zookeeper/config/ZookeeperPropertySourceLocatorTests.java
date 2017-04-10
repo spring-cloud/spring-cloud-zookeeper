@@ -53,10 +53,8 @@ import static org.junit.Assert.assertThat;
  */
 public class ZookeeperPropertySourceLocatorTests {
 
-	private ConfigurableEnvironment environment;
 	public static final String PREFIX = "test__config__";
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
-	private ConfigurableApplicationContext context;
 	public static final String CONTEXT = ROOT + "/application/";
 
 	public static final String KEY_BASIC = "testProp";
@@ -68,13 +66,17 @@ public class ZookeeperPropertySourceLocatorTests {
 	public static final String VAL_WITH_DOT = "withDotVal";
 
 	public static final String KEY_NESTED = "testProp.nested";
-	public static final String KEY_NESTED_PATH = CONTEXT + KEY_NESTED.replace('.','/');
+	public static final String KEY_NESTED_PATH = CONTEXT + KEY_NESTED.replace('.', '/');
 	public static final String VAL_NESTED = "nestedVal";
 
 	public static final String KEY_WITHOUT_VALUE = "testProp.novalue";
 	public static final String KEY_WITHOUT_VALUE_PATH = CONTEXT + KEY_WITHOUT_VALUE;
 
+	private ConfigurableEnvironment environment;
+	private ConfigurableApplicationContext context;
 	private TestingServer testingServer;
+	private CuratorFramework curator;
+	private ZookeeperConfigProperties properties;
 
 	@Configuration
 	@EnableAutoConfiguration
@@ -88,7 +90,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		@Bean
 		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
-												 RefreshScope scope) {
+				RefreshScope scope) {
 			return new ContextRefresher(context, scope);
 		}
 
@@ -103,7 +105,8 @@ public class ZookeeperPropertySourceLocatorTests {
 	static class TestContextRefresher extends ContextRefresher {
 		private CountDownLatch latch;
 
-		public TestContextRefresher( ConfigurableApplicationContext context, RefreshScope scope, CountDownLatch latch) {
+		public TestContextRefresher(ConfigurableApplicationContext context,
+				RefreshScope scope, CountDownLatch latch) {
 			super(context, scope);
 			this.latch = latch;
 		}
@@ -116,19 +119,13 @@ public class ZookeeperPropertySourceLocatorTests {
 		}
 	}
 
-	CuratorFramework curator;
-
-	ZookeeperConfigProperties properties;
-
 	@Before
 	public void setup() throws Exception {
 		int port = SocketUtils.findAvailableTcpPort();
 		this.testingServer = new TestingServer(port);
 		String connectString = "localhost:" + port;
 		this.curator = CuratorFrameworkFactory.builder()
-				.retryPolicy(new RetryOneTime(500))
-				.connectString(connectString)
-				.build();
+				.retryPolicy(new RetryOneTime(500)).connectString(connectString).build();
 		this.curator.start();
 
 		List<String> children = this.curator.getChildren().forPath("/");
@@ -139,25 +136,21 @@ public class ZookeeperPropertySourceLocatorTests {
 		}
 
 		StringBuilder create = new StringBuilder(1024);
-		create.append(
-				this.curator.create().creatingParentsIfNeeded().forPath(KEY_BASIC_PATH, VAL_BASIC.getBytes())).append(
-				'\n');
-		create.append(this.curator.create().creatingParentsIfNeeded().forPath(KEY_WITH_DOT_PATH,
-				VAL_WITH_DOT.getBytes())).append('\n');
-		create.append(
-				this.curator.create().creatingParentsIfNeeded().forPath(KEY_NESTED_PATH, VAL_NESTED.getBytes()))
-				.append(
-				'\n');
-		create.append(this.curator.create().creatingParentsIfNeeded().forPath(KEY_WITHOUT_VALUE_PATH, null)).append(
-				'\n');
+		create.append(this.curator.create().creatingParentsIfNeeded()
+				.forPath(KEY_BASIC_PATH, VAL_BASIC.getBytes())).append('\n');
+		create.append(this.curator.create().creatingParentsIfNeeded()
+				.forPath(KEY_WITH_DOT_PATH, VAL_WITH_DOT.getBytes())).append('\n');
+		create.append(this.curator.create().creatingParentsIfNeeded()
+				.forPath(KEY_NESTED_PATH, VAL_NESTED.getBytes())).append('\n');
+		create.append(this.curator.create().creatingParentsIfNeeded()
+				.forPath(KEY_WITHOUT_VALUE_PATH, null)).append('\n');
 		this.curator.close();
 		System.out.println(create);
 
-		this.context = new SpringApplicationBuilder(Config.class)
-				.web(false)
-				.run("--spring.cloud.zookeeper.connectString=" + connectString,
-						"--spring.application.name=testZkPropertySource",
-						"--spring.cloud.zookeeper.config.root="+ROOT);
+		this.context = new SpringApplicationBuilder(Config.class).web(false).run(
+				"--spring.cloud.zookeeper.connectString=" + connectString,
+				"--spring.application.name=testZkPropertySource",
+				"--spring.cloud.zookeeper.config.root=" + ROOT);
 
 		this.curator = this.context.getBean(CuratorFramework.class);
 		this.properties = this.context.getBean(ZookeeperConfigProperties.class);
@@ -167,7 +160,8 @@ public class ZookeeperPropertySourceLocatorTests {
 	public void delete(String path) throws Exception {
 		try {
 			this.curator.delete().deletingChildrenIfNeeded().forPath(path);
-		} catch (KeeperException e) {
+		}
+		catch (KeeperException e) {
 			if (e.code() != KeeperException.Code.NONODE) {
 				throw e;
 			}
@@ -178,8 +172,10 @@ public class ZookeeperPropertySourceLocatorTests {
 	public void after() throws Exception {
 		try {
 			delete(this.properties.getRoot());
-		} finally {
+		}
+		finally {
 			this.context.close();
+			this.testingServer.close();
 		}
 	}
 
@@ -210,6 +206,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		assertThat("listener didn't receive event", receivedEvent, is(true));
 
 		testProp = this.environment.getProperty(KEY_BASIC);
-		assertThat("testProp was wrong after update", testProp, is(equalTo("testPropValUpdate")));
+		assertThat("testProp was wrong after update", testProp,
+				is(equalTo("testPropValUpdate")));
 	}
 }
