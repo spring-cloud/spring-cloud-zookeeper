@@ -17,7 +17,6 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -99,23 +98,6 @@ public class ZookeeperPropertySourceLocatorTests {
 			if (event.getKeys().contains(KEY_BASIC)) {
 				countDownLatch().countDown();
 			}
-		}
-	}
-
-	static class TestContextRefresher extends ContextRefresher {
-		private CountDownLatch latch;
-
-		public TestContextRefresher(ConfigurableApplicationContext context,
-				RefreshScope scope, CountDownLatch latch) {
-			super(context, scope);
-			this.latch = latch;
-		}
-
-		@Override
-		public synchronized Set<String> refresh() {
-			Set<String> keys = super.refresh();
-			this.latch.countDown();
-			return keys;
 		}
 	}
 
