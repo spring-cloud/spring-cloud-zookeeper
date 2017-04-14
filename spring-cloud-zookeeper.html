@@ -431,6 +431,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_using_the_discoveryclient">Using the DiscoveryClient</a></li>
 </ul>
 </li>
+<li><a href="#spring-cloud-zookeeper-netflix">Using Spring Cloud Zookeeper with Spring Cloud Netflix Components</a>
+<ul class="sectlevel2">
+<li><a href="#_ribbon_with_zookeeper">Ribbon with Zookeeper</a></li>
+</ul>
+</li>
+<li><a href="#spring-cloud-zookeeper-service-registry">Spring Cloud Zookeeper and Service Registry</a>
+<ul class="sectlevel2">
+<li><a href="#_instance_status">Instance Status</a></li>
+</ul>
+</li>
 <li><a href="#spring-cloud-zookeeper-dependencies">Zookeeper Dependencies</a>
 <ul class="sectlevel2">
 <li><a href="#_using_the_zookeeper_dependencies">Using the Zookeeper Dependencies</a></li>
@@ -487,6 +497,18 @@ Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon), Circuit Brea
 <h3 id="_how_to_activate">How to activate</h3>
 <div class="paragraph">
 <p>Including a dependency on <code>org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Discovery.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You still need to include <code>org.springframework.boot:spring-boot-starter-web</code> for web functionality.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -557,7 +579,7 @@ If you use <a href="#spring-cloud-zookeeper-config">Spring Cloud Zookeeper Confi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>@Autowired
+<pre class="highlight"><code class="language-java" data-lang="java">@Autowired
 private DiscoveryClient discoveryClient;
 
 public String serviceUrl() {
@@ -566,7 +588,66 @@ public String serviceUrl() {
         return list.get(0).getUri().toString();
     }
     return null;
-}</pre>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spring-cloud-zookeeper-netflix">Using Spring Cloud Zookeeper with Spring Cloud Netflix Components</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Netflix supplies useful tools that work regardless of which <code>DiscoveryClient</code> implementation is used. Feign, Turbine, Ribbon and Zuul all work with Spring Cloud Zookeeper.</p>
+</div>
+<div class="sect2">
+<h3 id="_ribbon_with_zookeeper">Ribbon with Zookeeper</h3>
+<div class="paragraph">
+<p>Spring Cloud Zookeeper provides an implementation of Ribbon&#8217;s <code>ServerList</code>. When the <code>spring-cloud-starter-zookeeper-discovery</code> is used, Ribbon is auto-configured to use the <code>ZookeeperServerList</code> by default.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spring-cloud-zookeeper-service-registry">Spring Cloud Zookeeper and Service Registry</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Cloud Zookeeper implements the <code>ServiceRegistry</code> interface allowing developers to register arbitrary service in a programmatic way.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ServiceInstanceRegistration</code> class offers a <code>builder()</code> method to create a <code>Registration</code> object that can be used by the <code>ServiceRegistry</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Autowired
+private ZookeeperServiceRegistry serviceRegistry;
+
+public void registerThings() {
+    ZookeeperRegistration registration = ServiceInstanceRegistration.builder()
+            .defaultUriSpec()
+            .address("anyUrl")
+            .port(10)
+            .name("/a/b/c/d/anotherservice")
+            .build();
+    this.serviceRegistry.register(registration);
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instance_status">Instance Status</h3>
+<div class="paragraph">
+<p>Netflix Eureka supports having instances registered with the server that are <code>OUT_OF_SERVICE</code> and not returned as active service instances. This is very useful for behaviors such as blue/green deployments. The Curator Service Discovery recipe does not support this behavior. Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement <code>OUT_OF_SERVICE</code> by updating some specific metadata and then filtering on that metadata in the Ribbon <code>ZookeeperServerList</code>. The <code>ZookeeperServerList</code> filters out all non-null instance statuses that do not equal <code>UP</code>. If the instance status field is empty, it is considered <code>UP</code> for backwards compatibility. To change the status of an instance POST <code>OUT_OF_SERVICE</code> to the <code>ServiceRegistry</code> instance status actuator endpoint.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>----
+$ echo -n OUT_OF_SERVICE | http POST http://localhost:8081/service-registry/instance-status
+----</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>NOTE: The above example uses the `http` command from https://httpie.org</pre>
 </div>
 </div>
 </div>
