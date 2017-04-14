@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: ribbonApp
-  cloud:
-    zookeeper:
-      discovery:
-        metadata:
-          testMetadataKey: testMetadataValue

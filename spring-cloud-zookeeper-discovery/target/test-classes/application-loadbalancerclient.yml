@@ -1,6 +1,0 @@
-spring.application.name: loadbalancerclient
-spring.cloud.zookeeper:
-  dependencies:
-    someAlias:
-      path: testInstance
-      loadBalancerType: STICKY

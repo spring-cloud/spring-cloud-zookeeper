@@ -1,6 +1,0 @@
-server.port: 0
-spring.application.name: client
-spring.cloud.zookeeper:
-  dependencies:
-    testInstance:
-      path: /server

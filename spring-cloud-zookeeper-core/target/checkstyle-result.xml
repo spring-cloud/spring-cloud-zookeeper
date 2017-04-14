@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="6.11.2">
-<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java">
-</file>
-<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperHealthIndicator.java">
-</file>
-<file name="/opt/jenkins/data/workspace/spring-cloud-zookeeper-master-ci/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperProperties.java">
-</file>
-</checkstyle>
