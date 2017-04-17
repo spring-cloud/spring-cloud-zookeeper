@@ -4,4 +4,4 @@ org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration
 
 # Bootstrap Configuration
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration
+org.springframework.cloud.zookeeper.common.ZookeeperConfigBootstrapConfiguration
