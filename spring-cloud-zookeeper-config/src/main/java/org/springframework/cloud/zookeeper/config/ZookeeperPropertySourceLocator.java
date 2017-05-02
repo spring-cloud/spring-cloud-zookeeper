@@ -78,7 +78,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	@Override
 	public PropertySource<?> locate(Environment environment) {
-		if (environment instanceof ConfigurableEnvironment) {
+		if (properties.isEnabled() && environment instanceof ConfigurableEnvironment) {
 			ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
 			String appName = env.getProperty("spring.application.name");
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
