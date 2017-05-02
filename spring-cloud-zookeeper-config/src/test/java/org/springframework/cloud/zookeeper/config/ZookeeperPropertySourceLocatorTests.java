@@ -45,7 +45,6 @@ import org.springframework.util.SocketUtils;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -191,15 +190,5 @@ public class ZookeeperPropertySourceLocatorTests {
 		testProp = this.environment.getProperty(KEY_BASIC);
 		assertThat("testProp was wrong after update", testProp,
 				is(equalTo("testPropValUpdate")));
-	}
-
-	@Test
-	public void locateShouldReturnNullIfZookeeperConfigIsDisabled() {
-		properties.setEnabled(false);
-
-		ZookeeperPropertySourceLocator locator =
-				new ZookeeperPropertySourceLocator(curator, properties);
-
-		assertNull(locator.locate(environment));
 	}
 }
