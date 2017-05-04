@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.config;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Properties related to keeping configuration in Zookeeper.
@@ -27,6 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @see ZookeeperPropertySourceLocator
  */
+@Validated
 @ConfigurationProperties("spring.cloud.zookeeper.config")
 public class ZookeeperConfigProperties {
 	private boolean enabled = true;
