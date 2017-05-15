@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnZookeeperEnabled
+@ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
 public class ZookeeperConfigAutoConfiguration {
 
 	@Configuration
