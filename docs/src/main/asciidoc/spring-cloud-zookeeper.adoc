@@ -380,3 +380,71 @@ spring:
 * `root` sets the base namespace for configuration values
 * `defaultContext` sets the name used by all applications
 * `profileSeparator` sets the value of the separator used to separate the profile name in property sources with profiles
+
+=== SSL
+The Zookeeper client used by spring-cloud-zookeeper can be configured to connect over SSL by
+setting the following Java system properties:
+
+----
+zookeeper.clientCnxnSocket="org.apache.zookeeper.ClientCnxnSocketNetty"
+zookeeper.client.secure=true
+zookeeper.ssl.keyStore.location="/path/to/your/keystore"
+zookeeper.ssl.keyStore.password="keystore_password"
+zookeeper.ssl.trustStore.location="/path/to/your/truststore"
+zookeeper.ssl.trustStore.password="truststore_password"
+----
+
+In order to make use of the `ClientCnxnSocketNetty` class, you will
+need to add Netty (`io.netty:netty`) as an explicit dependency.
+
+More information on using Zookeeper over SSL is available from
+https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide[the Zookeeper SSL User Guide].
+
+=== ACLs
+You can add authentication information for Zookeeper ACLs by calling the addAuthInfo method of a
+CuratorFramework bean. One way to accomplish this is by providing your own CuratorFramework bean:
+
+[source,java,indent=0]
+----
+@BoostrapConfiguration
+public class CustomCuratorFrameworkConfig {
+
+  @Bean
+  public CuratorFramework curatorFramework() {
+    CuratorFramework curator = new CuratorFramework();
+    curator.addAuthInfo("digest", "user:password".getBytes());
+    return curator;
+  }
+
+}
+----
+Consult https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
+to see how the CuratorFramework bean is configured by default.
+
+Alternatively, you can add your credentials from a class that depends on the existing
+CuratorFramework bean:
+
+[source,java,indent=0]
+----
+@BoostrapConfiguration
+public class DefaultCuratorFrameworkConfig {
+
+  public ZookeeperConfig(CuratorFramework curator) {
+    curator.addAuthInfo("digest", "user:password".getBytes());
+  }
+
+}
+----
+
+This must occur during the boostrapping phase. You can register configuration classes to run
+during this phase by annotating them with `@BootstrapConfiguration` and including them in a
+comma-separated list set as the value of the property
+`org.springframework.cloud.bootstrap.BootstrapConfiguration` in the file
+`resources/META-INF/spring.factories`:
+
+.resources/META-INF/spring.factories
+----
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+my.project.CustomCuratorFrameworkConfig,\
+my.project.DefaultCuratorFrameworkConfig
+----
