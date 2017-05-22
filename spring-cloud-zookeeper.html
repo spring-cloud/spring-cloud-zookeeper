@@ -460,6 +460,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_how_to_activate_3">How to activate</a></li>
 <li><a href="#_customizing">Customizing</a></li>
+<li><a href="#_ssl">SSL</a></li>
+<li><a href="#_acls">ACLs</a></li>
 </ul>
 </li>
 </ul>
@@ -1028,6 +1030,88 @@ config/application</pre>
 <p><code>profileSeparator</code> sets the value of the separator used to separate the profile name in property sources with profiles</p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ssl">SSL</h3>
+<div class="paragraph">
+<p>The Zookeeper client used by spring-cloud-zookeeper can be configured to connect over SSL by
+setting the following Java system properties:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>zookeeper.clientCnxnSocket="org.apache.zookeeper.ClientCnxnSocketNetty"
+zookeeper.client.secure=true
+zookeeper.ssl.keyStore.location="/path/to/your/keystore"
+zookeeper.ssl.keyStore.password="keystore_password"
+zookeeper.ssl.trustStore.location="/path/to/your/truststore"
+zookeeper.ssl.trustStore.password="truststore_password"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to make use of the <code>ClientCnxnSocketNetty</code> class, you will
+need to add Netty (<code>io.netty:netty</code>) as an explicit dependency.</p>
+</div>
+<div class="paragraph">
+<p>More information on using Zookeeper over SSL is available from
+<a href="https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide">the Zookeeper SSL User Guide</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_acls">ACLs</h3>
+<div class="paragraph">
+<p>You can add authentication information for Zookeeper ACLs by calling the addAuthInfo method of a
+CuratorFramework bean. One way to accomplish this is by providing your own CuratorFramework bean:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
+public class CustomCuratorFrameworkConfig {
+
+  @Bean
+  public CuratorFramework curatorFramework() {
+    CuratorFramework curator = new CuratorFramework();
+    curator.addAuthInfo("digest", "user:password".getBytes());
+    return curator;
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Consult <a href="https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java">the ZookeeperAutoConfiguration class</a>
+to see how the CuratorFramework bean is configured by default.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can add your credentials from a class that depends on the existing
+CuratorFramework bean:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
+public class DefaultCuratorFrameworkConfig {
+
+  public ZookeeperConfig(CuratorFramework curator) {
+    curator.addAuthInfo("digest", "user:password".getBytes());
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This must occur during the boostrapping phase. You can register configuration classes to run
+during this phase by annotating them with <code>@BootstrapConfiguration</code> and including them in a
+comma-separated list set as the value of the property
+<code>org.springframework.cloud.bootstrap.BootstrapConfiguration</code> in the file
+<code>resources/META-INF/spring.factories</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">resources/META-INF/spring.factories</div>
+<div class="content">
+<pre>org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+my.project.CustomCuratorFrameworkConfig,\
+my.project.DefaultCuratorFrameworkConfig</pre>
+</div>
 </div>
 </div>
 </div>
