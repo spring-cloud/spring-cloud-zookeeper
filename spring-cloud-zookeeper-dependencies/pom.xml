@@ -14,7 +14,7 @@
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
 	<properties>
-		<curator.version>2.11.1</curator.version>
+		<curator.version>3.3.0</curator.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -62,10 +62,6 @@
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
 					</exclusion>
-					<exclusion>
-						<groupId>io.netty</groupId>
-						<artifactId>netty</artifactId>
-					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -76,10 +72,6 @@
 					<exclusion>
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>io.netty</groupId>
-						<artifactId>netty</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -92,10 +84,6 @@
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
 					</exclusion>
-					<exclusion>
-						<groupId>io.netty</groupId>
-						<artifactId>netty</artifactId>
-					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -107,10 +95,6 @@
 					<exclusion>
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>io.netty</groupId>
-						<artifactId>netty</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

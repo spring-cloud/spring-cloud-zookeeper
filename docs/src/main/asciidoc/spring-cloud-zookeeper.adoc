@@ -394,9 +394,6 @@ zookeeper.ssl.trustStore.location="/path/to/your/truststore"
 zookeeper.ssl.trustStore.password="truststore_password"
 ----
 
-In order to make use of the `ClientCnxnSocketNetty` class, you will
-need to add Netty (`io.netty:netty`) as an explicit dependency.
-
 More information on using Zookeeper over SSL is available from
 https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide[the Zookeeper SSL User Guide].
 
