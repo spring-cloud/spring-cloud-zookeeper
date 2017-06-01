@@ -67,6 +67,9 @@ public class ZookeeperDiscoveryProperties {
 	/** Port to register the service under (defaults to listening port) */
 	private Integer instancePort;
 
+	/** Ssl port of the registered service. */
+	private Integer instanceSslPort;
+
 	/**
 	 * Register as a service in zookeeper.
 	 */
@@ -161,6 +164,14 @@ public class ZookeeperDiscoveryProperties {
 		this.instancePort = instancePort;
 	}
 
+	public Integer getInstanceSslPort() {
+		return this.instanceSslPort;
+	}
+
+	public void setInstanceSslPort(Integer instanceSslPort) {
+		this.instanceSslPort = instanceSslPort;
+	}
+
 	public String getInitialStatus() {
 		return this.initialStatus;
 	}
@@ -176,6 +187,7 @@ public class ZookeeperDiscoveryProperties {
 				", uriSpec='" + this.uriSpec + '\'' +
 				", instanceHost='" + this.instanceHost + '\'' +
 				", instancePort='" + this.instancePort + '\'' +
+				", instanceSslPort='" + this.instanceSslPort + '\'' +
 				", metadata=" + this.metadata +
 				", register=" + this.register +
 				", initialStatus=" + this.initialStatus +

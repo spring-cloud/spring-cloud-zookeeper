@@ -27,6 +27,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
+import org.apache.curator.x.discovery.ServiceInstanceBuilder;
 import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.BeansException;
@@ -162,12 +163,16 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 			if (StringUtils.hasText(this.properties.getInitialStatus())) {
 				zookeeperInstance.getMetadata().put(INSTANCE_STATUS_KEY, this.properties.getInitialStatus());
 			}
-			serviceInstance.set(ServiceInstance.<ZookeeperInstance>builder()
+			ServiceInstanceBuilder<ZookeeperInstance> builder = ServiceInstance.<ZookeeperInstance>builder()
 					.name(appName)
 					.payload(zookeeperInstance)
 					.port(port.get())
 					.address(host)
-					.uriSpec(uriSpec).build());
+					.uriSpec(uriSpec);
+			if (this.properties.getInstanceSslPort() != null) {
+				builder.sslPort(this.properties.getInstanceSslPort());
+			}
+			serviceInstance.set(builder.build());
 		}
 		catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
