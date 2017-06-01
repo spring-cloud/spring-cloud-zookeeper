@@ -460,7 +460,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_how_to_activate_3">How to activate</a></li>
 <li><a href="#_customizing">Customizing</a></li>
-<li><a href="#_ssl">SSL</a></li>
 <li><a href="#_acls">ACLs</a></li>
 </ul>
 </li>
@@ -1030,31 +1029,6 @@ config/application</pre>
 <p><code>profileSeparator</code> sets the value of the separator used to separate the profile name in property sources with profiles</p>
 </li>
 </ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_ssl">SSL</h3>
-<div class="paragraph">
-<p>The Zookeeper client used by spring-cloud-zookeeper can be configured to connect over SSL by
-setting the following Java system properties:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>zookeeper.clientCnxnSocket="org.apache.zookeeper.ClientCnxnSocketNetty"
-zookeeper.client.secure=true
-zookeeper.ssl.keyStore.location="/path/to/your/keystore"
-zookeeper.ssl.keyStore.password="keystore_password"
-zookeeper.ssl.trustStore.location="/path/to/your/truststore"
-zookeeper.ssl.trustStore.password="truststore_password"</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In order to make use of the <code>ClientCnxnSocketNetty</code> class, you will
-need to add Netty (<code>io.netty:netty</code>) as an explicit dependency.</p>
-</div>
-<div class="paragraph">
-<p>More information on using Zookeeper over SSL is available from
-<a href="https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide">the Zookeeper SSL User Guide</a>.</p>
 </div>
 </div>
 <div class="sect2">
