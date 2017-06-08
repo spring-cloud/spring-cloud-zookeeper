@@ -15,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
@@ -71,10 +69,6 @@ public class DefaultDependencyWatcherSpringTests {
 	@EnableAutoConfiguration
 	@Profile("watcher")
 	static class Config {
-		@Bean
-		public ZookeeperLifecycle zookeeperLifecycle(ZookeeperDiscoveryProperties properties, ZookeeperServiceDiscovery serviceDiscovery) {
-			return new ZookeeperLifecycle(properties, serviceDiscovery);
-		}
 
 		@Bean
 		@LoadBalanced RestTemplate loadBalancedRestTemplate() {

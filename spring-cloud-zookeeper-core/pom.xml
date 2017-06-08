@@ -65,11 +65,13 @@
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
+			<version>1.0-groovy-2.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-spring</artifactId>
+			<version>1.0-groovy-2.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

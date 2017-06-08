@@ -19,7 +19,6 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import java.util.Collections;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
@@ -48,10 +47,9 @@ public class DependencyEnvironmentPostProcessor
 
 	@Override public void postProcessEnvironment(ConfigurableEnvironment environment,
 			SpringApplication application) {
-		RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(environment);
-		String appName = resolver.getProperty("spring.application.name");
+		String appName = environment.getProperty("spring.application.name");
 		if (StringUtils.hasText(appName) && !appName.contains("/")) {
-			String prefix = resolver.getProperty("spring.cloud.zookeeper.prefix");
+			String prefix = environment.getProperty("spring.cloud.zookeeper.prefix");
 			if (StringUtils.hasText(prefix)) {
 				StringBuilder prefixedName = new StringBuilder();
 				if (!prefix.startsWith("/")) {

@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
@@ -47,13 +47,13 @@ public class DependencyConfig {
 
 }
 
-class PortListener implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
+class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 
 	private int port;
 
 	@Override
-	public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
-		this.port = event.getEmbeddedServletContainer().getPort();
+	public void onApplicationEvent(WebServerInitializedEvent event) {
+		this.port = event.getWebServer().getPort();
 	}
 
 	public int getPort() {

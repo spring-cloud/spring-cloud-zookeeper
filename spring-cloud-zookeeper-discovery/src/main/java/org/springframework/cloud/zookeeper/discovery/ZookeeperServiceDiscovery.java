@@ -31,7 +31,6 @@ import org.apache.curator.x.discovery.ServiceInstanceBuilder;
 import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.BeansException;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -101,8 +100,7 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		this.context = context;
-		RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(this.context.getEnvironment());
-		this.appName = resolver.getProperty("spring.application.name", "application");
+		this.appName = this.context.getEnvironment().getProperty("spring.application.name", "application");
 	}
 
 	@Override

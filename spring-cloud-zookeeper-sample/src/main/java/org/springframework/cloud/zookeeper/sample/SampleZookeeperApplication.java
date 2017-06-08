@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -79,7 +78,7 @@ public class SampleZookeeperApplication {
 
 	@RequestMapping("/myenv")
 	public String env(@RequestParam("prop") String prop) {
-		return new RelaxedPropertyResolver(this.env).getProperty(prop, "Not Found");
+		return this.env.getProperty(prop, "Not Found");
 	}
 
 	@FeignClient("testZookeeperApp")

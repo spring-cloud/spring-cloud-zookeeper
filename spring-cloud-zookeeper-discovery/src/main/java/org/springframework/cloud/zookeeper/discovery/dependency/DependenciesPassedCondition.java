@@ -15,11 +15,13 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
@@ -32,11 +34,14 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 public class DependenciesPassedCondition extends SpringBootCondition {
 
+	private static final Bindable<Map<String, String>> STRING_STRING_MAP = Bindable
+			.mapOf(String.class, String.class);
 	private static final String ZOOKEEPER_DEPENDENCIES_PROP = "spring.cloud.zookeeper.dependencies";
 
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
-		Map<String, Object> subProperties = new RelaxedPropertyResolver(context.getEnvironment()).getSubProperties(ZOOKEEPER_DEPENDENCIES_PROP);
+		Map<String, String> subProperties = Binder.get(context.getEnvironment())
+				.bind(ZOOKEEPER_DEPENDENCIES_PROP, STRING_STRING_MAP).orElseGet(Collections::emptyMap);
 		if (!subProperties.isEmpty()) {
 			return ConditionOutcome.match("Dependencies are defined in configuration");
 		}

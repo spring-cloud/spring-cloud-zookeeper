@@ -79,16 +79,6 @@ public class ZookeeperAutoServiceRegistration extends AbstractAutoServiceRegistr
 	}
 
 	@Override
-	protected int getConfiguredPort() {
-		return this.registration.getPort();
-	}
-
-	@Override
-	protected void setConfiguredPort(int port) {
-		this.registration.setPort(port);
-	}
-
-	@Override
 	protected Object getConfiguration() {
 		return this.properties;
 	}
