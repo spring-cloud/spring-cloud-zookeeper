@@ -25,8 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.util.ReflectionUtils;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
@@ -43,20 +45,18 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
-
-	private ZookeeperDependencies zookeeperDependencies;
-	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
-
-	@Deprecated
-	public ZookeeperDiscoveryClient(ZookeeperServiceDiscovery zookeeperServiceDiscovery, ZookeeperDependencies zookeeperDependencies) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.zookeeperDependencies = zookeeperDependencies;
-	}
+	private final ZookeeperDependencies zookeeperDependencies;
+	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private ZookeeperRegistration zookeeperRegistration;
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
+	}
+
+	@Autowired(required = false)
+	public void setZookeeperRegistration(ZookeeperRegistration zookeeperRegistration) {
+		this.zookeeperRegistration = zookeeperRegistration;
 	}
 
 	@Override
@@ -66,10 +66,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public org.springframework.cloud.client.ServiceInstance getLocalServiceInstance() {
-		if (this.zookeeperServiceDiscovery == null) {
-			return null;
+		ServiceInstance<ZookeeperInstance> serviceInstance = null;
+		if (this.zookeeperRegistration != null) {
+			serviceInstance = this.zookeeperRegistration.getServiceInstance();
 		}
-		ServiceInstance<ZookeeperInstance> serviceInstance = this.zookeeperServiceDiscovery.getServiceInstanceRef().get();
 		return serviceInstance == null ? null : createServiceInstance(serviceInstance.getName(), serviceInstance);
 	}
 
@@ -98,13 +98,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		if (this.zookeeperServiceDiscovery.getServiceDiscoveryRef() == null) {
-			return null;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
+		return this.serviceDiscovery;
 	}
 
 	private String getServiceIdToQuery(String serviceId) {
@@ -123,7 +117,11 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			return Collections.emptyList();
 		}
 		try {
-			services = new ArrayList<>(getServiceDiscovery().queryForNames());
+			Collection<String> names = getServiceDiscovery().queryForNames();
+			if (names == null) {
+				return Collections.emptyList();
+			}
+			services = new ArrayList<>(names);
 		}
 		catch (Exception e) {
 			rethrowRuntimeException(e);

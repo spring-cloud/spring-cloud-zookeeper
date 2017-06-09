@@ -18,18 +18,14 @@ package org.springframework.cloud.zookeeper.serviceregistry;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -43,25 +39,14 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegistration>, SmartInitializingSingleton,
 		Closeable {
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
-	private AtomicBoolean started = new AtomicBoolean();
+	// private AtomicBoolean started = new AtomicBoolean();
 
 	protected CuratorFramework curator;
 
 	protected ZookeeperDiscoveryProperties properties;
 
-	protected InstanceSerializer<ZookeeperInstance> instanceSerializer;
+	// protected InstanceSerializer<ZookeeperInstance> instanceSerializer;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
-
-	@Deprecated
-	public ZookeeperServiceRegistry(ZookeeperServiceDiscovery zookeeperServiceDiscovery, CuratorFramework curator,
-									ZookeeperDiscoveryProperties properties, InstanceSerializer<ZookeeperInstance> instanceSerializer) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.curator = curator;
-		this.properties = properties;
-		this.instanceSerializer = instanceSerializer;
-		configureServiceDiscovery();
-	}
 
 	public ZookeeperServiceRegistry(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		this.serviceDiscovery = serviceDiscovery;
@@ -71,10 +56,10 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	 * TODO: add when ZookeeperServiceDiscovery is removed
 	 * One can override this method to provide custom way of registering {@link ServiceDiscovery}
 	 */
-	private void configureServiceDiscovery() {
+	/*private void configureServiceDiscovery() {
 		this.zookeeperServiceDiscovery.configureServiceDiscovery(this.zookeeperServiceDiscovery.getServiceDiscoveryRef(),
 				this.curator, this.properties, this.instanceSerializer, this.zookeeperServiceDiscovery.getServiceInstanceRef());
-	}
+	}*/
 
 	@Override
 	public void register(ZookeeperRegistration registration) {
@@ -86,10 +71,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	}
 
 	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
+		return this.serviceDiscovery;
 	}
 
 	@Override
@@ -142,19 +124,12 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 		return instanceStatus;
 	}
 
-	/**
-	 * @deprecated for backwards compatibility. Visibility will be tightened when ZookeeperServiceDiscovery is removed.
-	 */
 	@Deprecated
-	public CuratorFramework getCurator() {
+	protected CuratorFramework getCurator() {
 		return this.curator;
 	}
 
-	/**
-	 * @deprecated for backwards compatibility. Visibility will be tightened when ZookeeperServiceDiscovery is removed.
-	 */
-	@Deprecated
-	public AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {
+	/*protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {
 		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef();
-	}
+	}*/
 }

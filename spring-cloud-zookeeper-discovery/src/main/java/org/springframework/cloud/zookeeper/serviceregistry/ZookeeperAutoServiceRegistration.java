@@ -62,6 +62,9 @@ public class ZookeeperAutoServiceRegistration extends AbstractAutoServiceRegistr
 			log.debug("Registration disabled.");
 			return;
 		}
+		if (this.registration.getPort() == 0) {
+			this.registration.setPort(getPort().get());
+		}
 		super.register();
 	}
 

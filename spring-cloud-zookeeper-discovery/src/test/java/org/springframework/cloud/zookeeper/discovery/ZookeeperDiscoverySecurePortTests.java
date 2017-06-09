@@ -28,6 +28,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
@@ -57,7 +58,7 @@ public class ZookeeperDiscoverySecurePortTests {
 	private LoadBalancerClient loadBalancerClient;
 
 	@Autowired
-	private ZookeeperServiceDiscovery serviceDiscovery;
+	private ZookeeperRegistration zookeeperRegistration;
 
 	@Autowired
 	private SpringClientFactory clientFactory;
@@ -70,7 +71,7 @@ public class ZookeeperDiscoverySecurePortTests {
 		ServerIntrospector serverIntrospector = this.clientFactory.getInstance(springAppName, ServerIntrospector.class);
 		then(serverIntrospector).isInstanceOf(ZookeeperServerIntrospector.class);
 
-		ZookeeperServer zookeeperServer = new ZookeeperServer(this.serviceDiscovery.getServiceInstance());
+		ZookeeperServer zookeeperServer = new ZookeeperServer(this.zookeeperRegistration.getServiceInstance());
 		then(serverIntrospector.isSecure(zookeeperServer)).isTrue();
 	}
 
@@ -82,7 +83,7 @@ public class ZookeeperDiscoverySecurePortTests {
 
 	@Test
 	public void shouldSetServiceInstanceSslPort() {
-		then(this.serviceDiscovery.getServiceInstance().getSslPort()).isEqualTo(8443);
+		then(this.zookeeperRegistration.getServiceInstance().getSslPort()).isEqualTo(8443);
 	}
 
 	@Configuration

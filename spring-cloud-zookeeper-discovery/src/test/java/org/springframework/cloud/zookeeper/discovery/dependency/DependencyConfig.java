@@ -64,7 +64,7 @@ class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 
 @FeignClient("someAlias")
 interface AliasUsingFeignClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/beans")
+	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
 	String getBeans();
 
 	@RequestMapping(method = RequestMethod.GET, value = "/checkHeaders")
@@ -73,7 +73,7 @@ interface AliasUsingFeignClient {
 
 @FeignClient("nameWithoutAlias")
 interface IdUsingFeignClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/beans")
+	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
 	String getBeans();
 }
 

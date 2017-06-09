@@ -62,7 +62,7 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 		if (dependency == null) {
 			log.debug(String.format("No dependency found for alias [%s] - will use the default rule which is [%s]", keyAsString, this.rule));
 			return this.rule.choose(key);
-		};
+		}
 		cacheEntryIfMissing(keyAsString, dependency);
 		log.debug(String.format("Will try to retrieve dependency for key [%s]. Current cache contents [%s]", keyAsString, this.ruleCache));
 		updateListOfServers();

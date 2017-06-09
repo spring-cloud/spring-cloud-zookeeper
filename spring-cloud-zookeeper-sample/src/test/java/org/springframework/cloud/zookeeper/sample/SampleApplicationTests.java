@@ -37,9 +37,9 @@ public class SampleApplicationTests {
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run(
 				"--server.port="+port,
-				"--spring.cloud.zookeeper.connectString=localhost:" + zkPort);
+				"--spring.cloud.zookeeper.connect-string=localhost:" + zkPort);
 
-		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/health", String.class);
+		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/application/health", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		context.close();

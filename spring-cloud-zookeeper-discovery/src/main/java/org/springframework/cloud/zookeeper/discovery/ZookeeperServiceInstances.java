@@ -26,24 +26,11 @@ public class ZookeeperServiceInstances
 
 	private static final Log log = LogFactory.getLog(ZookeeperServiceInstances.class);
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 	private final List<ServiceInstance<ZookeeperInstance>> allInstances;
 	private final CuratorFramework curator;
-
-	@Deprecated
-	public ZookeeperServiceInstances(ZookeeperServiceDiscovery zookeeperServiceDiscovery,
-			ZookeeperDependencies zookeeperDependencies,
-			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.curator = zookeeperServiceDiscovery.getCurator();
-		this.zookeeperDependencies = zookeeperDependencies;
-		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
-		this.allInstances = getZookeeperInstances();
-
-	}
 
 	public ZookeeperServiceInstances(CuratorFramework curator,
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
@@ -114,10 +101,7 @@ public class ZookeeperServiceInstances
 	}
 
 	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
+		return this.serviceDiscovery;
 	}
 
 	private String getPathWithoutRoot(String path) {

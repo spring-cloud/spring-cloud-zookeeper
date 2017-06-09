@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,7 @@ public class DependencyRestTemplateAutoConfiguration {
 			private Map<String, List<String>> convertHeadersFromCollectionToList(Map<String, Collection<String>> headers) {
 				Map<String, List<String>> transformedHeaders = new HashMap<>();
 				for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
-					transformedHeaders.put(entry.getKey(), (List<String>) entry.getValue());
+					transformedHeaders.put(entry.getKey(), new ArrayList<>(entry.getValue()));
 				}
 				return transformedHeaders;
 			}

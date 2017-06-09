@@ -29,6 +29,7 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperServer;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServerList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,7 +67,7 @@ public class ZookeeperServerListTests {
 		instances.add(serviceInstance(1, null));
 
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
-		when(serviceDiscovery.queryForInstances(anyString())).thenReturn(instances);
+		when(serviceDiscovery.queryForInstances(nullable(String.class))).thenReturn(instances);
 
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		List<ZookeeperServer> servers = serverList.getInitialListOfServers();
@@ -96,7 +97,7 @@ public class ZookeeperServerListTests {
 		instances.add(serviceInstance(2, STATUS_OUT_OF_SERVICE));
 
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
-		when(serviceDiscovery.queryForInstances(anyString())).thenReturn(instances);
+		when(serviceDiscovery.queryForInstances(nullable(String.class))).thenReturn(instances);
 
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		List<ZookeeperServer> servers = serverList.getInitialListOfServers();

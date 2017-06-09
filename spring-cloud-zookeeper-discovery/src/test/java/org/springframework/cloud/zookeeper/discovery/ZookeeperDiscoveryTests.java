@@ -17,6 +17,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -42,7 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class,
 		properties = {
 			"feign.hystrix.enabled=false",
-			"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath"
+			"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath"
 		},
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
@@ -51,7 +52,7 @@ public class ZookeeperDiscoveryTests {
 
 	@Autowired TestRibbonClient testRibbonClient;
 	@Autowired DiscoveryClient discoveryClient;
-	@Autowired ZookeeperServiceDiscovery serviceDiscovery;
+	@Autowired ServiceInstanceRegistration serviceDiscovery;
 	@Value("${spring.application.name}") String springAppName;
 	@Autowired IdUsingFeignClient idUsingFeignClient;
 
@@ -99,18 +100,18 @@ public class ZookeeperDiscoveryTests {
 	}
 
 	private String registeredServiceStatus(ServiceInstance instance) {
-		return JsonPath.builder(this.testRibbonClient.callOnUrl(instance.getHost()+":"+instance.getPort(), "health")).field("status").read(String.class);
+		return JsonPath.builder(this.testRibbonClient.callOnUrl(instance.getHost()+":"+instance.getPort(), "application/health")).field("status").read(String.class);
 	}
 
 	@Test public void should_properly_find_local_instance() {
 		//expect:
-		then(this.serviceDiscovery.getServiceInstanceRef().get().getAddress()).isEqualTo(this.discoveryClient.getLocalServiceInstance().getHost());
+		then(this.serviceDiscovery.getServiceInstance().getAddress()).isEqualTo(this.discoveryClient.getLocalServiceInstance().getHost());
 	}
 	
 	
 	@FeignClient("ribbonApp")
 	public static interface IdUsingFeignClient {
-		@RequestMapping(method = RequestMethod.GET, value = "/beans")
+		@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
 		String getBeans();
 	}
 

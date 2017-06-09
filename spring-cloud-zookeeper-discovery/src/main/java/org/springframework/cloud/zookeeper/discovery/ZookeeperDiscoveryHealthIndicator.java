@@ -37,20 +37,10 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	private static final Log log = LogFactory
 			.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
 	private CuratorFramework curatorFramework;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
-
-	@Deprecated
-	public ZookeeperDiscoveryHealthIndicator(ZookeeperServiceDiscovery zookeeperServiceDiscovery,
-			ZookeeperDependencies zookeeperDependencies,
-			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.zookeeperDependencies = zookeeperDependencies;
-		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
-	}
 
 	public ZookeeperDiscoveryHealthIndicator(CuratorFramework curatorFramework,
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
@@ -71,16 +61,10 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	public Health health() {
 		Health.Builder builder = Health.unknown();
 		try {
-			Iterable<ServiceInstance<ZookeeperInstance>> allInstances;
-			if (this.zookeeperServiceDiscovery != null) {
-				allInstances = new ZookeeperServiceInstances(
-						this.zookeeperServiceDiscovery, this.zookeeperDependencies,
-						this.zookeeperDiscoveryProperties);
-			} else {
-				allInstances = new ZookeeperServiceInstances(this.curatorFramework,
+			Iterable<ServiceInstance<ZookeeperInstance>> allInstances =
+					new ZookeeperServiceInstances(this.curatorFramework,
 						this.serviceDiscovery, this.zookeeperDependencies,
 						this.zookeeperDiscoveryProperties);
-			}
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {

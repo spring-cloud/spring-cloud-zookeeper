@@ -159,4 +159,14 @@ public class ZookeeperDependencies {
 	public void setDefaultHealthEndpoint(String defaultHealthEndpoint) {
 		this.defaultHealthEndpoint = defaultHealthEndpoint;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("ZookeeperDependencies{");
+		sb.append("prefix='").append(this.prefix).append('\'');
+		sb.append(", dependencies=").append(this.dependencies);
+		sb.append(", defaultHealthEndpoint='").append(this.defaultHealthEndpoint).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }

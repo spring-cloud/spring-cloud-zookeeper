@@ -24,7 +24,6 @@ import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependency;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
@@ -44,23 +43,11 @@ import org.springframework.util.ReflectionUtils;
  */
 public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent<?>> {
 
-	private ZookeeperServiceDiscovery zookeeperServiceDiscovery;
 	private final Map<String, ServiceCache<?>> dependencyRegistry = new ConcurrentHashMap<>();
 	private final List<DependencyWatcherListener> listeners;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 	private final DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 	private final ZookeeperDependencies zookeeperDependencies;
-
-	@Deprecated
-	public DefaultDependencyWatcher(ZookeeperServiceDiscovery zookeeperServiceDiscovery,
-									DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
-									List<DependencyWatcherListener> dependencyWatcherListeners,
-									ZookeeperDependencies zookeeperDependencies) {
-		this.zookeeperServiceDiscovery = zookeeperServiceDiscovery;
-		this.dependencyPresenceOnStartupVerifier = dependencyPresenceOnStartupVerifier;
-		this.listeners = dependencyWatcherListeners;
-		this.zookeeperDependencies = zookeeperDependencies;
-	}
 
 	public DefaultDependencyWatcher(ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 									DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
@@ -96,10 +83,7 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 	}
 
 	private ServiceDiscovery<ZookeeperInstance> getServiceDiscovery() {
-		if (this.serviceDiscovery != null) {
-			return this.serviceDiscovery;
-		}
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef().get();
+		return this.serviceDiscovery;
 	}
 
 	@Override

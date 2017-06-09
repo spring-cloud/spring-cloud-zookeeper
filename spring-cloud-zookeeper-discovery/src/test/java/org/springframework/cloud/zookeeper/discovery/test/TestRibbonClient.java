@@ -21,7 +21,7 @@ public class TestRibbonClient extends TestServiceRestClient {
 
 	public String thisHealthCheck() {
 		return this.restTemplate
-				.getForObject("http://" + this.thisAppName + "/health", String.class);
+				.getForObject("http://" + this.thisAppName + "/application/health", String.class);
 	}
 
 	public Integer thisPort() {

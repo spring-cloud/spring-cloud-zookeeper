@@ -49,7 +49,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
 			throws Exception {
 		// when:
-		String response = this.testRibbonClient.callService("me", "health");
+		String response = this.testRibbonClient.callService("me", "application/health");
 		// then:
 		log.info("Received response [" + response + "]");
 		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();

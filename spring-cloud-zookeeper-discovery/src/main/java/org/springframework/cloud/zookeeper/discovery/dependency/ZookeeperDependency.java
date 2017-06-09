@@ -229,4 +229,19 @@ public class ZookeeperDependency {
 	public void setStubsConfiguration(StubsConfiguration stubsConfiguration) {
 		this.stubsConfiguration = stubsConfiguration;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("ZookeeperDependency{");
+		sb.append("path='").append(this.path).append('\'');
+		sb.append(", loadBalancerType=").append(this.loadBalancerType);
+		sb.append(", contentTypeTemplate='").append(this.contentTypeTemplate).append('\'');
+		sb.append(", version='").append(this.version).append('\'');
+		sb.append(", headers=").append(this.headers);
+		sb.append(", required=").append(this.required);
+		sb.append(", stubs='").append(this.stubs).append('\'');
+		sb.append(", stubsConfiguration=").append(this.stubsConfiguration);
+		sb.append('}');
+		return sb.toString();
+	}
 }
