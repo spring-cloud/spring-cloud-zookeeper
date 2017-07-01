@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -55,7 +56,11 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 	@Test public void discovery_client_is_zookeeper() {
 		//given: this.discoveryClient
 		//expect:
-		then(discoveryClient).isInstanceOf(ZookeeperDiscoveryClient.class);
+		then(discoveryClient).isInstanceOf(CompositeDiscoveryClient.class);
+		CompositeDiscoveryClient composite = (CompositeDiscoveryClient) discoveryClient;
+		List<DiscoveryClient> discoveryClients = composite.getDiscoveryClients();
+		DiscoveryClient first = discoveryClients.get(0);
+		then(first).isInstanceOf(ZookeeperDiscoveryClient.class);
 	}
 
 	@Test public void application_should_not_have_been_registered() {
@@ -65,11 +70,11 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 		then(instances).isEmpty();
 	}
 
-	@Test public void should_not_find_local_instance() {
+	@Test public void should_find_local_instance() {
 		//given
 		ServiceInstance serviceInstance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
-		then(serviceInstance).isNull();
+		then(serviceInstance).isNotNull();
 	}
 
 	@Configuration

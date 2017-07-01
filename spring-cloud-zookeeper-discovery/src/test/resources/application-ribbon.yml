@@ -9,3 +9,6 @@ spring:
 management:
   security:
     enabled: false
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: ERROR

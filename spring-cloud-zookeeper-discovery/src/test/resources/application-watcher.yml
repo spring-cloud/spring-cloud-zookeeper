@@ -18,3 +18,6 @@ spring.cloud.zookeeper:
       contentTypeTemplate: application/vnd.newsletter.$version+json2
       version: v1
       required: false
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: ERROR

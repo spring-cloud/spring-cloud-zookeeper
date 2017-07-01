@@ -3,3 +3,6 @@ spring.application.name: me
 management:
   security:
     enabled: false
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: ERROR

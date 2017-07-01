@@ -10,7 +10,7 @@ endpoints:
     sensitive: false
 
 logging.level:
-  org.apache.zookeeper.ClientCnxn: WARN
+  org.apache.zookeeper.ClientCnxn: ERROR
 
 management:
   security:

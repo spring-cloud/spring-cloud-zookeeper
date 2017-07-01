@@ -4,3 +4,6 @@ spring.cloud.zookeeper:
   dependencies:
     testInstance:
       path: /server
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: ERROR

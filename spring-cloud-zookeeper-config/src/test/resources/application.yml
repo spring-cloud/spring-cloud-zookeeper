@@ -1,4 +1,3 @@
-testInstance.ribbon.ServerListRefreshInterval: 100
 logging:
   level:
     org.apache.zookeeper.ClientCnxn: ERROR
