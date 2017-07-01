@@ -4,3 +4,6 @@ spring.cloud.zookeeper:
     someAlias:
       path: testInstance
       loadBalancerType: STICKY
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: ERROR
