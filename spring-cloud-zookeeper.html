@@ -522,7 +522,7 @@ You still need to include <code>org.springframework.boot:spring-boot-starter-web
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@SpringBootApplication
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@SpringBootApplication
 @EnableDiscoveryClient
 @RestController
 public class Application {
@@ -580,7 +580,7 @@ If you use <a href="#spring-cloud-zookeeper-config">Spring Cloud Zookeeper Confi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Autowired
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Autowired
 private DiscoveryClient discoveryClient;
 
 public String serviceUrl() {
@@ -620,7 +620,7 @@ public String serviceUrl() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@Autowired
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Autowired
 private ZookeeperServiceRegistry serviceRegistry;
 
 public void registerThings() {
@@ -851,7 +851,7 @@ In other words your application won&#8217;t be able to start if the required dep
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>stubs: org.springframework:foo:stubs</code></pre>
+<pre class="prettyprint highlight"><code>stubs: org.springframework:foo:stubs</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -875,7 +875,7 @@ In other words your application won&#8217;t be able to start if the required dep
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>stubs: org.springframework:foo</code></pre>
+<pre class="prettyprint highlight"><code>stubs: org.springframework:foo</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1039,7 +1039,7 @@ CuratorFramework bean. One way to accomplish this is by providing your own Curat
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
 public class CustomCuratorFrameworkConfig {
 
   @Bean
@@ -1062,7 +1062,7 @@ CuratorFramework bean:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@BoostrapConfiguration
 public class DefaultCuratorFrameworkConfig {
 
   public ZookeeperConfig(CuratorFramework curator) {
@@ -1091,5 +1091,8 @@ my.project.DefaultCuratorFrameworkConfig</pre>
 </div>
 </div>
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>prettyPrint()</script>
 </body>
 </html>
