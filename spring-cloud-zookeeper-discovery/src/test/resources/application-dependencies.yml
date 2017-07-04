@@ -21,3 +21,5 @@ spring.cloud.zookeeper:
       required: false
     aliasIsPath: ''
     anotherAlias: 'myPath'
+    some-service:
+      path: io/company/department/some-service
