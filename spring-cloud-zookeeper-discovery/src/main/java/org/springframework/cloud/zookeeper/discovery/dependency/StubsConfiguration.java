@@ -1,6 +1,7 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.springframework.util.StringUtils;
 
@@ -26,20 +27,20 @@ public class StubsConfiguration {
 	}
 
 	public StubsConfiguration(String stubPath) {
-		String[] parsedPath = parsedPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER);
+		String[] parsedPath = parsedStubPathEmptyByDefault(stubPath, STUB_COLON_DELIMITER);
 		this.stubsGroupId = parsedPath[0];
 		this.stubsArtifactId = parsedPath[1];
 		this.stubsClassifier = parsedPath[2];
 	}
 
 	public StubsConfiguration(DependencyPath path) {
-		String[] parsedPath = parsedPathEmptyByDefault(path.getPath(), PATH_SLASH_DELIMITER);
+		String[] parsedPath = parsedDependencyPathEmptyByDefault(path.getPath(), PATH_SLASH_DELIMITER);
 		this.stubsGroupId = parsedPath[0];
 		this.stubsArtifactId = parsedPath[1];
 		this.stubsClassifier = parsedPath[2];
 	}
 
-	private String[] parsedPathEmptyByDefault(String path, String delimiter) {
+	private String[] parsedStubPathEmptyByDefault(String path, String delimiter) {
 		String[] splitPath = path.split(delimiter);
 		String stubsGroupId = "";
 		String stubsArtifactId = "";
@@ -48,6 +49,22 @@ public class StubsConfiguration {
 			stubsGroupId = splitPath[0];
 			stubsArtifactId = splitPath[1];
 			stubsClassifier = splitPath.length == 3 ? splitPath[2] : DEFAULT_STUBS_CLASSIFIER;
+		}
+		return new String[]{stubsGroupId, stubsArtifactId, stubsClassifier};
+	}
+
+	private String[] parsedDependencyPathEmptyByDefault(String path, String delimiter) {
+		String trimmedPath = path.startsWith(delimiter) ? path.substring(1) : path;
+		String[] splitPath = trimmedPath.split(delimiter);
+		String stubsGroupId = "";
+		String stubsArtifactId = "";
+		String stubsClassifier = "";
+		if (splitPath.length >= 2) {
+			LinkedList<String> list = new LinkedList<>(Arrays.asList(splitPath));
+			String lastElement = list.removeLast();
+			stubsGroupId = StringUtils.collectionToDelimitedString(list, ".");
+			stubsArtifactId = lastElement;
+			stubsClassifier = DEFAULT_STUBS_CLASSIFIER;
 		}
 		return new String[]{stubsGroupId, stubsArtifactId, stubsClassifier};
 	}

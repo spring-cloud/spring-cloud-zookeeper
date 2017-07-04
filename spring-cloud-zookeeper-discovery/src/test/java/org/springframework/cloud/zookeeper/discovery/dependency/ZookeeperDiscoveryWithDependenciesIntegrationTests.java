@@ -145,6 +145,16 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		then(dependency.getPath()).isEqualTo("/myPath");
 	}
 
+	// #138
+	@Test public void should_parse_dependency_with_path() {
+		// given:
+		StubsConfiguration someServiceStub = this.zookeeperDependencies.getDependencyForAlias("some-service").getStubsConfiguration();
+		// expect:
+		then(someServiceStub.getStubsGroupId()).isEqualTo("io.company.department");
+		then(someServiceStub.getStubsArtifactId()).isEqualTo("some-service");
+		then(someServiceStub.getStubsClassifier()).isEqualTo("stubs");
+	}
+
 	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
 		return !this.testRibbonClient.callService("someAlias", "beans").isEmpty();
 	}
