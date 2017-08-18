@@ -65,11 +65,11 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 		then(instances).isEmpty();
 	}
 
-	@Test public void should_find_local_instance() {
+	@Test public void should_not_find_local_instance() {
 		//given
 		ServiceInstance serviceInstance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
-		then(serviceInstance).isNotNull();
+		then(serviceInstance).isNull();
 	}
 
 	@Configuration
