@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import org.junit.Test;
@@ -28,7 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -36,7 +34,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -58,13 +55,7 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 	@Test public void discovery_client_is_zookeeper() {
 		//given: this.discoveryClient
 		//expect:
-		then(discoveryClient).isInstanceOf(CompositeDiscoveryClient.class);
-		CompositeDiscoveryClient composite = (CompositeDiscoveryClient) discoveryClient;
-		Field field = ReflectionUtils.findField(CompositeDiscoveryClient.class, "discoveryClients");
-		ReflectionUtils.makeAccessible(field);
-		List<DiscoveryClient> discoveryClients = (List<DiscoveryClient>) ReflectionUtils.getField(field, composite);
-		DiscoveryClient first = discoveryClients.get(0);
-		then(first).isInstanceOf(ZookeeperDiscoveryClient.class);
+		then(discoveryClient).isInstanceOf(ZookeeperDiscoveryClient.class);
 	}
 
 	@Test public void application_should_not_have_been_registered() {
