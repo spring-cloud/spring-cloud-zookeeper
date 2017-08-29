@@ -65,7 +65,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 
 	private List<String> contexts;
 
-	private static final Log log = LogFactory.getLog(ConfigWatcher.class);
+	private static final Log log = LogFactory.getLog(ZookeeperPropertySourceLocator.class);
 
 	public ZookeeperPropertySourceLocator(CuratorFramework curator, ZookeeperConfigProperties properties) {
 		this.curator = curator;
