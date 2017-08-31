@@ -15,13 +15,17 @@
 	<properties>
 		<docs.main>spring-cloud-zookeeper</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
-		<docs.whitelisted.branches>1.0.x,1.1.x</docs.whitelisted.branches>
+		<docs.whitelisted.branches>1.0.x</docs.whitelisted.branches>
 	</properties>
 	<profiles>
 		<profile>
 			<id>docs</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+					</plugin>
 					<plugin>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
