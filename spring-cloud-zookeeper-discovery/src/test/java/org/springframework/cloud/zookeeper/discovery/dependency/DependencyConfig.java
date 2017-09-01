@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -26,7 +25,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 @Configuration
 @EnableAutoConfiguration(exclude = EndpointMBeanExportAutoConfiguration.class)
 @Import(CommonTestConfig.class)
-@EnableDiscoveryClient
 @EnableFeignClients(basePackageClasses = {AliasUsingFeignClient.class, IdUsingFeignClient.class})
 public class DependencyConfig {
 

@@ -33,7 +33,6 @@ Example Zookeeper client:
 [source,java,indent=0]
 ----
 @SpringBootApplication
-@EnableDiscoveryClient
 @RestController
 public class Application {
 
@@ -63,7 +62,9 @@ CAUTION: If you use <<spring-cloud-zookeeper-config,Spring Cloud Zookeeper Confi
 
 The default service name, instance id and port, taken from the `Environment`, are `${spring.application.name}`, the Spring Context ID and `${server.port}` respectively.
 
-`@EnableDiscoveryClient` makes the app into both a Zookeeper "service" (i.e. it registers itself) and a "client" (i.e. it can query Zookeeper to locate other services).
+Having `spring-cloud-starter-zookeeper-discovery` on the classpath makes the app into both a Zookeeper "service" (i.e. it registers itself) and a "client" (i.e. it can query Zookeeper to locate other services).
+
+If you would like to disable the Zookeeper Discovery Client you can set `spring.cloud.zookeeper.discovery.enabled` to `false`.
 
 
 === Using the DiscoveryClient

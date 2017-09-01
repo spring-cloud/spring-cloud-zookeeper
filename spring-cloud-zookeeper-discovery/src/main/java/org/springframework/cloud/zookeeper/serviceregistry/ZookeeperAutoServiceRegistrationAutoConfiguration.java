@@ -42,8 +42,8 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnMissingBean(type = "org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle")
 @ConditionalOnZookeeperDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.service-registry.auto-registration.enabled", matchIfMissing = true)
-@AutoConfigureAfter(ZookeeperServiceRegistryAutoConfiguration.class)
-@AutoConfigureBefore( {AutoServiceRegistrationAutoConfiguration.class, ZookeeperDiscoveryAutoConfiguration.class} )
+@AutoConfigureAfter( {AutoServiceRegistrationAutoConfiguration.class,ZookeeperServiceRegistryAutoConfiguration.class} )
+@AutoConfigureBefore( {ZookeeperDiscoveryAutoConfiguration.class} )
 public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 
 	@Bean

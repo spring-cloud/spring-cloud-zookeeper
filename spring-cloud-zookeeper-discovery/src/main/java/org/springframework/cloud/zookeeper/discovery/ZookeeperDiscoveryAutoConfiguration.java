@@ -20,6 +20,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.Endpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -39,6 +40,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(ZookeeperDiscoveryClientConfiguration.Marker.class)
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore({CommonsClientAutoConfiguration.class, NoopDiscoveryClientAutoConfiguration.class})
+@AutoConfigureAfter({ZookeeperDiscoveryClientConfiguration.class})
 public class ZookeeperDiscoveryAutoConfiguration {
 
 	@Autowired(required = false)

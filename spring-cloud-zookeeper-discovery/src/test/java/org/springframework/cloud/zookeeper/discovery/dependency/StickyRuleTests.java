@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
@@ -77,7 +76,6 @@ public class StickyRuleTests {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableDiscoveryClient
 	@Profile("loadbalancerclient")
 	static class Config {
 

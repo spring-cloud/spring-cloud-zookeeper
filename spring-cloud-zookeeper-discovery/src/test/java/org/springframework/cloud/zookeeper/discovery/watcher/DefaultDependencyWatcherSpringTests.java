@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.CustomZookeeperServiceDiscovery;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -67,7 +66,6 @@ public class DefaultDependencyWatcherSpringTests {
 	}
 
 	@Configuration
-	@EnableDiscoveryClient
 	@EnableAutoConfiguration
 	@Profile("watcher")
 	static class Config {
