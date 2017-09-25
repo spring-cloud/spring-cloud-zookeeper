@@ -24,11 +24,9 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
-import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -38,12 +36,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnBean(AutoServiceRegistrationProperties.class)
 @ConditionalOnMissingBean(type = "org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle")
 @ConditionalOnZookeeperDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.service-registry.auto-registration.enabled", matchIfMissing = true)
-@AutoConfigureAfter( {AutoServiceRegistrationAutoConfiguration.class,ZookeeperServiceRegistryAutoConfiguration.class} )
-@AutoConfigureBefore( {ZookeeperDiscoveryAutoConfiguration.class} )
+@AutoConfigureAfter( { ZookeeperServiceRegistryAutoConfiguration.class} )
+@AutoConfigureBefore( {AutoServiceRegistrationAutoConfiguration.class,ZookeeperDiscoveryAutoConfiguration.class} )
 public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 
 	@Bean
