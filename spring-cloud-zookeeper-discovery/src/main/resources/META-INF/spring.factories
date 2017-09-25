@@ -9,11 +9,9 @@ org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAu
 org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAutoConfiguration,\
 org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration,\
 org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration,\
-org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration
+org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration,\
+org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration
 
 # Environment Post Processors
 org.springframework.boot.env.EnvironmentPostProcessor=\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPostProcessor
-
-org.springframework.cloud.client.discovery.EnableDiscoveryClient=\
-org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration

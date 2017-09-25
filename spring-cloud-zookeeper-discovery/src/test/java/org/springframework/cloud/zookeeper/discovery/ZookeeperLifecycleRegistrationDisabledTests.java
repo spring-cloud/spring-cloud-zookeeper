@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -57,7 +54,6 @@ public class ZookeeperLifecycleRegistrationDisabledTests {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableDiscoveryClient
 	@Import({ CommonTestConfig.class })
 	static class TestPropsConfig { }
 }

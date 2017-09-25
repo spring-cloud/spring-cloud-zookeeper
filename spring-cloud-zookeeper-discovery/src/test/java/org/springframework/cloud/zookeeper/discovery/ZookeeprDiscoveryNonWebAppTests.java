@@ -26,7 +26,6 @@ import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoCon
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -69,7 +68,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 		clientApplication.setWebEnvironment(false);
 
 		try (ConfigurableApplicationContext producerContext = producerApp.run(this.connectionString, "--server.port=0",
-				"--spring.application.name=hello-world")) {
+				"--spring.application.name=hello-world", "--debug")) {
 			try (final ConfigurableApplicationContext context = clientApplication.run(this.connectionString,
 					"--spring.cloud.zookeeper.discovery.register=false")) {
 				Awaitility.await().until(new Runnable() {
@@ -91,7 +90,6 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
 			JmxAutoConfiguration.class})
-	@EnableDiscoveryClient
 	@Configuration
 	static class HelloClient {
 		@LoadBalanced
@@ -108,7 +106,6 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
 			JmxAutoConfiguration.class})
-	@EnableDiscoveryClient
 	@RestController
 	static class HelloProducer {
 

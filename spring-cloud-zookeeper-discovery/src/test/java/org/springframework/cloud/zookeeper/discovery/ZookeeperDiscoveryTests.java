@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -117,7 +116,6 @@ public class ZookeeperDiscoveryTests {
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
-	@EnableDiscoveryClient 
 	@EnableFeignClients(clients = { IdUsingFeignClient.class })
 	@Profile("ribbon")
 	static class Config {

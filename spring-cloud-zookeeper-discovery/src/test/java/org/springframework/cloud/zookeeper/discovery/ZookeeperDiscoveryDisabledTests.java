@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +42,6 @@ public class ZookeeperDiscoveryDisabledTests {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableDiscoveryClient
 	@Import(CommonTestConfig.class)
 	static class SomeApp {
 		@Bean
