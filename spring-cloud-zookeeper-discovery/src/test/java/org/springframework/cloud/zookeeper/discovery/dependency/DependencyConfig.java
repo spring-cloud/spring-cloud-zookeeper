@@ -26,7 +26,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 @Configuration
 @EnableAutoConfiguration(exclude = EndpointMBeanExportAutoConfiguration.class)
 @Import(CommonTestConfig.class)
-@EnableDiscoveryClient
 @EnableFeignClients(basePackageClasses = {AliasUsingFeignClient.class, IdUsingFeignClient.class})
 public class DependencyConfig {
 

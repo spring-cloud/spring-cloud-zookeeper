@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,44 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import org.apache.curator.framework.CuratorFramework;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.Assert.assertTrue;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
 /**
- * @author Marcin Grzejszczak
+ * @author Spencer Gibb
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ZookeeperDiscoveryDisabledTests.SomeApp.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = "spring.cloud.zookeeper.discovery.enabled=false")
-public class ZookeeperDiscoveryDisabledTests {
+@SpringBootTest(classes = ZookeeperLifecycleRegistrationDisabledTests.TestPropsConfig.class,
+	properties = { "spring.application.name=myTestNotRegisteredService",
+		"spring.cloud.zookeeper.discovery.register=false", "spring.cloud.zookeeper.dependency.enabled=false"},
+		webEnvironment = RANDOM_PORT)
+public class ZookeeperLifecycleRegistrationDisabledTests {
+
+
+	@Autowired
+	private ZookeeperDiscoveryClient client;
 
 	@Test
-	public void should_start_the_context_with_discovery_disabled() throws Exception {
+	public void contextLoads() {
+		List<ServiceInstance> instances = this.client.getInstances("myTestNotRegisteredService");
+		assertTrue("service was registered", instances.isEmpty());
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
-	@Import(CommonTestConfig.class)
-	static class SomeApp {
-		@Bean
-		CuratorFramework curator() {
-			return null;
-		}
-	}
+	@Import({ CommonTestConfig.class })
+	static class TestPropsConfig { }
 }

@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
@@ -89,7 +88,6 @@ public class ZookeeperDiscoverySecurePortTests {
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
-	@EnableDiscoveryClient 
 	@Profile("ribbon")
 	static class Config {
 	}

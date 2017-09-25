@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
@@ -58,7 +57,6 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableDiscoveryClient
 	@Import(CommonTestConfig.class)
 	@Profile("nestedstructure")
 	static class Config {

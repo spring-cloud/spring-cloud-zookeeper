@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
@@ -75,7 +74,6 @@ public class ZookeeperAutoServiceRegistrationTests {
 
 	@SpringBootConfiguration
 	@EnableAutoConfiguration
-	@EnableDiscoveryClient
 	@Import({CommonTestConfig.class})
 	/*@ImportAutoConfiguration({AutoServiceRegistrationAutoConfiguration.class, ZookeeperAutoServiceRegistration.class,
 			ZookeeperServiceRegistryAutoConfiguration.class})*/
