@@ -35,7 +35,6 @@ Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon), Circuit Brea
 <simpara>When a client registers with Zookeeper, it provides meta-data about itself such as host and port, id and name.</simpara>
 <simpara>Example Zookeeper client:</simpara>
 <programlisting language="java" linenumbering="unnumbered">@SpringBootApplication
-@EnableDiscoveryClient
 @RestController
 public class Application {
 
@@ -63,7 +62,8 @@ public class Application {
 <simpara>If you use <link linkend="spring-cloud-zookeeper-config">Spring Cloud Zookeeper Config</link>, the above values will need to be placed in <literal>bootstrap.yml</literal> instead of <literal>application.yml</literal>.</simpara>
 </caution>
 <simpara>The default service name, instance id and port, taken from the <literal>Environment</literal>, are <literal>${spring.application.name}</literal>, the Spring Context ID and <literal>${server.port}</literal> respectively.</simpara>
-<simpara><literal>@EnableDiscoveryClient</literal> makes the app into both a Zookeeper "service" (i.e. it registers itself) and a "client" (i.e. it can query Zookeeper to locate other services).</simpara>
+<simpara>Having <literal>spring-cloud-starter-zookeeper-discovery</literal> on the classpath makes the app into both a Zookeeper "service" (i.e. it registers itself) and a "client" (i.e. it can query Zookeeper to locate other services).</simpara>
+<simpara>If you would like to disable the Zookeeper Discovery Client you can set <literal>spring.cloud.zookeeper.discovery.enabled</literal> to <literal>false</literal>.</simpara>
 </section>
 <section xml:id="_using_the_discoveryclient">
 <title>Using the DiscoveryClient</title>
