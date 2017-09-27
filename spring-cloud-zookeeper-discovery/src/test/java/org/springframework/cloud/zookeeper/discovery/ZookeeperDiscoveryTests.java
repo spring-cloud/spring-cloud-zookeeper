@@ -42,7 +42,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class,
 		properties = {
 			"feign.hystrix.enabled=false",
-			"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath"
+			"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath",
+			"endpoints.default.web.enabled=true"
 		},
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")

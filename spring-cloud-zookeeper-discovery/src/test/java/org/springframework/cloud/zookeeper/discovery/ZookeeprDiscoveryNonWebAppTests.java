@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -88,8 +87,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 		}
 	}
 
-	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
-			JmxAutoConfiguration.class})
+	@EnableAutoConfiguration(exclude = {JmxAutoConfiguration.class})
 	@Configuration
 	static class HelloClient {
 		@LoadBalanced
@@ -104,8 +102,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 		@Autowired RestTemplate restTemplate;
 	}
 
-	@EnableAutoConfiguration(exclude = {EndpointMBeanExportAutoConfiguration.class,
-			JmxAutoConfiguration.class})
+	@EnableAutoConfiguration(exclude = {JmxAutoConfiguration.class})
 	@RestController
 	static class HelloProducer {
 

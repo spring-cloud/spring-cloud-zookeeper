@@ -29,13 +29,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+		properties = "endpoints.default.web.enabled=true",
+		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 

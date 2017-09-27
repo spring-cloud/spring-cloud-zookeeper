@@ -2,10 +2,8 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.Collection;
 
-import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -24,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.BDDAssertions.then;
 
 @Configuration
-@EnableAutoConfiguration(exclude = EndpointMBeanExportAutoConfiguration.class)
+@EnableAutoConfiguration
 @Import(CommonTestConfig.class)
 @EnableFeignClients(basePackageClasses = {AliasUsingFeignClient.class, IdUsingFeignClient.class})
 public class DependencyConfig {
