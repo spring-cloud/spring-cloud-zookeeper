@@ -17,6 +17,9 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -108,6 +111,29 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 	@Override
 	public String getServiceId() {
 		return this.appName;
+	}
+
+	@Override
+	public String getHost() {
+		return getServiceInstance().getAddress();
+	}
+
+	@Override
+	public boolean isSecure() {
+		return getServiceInstance().getSslPort() != null;
+	}
+
+	@Override
+	public URI getUri() {
+		return URI.create(getServiceInstance().buildUriSpec());
+	}
+
+	@Override
+	public Map<String, String> getMetadata() {
+		if (getServiceInstance().getPayload() != null) {
+			return getServiceInstance().getPayload().getMetadata();
+		}
+		return Collections.emptyMap();
 	}
 
 	/**
