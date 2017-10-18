@@ -27,7 +27,5 @@ public interface ZookeeperRegistration extends Registration {
 
 	ServiceInstance<ZookeeperInstance> getServiceInstance();
 
-	int getPort();
-
 	void setPort(int port);
 }

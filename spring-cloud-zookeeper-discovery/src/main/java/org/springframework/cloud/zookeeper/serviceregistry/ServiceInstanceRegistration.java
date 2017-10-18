@@ -22,6 +22,10 @@ import org.apache.curator.x.discovery.ServiceType;
 import org.apache.curator.x.discovery.UriSpec;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+
 import static org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties.DEFAULT_URI_SPEC;
 
 /**
@@ -148,5 +152,37 @@ public class ServiceInstanceRegistration implements ZookeeperRegistration {
 	public void setPort(int port) {
 		this.builder.port(port);
 		this.build();
+	}
+
+	@Override
+	public String getHost() {
+		if (this.serviceInstance == null) {
+			return null;
+		}
+		return this.serviceInstance.getAddress();
+	}
+
+	@Override
+	public boolean isSecure() {
+		if (this.serviceInstance == null) {
+			return false;
+		}
+		return this.serviceInstance.getSslPort() != null;
+	}
+
+	@Override
+	public URI getUri() {
+		if (this.serviceInstance == null) {
+			return null;
+		}
+		return URI.create(this.serviceInstance.buildUriSpec());
+	}
+
+	@Override
+	public Map<String, String> getMetadata() {
+		if (this.serviceInstance == null || this.serviceInstance.getPayload() == null) {
+			return Collections.emptyMap();
+		}
+		return this.serviceInstance.getPayload().getMetadata();
 	}
 }
