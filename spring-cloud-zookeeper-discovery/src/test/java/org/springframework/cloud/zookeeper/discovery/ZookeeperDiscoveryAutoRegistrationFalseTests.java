@@ -70,13 +70,6 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 		then(instances).isEmpty();
 	}
 
-	@Test public void should_find_local_instance() {
-		//given
-		ServiceInstance serviceInstance = this.discoveryClient.getLocalServiceInstance();
-		//expect:
-		then(serviceInstance).isNotNull();
-	}
-
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)

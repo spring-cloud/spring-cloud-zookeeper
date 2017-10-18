@@ -1,7 +1,6 @@
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
@@ -55,6 +55,7 @@ public class ZookeeperDiscoveryTests {
 	@Autowired ServiceInstanceRegistration serviceDiscovery;
 	@Value("${spring.application.name}") String springAppName;
 	@Autowired IdUsingFeignClient idUsingFeignClient;
+	@Autowired Registration registration;
 
 	@Test public void should_find_the_app_by_its_name_via_Ribbon() {
 		//expect:
@@ -72,26 +73,22 @@ public class ZookeeperDiscoveryTests {
 
 	@Test public void should_present_application_name_as_id_of_the_service_instance() {
 		//given:
-		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
-		then(this.springAppName).isEqualTo(instance.getServiceId());
+		then(this.springAppName).isEqualTo(this.registration.getServiceId());
 	}
 
 	@Test public void should_service_instance_uri_match_uriSpec() {
 		//given:
-		ServiceInstance instance = this.discoveryClient.getLocalServiceInstance();
 		//expect:
-		then(instance.getUri()).hasPath("/contextPath");
+		then(this.registration.getUri()).hasPath("/contextPath");
 	}
 
 	@Test public void should_find_an_instance_using_feign_via_service_id() {
 		final IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
 		//expect:
-		Awaitility.await().until(new Callable<Boolean>() {
-			@Override public Boolean call() throws Exception {
-				then(idUsingFeignClient.getBeans()).isNotEmpty();
-				return true;
-			}
+		Awaitility.await().until(() -> {
+			then(idUsingFeignClient.getBeans()).isNotEmpty();
+			return true;
 		});
 	}
 
@@ -105,7 +102,7 @@ public class ZookeeperDiscoveryTests {
 
 	@Test public void should_properly_find_local_instance() {
 		//expect:
-		then(this.serviceDiscovery.getServiceInstance().getAddress()).isEqualTo(this.discoveryClient.getLocalServiceInstance().getHost());
+		then(this.serviceDiscovery.getServiceInstance().getAddress()).isEqualTo(this.registration.getHost());
 	}
 	
 	
