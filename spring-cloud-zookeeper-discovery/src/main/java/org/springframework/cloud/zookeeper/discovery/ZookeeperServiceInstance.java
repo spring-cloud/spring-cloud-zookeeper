@@ -36,6 +36,7 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 	private final boolean secure;
 	private final URI uri;
 	private final Map<String, String> metadata;
+	private final org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> serviceInstance;
 
 	/**
 	 * @param serviceId The service id to be used
@@ -43,7 +44,8 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 	 */
 	public ZookeeperServiceInstance(String serviceId, org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> serviceInstance) {
 		this.serviceId = serviceId;
-		this.host = serviceInstance.getAddress();
+		this.serviceInstance = serviceInstance;
+		this.host = this.serviceInstance.getAddress();
 		this.secure = serviceInstance.getSslPort() != null;
 		Integer port = serviceInstance.getPort();
 		if (this.secure) {
@@ -86,5 +88,9 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 	@Override
 	public Map<String, String> getMetadata() {
 		return this.metadata;
+	}
+
+	public org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> getServiceInstance() {
+		return this.serviceInstance;
 	}
 }

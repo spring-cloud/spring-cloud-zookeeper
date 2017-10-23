@@ -198,6 +198,9 @@ public class ZookeeperServiceDiscovery implements ZookeeperRegistration, Applica
 			if (this.properties.getInstanceSslPort() != null) {
 				builder.sslPort(this.properties.getInstanceSslPort());
 			}
+			if (this.properties.getInstanceId() != null) {
+				builder.id(this.properties.getInstanceId());
+			}
 			serviceInstance.set(builder.build());
 		}
 		catch (Exception e) {

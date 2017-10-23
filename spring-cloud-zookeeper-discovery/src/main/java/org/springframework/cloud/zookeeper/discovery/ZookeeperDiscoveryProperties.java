@@ -49,6 +49,9 @@ public class ZookeeperDiscoveryProperties {
 	 */
 	private String uriSpec = DEFAULT_URI_SPEC;
 
+	/** Id used to register with zookeeper. Defaults to a random UUID. */
+	private String instanceId;
+
 	/**
 	 * Predefined host with which a service can register itself in Zookeeper. Corresponds
 	 * to the {code address} from the URI spec.
@@ -126,6 +129,14 @@ public class ZookeeperDiscoveryProperties {
 		this.uriSpec = uriSpec;
 	}
 
+	public String getInstanceId() {
+		return this.instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
 	public void setInstanceHost(String instanceHost) {
 		this.instanceHost = instanceHost;
 		this.hostInfo.override = true;
@@ -185,6 +196,7 @@ public class ZookeeperDiscoveryProperties {
 		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
 				", root='" + this.root + '\'' +
 				", uriSpec='" + this.uriSpec + '\'' +
+				", instanceId='" + this.instanceId + '\'' +
 				", instanceHost='" + this.instanceHost + '\'' +
 				", instancePort='" + this.instancePort + '\'' +
 				", instanceSslPort='" + this.instanceSslPort + '\'' +
