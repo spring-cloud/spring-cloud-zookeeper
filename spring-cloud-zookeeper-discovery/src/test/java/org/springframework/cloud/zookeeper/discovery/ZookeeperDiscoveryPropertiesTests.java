@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 		"spring.cloud.zookeeper.discovery.preferIpAddress=true",
 		"spring.cloud.zookeeper.discovery.instanceIpAddress=1.1.1.1"},
 		classes = ZookeeperDiscoveryPropertiesTests.Config.class,
-		webEnvironment = WebEnvironment.NONE)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ZookeeperDiscoveryPropertiesTests {
 
 	@Autowired
