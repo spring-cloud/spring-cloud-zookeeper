@@ -69,6 +69,9 @@ public class ZookeeperDiscoveryTests {
 		//expect:
 		then(registeredServiceStatus(instance)).isEqualTo("UP");
 		then(instance.getMetadata().get("testMetadataKey")).isEqualTo("testMetadataValue");
+		then(instance).isInstanceOf(ZookeeperServiceInstance.class);
+		ZookeeperServiceInstance zkInstance = (ZookeeperServiceInstance) instance;
+		then(zkInstance.getServiceInstance().getId()).isEqualTo("ribbon-instance-id-123");
 	}
 
 	@Test public void should_present_application_name_as_id_of_the_service_instance() {
