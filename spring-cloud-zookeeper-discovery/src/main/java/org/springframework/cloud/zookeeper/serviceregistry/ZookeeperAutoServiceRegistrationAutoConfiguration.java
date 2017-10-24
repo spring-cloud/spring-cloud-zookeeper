@@ -69,6 +69,10 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 		if (properties.getInstanceSslPort() != null) {
 			builder.sslPort(properties.getInstanceSslPort());
 		}
+		if (properties.getInstanceId() != null) {
+			builder.id(properties.getInstanceId());
+		}
+
 
 		// TODO add customizer?
 
