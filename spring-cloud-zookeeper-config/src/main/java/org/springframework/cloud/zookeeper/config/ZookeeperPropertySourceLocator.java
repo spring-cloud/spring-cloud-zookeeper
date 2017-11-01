@@ -81,6 +81,11 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 		if (environment instanceof ConfigurableEnvironment) {
 			ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
 			String appName = env.getProperty("spring.application.name");
+			if (appName == null) {
+				// use default "application" (which config client does)
+				appName = "application";
+				log.warn("spring.application.name is not set. Using default of 'application'");
+			}
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
 
 			String root = this.properties.getRoot();
