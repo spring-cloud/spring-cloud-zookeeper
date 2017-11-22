@@ -22,6 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
@@ -51,6 +53,8 @@ import static org.junit.Assert.assertThat;
  * @author Spencer Gibb
  */
 public class ZookeeperPropertySourceLocatorTests {
+
+	private static final Log log = LogFactory.getLog(ZookeeperPropertySourceLocatorTests.class);
 
 	public static final String PREFIX = "test__config__";
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
@@ -95,6 +99,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		@EventListener
 		public void handle(EnvironmentChangeEvent event) {
+			log.debug("Event keys: " + event.getKeys());
 			if (event.getKeys().contains(KEY_BASIC)) {
 				countDownLatch().countDown();
 			}
@@ -131,7 +136,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 		this.context = new SpringApplicationBuilder(Config.class).web(false).run(
 				"--spring.cloud.zookeeper.connectString=" + connectString,
-				"--spring.application.name=testZkPropertySource",
+				"--spring.application.name=testZkPropertySource", "--logging.level.org.springframework.cloud.zookeeper=DEBUG",
 				"--spring.cloud.zookeeper.config.root=" + ROOT);
 
 		this.curator = this.context.getBean(CuratorFramework.class);
