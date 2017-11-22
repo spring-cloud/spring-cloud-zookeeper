@@ -37,7 +37,7 @@ public class SampleApplicationTests {
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run(
 				"--server.port="+port,
-				"--endpoints.default.web.enabled=true",
+				"--management.endpoints.web.expose=*",
 				"--spring.cloud.zookeeper.connect-string=localhost:" + zkPort);
 
 		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/application/health", String.class);

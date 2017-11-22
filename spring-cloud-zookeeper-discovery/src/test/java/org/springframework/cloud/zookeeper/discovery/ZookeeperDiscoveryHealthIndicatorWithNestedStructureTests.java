@@ -36,7 +36,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
-		properties = "endpoints.default.web.enabled=true",
+		properties = "management.endpoints.web.expose=*",
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {

@@ -26,7 +26,7 @@ import static org.assertj.core.api.BDDAssertions.then;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class,
-		properties = {"feign.hystrix.enabled=false", "debug=true", "endpoints.default.web.enabled=true"},
+		properties = {"feign.hystrix.enabled=false", "debug=true", "management.endpoints.web.expose=*"},
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dependencies")
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {

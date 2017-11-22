@@ -43,7 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		properties = {
 			"feign.hystrix.enabled=false",
 			"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath",
-			"endpoints.default.web.enabled=true"
+			"management.endpoints.web.expose=*"
 		},
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
