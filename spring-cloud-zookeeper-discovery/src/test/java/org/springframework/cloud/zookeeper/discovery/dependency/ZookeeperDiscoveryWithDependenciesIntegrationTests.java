@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -161,11 +162,11 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	}
 
 	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
-		return !this.testRibbonClient.callService("someAlias", "application/beans").isEmpty();
+		return !this.testRibbonClient.callService("someAlias", BASE_PATH + "/beans").isEmpty();
 	}
 
 	private boolean callingServiceViaUrlOnBeansEndpointIsNotEmpty(ServiceInstance instance) {
-		return !this.testRibbonClient.callOnUrl(instance.getHost() + ":" + instance.getPort(), "application/beans").isEmpty();
+		return !this.testRibbonClient.callOnUrl(instance.getHost() + ":" + instance.getPort(), BASE_PATH + "/beans").isEmpty();
 	}
 
 	private void callingServiceToCheckIfHeadersArePassed() {
