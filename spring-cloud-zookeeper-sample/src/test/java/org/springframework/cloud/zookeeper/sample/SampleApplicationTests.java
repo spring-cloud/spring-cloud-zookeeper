@@ -40,7 +40,7 @@ public class SampleApplicationTests {
 				"--management.endpoints.web.expose=*",
 				"--spring.cloud.zookeeper.connect-string=localhost:" + zkPort);
 
-		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/application/health", String.class);
+		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/hi", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		context.close();

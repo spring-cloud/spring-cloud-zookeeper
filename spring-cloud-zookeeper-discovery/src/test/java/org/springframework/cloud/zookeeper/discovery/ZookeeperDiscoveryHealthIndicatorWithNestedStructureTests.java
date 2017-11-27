@@ -17,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
-import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
+import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -50,7 +51,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
 			throws Exception {
 		// when:
-		String response = this.testRibbonClient.callService("me", "application/health");
+		String response = this.testRibbonClient.callService("me", BASE_PATH + "/health");
 		// then:
 		log.info("Received response [" + response + "]");
 		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();

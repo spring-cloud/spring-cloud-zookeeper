@@ -1,11 +1,14 @@
 package org.springframework.cloud.zookeeper.discovery.test;
 
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Marcin Grzejszczak
  */
 public class TestRibbonClient extends TestServiceRestClient {
+
+	public static final String BASE_PATH = new WebEndpointProperties().getBasePath();
 
 	private final String thisAppName;
 
@@ -21,7 +24,7 @@ public class TestRibbonClient extends TestServiceRestClient {
 
 	public String thisHealthCheck() {
 		return this.restTemplate
-				.getForObject("http://" + this.thisAppName + "/application/health", String.class);
+				.getForObject("http://" + this.thisAppName + BASE_PATH + "/health", String.class);
 	}
 
 	public Integer thisPort() {

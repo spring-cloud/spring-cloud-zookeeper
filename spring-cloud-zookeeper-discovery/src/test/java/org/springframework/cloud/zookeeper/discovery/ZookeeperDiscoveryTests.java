@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.jayway.awaitility.Awaitility;
@@ -34,6 +35,7 @@ import com.toomuchcoding.jsonassert.JsonPath;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -90,7 +92,7 @@ public class ZookeeperDiscoveryTests {
 		final IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
 		//expect:
 		Awaitility.await().until(() -> {
-			then(idUsingFeignClient.getBeans()).isNotEmpty();
+			then(idUsingFeignClient.hi()).isNotEmpty();
 			return true;
 		});
 	}
@@ -100,7 +102,7 @@ public class ZookeeperDiscoveryTests {
 	}
 
 	private String registeredServiceStatus(ServiceInstance instance) {
-		return JsonPath.builder(this.testRibbonClient.callOnUrl(instance.getHost()+":"+instance.getPort(), "application/health")).field("status").read(String.class);
+		return JsonPath.builder(this.testRibbonClient.callOnUrl(instance.getHost()+":"+instance.getPort(), BASE_PATH + "/health")).field("status").read(String.class);
 	}
 
 	@Test public void should_properly_find_local_instance() {
@@ -110,9 +112,9 @@ public class ZookeeperDiscoveryTests {
 	
 	
 	@FeignClient("ribbonApp")
-	public static interface IdUsingFeignClient {
-		@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
-		String getBeans();
+	public interface IdUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/hi")
+		String hi();
 	}
 
 	@Configuration
@@ -120,11 +122,17 @@ public class ZookeeperDiscoveryTests {
 	@Import(CommonTestConfig.class)
 	@EnableFeignClients(clients = { IdUsingFeignClient.class })
 	@Profile("ribbon")
+	@RestController
 	static class Config {
 
 		@Bean TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
 			return new TestRibbonClient(restTemplate, springAppName);
+		}
+
+		@RequestMapping("/hi")
+		public String hi() {
+			return "hi";
 		}
 	}
 

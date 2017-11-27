@@ -27,6 +27,10 @@ public class TestServiceRestClient {
 	}
 
 	public String callOnUrl(String url, String endpoint) {
-		return new RestTemplate().getForObject("http://" + url + "/" + endpoint, String.class);
+		if (!endpoint.startsWith("/")) {
+			endpoint = "/" + endpoint;
+		}
+
+		return new RestTemplate().getForObject("http://" + url + endpoint, String.class);
 	}
 }
