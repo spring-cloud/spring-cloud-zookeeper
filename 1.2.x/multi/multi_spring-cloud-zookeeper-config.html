@@ -1,0 +1,43 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>7.&nbsp;Distributed Configuration with Zookeeper</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="multi_spring-cloud-zookeeper.html" title="Spring Cloud Zookeeper"><link rel="up" href="multi_spring-cloud-zookeeper.html" title="Spring Cloud Zookeeper"><link rel="prev" href="multi_spring-cloud-zookeeper-dependency-watcher.html" title="6.&nbsp;Spring Cloud Zookeeper Dependency Watcher"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">7.&nbsp;Distributed Configuration with Zookeeper</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi_spring-cloud-zookeeper-dependency-watcher.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;</td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-config" href="#spring-cloud-zookeeper-config"></a>7.&nbsp;Distributed Configuration with Zookeeper</h1></div></div></div><p>Zookeeper provides a <a class="link" href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace" target="_top">hierarchical namespace</a> that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the <a class="link" href="https://github.com/spring-cloud/spring-cloud-config" target="_top">Config Server and Client</a>.  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the <code class="literal">/config</code> namespace by default.  Multiple <code class="literal">PropertySource</code> instances are created based on the application&#8217;s name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:</p><pre class="screen">config/testApp,dev
+config/testApp
+config/application,dev
+config/application</pre><p>The most specific property source is at the top, with the least specific at the bottom.  Properties is the <code class="literal">config/application</code> namespace are applicable to all applications using zookeeper for configuration.  Properties in the <code class="literal">config/testApp</code> namespace are only available to the instances of the service named "testApp".</p><p>Configuration is currently read on startup of the application.  Sending a HTTP POST to <code class="literal">/refresh</code> will cause the configuration to be reloaded.  Watching the configuration namespace (which Zookeeper supports) is not currently implemented, but will be a future addition to this project.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_to_activate_3" href="#_how_to_activate_3"></a>7.1&nbsp;How to activate</h2></div></div></div><p>Including a dependency on <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Config.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized using the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
+</p><pre class="screen">spring:
+  cloud:
+    zookeeper:
+      config:
+        enabled: true
+        root: configuration
+        defaultContext: apps
+        profileSeparator: '::'</pre><p>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">enabled</code> setting this value to "false" disables Zookeeper Config</li><li class="listitem"><code class="literal">root</code> sets the base namespace for configuration values</li><li class="listitem"><code class="literal">defaultContext</code> sets the name used by all applications</li><li class="listitem"><code class="literal">profileSeparator</code> sets the value of the separator used to separate the profile name in property sources with profiles</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_acls" href="#_acls"></a>7.3&nbsp;ACLs</h2></div></div></div><p>You can add authentication information for Zookeeper ACLs by calling the addAuthInfo method of a
+CuratorFramework bean. One way to accomplish this is by providing your own CuratorFramework bean:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomCuratorFrameworkConfig {
+
+  <em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> CuratorFramework curatorFramework() {
+    CuratorFramework curator = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> CuratorFramework();
+    curator.addAuthInfo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"digest"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"user:password"</span>.getBytes());
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> curator;
+  }
+
+}</pre><p>Consult <a class="link" href="https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java" target="_top">the ZookeeperAutoConfiguration class</a>
+to see how the CuratorFramework bean is configured by default.</p><p>Alternatively, you can add your credentials from a class that depends on the existing
+CuratorFramework bean:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> DefaultCuratorFrameworkConfig {
+
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> ZookeeperConfig(CuratorFramework curator) {
+    curator.addAuthInfo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"digest"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"user:password"</span>.getBytes());
+  }
+
+}</pre><p>This must occur during the boostrapping phase. You can register configuration classes to run
+during this phase by annotating them with <code class="literal">@BootstrapConfiguration</code> and including them in a
+comma-separated list set as the value of the property
+<code class="literal">org.springframework.cloud.bootstrap.BootstrapConfiguration</code> in the file
+<code class="literal">resources/META-INF/spring.factories</code>:</p><p><b>resources/META-INF/spring.factories.&nbsp;</b>
+</p><pre class="screen">org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+my.project.CustomCuratorFrameworkConfig,\
+my.project.DefaultCuratorFrameworkConfig</pre><p>
+</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi_spring-cloud-zookeeper-dependency-watcher.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;</td></tr><tr><td width="40%" align="left" valign="top">6.&nbsp;Spring Cloud Zookeeper Dependency Watcher&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-zookeeper.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;</td></tr></table></div></body></html>
