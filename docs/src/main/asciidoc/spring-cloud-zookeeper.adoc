@@ -125,7 +125,7 @@ Netflix Eureka supports having instances registered with the server that are `OU
 
 [source,sh,indent=0]
 ----
-$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE overridenStatus=OUT_OF_SERVICE
+$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE overriddenStatus=OUT_OF_SERVICE
 ----
 
  NOTE: The above example uses the `http` command from https://httpie.org
@@ -343,7 +343,7 @@ The default implementation of the abstract `org.springframework.cloud.zookeeper.
 - If the dependency is marked us `required` and it's not in Zookeeper then upon booting your application will throw an exception and shutdown
 - If dependency is not `required` the `org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker` will log that application is missing at `WARN` level
 
-The functionality can be overriden since the `DefaultDependencyPresenceOnStartupVerifier` is registered only when there is no bean of `DependencyPresenceOnStartupVerifier`.
+The functionality can be overridden since the `DefaultDependencyPresenceOnStartupVerifier` is registered only when there is no bean of `DependencyPresenceOnStartupVerifier`.
 
 
 [[spring-cloud-zookeeper-config]]
