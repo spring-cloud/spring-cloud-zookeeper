@@ -4,7 +4,7 @@
 config/testApp
 config/application,dev
 config/application</pre><p>The most specific property source is at the top, with the least specific at the bottom.  Properties is the <code class="literal">config/application</code> namespace are applicable to all applications using zookeeper for configuration.  Properties in the <code class="literal">config/testApp</code> namespace are only available to the instances of the service named "testApp".</p><p>Configuration is currently read on startup of the application.  Sending a HTTP POST to <code class="literal">/refresh</code> will cause the configuration to be reloaded.  Watching the configuration namespace (which Zookeeper supports) is not currently implemented, but will be a future addition to this project.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_how_to_activate_3" href="#_how_to_activate_3"></a>7.1&nbsp;How to activate</h2></div></div></div><p>Including a dependency on <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> will enable auto-configuration that will setup Spring Cloud Zookeeper Config.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized using the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
-</p><pre class="screen">spring:
+</p><pre class="programlisting">spring:
   cloud:
     zookeeper:
       config:

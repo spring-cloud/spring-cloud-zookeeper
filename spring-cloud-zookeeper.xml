@@ -52,10 +52,10 @@ public class Application {
 <formalpara>
 <title>application.yml</title>
 <para>
-<screen>spring:
+<programlisting language="yml" linenumbering="unnumbered">spring:
   cloud:
     zookeeper:
-      connect-string: localhost:2181</screen>
+      connect-string: localhost:2181</programlisting>
 </para>
 </formalpara>
 <caution>
@@ -108,9 +108,7 @@ public void registerThings() {
 <section xml:id="_instance_status">
 <title>Instance Status</title>
 <simpara>Netflix Eureka supports having instances registered with the server that are <literal>OUT_OF_SERVICE</literal> and not returned as active service instances. This is very useful for behaviors such as blue/green deployments. The Curator Service Discovery recipe does not support this behavior. Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement <literal>OUT_OF_SERVICE</literal> by updating some specific metadata and then filtering on that metadata in the Ribbon <literal>ZookeeperServerList</literal>. The <literal>ZookeeperServerList</literal> filters out all non-null instance statuses that do not equal <literal>UP</literal>. If the instance status field is empty, it is considered <literal>UP</literal> for backwards compatibility. To change the status of an instance POST <literal>OUT_OF_SERVICE</literal> to the <literal>ServiceRegistry</literal> instance status actuator endpoint.</simpara>
-<literallayout class="monospaced">----
-$ echo -n OUT_OF_SERVICE | http POST http://localhost:8081/service-registry/instance-status
-----</literallayout>
+<programlisting language="sh" linenumbering="unnumbered">$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE</programlisting>
 <literallayout class="monospaced">NOTE: The above example uses the `http` command from https://httpie.org</literallayout>
 </section>
 </chapter>
@@ -143,7 +141,7 @@ and also <link xl:href="https://github.com/spring-cloud/spring-cloud-netflix/blo
 <formalpara>
 <title>application.yml</title>
 <para>
-<screen>spring.application.name: yourServiceName
+<programlisting language="yml" linenumbering="unnumbered">spring.application.name: yourServiceName
 spring.cloud.zookeeper:
   dependencies:
     newsletter:
@@ -163,7 +161,7 @@ spring.cloud.zookeeper:
       loadBalancerType: ROUND_ROBIN
       contentTypeTemplate: application/vnd.mailing.$version+json
       version: v1
-      required: true</screen>
+      required: true</programlisting>
 </para>
 </formalpara>
 <simpara>Let&#8217;s now go through each part of the dependency one by one. The root property name is <literal>spring.cloud.zookeeper.dependencies</literal>.</simpara>
@@ -172,11 +170,11 @@ spring.cloud.zookeeper:
 <simpara>Below the root property you have to represent each dependency has by an alias due to the constraints of Ribbon (the application id has to be placed in the URL
 thus you can&#8217;t pass any complex path like /foo/bar/name). The alias will be the name that you will use instead of serviceId for <literal>DiscoveryClient</literal>, <literal>Feign</literal> or <literal>RestTemplate</literal>.</simpara>
 <simpara>In the aforementioned examples the aliases are <literal>newsletter</literal> and <literal>mailing</literal>. Example of Feign usage with <literal>newsletter</literal> would be:</simpara>
-<screen>@FeignClient("newsletter")
+<programlisting language="java" linenumbering="unnumbered">@FeignClient("newsletter")
 public interface NewsletterService {
         @RequestMapping(method = RequestMethod.GET, value = "/newsletter")
         String getNewsletters();
-}</screen>
+}</programlisting>
 </section>
 <section xml:id="_path">
 <title>Path</title>
@@ -219,12 +217,12 @@ roam around your code to bump up the API version. That&#8217;s why you can provi
 <simpara>Represented by <literal>headers</literal> map in yaml</simpara>
 <simpara>Sometimes each call to a dependency requires setting up of some default headers. In order not to do that in code you can set them up in the yaml file.
 Having the following <literal>headers</literal> section:</simpara>
-<screen>headers:
+<programlisting language="yml" linenumbering="unnumbered">headers:
     Accept:
         - text/html
         - application/xhtml+xml
     Cache-Control:
-        - no-cache</screen>
+        - no-cache</programlisting>
 <simpara>Results in adding the <literal>Accept</literal> and <literal>Cache-Control</literal> headers with appropriate list of values in your HTTP request.</simpara>
 </section>
 <section xml:id="_obligatory_dependencies">
@@ -295,7 +293,7 @@ its state (UP or DOWN) then some custom logic can be applied.</simpara>
 <title>Registering a listener</title>
 <simpara>In order to register a listener you have to implement an interface <literal>org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherListener</literal> and register it as a bean.
 The interface gives you one method:</simpara>
-<screen>    void stateChanged(String dependencyName, DependencyState newState);</screen>
+<programlisting language="java" linenumbering="unnumbered">void stateChanged(String dependencyName, DependencyState newState);</programlisting>
 <simpara>If you want to register a listener for a particular dependency then the <literal>dependencyName</literal> would be the discriminator for your concrete implementation. <literal>newState</literal> will provide you with information
  whether your dependency has changed to <literal>CONNECTED</literal> or <literal>DISCONNECTED</literal>.</simpara>
 </section>
@@ -313,7 +311,7 @@ of your dependencies.</simpara>
 <simpara>If dependency is not <literal>required</literal> the <literal>org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker</literal> will log that application is missing at <literal>WARN</literal> level</simpara>
 </listitem>
 </itemizedlist>
-<simpara>The functionality can be overriden since the <literal>DefaultDependencyPresenceOnStartupVerifier</literal> is registered only when there is no bean of <literal>DependencyPresenceOnStartupVerifier</literal>.</simpara>
+<simpara>The functionality can be overridden since the <literal>DefaultDependencyPresenceOnStartupVerifier</literal> is registered only when there is no bean of <literal>DependencyPresenceOnStartupVerifier</literal>.</simpara>
 </section>
 </chapter>
 <chapter xml:id="spring-cloud-zookeeper-config">
@@ -335,14 +333,14 @@ config/application</screen>
 <formalpara>
 <title>bootstrap.yml</title>
 <para>
-<screen>spring:
+<programlisting language="yml" linenumbering="unnumbered">spring:
   cloud:
     zookeeper:
       config:
         enabled: true
         root: configuration
         defaultContext: apps
-        profileSeparator: '::'</screen>
+        profileSeparator: '::'</programlisting>
 </para>
 </formalpara>
 <itemizedlist>
