@@ -50,6 +50,7 @@ public class Application {
 
 (i.e. utterly normal Spring Boot app).  If Zookeeper is located somewhere other than `localhost:2181`, the configuration is required to locate the server. Example:
 
+[source,yml,indent=0]
 .application.yml
 ----
 spring:
@@ -122,9 +123,10 @@ public void registerThings() {
 
 Netflix Eureka supports having instances registered with the server that are `OUT_OF_SERVICE` and not returned as active service instances. This is very useful for behaviors such as blue/green deployments. The Curator Service Discovery recipe does not support this behavior. Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement `OUT_OF_SERVICE` by updating some specific metadata and then filtering on that metadata in the Ribbon `ZookeeperServerList`. The `ZookeeperServerList` filters out all non-null instance statuses that do not equal `UP`. If the instance status field is empty, it is considered `UP` for backwards compatibility. To change the status of an instance POST `OUT_OF_SERVICE` to the `ServiceRegistry` instance status actuator endpoint.
 
- ----
- $ echo -n OUT_OF_SERVICE | http POST http://localhost:8081/service-registry/instance-status
- ----
+[source,sh,indent=0]
+----
+$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE
+----
 
  NOTE: The above example uses the `http` command from https://httpie.org
 
@@ -150,6 +152,7 @@ You can also benefit from the Zookeeper Dependency Watchers functionality that l
 
 Let's take a closer look at an example of dependencies representation:
 
+[source,yml,indent=0]
 .application.yml
 ----
 spring.application.name: yourServiceName
@@ -184,6 +187,7 @@ thus you can't pass any complex path like /foo/bar/name). The alias will be the 
 
 In the aforementioned examples the aliases are `newsletter` and `mailing`. Example of Feign usage with `newsletter` would be:
 
+[source,java,indent=0]
 ----
 @FeignClient("newsletter")
 public interface NewsletterService {
@@ -243,6 +247,7 @@ Represented by `headers` map in yaml
 Sometimes each call to a dependency requires setting up of some default headers. In order not to do that in code you can set them up in the yaml file.
 Having the following `headers` section:
 
+[source,yml,indent=0]
 ----
 headers:
     Accept:
@@ -319,8 +324,9 @@ Spring Cloud Zookeeper Dependencies functionality needs to be enabled to profit 
 In order to register a listener you have to implement an interface `org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherListener` and register it as a bean.
 The interface gives you one method:
 
+[source,java,indent=0]
 ----
-    void stateChanged(String dependencyName, DependencyState newState);
+void stateChanged(String dependencyName, DependencyState newState);
 ----
 
 If you want to register a listener for a particular dependency then the `dependencyName` would be the discriminator for your concrete implementation. `newState` will provide you with information
@@ -337,7 +343,7 @@ The default implementation of the abstract `org.springframework.cloud.zookeeper.
 - If the dependency is marked us `required` and it's not in Zookeeper then upon booting your application will throw an exception and shutdown
 - If dependency is not `required` the `org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker` will log that application is missing at `WARN` level
 
-The functionality can be overriden since the `DefaultDependencyPresenceOnStartupVerifier` is registered only when there is no bean of `DependencyPresenceOnStartupVerifier`.
+The functionality can be overridden since the `DefaultDependencyPresenceOnStartupVerifier` is registered only when there is no bean of `DependencyPresenceOnStartupVerifier`.
 
 
 [[spring-cloud-zookeeper-config]]
@@ -365,6 +371,7 @@ Including a dependency on `org.springframework.cloud:spring-cloud-starter-zookee
 
 Zookeeper Config may be customized using the following properties:
 
+[source,yml,indent=0]
 .bootstrap.yml
 ----
 spring:
