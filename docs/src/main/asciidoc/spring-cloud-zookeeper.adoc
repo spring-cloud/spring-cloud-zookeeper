@@ -125,7 +125,7 @@ Netflix Eureka supports having instances registered with the server that are `OU
 
 [source,sh,indent=0]
 ----
-$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE overriddenStatus=OUT_OF_SERVICE
+$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE
 ----
 
  NOTE: The above example uses the `http` command from https://httpie.org
