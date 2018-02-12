@@ -45,7 +45,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 		properties = {
 			"feign.hystrix.enabled=false",
 			"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath",
-			"management.endpoints.web.expose=*"
+			"management.endpoints.web.exposure.include=*"
 		},
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")

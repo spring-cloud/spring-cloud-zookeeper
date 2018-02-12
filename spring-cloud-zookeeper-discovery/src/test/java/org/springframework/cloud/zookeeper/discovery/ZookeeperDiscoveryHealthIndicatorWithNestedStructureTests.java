@@ -37,7 +37,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
-		properties = "management.endpoints.web.expose=*",
+		properties = "management.endpoints.web.exposure.include=*",
 		webEnvironment = RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {

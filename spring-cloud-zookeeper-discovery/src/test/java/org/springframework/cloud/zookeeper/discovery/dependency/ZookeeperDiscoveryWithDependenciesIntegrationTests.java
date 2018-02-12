@@ -27,7 +27,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class,
-		properties = {"feign.hystrix.enabled=false", "debug=true", "management.endpoints.web.expose=*"},
+		properties = {"feign.hystrix.enabled=false", "debug=true", "management.endpoints.web.exposure.include=*"},
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dependencies")
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
