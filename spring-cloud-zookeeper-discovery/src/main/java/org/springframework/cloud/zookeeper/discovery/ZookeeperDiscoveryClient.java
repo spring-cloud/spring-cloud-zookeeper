@@ -29,7 +29,6 @@ import org.apache.zookeeper.KeeperException;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.util.ReflectionUtils;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
@@ -76,8 +75,14 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
 			}
 			return instances;
+		} catch (KeeperException.NoNodeException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Error getting instances from zookeeper. Possibly, no service has registered.", e);
+			}
+			// this means that nothing has registered as a service yes
+			return Collections.emptyList();
 		} catch (Exception exception) {
-			ReflectionUtils.rethrowRuntimeException(exception);
+			rethrowRuntimeException(exception);
 		}
 		return new ArrayList<>();
 	}
