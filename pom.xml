@@ -142,6 +142,19 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- archaius dependencies that are now runtime -->
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- end archaius deps -->
 			<dependency>
 				<groupId>cglib</groupId>
 				<artifactId>cglib-nodep</artifactId>
