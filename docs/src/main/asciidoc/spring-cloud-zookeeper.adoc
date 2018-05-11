@@ -14,6 +14,47 @@ include::intro.adoc[]
 See the http://zookeeper.apache.org/doc/current/zookeeperStarted.html[installation
 documentation] for instructions on how to install Zookeeper.
 
+When running version 3.4, you need to change the Zookeeper dependency
+that comes shipped with `spring-cloud-zookeeper`.
+To do so simply exclude that dependency and add the 3.4.x version like shown below.
+
+.maven
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zookeeper-all</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.apache.zookeeper</groupId>
+    <artifactId>zookeeper</artifactId>
+    <version>3.4.12</version>
+    <exclusions>
+        <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+----
+
+.gradle
+[source,groovy,indent=0]
+----
+compile('org.springframework.cloud:spring-cloud-starter-zookeeper-all') {
+  exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+}
+compile('org.apache.zookeeper:zookeeper:3.4.12') {
+  exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+----
+
 [[spring-cloud-zookeeper-discovery]]
 == Service Discovery with Zookeeper
 
@@ -32,6 +73,9 @@ autoconfiguration that sets up Spring Cloud Zookeeper Discovery.
 
 NOTE: For web functionality, you still need to include
 `org.springframework.boot:spring-boot-starter-web`.
+
+CAUTION: When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
 
 === Registering with Zookeeper
 
@@ -470,6 +514,9 @@ namespace (which Zookeeper supports) is not currently implemented.
 Including a dependency on
 `org.springframework.cloud:spring-cloud-starter-zookeeper-config` enables
 autoconfiguration that sets up Spring Cloud Zookeeper Config.
+
+CAUTION: When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
 
 === Customizing
 
