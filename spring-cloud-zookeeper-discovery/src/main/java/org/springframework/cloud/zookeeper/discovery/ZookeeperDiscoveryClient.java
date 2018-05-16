@@ -16,21 +16,21 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.zookeeper.KeeperException;
-
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
  * Zookeeper version of {@link DiscoveryClient}. Capable of resolving aliases from
@@ -46,6 +46,7 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private final ConcurrentHashMap<String, ServiceCache<ZookeeperInstance>> servicesCache = new ConcurrentHashMap<>();
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = serviceDiscovery;
@@ -66,21 +67,41 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			final String serviceId) {
 		try {
 			if (getServiceDiscovery() == null) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 			String serviceIdToQuery = getServiceIdToQuery(serviceId);
-			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = getServiceDiscovery().queryForInstances(serviceIdToQuery);
+
+			ServiceCache<ZookeeperInstance> serviceCache = this.servicesCache.get(serviceId);
+			if (serviceCache == null) {
+				serviceCache = getServiceDiscovery().serviceCacheBuilder()
+						.name(serviceId)
+						.build();
+				if (this.servicesCache.putIfAbsent(serviceId, serviceCache) == null) {
+					try {
+						serviceCache.start();
+					} catch (Exception e) {
+						rethrowRuntimeException(e);
+					}
+				} else {
+					serviceCache = this.servicesCache.get(serviceId);
+				}
+			}
+
+			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = serviceCache.getInstances();
+			if (zkInstances.isEmpty()) {
+
+				if (log.isDebugEnabled()) {
+					log.debug("Error getting instances from zookeeper. Possibly, no service has registered.");
+				}
+				// this means that nothing has registered as a service yes
+				return Collections.emptyList();
+			}
+
 			List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
 			}
 			return instances;
-		} catch (KeeperException.NoNodeException e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Error getting instances from zookeeper. Possibly, no service has registered.", e);
-			}
-			// this means that nothing has registered as a service yes
-			return Collections.emptyList();
 		} catch (Exception exception) {
 			rethrowRuntimeException(exception);
 		}
