@@ -47,14 +47,14 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
-	private final ZookeeperDiscoveryClientConfig discoveryClientConfig;
+	private final ZookeeperDiscoveryClientProperties discoveryClientProperties;
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 			ZookeeperDependencies zookeeperDependencies,
-			ZookeeperDiscoveryClientConfig discoveryClientConfig) {
+			ZookeeperDiscoveryClientProperties discoveryClientProperties) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
-		this.discoveryClientConfig = discoveryClientConfig;
+		this.discoveryClientProperties = discoveryClientProperties;
 	}
 
 	@Override
@@ -133,6 +133,6 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	@Override
 	public int getOrder() {
-		return this.discoveryClientConfig.getOrder();
+		return this.discoveryClientProperties.getOrder();
 	}
 }

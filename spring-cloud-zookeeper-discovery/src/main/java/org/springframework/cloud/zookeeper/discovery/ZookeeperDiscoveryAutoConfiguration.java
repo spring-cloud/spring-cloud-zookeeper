@@ -57,8 +57,8 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	}
 
 	@Bean
-	public ZookeeperDiscoveryClientConfig zookeeperDiscoveryClientConfig() {
-		return new ZookeeperDiscoveryClientConfig();
+	public ZookeeperDiscoveryClientProperties zookeeperDiscoveryClientProperties() {
+		return new ZookeeperDiscoveryClientProperties();
 	}
 
 	@Bean
@@ -66,9 +66,9 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	// currently means auto-registration is false. That will change when ZookeeperServiceDiscovery is gone
 	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
-			ZookeeperDiscoveryClientConfig zookeeperDiscoveryClientConfig) {
+			ZookeeperDiscoveryClientProperties zookeeperDiscoveryClientProperties) {
 		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies,
-				zookeeperDiscoveryClientConfig);
+				zookeeperDiscoveryClientProperties);
 	}
 
 	@Configuration

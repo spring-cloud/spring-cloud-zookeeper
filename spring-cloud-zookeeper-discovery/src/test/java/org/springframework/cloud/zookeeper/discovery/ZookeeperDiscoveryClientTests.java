@@ -21,7 +21,7 @@ public class ZookeeperDiscoveryClientTests {
 		// given:
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
 		ZookeeperDiscoveryClient zookeeperDiscoveryClient = new ZookeeperDiscoveryClient(
-				serviceDiscovery, null, new ZookeeperDiscoveryClientConfig());
+				serviceDiscovery, null, new ZookeeperDiscoveryClientProperties());
 		// when:
 		List<String> services = zookeeperDiscoveryClient.getServices();
 		// then:
@@ -34,7 +34,7 @@ public class ZookeeperDiscoveryClientTests {
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
 		when(serviceDiscovery.queryForNames()).thenThrow(new NoNodeException());
 		ZookeeperDiscoveryClient discoveryClient = new ZookeeperDiscoveryClient(
-				serviceDiscovery, null, new ZookeeperDiscoveryClientConfig());
+				serviceDiscovery, null, new ZookeeperDiscoveryClientProperties());
 		// when:
 		List<String> services = discoveryClient.getServices();
 		// then:
@@ -47,7 +47,7 @@ public class ZookeeperDiscoveryClientTests {
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
 		when(serviceDiscovery.queryForInstances("myservice")).thenThrow(new NoNodeException());
 		ZookeeperDiscoveryClient discoveryClient = new ZookeeperDiscoveryClient(
-				serviceDiscovery, null, new ZookeeperDiscoveryClientConfig());
+				serviceDiscovery, null, new ZookeeperDiscoveryClientProperties());
 		// when:
 		List<ServiceInstance> instances = discoveryClient.getInstances("myservice");
 		// then:

@@ -10,7 +10,7 @@ import org.springframework.core.Ordered;
  * @author Olga Maciaszek-Sharma
  */
 @ConfigurationProperties("spring.cloud.discovery.client.zookeeper")
-public class ZookeeperDiscoveryClientConfig {
+public class ZookeeperDiscoveryClientProperties {
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
