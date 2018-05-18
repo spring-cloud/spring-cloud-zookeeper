@@ -57,10 +57,18 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	}
 
 	@Bean
+	public ZookeeperDiscoveryClientConfig zookeeperDiscoveryClientConfig() {
+		return new ZookeeperDiscoveryClientConfig();
+	}
+
+	@Bean
 	@ConditionalOnMissingBean
 	// currently means auto-registration is false. That will change when ZookeeperServiceDiscovery is gone
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
-		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies);
+	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
+			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
+			ZookeeperDiscoveryClientConfig zookeeperDiscoveryClientConfig) {
+		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies,
+				zookeeperDiscoveryClientConfig);
 	}
 
 	@Configuration
