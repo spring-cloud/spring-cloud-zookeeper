@@ -7,7 +7,43 @@ inside your application and build large distributed systems with Zookeeper based
 components. The provided patterns include Service Discovery and Configuration. Integration
 with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
 (Ribbon), and Circuit Breaker (Hystrix).</p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-install" href="#spring-cloud-zookeeper-install"></a>1.&nbsp;Install Zookeeper</h1></div></div></div><p>See the <a class="link" href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html" target="_top">installation
-documentation</a> for instructions on how to install Zookeeper.</p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-discovery" href="#spring-cloud-zookeeper-discovery"></a>2.&nbsp;Service Discovery with Zookeeper</h1></div></div></div><p>Service Discovery is one of the key tenets of a microservice based architecture. Trying to
+documentation</a> for instructions on how to install Zookeeper.</p><p>Spring Cloud Zookeeper uses Apache Curator behind the scenes.
+While Zookeeper 3.5.x is still considered "beta" by the Zookeeper development team,
+the reality is that it is used in production by many users.
+However, Zookeeper 3.4.x is also used in production.
+Prior to Apache Curator 4.0, both versions of Zookeeper were supported via two versions of Apache Curator.
+Starting with Curator 4.0 both versions of Zookeeper are supported via the same Curator libraries.</p><p>In case you are integrating with version 3.4 you need to change the Zookeeper dependency
+that comes shipped with <code class="literal">curator</code>, and thus <code class="literal">spring-cloud-zookeeper</code>.
+To do so simply exclude that dependency and add the 3.4.x version like shown below.</p><p><b>maven.&nbsp;</b>
+</p><pre class="programlisting"><span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.springframework.cloud<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>spring-cloud-starter-zookeeper-all<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusion&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.zookeeper<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>zookeeper<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusion&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;dependency&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.apache.zookeeper<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>zookeeper<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;version&gt;</span>3.4.12<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusions&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;exclusion&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;groupId&gt;</span>org.slf4j<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;artifactId&gt;</span>slf4j-log4j12<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusion&gt;</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/exclusions&gt;</span>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-tag">&lt;/dependency&gt;</span></pre><p>
+</p><p><b>gradle.&nbsp;</b>
+</p><pre class="programlisting">compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.springframework.cloud:spring-cloud-starter-zookeeper-all'</span>) {
+  exclude group: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.apache.zookeeper'</span>, module: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'zookeeper'</span>
+}
+compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.apache.zookeeper:zookeeper:3.4.12'</span>) {
+  exclude group: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.slf4j'</span>, module: <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'slf4j-log4j12'</span>
+}</pre><p>
+</p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-discovery" href="#spring-cloud-zookeeper-discovery"></a>2.&nbsp;Service Discovery with Zookeeper</h1></div></div></div><p>Service Discovery is one of the key tenets of a microservice based architecture. Trying to
 hand-configure each client or some form of convention can be difficult to do and can be
 brittle. <a class="link" href="http://curator.apache.org" target="_top">Curator</a>(A Java library for Zookeeper) provides Service
 Discovery through a <a class="link" href="http://curator.apache.org/curator-x-discovery/" target="_top">Service Discovery
@@ -15,7 +51,8 @@ Extension</a>. Spring Cloud Zookeeper uses this extension for service registrati
 discovery.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_activating" href="#_activating"></a>2.1&nbsp;Activating</h2></div></div></div><p>Including a dependency on
 <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</code> enables
 autoconfiguration that sets up Spring Cloud Zookeeper Discovery.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>For web functionality, you still need to include
-<code class="literal">org.springframework.boot:spring-boot-starter-web</code>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_with_zookeeper" href="#_registering_with_zookeeper"></a>2.2&nbsp;Registering with Zookeeper</h2></div></div></div><p>When a client registers with Zookeeper, it provides metadata (such as host and port, ID,
+<code class="literal">org.springframework.boot:spring-boot-starter-web</code>.</p></td></tr></table></div><div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/caution.png"></td><th align="left">Caution</th></tr><tr><td align="left" valign="top"><p>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <a class="link" href="#spring-cloud-zookeeper-install" title="1.&nbsp;Install Zookeeper">here</a>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_with_zookeeper" href="#_registering_with_zookeeper"></a>2.2&nbsp;Registering with Zookeeper</h2></div></div></div><p>When a client registers with Zookeeper, it provides metadata (such as host and port, ID,
 and name) about itself.</p><p>The following example shows a Zookeeper client:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@SpringBootApplication</span></em>
 <em><span class="hl-annotation" style="color: gray">@RestController</span></em>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Application {
@@ -201,7 +238,8 @@ only to the instances of the service named <code class="literal">testApp</code>.
 request to <code class="literal">/refresh</code> causes the configuration to be reloaded. Watching the configuration
 namespace (which Zookeeper supports) is not currently implemented.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_activating_3" href="#_activating_3"></a>7.1&nbsp;Activating</h2></div></div></div><p>Including a dependency on
 <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> enables
-autoconfiguration that sets up Spring Cloud Zookeeper Config.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized by setting the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
+autoconfiguration that sets up Spring Cloud Zookeeper Config.</p><div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/caution.png"></td><th align="left">Caution</th></tr><tr><td align="left" valign="top"><p>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <a class="link" href="#spring-cloud-zookeeper-install" title="1.&nbsp;Install Zookeeper">here</a>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized by setting the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
 </p><pre class="programlisting">spring:
   cloud:
     zookeeper:

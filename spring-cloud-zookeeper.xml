@@ -20,6 +20,52 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 <title>Install Zookeeper</title>
 <simpara>See the <link xl:href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation
 documentation</link> for instructions on how to install Zookeeper.</simpara>
+<simpara>Spring Cloud Zookeeper uses Apache Curator behind the scenes.
+While Zookeeper 3.5.x is still considered "beta" by the Zookeeper development team,
+the reality is that it is used in production by many users.
+However, Zookeeper 3.4.x is also used in production.
+Prior to Apache Curator 4.0, both versions of Zookeeper were supported via two versions of Apache Curator.
+Starting with Curator 4.0 both versions of Zookeeper are supported via the same Curator libraries.</simpara>
+<simpara>In case you are integrating with version 3.4 you need to change the Zookeeper dependency
+that comes shipped with <literal>curator</literal>, and thus <literal>spring-cloud-zookeeper</literal>.
+To do so simply exclude that dependency and add the 3.4.x version like shown below.</simpara>
+<formalpara>
+<title>maven</title>
+<para>
+<programlisting language="xml" linenumbering="unnumbered">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-zookeeper-all&lt;/artifactId&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
+            &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
+    &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
+    &lt;version&gt;3.4.12&lt;/version&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;slf4j-log4j12&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>gradle</title>
+<para>
+<programlisting language="groovy" linenumbering="unnumbered">compile('org.springframework.cloud:spring-cloud-starter-zookeeper-all') {
+  exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+}
+compile('org.apache.zookeeper:zookeeper:3.4.12') {
+  exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}</programlisting>
+</para>
+</formalpara>
 </chapter>
 <chapter xml:id="spring-cloud-zookeeper-discovery">
 <title>Service Discovery with Zookeeper</title>
@@ -38,6 +84,10 @@ autoconfiguration that sets up Spring Cloud Zookeeper Discovery.</simpara>
 <simpara>For web functionality, you still need to include
 <literal>org.springframework.boot:spring-boot-starter-web</literal>.</simpara>
 </note>
+<caution>
+<simpara>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <link linkend="spring-cloud-zookeeper-install">here</link>.</simpara>
+</caution>
 </section>
 <section xml:id="_registering_with_zookeeper">
 <title>Registering with Zookeeper</title>
@@ -450,6 +500,10 @@ namespace (which Zookeeper supports) is not currently implemented.</simpara>
 <simpara>Including a dependency on
 <literal>org.springframework.cloud:spring-cloud-starter-zookeeper-config</literal> enables
 autoconfiguration that sets up Spring Cloud Zookeeper Config.</simpara>
+<caution>
+<simpara>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <link linkend="spring-cloud-zookeeper-install">here</link>.</simpara>
+</caution>
 </section>
 <section xml:id="_customizing">
 <title>Customizing</title>

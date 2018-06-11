@@ -17,7 +17,8 @@ only to the instances of the service named <code class="literal">testApp</code>.
 request to <code class="literal">/refresh</code> causes the configuration to be reloaded. Watching the configuration
 namespace (which Zookeeper supports) is not currently implemented.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_activating_3" href="#_activating_3"></a>7.1&nbsp;Activating</h2></div></div></div><p>Including a dependency on
 <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> enables
-autoconfiguration that sets up Spring Cloud Zookeeper Config.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized by setting the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
+autoconfiguration that sets up Spring Cloud Zookeeper Config.</p><div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/caution.png"></td><th align="left">Caution</th></tr><tr><td align="left" valign="top"><p>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <a class="link" href="multi_spring-cloud-zookeeper-install.html" title="1.&nbsp;Install Zookeeper">here</a>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized by setting the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
 </p><pre class="programlisting">spring:
   cloud:
     zookeeper:
