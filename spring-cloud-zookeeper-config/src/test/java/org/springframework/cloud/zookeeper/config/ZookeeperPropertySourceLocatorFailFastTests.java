@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -46,7 +47,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 	public void testFailFastFalseLoadsTheApplicationContext() throws Exception {
 		new SpringApplicationBuilder()
 			.sources(Config.class)
-			.web(false)
+			.web(WebApplicationType.NONE)
 			.run(
 				"--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
 				"--spring.cloud.zookeeper.config.connectString=localhost:2188",
@@ -64,7 +65,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 
 		new SpringApplicationBuilder()
 			.sources(Config.class)
-			.web(false)
+			.web(WebApplicationType.NONE)
 			.run(
 				"--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
 				"--spring.cloud.zookeeper.config.connectString=localhost:2188",
