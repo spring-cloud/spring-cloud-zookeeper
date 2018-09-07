@@ -4,6 +4,7 @@ package org.springframework.cloud.zookeeper.config;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,7 +35,7 @@ public class ZookeeperConfigAutoConfigurationTests {
     public void testConfigEnabledFalseDoesNotLoadZookeeperConfigAutoConfiguration() throws Exception {
         ConfigurableApplicationContext context = new SpringApplicationBuilder()
                 .sources(Config.class)
-                .web(false)
+                .web(WebApplicationType.NONE)
                 .run(
                         "--spring.application.name=testZookeeperConfigEnabledSetToFalse",
                         "--spring.jmx.default-domain=testZookeeperConfigEnabledSetToFalse",
@@ -58,7 +59,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 
         new SpringApplicationBuilder()
                 .sources(Config.class)
-                .web(false)
+                .web(WebApplicationType.NONE)
                 .run(
                         "--spring.application.name=testZookeeperConfigEnabledSetToTrue",
                         "--spring.jmx.default-domain=testZookeeperConfigEnabledSetToTrue",

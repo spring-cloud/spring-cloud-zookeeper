@@ -32,6 +32,7 @@ import org.apache.zookeeper.KeeperException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -134,7 +135,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		this.curator.close();
 		System.out.println(create);
 
-		this.context = new SpringApplicationBuilder(Config.class).web(false).run(
+		this.context = new SpringApplicationBuilder(Config.class).web(WebApplicationType.NONE).run(
 				"--spring.cloud.zookeeper.connectString=" + connectString,
 				"--spring.application.name=testZkPropertySource", "--logging.level.org.springframework.cloud.zookeeper=DEBUG",
 				"--spring.cloud.zookeeper.config.root=" + ROOT);

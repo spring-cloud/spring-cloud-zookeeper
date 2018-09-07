@@ -15,3 +15,7 @@ org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfigurat
 # Environment Post Processors
 org.springframework.boot.env.EnvironmentPostProcessor=\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPostProcessor
+
+
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperDiscoveryClientConfigServiceBootstrapConfiguration

@@ -19,6 +19,7 @@ package org.springframework.cloud.zookeeper.serviceregistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
+import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 
 /**
@@ -38,7 +39,14 @@ public class ZookeeperAutoServiceRegistration extends AbstractAutoServiceRegistr
 	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
 											ZookeeperRegistration registration,
 											ZookeeperDiscoveryProperties properties) {
-		super(registry);
+		this(registry, registration, properties, null);
+	}
+
+	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
+											ZookeeperRegistration registration,
+											ZookeeperDiscoveryProperties properties,
+											AutoServiceRegistrationProperties arProperties) {
+		super(registry, arProperties);
 		this.registration = registration;
 		this.properties = properties;
 		if (this.properties.getInstancePort() != null) {

@@ -22,8 +22,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -61,10 +63,12 @@ public class ZookeeprDiscoveryNonWebAppTests {
 	@Test
 	public void should_work_when_using_web_client_without_the_web_environment()
 			throws Exception {
-		SpringApplication producerApp = new SpringApplication(HelloProducer.class);
-		producerApp.setWebEnvironment(true);
-		SpringApplication clientApplication = new SpringApplication(HelloClient.class);
-		clientApplication.setWebEnvironment(false);
+		SpringApplication producerApp = new SpringApplicationBuilder(HelloProducer.class)
+				.web(WebApplicationType.SERVLET)
+				.build();
+		SpringApplication clientApplication = new SpringApplicationBuilder(HelloClient.class)
+				.web(WebApplicationType.NONE)
+				.build();
 
 		try (ConfigurableApplicationContext producerContext = producerApp.run(this.connectionString, "--server.port=0",
 				"--spring.application.name=hello-world", "--debug")) {
