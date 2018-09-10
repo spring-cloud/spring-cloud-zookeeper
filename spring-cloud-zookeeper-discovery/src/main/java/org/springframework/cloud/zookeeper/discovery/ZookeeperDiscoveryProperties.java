@@ -89,8 +89,13 @@ public class ZookeeperDiscoveryProperties {
 	 */
 	private String initialStatus = StatusConstants.STATUS_UP;
 
-	@SuppressWarnings("unused")
-	private ZookeeperDiscoveryProperties() {}
+	/**
+	 * Order of the discovery client used by `CompositeDiscoveryClient` for sorting available clients.
+	 */
+	private int order = 0;
+
+	// Visible for Testing
+	protected ZookeeperDiscoveryProperties() {}
 
 	public ZookeeperDiscoveryProperties(InetUtils inetUtils) {
 		this.hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
@@ -191,6 +196,14 @@ public class ZookeeperDiscoveryProperties {
 		this.initialStatus = initialStatus;
 	}
 
+	public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	@Override
 	public String toString() {
 		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
@@ -203,6 +216,7 @@ public class ZookeeperDiscoveryProperties {
 				", metadata=" + this.metadata +
 				", register=" + this.register +
 				", initialStatus=" + this.initialStatus +
+				", order=" + this.order +
 				'}';
 	}
 }

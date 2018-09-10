@@ -38,6 +38,7 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
  *
  * @author Spencer Gibb
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 public class ZookeeperDiscoveryClient implements DiscoveryClient {
@@ -46,10 +47,14 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 
 	private final ZookeeperDependencies zookeeperDependencies;
 	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
-	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery, ZookeeperDependencies zookeeperDependencies) {
+	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
+			ZookeeperDependencies zookeeperDependencies,
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.zookeeperDependencies = zookeeperDependencies;
+		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
 	}
 
 	@Override
@@ -124,5 +129,10 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			rethrowRuntimeException(e);
 		}
 		return services;
+	}
+
+	@Override
+	public int getOrder() {
+		return this.zookeeperDiscoveryProperties.getOrder();
 	}
 }
