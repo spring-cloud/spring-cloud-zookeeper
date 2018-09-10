@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,16 +31,17 @@ import org.apache.zookeeper.KeeperException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.SocketUtils;
 
@@ -84,9 +84,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 	@Configuration
 	@EnableAutoConfiguration
-	static class Config {
-		private AtomicBoolean ready = new AtomicBoolean(false);
-
+	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
 		@Bean
 		public CountDownLatch countDownLatch() {
 			return new CountDownLatch(1);
@@ -98,8 +96,8 @@ public class ZookeeperPropertySourceLocatorTests {
 			return new ContextRefresher(context, scope);
 		}
 
-		@EventListener
-		public void handle(EnvironmentChangeEvent event) {
+		@Override
+		public void onApplicationEvent(EnvironmentChangeEvent event) {
 			log.debug("Event keys: " + event.getKeys());
 			if (event.getKeys().contains(KEY_BASIC)) {
 				countDownLatch().countDown();
