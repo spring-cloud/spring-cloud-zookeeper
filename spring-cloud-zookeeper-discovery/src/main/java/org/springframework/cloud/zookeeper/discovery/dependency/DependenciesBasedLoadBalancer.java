@@ -56,7 +56,12 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 
 	@Override
 	public Server chooseServer(Object key) {
-		String keyAsString = (String) key;
+		String keyAsString;
+		if ("default".equals(key)) { // this is the default hint, use name instead
+			keyAsString = getName();
+		} else {
+			keyAsString = (String) key;
+		}
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);
 		log.debug(String.format("Current dependencies are [%s]", this.zookeeperDependencies));
 		if (dependency == null) {
