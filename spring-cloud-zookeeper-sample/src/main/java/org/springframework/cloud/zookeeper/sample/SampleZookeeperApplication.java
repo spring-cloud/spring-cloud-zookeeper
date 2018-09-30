@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
+ * Sample application.
+ *
  * @author Spencer Gibb
  */
 @Configuration
@@ -100,6 +102,9 @@ public class SampleZookeeperApplication {
 		return this.rest.getForObject("http://" + this.appName + "/hi", String.class);
 	}
 
+	/**
+	 * Interface used to generate a Feign client.
+	 */
 	@FeignClient("testZookeeperApp")
 	interface AppClient {
 		@RequestMapping(path = "/hi", method = RequestMethod.GET)
