@@ -55,10 +55,10 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	DiscoveryClient discoveryClient;
 
 	@Autowired
-	AliasUsingFeignClient aliasUsingFeignClient;
+	DependencyConfig.AliasUsingFeignClient aliasUsingFeignClient;
 
 	@Autowired
-	IdUsingFeignClient idUsingFeignClient;
+	DependencyConfig.IdUsingFeignClient idUsingFeignClient;
 
 	@Autowired
 	ZookeeperDependencies zookeeperDependencies;
@@ -85,7 +85,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	@Test
 	public void should_find_an_instance_using_feign_via_serviceID_when_alias_is_not_found() {
 		// given:
-		final IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
+		final DependencyConfig.IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
 		// expect:
 		Awaitility.await().until(() -> {
 			assertThat(idUsingFeignClient.getBeans()).isNotEmpty();
@@ -104,7 +104,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	@Test
 	public void should_find_a_collaborator_using_feign_by_using_its_alias_from_dependencies() {
 		// given:
-		final AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
+		final DependencyConfig.AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
 		// expect:
 		Awaitility.await().until(() -> {
 			assertThat(aliasUsingFeignClient.getBeans()).isNotEmpty();
@@ -125,7 +125,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	@Test
 	public void should_have_headers_from_dependencies_attached_to_the_request_via_feign() {
 		// given:
-		final AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
+		final DependencyConfig.AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
 		// expect:
 		Awaitility.await().until(() -> {
 			aliasUsingFeignClient.checkHeaders();

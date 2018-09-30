@@ -50,16 +50,9 @@ public class DependencyConfig {
 	}
 
 	@Bean
-	PingController pingController() {
-		return new PingController(portListener());
-	}
-
-	@Bean
 	PortListener portListener() {
 		return new PortListener();
 	}
-
-
 
 	static class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 
