@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import com.jayway.awaitility.Awaitility;
 import org.apache.curator.test.TestingServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -36,9 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.jayway.awaitility.Awaitility;
-
-import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test for gh-91, using s-c-zookeeper in a non-web app.
@@ -72,18 +72,20 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 		try (ConfigurableApplicationContext producerContext = producerApp.run(this.connectionString, "--server.port=0",
 				"--spring.application.name=hello-world", "--debug")) {
-			try (final ConfigurableApplicationContext context = clientApplication.run(this.connectionString,
+			try (ConfigurableApplicationContext context = clientApplication.run(this.connectionString,
 					"--spring.cloud.zookeeper.discovery.register=false")) {
 				Awaitility.await().until(new Runnable() {
-					@Override public void run() {
+					@Override
+					public void run() {
 						try {
 							HelloClient bean = context.getBean(HelloClient.class);
-							then(bean.discoveryClient.getServices()).isNotEmpty();
-							then(bean.discoveryClient.getInstances("hello-world")).isNotEmpty();
+							assertThat(bean.discoveryClient.getServices()).isNotEmpty();
+							assertThat(bean.discoveryClient.getInstances("hello-world")).isNotEmpty();
 							String string = bean.restTemplate.getForObject("http://hello-world/", String.class);
-							then(string).isEqualTo("foo");
-						} catch (IllegalStateException e) {
-							throw new AssertionError(e);
+							assertThat(string).isEqualTo("foo");
+						}
+						catch (IllegalStateException ise) {
+							throw new AssertionError(ise);
 						}
 					}
 				});
@@ -103,7 +105,8 @@ public class ZookeeprDiscoveryNonWebAppTests {
 		@Autowired
 		DiscoveryClient discoveryClient;
 
-		@Autowired RestTemplate restTemplate;
+		@Autowired
+		RestTemplate restTemplate;
 	}
 
 	@EnableAutoConfiguration(exclude = {JmxAutoConfiguration.class})

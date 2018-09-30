@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -61,7 +62,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 
 	@Test
 	public void testFailFastTrueDoesNotLoadTheApplicationContext() throws Exception {
-		expectedException.expect(Exception.class);
+		this.expectedException.expect(Exception.class);
 
 		new SpringApplicationBuilder()
 			.sources(Config.class)

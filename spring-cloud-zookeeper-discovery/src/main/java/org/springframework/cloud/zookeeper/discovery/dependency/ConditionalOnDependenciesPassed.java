@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Conditional;
 
 /**
- * Annotation to turn on a feature if Zookeeper dependencies have been passed. 
+ * Annotation to turn on a feature if Zookeeper dependencies have been passed.
  * Also checks if switch for zookeeper dependencies is turned on.
  *
  * @author Marcin Grzejszczak

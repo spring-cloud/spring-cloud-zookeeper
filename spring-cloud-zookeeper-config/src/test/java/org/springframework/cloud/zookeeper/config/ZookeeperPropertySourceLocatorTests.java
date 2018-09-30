@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,10 +45,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Spencer Gibb
@@ -81,29 +78,6 @@ public class ZookeeperPropertySourceLocatorTests {
 	private TestingServer testingServer;
 	private CuratorFramework curator;
 	private ZookeeperConfigProperties properties;
-
-	@Configuration
-	@EnableAutoConfiguration
-	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
-		@Bean
-		public CountDownLatch countDownLatch() {
-			return new CountDownLatch(1);
-		}
-
-		@Bean
-		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
-				RefreshScope scope) {
-			return new ContextRefresher(context, scope);
-		}
-
-		@Override
-		public void onApplicationEvent(EnvironmentChangeEvent event) {
-			log.debug("Event keys: " + event.getKeys());
-			if (event.getKeys().contains(KEY_BASIC)) {
-				countDownLatch().countDown();
-			}
-		}
-	}
 
 	@Before
 	public void setup() throws Exception {
@@ -147,9 +121,9 @@ public class ZookeeperPropertySourceLocatorTests {
 		try {
 			this.curator.delete().deletingChildrenIfNeeded().forPath(path);
 		}
-		catch (KeeperException e) {
-			if (e.code() != KeeperException.Code.NONODE) {
-				throw e;
+		catch (KeeperException ke) {
+			if (ke.code() != KeeperException.Code.NONODE) {
+				throw ke;
 			}
 		}
 	}
@@ -168,31 +142,52 @@ public class ZookeeperPropertySourceLocatorTests {
 	@Test
 	public void checkKeyValues() throws Exception {
 		String propValue = this.environment.getProperty(KEY_BASIC);
-		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_BASIC)));
+		assertThat(propValue).isEqualTo(VAL_BASIC);
 
 		propValue = this.environment.getProperty(KEY_NESTED);
-		assertThat(VAL_NESTED + " was wrong", propValue, is(equalTo(VAL_NESTED)));
+		assertThat(propValue).isEqualTo(VAL_NESTED);
 
 		propValue = this.environment.getProperty(KEY_WITH_DOT);
-		assertThat(VAL_WITH_DOT + " was wrong", propValue, is(equalTo(VAL_WITH_DOT)));
+		assertThat(propValue).isEqualTo(VAL_WITH_DOT);
 
 		propValue = this.environment.getProperty(KEY_WITHOUT_VALUE);
-		assertThat(KEY_WITHOUT_VALUE + " was wrong", propValue, is(isEmptyString()));
+		assertThat(propValue).isEmpty();
 	}
 
 	@Test
 	public void propertyLoadedAndUpdated() throws Exception {
 		String testProp = this.environment.getProperty(KEY_BASIC);
-		assertThat("testProp was wrong", testProp, is(equalTo(VAL_BASIC)));
+		assertThat(testProp).isEqualTo(VAL_BASIC);
 
 		this.curator.setData().forPath(KEY_BASIC_PATH, "testPropValUpdate".getBytes());
 
 		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
 		boolean receivedEvent = latch.await(15, TimeUnit.SECONDS);
-		assertThat("listener didn't receive event", receivedEvent, is(true));
+		assertThat(receivedEvent).isTrue().as("listener didn't receive event");
 
 		testProp = this.environment.getProperty(KEY_BASIC);
-		assertThat("testProp was wrong after update", testProp,
-				is(equalTo("testPropValUpdate")));
+		assertThat(testProp).isEqualTo("testPropValUpdate");
+	}
+
+	@Configuration
+	@EnableAutoConfiguration
+	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
+		@Bean
+		public CountDownLatch countDownLatch() {
+			return new CountDownLatch(1);
+		}
+
+		@Bean
+		public ContextRefresher contextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
+			return new ContextRefresher(context, scope);
+		}
+
+		@Override
+		public void onApplicationEvent(EnvironmentChangeEvent event) {
+			log.debug("Event keys: " + event.getKeys());
+			if (event.getKeys().contains(KEY_BASIC)) {
+				countDownLatch().countDown();
+			}
+		}
 	}
 }

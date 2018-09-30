@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.util.StringUtils;
-
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceInstance;
 
-import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
-import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.cloud.zookeeper.support.StatusConstants;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Zookeeper version of {@link AbstractServerList} that returns the list of
@@ -90,17 +88,17 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			for (ServiceInstance<ZookeeperInstance> instance : instances) {
 				String instanceStatus = null;
 				if (instance.getPayload() != null && instance.getPayload().getMetadata() != null) {
-					instanceStatus = instance.getPayload().getMetadata().get(INSTANCE_STATUS_KEY);
+					instanceStatus = instance.getPayload().getMetadata().get(StatusConstants.INSTANCE_STATUS_KEY);
 				}
 				if (!StringUtils.hasText(instanceStatus) // backwards compatibility
-						|| instanceStatus.equalsIgnoreCase(STATUS_UP)) {
+						|| instanceStatus.equalsIgnoreCase(StatusConstants.STATUS_UP)) {
 					servers.add(new ZookeeperServer(instance));
 				}
 			}
 			return servers;
 		}
-		catch (Exception e) {
-			rethrowRuntimeException(e);
+		catch (Exception ex) {
+			ReflectionUtils.rethrowRuntimeException(ex);
 		}
 		return Collections.EMPTY_LIST;
 	}

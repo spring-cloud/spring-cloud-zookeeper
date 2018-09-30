@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.details.ServiceCacheListener;
 
 /**
- * Informs all the DependencyWatcherListeners that a dependency's state has changed
+ * Informs all the DependencyWatcherListeners that a dependency's state has changed.
  *
  * @author Marcin Grzejszczak
  * @author Tomasz Nurkiewicz, 4financeIT
@@ -53,7 +53,7 @@ public class DependencyStateChangeListenerRegistry implements ServiceCacheListen
 	}
 
 	private void logCurrentState(DependencyState dependencyState) {
-		log.info("Service cache state change for '"+this.dependencyName+"' instances, current service state: " + dependencyState);
+		log.info("Service cache state change for '" + this.dependencyName + "' instances, current service state: " + dependencyState);
 	}
 
 	private void informListeners(DependencyState state) {

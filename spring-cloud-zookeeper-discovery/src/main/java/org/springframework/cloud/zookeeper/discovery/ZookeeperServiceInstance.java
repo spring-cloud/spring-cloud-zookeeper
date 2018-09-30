@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import java.util.Map;
 import org.springframework.cloud.client.ServiceInstance;
 
 /**
- * A specific {@link ServiceInstance} describing a zookeeper service instance
+ * A specific {@link ServiceInstance} describing a zookeeper service instance.
  *
- * @author Reda.Housni-Alaoui
+ * @author Reda Housni-Alaoui
  * @since 1.1.0
  */
 public class ZookeeperServiceInstance implements ServiceInstance {
@@ -38,10 +38,6 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 	private final Map<String, String> metadata;
 	private final org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> serviceInstance;
 
-	/**
-	 * @param serviceId The service id to be used
-	 * @param serviceInstance The zookeeper service instance described by this service instance
-	 */
 	public ZookeeperServiceInstance(String serviceId, org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> serviceInstance) {
 		this.serviceId = serviceId;
 		this.serviceInstance = serviceInstance;
@@ -55,7 +51,8 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 		this.uri = URI.create(serviceInstance.buildUriSpec());
 		if (serviceInstance.getPayload() != null) {
 			this.metadata = serviceInstance.getPayload().getMetadata();
-		} else {
+		}
+		else {
 			this.metadata = new HashMap<>();
 		}
 	}

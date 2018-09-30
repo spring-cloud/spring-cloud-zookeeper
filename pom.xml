@@ -72,33 +72,6 @@
 						</excludes>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>${checkstyle.version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.springframework.cloud</groupId>
-							<artifactId>spring-cloud-build-tools</artifactId>
-							<version>${spring-cloud-build.version}</version>
-						</dependency>
-					</dependencies>
-					<executions>
-						<execution>
-							<id>validate</id>
-							<phase>validate</phase>
-							<configuration>
-								<configLocation>checkstyle.xml</configLocation>
-								<headerLocation>LICENSE.txt</headerLocation>
-								<consoleOutput>true</consoleOutput>
-								<failsOnError>true</failsOnError>
-							</configuration>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
 
 			</plugins>
 		</pluginManagement>
@@ -107,13 +80,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${checkstyle.version}</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-build-tools</artifactId>
-						<version>${spring-cloud-build.version}</version>
-					</dependency>
-				</dependencies>
 				<executions>
 					<execution>
 						<id>validate</id>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.io.IOException;
@@ -38,8 +39,9 @@ public class TestServiceRegistrar {
 	public void start() {
 		try {
 			this.serviceDiscovery.start();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		}
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -50,8 +52,9 @@ public class TestServiceRegistrar {
 					.port(this.serverPort)
 					.name("testInstance")
 					.build();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		}
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -69,8 +72,8 @@ public class TestServiceRegistrar {
 		try {
 			this.serviceDiscovery.close();
 		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
+		catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 }

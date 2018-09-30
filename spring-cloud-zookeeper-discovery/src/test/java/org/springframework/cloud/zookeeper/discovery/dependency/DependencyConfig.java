@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.Collection;
@@ -19,12 +35,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Configuration
 @EnableAutoConfiguration
 @Import(CommonTestConfig.class)
-@EnableFeignClients(basePackageClasses = {AliasUsingFeignClient.class, IdUsingFeignClient.class})
+@EnableFeignClients(basePackageClasses = { DependencyConfig.AliasUsingFeignClient.class,
+		DependencyConfig.IdUsingFeignClient.class })
 public class DependencyConfig {
 
 	@Bean
@@ -42,62 +59,66 @@ public class DependencyConfig {
 		return new PortListener();
 	}
 
-}
 
-class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 
-	private int port;
+	static class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 
-	@Override
-	public void onApplicationEvent(WebServerInitializedEvent event) {
-		this.port = event.getWebServer().getPort();
+		private int port;
+
+		@Override
+		public void onApplicationEvent(WebServerInitializedEvent event) {
+			this.port = event.getWebServer().getPort();
+		}
+
+		public int getPort() {
+			return this.port;
+		}
+
 	}
 
-	public int getPort() {
-		return this.port;
+	@FeignClient("someAlias")
+	interface AliasUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
+		String getBeans();
+
+		@RequestMapping(method = RequestMethod.GET, value = "/checkHeaders")
+		String checkHeaders();
 	}
 
-}
-
-@FeignClient("someAlias")
-interface AliasUsingFeignClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
-	String getBeans();
-
-	@RequestMapping(method = RequestMethod.GET, value = "/checkHeaders")
-	String checkHeaders();
-}
-
-@FeignClient("nameWithoutAlias")
-interface IdUsingFeignClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
-	String getBeans();
-}
-
-@RestController
-class PingController {
-
-	private final PortListener portListener;
-
-	PingController(PortListener portListener) {
-		this.portListener = portListener;
+	@FeignClient("nameWithoutAlias")
+	interface IdUsingFeignClient {
+		@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
+		String getBeans();
 	}
 
-	@RequestMapping("/ping") String ping() {
-		return "pong";
+	@RestController
+	static class PingController {
+
+		private final PortListener portListener;
+
+		PingController(PortListener portListener) {
+			this.portListener = portListener;
+		}
+
+		@RequestMapping("/ping")
+		String ping() {
+			return "pong";
+		}
+
+		@RequestMapping("/port")
+		Integer port() {
+			return this.portListener.getPort();
+		}
+
+		@RequestMapping("/checkHeaders")
+		String checkHeaders(@RequestHeader("Content-Type") String contentType,
+							@RequestHeader("header1") Collection<String> header1,
+							@RequestHeader("header2") Collection<String> header2) {
+			assertThat(contentType).isEqualTo("application/vnd.newsletter.v1+json");
+			assertThat(header1).containsExactly("value1");
+			assertThat(header2).containsExactly("value2");
+			return "ok";
+		}
 	}
 
-	@RequestMapping("/port") Integer port() {
-		return this.portListener.getPort();
-	}
-
-	@RequestMapping("/checkHeaders") String checkHeaders(@RequestHeader("Content-Type") String contentType,
-														 @RequestHeader("header1")
-														 Collection<String> header1,
-														 @RequestHeader("header2") Collection<String> header2) {
-		then(contentType).isEqualTo("application/vnd.newsletter.v1+json");
-		then(header1).containsExactly("value1");
-		then(header2).containsExactly("value2");
-		return "ok";
-	}
 }

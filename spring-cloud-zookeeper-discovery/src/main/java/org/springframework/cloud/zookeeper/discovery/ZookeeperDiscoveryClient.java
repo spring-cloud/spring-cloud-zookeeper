@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ import org.apache.zookeeper.KeeperException;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Zookeeper version of {@link DiscoveryClient}. Capable of resolving aliases from
@@ -80,14 +79,16 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
 			}
 			return instances;
-		} catch (KeeperException.NoNodeException e) {
+		}
+		catch (KeeperException.NoNodeException kenne) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting instances from zookeeper. Possibly, no service has registered.", e);
+				log.debug("Error getting instances from zookeeper. Possibly, no service has registered.", kenne);
 			}
 			// this means that nothing has registered as a service yes
 			return Collections.emptyList();
-		} catch (Exception exception) {
-			rethrowRuntimeException(exception);
+		}
+		catch (Exception exception) {
+			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 		return new ArrayList<>();
 	}
@@ -118,15 +119,15 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 			}
 			services = new ArrayList<>(names);
 		}
-		catch (KeeperException.NoNodeException e) {
+		catch (KeeperException.NoNodeException kenne) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting services from zookeeper. Possibly, no service has registered.", e);
+				log.debug("Error getting services from zookeeper. Possibly, no service has registered.", kenne);
 			}
 			// this means that nothing has registered as a service yes
 			return Collections.emptyList();
 		}
-		catch (Exception e) {
-			rethrowRuntimeException(e);
+		catch (Exception ex) {
+			ReflectionUtils.rethrowRuntimeException(ex);
 		}
 		return services;
 	}

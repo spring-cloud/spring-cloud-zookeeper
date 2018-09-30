@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.sample;
 
 import org.apache.curator.test.TestingServer;
 import org.junit.Test;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -29,18 +30,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SampleApplicationTests {
 
-	@Test public void contextLoads() throws Exception {
+	@Test
+	public void contextLoads() throws Exception {
+
 		int zkPort = SocketUtils.findAvailableTcpPort();
 		TestingServer server = new TestingServer(zkPort);
 
-		int port = SocketUtils.findAvailableTcpPort(zkPort+1);
+		int port = SocketUtils.findAvailableTcpPort(zkPort + 1);
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(SampleZookeeperApplication.class).run(
-				"--server.port="+port,
+				"--server.port=" + port,
 				"--management.endpoints.web.exposure.include=*",
 				"--spring.cloud.zookeeper.connect-string=localhost:" + zkPort);
 
-		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:"+port+"/hi", String.class);
+		ResponseEntity<String> response = new TestRestTemplate().getForEntity("http://localhost:" + port + "/hi", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		context.close();

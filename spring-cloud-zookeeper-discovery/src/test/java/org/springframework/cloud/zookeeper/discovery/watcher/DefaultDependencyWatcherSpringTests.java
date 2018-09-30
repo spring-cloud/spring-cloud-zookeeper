@@ -1,7 +1,22 @@
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
-import java.util.concurrent.Callable;
-
+import com.jayway.awaitility.Awaitility;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -10,9 +25,11 @@ import org.apache.curator.x.discovery.ServiceCache;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
@@ -27,41 +44,45 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.jayway.awaitility.Awaitility;
-
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class, webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class,
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("watcher")
 public class DefaultDependencyWatcherSpringTests {
 
-	@Autowired AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
-	@Autowired AssertableDependencyWatcherListener dependencyWatcherListener;
-	@Autowired ZookeeperRegistration zookeeperRegistration;
-	@Autowired ZookeeperServiceRegistry registry;
+	@Autowired
+	AssertableDependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
 
+	@Autowired
+	AssertableDependencyWatcherListener dependencyWatcherListener;
 
-	@Test public void should_verify_that_presence_of_a_dependency_has_been_checked() {
-		then(this.dependencyPresenceOnStartupVerifier.startupPresenceVerified).isTrue();
+	@Autowired
+	ZookeeperRegistration zookeeperRegistration;
+
+	@Autowired
+	ZookeeperServiceRegistry registry;
+
+	@Test
+	public void should_verify_that_presence_of_a_dependency_has_been_checked() {
+		assertThat(this.dependencyPresenceOnStartupVerifier.startupPresenceVerified).isTrue();
 	}
 
 	@Ignore //FIXME 2.0.0
-	@Test public void should_verify_that_dependency_watcher_listener_is_successfully_registered_and_operational()
+	@Test
+	public void should_verify_that_dependency_watcher_listener_is_successfully_registered_and_operational()
 			throws Exception {
 		//when:
 		this.registry.deregister(this.zookeeperRegistration);
 
 		//then:
-		Awaitility.await().until(new Callable<Boolean>() {
-			@Override public Boolean call() throws Exception {
-				then(DefaultDependencyWatcherSpringTests.this.dependencyWatcherListener.dependencyState).isEqualTo(DependencyState.DISCONNECTED);
-				return true;
-			}
+		Awaitility.await().until(() -> {
+			assertThat(DefaultDependencyWatcherSpringTests.this.dependencyWatcherListener.dependencyState).isEqualTo(DependencyState.DISCONNECTED);
+			return true;
 		});
 	}
 
@@ -71,7 +92,8 @@ public class DefaultDependencyWatcherSpringTests {
 	static class Config {
 
 		@Bean
-		@LoadBalanced RestTemplate loadBalancedRestTemplate() {
+		@LoadBalanced
+		RestTemplate loadBalancedRestTemplate() {
 			return new RestTemplate();
 		}
 
@@ -80,7 +102,8 @@ public class DefaultDependencyWatcherSpringTests {
 			return new PropertySourcesPlaceholderConfigurer();
 		}
 
-		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
+		@Bean(destroyMethod = "close")
+		TestingServer testingServer() throws Exception {
 			return new TestingServer(SocketUtils.findAvailableTcpPort());
 		}
 
@@ -96,7 +119,8 @@ public class DefaultDependencyWatcherSpringTests {
 			return new AssertableDependencyWatcherListener();
 		}
 
-		@Bean DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier() {
+		@Bean
+		DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier() {
 			return new AssertableDependencyPresenceOnStartupVerifier();
 		}
 
@@ -108,7 +132,7 @@ public class DefaultDependencyWatcherSpringTests {
 
 		@Override
 		public void stateChanged(String dependencyName, DependencyState newState) {
-			dependencyState = newState;
+			this.dependencyState = newState;
 		}
 	}
 
@@ -120,9 +144,10 @@ public class DefaultDependencyWatcherSpringTests {
 			super(new LogMissingDependencyChecker());
 		}
 
-		@Override public void verifyDependencyPresence(String dependencyName,
+		@Override
+		public void verifyDependencyPresence(String dependencyName,
 				ServiceCache serviceCache, boolean required) {
-			startupPresenceVerified = true;
+			this.startupPresenceVerified = true;
 		}
 	}
 }

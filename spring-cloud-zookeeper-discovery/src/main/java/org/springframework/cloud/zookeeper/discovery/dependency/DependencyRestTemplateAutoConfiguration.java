@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,12 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureAfter(DependencyRibbonAutoConfiguration.class)
 public class DependencyRestTemplateAutoConfiguration {
 
-	@Autowired @LoadBalanced RestTemplate restTemplate;
-	@Autowired ZookeeperDependencies zookeeperDependencies;
+	@Autowired
+	@LoadBalanced
+	RestTemplate restTemplate;
+
+	@Autowired
+	ZookeeperDependencies zookeeperDependencies;
 
 	@PostConstruct
 	void customizeRestTemplate() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 
 /**
- * Wrapper annotation to enable Zookeeper Discovery
+ * Wrapper annotation to enable Zookeeper Discovery.
  *
+ * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

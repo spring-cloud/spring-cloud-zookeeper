@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +27,16 @@ import java.io.IOException;
 public interface DependencyRegistrationHookProvider {
 
 	/**
-	 * Register hooks upon dependencies registration
+	 * Register hooks upon dependencies registration.
 	 *
-	 * @throws Exception
+	 * @throws Exception in case an error occurs while registering the dependency registration hooks
 	 */
 	void registerDependencyRegistrationHooks() throws Exception;
 
 	/**
-	 * Unregister hooks upon dependencies registration
+	 * Unregister hooks upon dependencies registration.
 	 *
-	 * @throws IOException
+	 * @throws IOException in case an error occurs while removing the dependency registration hooks
 	 */
 	void clearDependencyRegistrationHooks() throws IOException;
 

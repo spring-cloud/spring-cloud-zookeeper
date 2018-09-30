@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,17 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.assertj.core.data.MapEntry;
 import org.junit.Test;
+
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServer;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServerList;
+import org.springframework.cloud.zookeeper.support.StatusConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.when;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
-import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_OUT_OF_SERVICE;
-import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
 
 /**
  * @author Spencer Gibb
@@ -81,7 +80,7 @@ public class ZookeeperServerListTests {
 		ZookeeperInstance payload = null;
 
 		if (instanceStatus != null) {
-			payload = new ZookeeperInstance(id, name, Collections.singletonMap(INSTANCE_STATUS_KEY, instanceStatus));
+			payload = new ZookeeperInstance(id, name, Collections.singletonMap(StatusConstants.INSTANCE_STATUS_KEY, instanceStatus));
 		}
 		String address = "instance" + instanceNum + "addr";
 		int port = 8080 + instanceNum;
@@ -93,8 +92,8 @@ public class ZookeeperServerListTests {
 	@SuppressWarnings("unchecked")
 	public void testGetServersWithInstanceStatus() throws Exception {
 		ArrayList<ServiceInstance<ZookeeperInstance>> instances = new ArrayList<>();
-		instances.add(serviceInstance(1, STATUS_UP));
-		instances.add(serviceInstance(2, STATUS_OUT_OF_SERVICE));
+		instances.add(serviceInstance(1, StatusConstants.STATUS_UP));
+		instances.add(serviceInstance(2, StatusConstants.STATUS_OUT_OF_SERVICE));
 
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
 		when(serviceDiscovery.queryForInstances(nullable(String.class))).thenReturn(instances);
@@ -104,6 +103,6 @@ public class ZookeeperServerListTests {
 		assertThat(servers).hasSize(1);
 
 		assertThat(servers.get(0).getInstance().getPayload().getMetadata())
-				.contains(MapEntry.entry(INSTANCE_STATUS_KEY, STATUS_UP));
+				.contains(MapEntry.entry(StatusConstants.INSTANCE_STATUS_KEY, StatusConstants.STATUS_UP));
 	}
 }

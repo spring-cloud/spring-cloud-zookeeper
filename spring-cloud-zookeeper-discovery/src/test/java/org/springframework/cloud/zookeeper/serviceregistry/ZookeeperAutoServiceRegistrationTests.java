@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
@@ -33,14 +35,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * @author Spencer Gibb
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = { "spring.application.name=myTestService1-F" },
-		webEnvironment = RANDOM_PORT)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ZookeeperAutoServiceRegistrationTests {
 
 	@Autowired
@@ -54,7 +55,7 @@ public class ZookeeperAutoServiceRegistrationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		Collection<ServiceInstance<ZookeeperInstance>> instances = serviceDiscovery.queryForInstances("myTestService1-F");
+		Collection<ServiceInstance<ZookeeperInstance>> instances = this.serviceDiscovery.queryForInstances("myTestService1-F");
 		assertThat(instances).hasSize(1);
 
 		ServiceInstance<ZookeeperInstance> instance = instances.iterator().next();
@@ -77,6 +78,7 @@ public class ZookeeperAutoServiceRegistrationTests {
 	@Import({CommonTestConfig.class})
 	/*@ImportAutoConfiguration({AutoServiceRegistrationAutoConfiguration.class, ZookeeperAutoServiceRegistration.class,
 			ZookeeperServiceRegistryAutoConfiguration.class})*/
-	protected static class TestConfig { }
+	protected static class TestConfig {
+	}
 }
 

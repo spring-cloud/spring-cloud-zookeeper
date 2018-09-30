@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,19 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import javax.annotation.PostConstruct;
 
+import com.netflix.client.config.CommonClientConfigKey;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.config.ConfigurationManager;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.PingUrl;
+import com.netflix.loadbalancer.ServerList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,18 +41,6 @@ import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBase
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.netflix.client.config.IClientConfig;
-import com.netflix.config.ConfigurationManager;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.PingUrl;
-import com.netflix.loadbalancer.ServerList;
-
-import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
-import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
 
 /**
  * Preprocessor that configures defaults for zookeeper-discovered ribbon clients. Such as:
@@ -114,8 +112,8 @@ public class ZookeeperRibbonClientConfiguration {
 
 	@PostConstruct
 	public void preprocess() {
-		setProp(this.serviceId, DeploymentContextBasedVipAddresses.key(), this.serviceId);
-		setProp(this.serviceId, EnableZoneAffinity.key(), "true");
+		setProp(this.serviceId, CommonClientConfigKey.DeploymentContextBasedVipAddresses.key(), this.serviceId);
+		setProp(this.serviceId, CommonClientConfigKey.EnableZoneAffinity.key(), "true");
 	}
 
 	protected void setProp(String serviceId, String suffix, String value) {

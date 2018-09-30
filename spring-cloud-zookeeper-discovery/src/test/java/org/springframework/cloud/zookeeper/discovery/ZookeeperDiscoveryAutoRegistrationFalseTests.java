@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -37,8 +39,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Spencer Gibb
@@ -46,28 +47,33 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryAutoRegistrationFalseTests.Config.class,
 		properties = { "spring.application.name=testzkautoregfalse", "debug=true" },
-		webEnvironment = RANDOM_PORT)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 
-	@Autowired DiscoveryClient discoveryClient;
-	@Value("${spring.application.name}") String springAppName;
+	@Autowired
+	DiscoveryClient discoveryClient;
 
-	@Test public void discovery_client_is_zookeeper() {
+	@Value("${spring.application.name}")
+	String springAppName;
+
+	@Test
+	public void discovery_client_is_zookeeper() {
 		//given: this.discoveryClient
 		//expect:
-		then(discoveryClient).isInstanceOf(CompositeDiscoveryClient.class);
-		CompositeDiscoveryClient composite = (CompositeDiscoveryClient) discoveryClient;
+		assertThat(this.discoveryClient).isInstanceOf(CompositeDiscoveryClient.class);
+		CompositeDiscoveryClient composite = (CompositeDiscoveryClient) this.discoveryClient;
 		List<DiscoveryClient> discoveryClients = composite.getDiscoveryClients();
 		DiscoveryClient first = discoveryClients.get(0);
-		then(first).isInstanceOf(ZookeeperDiscoveryClient.class);
+		assertThat(first).isInstanceOf(ZookeeperDiscoveryClient.class);
 	}
 
-	@Test public void application_should_not_have_been_registered() {
+	@Test
+	public void application_should_not_have_been_registered() {
 		//given:
-		List<ServiceInstance> instances = this.discoveryClient.getInstances(springAppName);
+		List<ServiceInstance> instances = this.discoveryClient.getInstances(this.springAppName);
 		//expect:
-		then(instances).isEmpty();
+		assertThat(instances).isEmpty();
 	}
 
 	@Configuration
@@ -75,15 +81,16 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 	@Import(CommonTestConfig.class)
 	@EnableDiscoveryClient(autoRegister = false)
 	static class Config {
-
 	}
 
 	@Controller
 	@Profile("ribbon")
 	class PingController {
 
-		@RequestMapping("/ping") String ping() {
+		@RequestMapping("/ping")
+		String ping() {
 			return "pong";
 		}
+
 	}
 }

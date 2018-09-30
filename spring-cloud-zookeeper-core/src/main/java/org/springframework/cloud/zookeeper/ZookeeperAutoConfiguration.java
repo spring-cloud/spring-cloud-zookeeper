@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -63,7 +64,8 @@ public class ZookeeperAutoConfiguration {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 		if (this.ensembleProvider != null) {
 			builder.ensembleProvider(this.ensembleProvider);
-		} else {
+		}
+		else {
 			builder.connectString(properties.getConnectString());
 		}
 		CuratorFramework curator = builder.retryPolicy(retryPolicy).build();
@@ -82,6 +84,10 @@ public class ZookeeperAutoConfiguration {
 				properties.getMaxSleepMs());
 	}
 
+	/**
+	 * {@link org.springframework.context.annotation.Configuration Configuration}
+	 * that sets up the Zookeeper health indicator.
+	 */
 	@Configuration
 	@ConditionalOnClass(Endpoint.class)
 	protected static class ZookeeperHealthConfig {

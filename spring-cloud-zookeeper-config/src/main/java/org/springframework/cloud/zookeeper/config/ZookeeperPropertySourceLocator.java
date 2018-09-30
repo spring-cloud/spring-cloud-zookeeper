@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
+
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -48,7 +50,6 @@ import org.springframework.util.ReflectionUtils;
  * config/application
  * }</pre>
  *
- * </p>
  * The most specific property source is at the top, with the least specific at the
  * bottom.  Properties is the {@code config/application} namespace are applicable to all applications
  * using zookeeper for configuration.  Properties in the {@code config/testApp} namespace are only available
@@ -112,11 +113,13 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 					PropertySource propertySource = create(propertySourceContext);
 					composite.addPropertySource(propertySource);
 					// TODO: howto call close when /refresh
-				} catch (Exception e) {
+				}
+				catch (Exception ex) {
 					if (this.properties.isFailFast()) {
-						ReflectionUtils.rethrowRuntimeException(e);
-					} else {
-						log.warn("Unable to load zookeeper config from " + propertySourceContext, e);
+						ReflectionUtils.rethrowRuntimeException(ex);
+					}
+					else {
+						log.warn("Unable to load zookeeper config from " + propertySourceContext, ex);
 					}
 				}
 			}

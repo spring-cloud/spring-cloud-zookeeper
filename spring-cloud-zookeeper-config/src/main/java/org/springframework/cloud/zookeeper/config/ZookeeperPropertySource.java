@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.KeeperException;
+
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -56,13 +57,15 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 			byte[] bytes = null;
 			try {
 				bytes = this.getSource().getData().forPath(fullPath);
-			} catch (KeeperException e) {
-				if (e.code() != KeeperException.Code.NONODE) { // not found
-					throw e;
+			}
+			catch (KeeperException ke) {
+				if (ke.code() != KeeperException.Code.NONODE) { // not found
+					throw ke;
 				}
 			}
 			return bytes;
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 		return null;
@@ -92,7 +95,8 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 					if (childPathChildren == null || childPathChildren.isEmpty()) {
 						registerKeyValue(childPath, "");
 					}
-				} else {
+				}
+				else {
 					registerKeyValue(childPath, new String(bytes, Charset.forName("UTF-8")));
 				}
 
@@ -100,7 +104,8 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 				findProperties(childPath, childPathChildren);
 			}
 			log.trace("leaving findProperties for path: " + path);
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 	}
@@ -114,9 +119,10 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 		List<String> children = null;
 		try {
 			children = this.getSource().getChildren().forPath(path);
-		} catch (KeeperException e) {
-			if (e.code() != KeeperException.Code.NONODE) { // not found
-				throw e;
+		}
+		catch (KeeperException ke) {
+			if (ke.code() != KeeperException.Code.NONODE) { // not found
+				throw ke;
 			}
 		}
 		return children;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,13 @@ package org.springframework.cloud.zookeeper.support;
 
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
+
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
 /**
+ * Interface that hooks in on the creation of
+ * a {@link org.apache.curator.x.discovery.ServiceDiscovery service discovery} instance.
+ *
  * @author Spencer Gibb
  */
 public interface ServiceDiscoveryCustomizer {

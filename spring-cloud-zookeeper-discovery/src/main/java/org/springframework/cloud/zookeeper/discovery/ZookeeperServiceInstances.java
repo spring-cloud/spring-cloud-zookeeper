@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.util.ArrayList;
@@ -10,15 +26,17 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
-import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.sanitize;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 /**
  * An {@link Iterable} representing registered Zookeeper instances. If using
  * {@link ZookeeperDependencies} it will return a list of registered Zookeeper instances
  * corresponding to the ones defined in the dependencies.
  *
+ * @author Marcin Grzejszczak
+ * @author Denis Stepanov
+ * @author Spencer Gibb
  * @since 1.0.0
  */
 public class ZookeeperServiceInstances
@@ -55,9 +73,9 @@ public class ZookeeperServiceInstances
 			}
 			return allInstances;
 		}
-		catch (Exception e) {
+		catch (Exception ex) {
 			log.debug("Exception occurred while trying to build the list of instances",
-					e);
+					ex);
 			return allInstances;
 		}
 	}
@@ -74,9 +92,10 @@ public class ZookeeperServiceInstances
 		try {
 			List<String> children = this.curator.getChildren().forPath(parentPath);
 			return iterateOverChildren(accumulator, parentPath, children);
-		} catch (Exception e) {
+		}
+		catch (Exception ex) {
 			if (log.isTraceEnabled()) {
-				log.trace("Exception occurred while trying to retrieve children of [" + parentPath + "]", e);
+				log.trace("Exception occurred while trying to retrieve children of [" + parentPath + "]", ex);
 			}
 			return injectZookeeperServiceInstances(accumulator, parentPath);
 		}
@@ -93,9 +112,9 @@ public class ZookeeperServiceInstances
 			return getServiceDiscovery()
 					.queryForInstances(getPathWithoutRoot(path));
 		}
-		catch (Exception e) {
+		catch (Exception ex) {
 			log.trace("Exception occurred while trying to retrieve instances of [" + path
-					+ "]", e);
+					+ "]", ex);
 			return null;
 		}
 	}
@@ -142,7 +161,7 @@ public class ZookeeperServiceInstances
 			}
 			List<String> names = new ArrayList<>();
 			for (String name : getServiceDiscovery().queryForNames()) {
-				names.add(sanitize(name));
+				names.add(DependencyPathUtils.sanitize(name));
 			}
 			return names;
 		}

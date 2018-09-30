@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.Arrays;
@@ -48,7 +64,7 @@ public class StubsConfiguration {
 		if (splitPath.length >= 2) {
 			stubsGroupId = splitPath[0];
 			stubsArtifactId = splitPath[1];
-			stubsClassifier = splitPath.length == 3 ? splitPath[2] : DEFAULT_STUBS_CLASSIFIER;
+			stubsClassifier = (splitPath.length == 3) ? splitPath[2] : DEFAULT_STUBS_CLASSIFIER;
 		}
 		return new String[]{stubsGroupId, stubsArtifactId, stubsClassifier};
 	}
@@ -74,7 +90,7 @@ public class StubsConfiguration {
 	}
 
 	public String toColonSeparatedDependencyNotation() {
-		if(!isDefined()) {
+		if (!isDefined()) {
 			return "";
 		}
 		return StringUtils.collectionToDelimitedString(Arrays.asList(getStubsGroupId(), getStubsArtifactId(), getStubsClassifier()), STUB_COLON_DELIMITER);
@@ -93,12 +109,12 @@ public class StubsConfiguration {
 	}
 
 	/**
-	 * Marker class to discern between the stubs location and dependency registration path
+	 * Marker class to discern between the stubs location and dependency registration path.
 	 */
 	static class DependencyPath {
 		private final String path;
 
-		public DependencyPath(String path) {
+		DependencyPath(String path) {
 			this.path = path;
 		}
 

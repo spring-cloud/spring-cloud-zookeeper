@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.lang.invoke.MethodHandles;
@@ -10,10 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
@@ -28,9 +46,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Marcin Grzejszczak
@@ -38,26 +54,30 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
 		properties = "management.endpoints.web.exposure.include=*",
-		webEnvironment = RANDOM_PORT)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 
 	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
-	@Autowired TestRibbonClient testRibbonClient;
-	@Autowired CuratorFramework curatorFramework;
+	@Autowired
+	TestRibbonClient testRibbonClient;
+
+	@Autowired
+	CuratorFramework curatorFramework;
 
 	// Issue: #54 - ZookeeperDiscoveryHealthIndicator fails on nested structure
-	@Test public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
+	@Test
+	public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
 			throws Exception {
 		// when:
-		String response = this.testRibbonClient.callService("me", BASE_PATH + "/health");
+		String response = this.testRibbonClient.callService("me", TestRibbonClient.BASE_PATH + "/health");
 		// then:
 		log.info("Received response [" + response + "]");
-		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();
-		then(this.curatorFramework.getChildren().forPath("/services/a/b/c/d/anotherservice")).isNotEmpty();
+		assertThat(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();
+		assertThat(this.curatorFramework.getChildren().forPath("/services/a/b/c/d/anotherservice")).isNotEmpty();
 	}
-	
+
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
@@ -77,9 +97,10 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 						.port(10)
 						.name("/a/b/c/d/anotherservice")
 						.build();
-				this.serviceRegistry.register(registration);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+				this.serviceRegistry.register(this.registration);
+			}
+			catch (Exception ex) {
+				throw new RuntimeException(ex);
 			}
 		}
 
@@ -88,7 +109,8 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 			this.serviceRegistry.deregister(this.registration);
 		}
 
-		@Bean TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		@Bean
+		TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
 			return new TestRibbonClient(restTemplate, springAppName);
 		}

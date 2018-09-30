@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
@@ -73,8 +74,8 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 			try {
 				serviceCache.start();
 			}
-			catch (Exception e) {
-				ReflectionUtils.rethrowRuntimeException(e);
+			catch (Exception ex) {
+				ReflectionUtils.rethrowRuntimeException(ex);
 			}
 			this.dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
 			this.dependencyRegistry.put(dependencyPath, serviceCache);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dave Syer
@@ -48,15 +47,15 @@ public class ZookeeperConfigServerAutoConfigurationTests {
 	public void offByDefault() {
 		this.context = new AnnotationConfigApplicationContext(
 				ZookeeperConfigServerAutoConfiguration.class);
-		assertEquals(0,
-				this.context.getBeanNamesForType(ZookeeperDiscoveryProperties.class).length);
+		assertThat(this.context.getBeanNamesForType(ZookeeperDiscoveryProperties.class).length)
+				.isEqualTo(0);
 	}
 
 	@Test
 	public void onWhenRequested() {
 		setup("spring.cloud.config.server.prefix=/config");
-		assertEquals(1,
-				this.context.getBeanNamesForType(ZookeeperDiscoveryProperties.class).length);
+		assertThat(this.context.getBeanNamesForType(ZookeeperDiscoveryProperties.class).length)
+				.isEqualTo(1);
 		ZookeeperDiscoveryProperties properties = this.context.getBean(ZookeeperDiscoveryProperties.class);
 		assertThat(properties.getMetadata()).containsEntry("configPath", "/config");
 	}

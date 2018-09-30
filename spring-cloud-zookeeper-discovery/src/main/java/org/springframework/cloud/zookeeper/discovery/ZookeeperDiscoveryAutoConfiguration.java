@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -34,14 +35,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
+ * that sets up service discovery with Zookeeper.
+ *
  * @author Spencer Gibb
  * @since 1.1.0
  */
 @Configuration
 @ConditionalOnBean(ZookeeperDiscoveryClientConfiguration.Marker.class)
 @ConditionalOnZookeeperDiscoveryEnabled
-@AutoConfigureBefore({CommonsClientAutoConfiguration.class, NoopDiscoveryClientAutoConfiguration.class})
-@AutoConfigureAfter({ZookeeperDiscoveryClientConfiguration.class})
+@AutoConfigureBefore({ CommonsClientAutoConfiguration.class, NoopDiscoveryClientAutoConfiguration.class })
+@AutoConfigureAfter({ ZookeeperDiscoveryClientConfiguration.class })
 public class ZookeeperDiscoveryAutoConfiguration {
 
 	@Autowired(required = false)
@@ -66,6 +70,16 @@ public class ZookeeperDiscoveryAutoConfiguration {
 				zookeeperDiscoveryProperties);
 	}
 
+	@Bean
+	public ZookeeperServiceWatch zookeeperServiceWatch(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
+	}
+
+
+	/**
+	 * {@link org.springframework.context.annotation.Configuration configuration}
+	 * that sets up a {@link org.springframework.boot.actuate.health.HealthIndicator}.
+	 */
 	@Configuration
 	@ConditionalOnEnabledHealthIndicator("zookeeper")
 	@ConditionalOnClass(Endpoint.class)
@@ -82,11 +96,6 @@ public class ZookeeperDiscoveryAutoConfiguration {
 			return new ZookeeperDiscoveryHealthIndicator(curatorFramework,
 					serviceDiscovery, this.zookeeperDependencies, properties);
 		}
-	}
-
-	@Bean
-	public ZookeeperServiceWatch zookeeperServiceWatch(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
 	}
 
 }

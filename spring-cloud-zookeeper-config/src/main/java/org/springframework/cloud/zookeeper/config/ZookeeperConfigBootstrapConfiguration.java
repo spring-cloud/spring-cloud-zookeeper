@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.config;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * Bootstrap Configuration for Zookeeper Configuration
+ * Bootstrap Configuration for Zookeeper Configuration.
  *
  * @author Spencer Gibb
  * @since 1.0.0

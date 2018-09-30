@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,27 +83,27 @@ public class SampleZookeeperApplication {
 		return this.env.getProperty(prop, "Not Found");
 	}
 
-	@FeignClient("testZookeeperApp")
-	interface AppClient {
-		@RequestMapping(path = "/hi", method = RequestMethod.GET)
-		String hi();
-	}
-
 	@Autowired
 	RestTemplate rest;
 
-	public String rt() {
-		return this.rest.getForObject("http://" + this.appName + "/hi", String.class);
+	@Bean
+	@LoadBalanced
+	RestTemplate loadBalancedRestTemplate() {
+		return new RestTemplate();
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleZookeeperApplication.class, args);
 	}
 
-	@Bean
-	@LoadBalanced
-	RestTemplate loadBalancedRestTemplate() {
-		return new RestTemplate();
+	public String rt() {
+		return this.rest.getForObject("http://" + this.appName + "/hi", String.class);
+	}
+
+	@FeignClient("testZookeeperApp")
+	interface AppClient {
+		@RequestMapping(path = "/hi", method = RequestMethod.GET)
+		String hi();
 	}
 
 }

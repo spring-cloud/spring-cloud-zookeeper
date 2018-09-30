@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package org.springframework.cloud.zookeeper.sample;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration;
@@ -35,10 +37,9 @@ import org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoCo
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = SampleZookeeperApplication.class, webEnvironment = RANDOM_PORT,
+@SpringBootTest(classes = SampleZookeeperApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT,
 		properties = "spring.cloud.zookeeper.enabled=false")
 public class ZookeeperDisabledTests {
 
@@ -77,7 +78,6 @@ public class ZookeeperDisabledTests {
 
 	@Autowired(required = false)
 	private CuratorServiceDiscoveryAutoConfiguration curatorServiceDiscoveryAutoConfiguration;
-
 
 	@Test
 	public void allPartsOfZookeeperDisabled() throws Exception {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
  */
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.zookeeper.discovery.DependencyPathUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.StubsConfiguration.DependencyPath;
 import org.springframework.util.StringUtils;
 
-import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.sanitize;
-
 /**
- * Representation of this service's dependencies in Zookeeper
+ * Representation of this service's dependencies in Zookeeper.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -39,18 +39,18 @@ import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.
 public class ZookeeperDependencies {
 
 	/**
-	 * Common prefix that will be applied to all Zookeeper dependencies' paths
+	 * Common prefix that will be applied to all Zookeeper dependencies' paths.
 	 */
 	private String prefix = "";
 
 	/**
 	 * Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias
-	 * is actually serviceID since Ribbon can't accept nested structures in serviceID
+	 * is actually serviceID since Ribbon can't accept nested structures in serviceID.
 	 */
 	private Map<String, ZookeeperDependency> dependencies = new LinkedHashMap<>();
 
 	/**
-	 * Default health endpoint that will be checked to verify that a dependency is alive
+	 * Default health endpoint that will be checked to verify that a dependency is alive.
 	 */
 	@Value("${spring.cloud.zookeeper.dependency.ribbon.loadbalancer.defaulthealthendpoint:/health}")
 	private String defaultHealthEndpoint;
@@ -58,7 +58,7 @@ public class ZookeeperDependencies {
 	@PostConstruct
 	public void init() {
 		if (StringUtils.hasText(this.prefix)) {
-			this.prefix = sanitize(this.prefix);
+			this.prefix = DependencyPathUtils.sanitize(this.prefix);
 		}
 		for (Map.Entry<String, ZookeeperDependency> entry : this.dependencies.entrySet()) {
 			ZookeeperDependency value = entry.getValue();
@@ -67,7 +67,7 @@ public class ZookeeperDependencies {
 				value.setPath(entry.getKey());
 			}
 
-			value.setPath(sanitize(value.getPath()));
+			value.setPath(DependencyPathUtils.sanitize(value.getPath()));
 
 			if (StringUtils.hasText(this.prefix)) {
 				value.setPath(this.prefix + value.getPath());
@@ -80,7 +80,8 @@ public class ZookeeperDependencies {
 	private void setStubDefinition(ZookeeperDependency value) {
 		if (!StringUtils.hasText(value.getStubs())) {
 			value.setStubsConfiguration(new StubsConfiguration(new DependencyPath(value.getPath())));
-		} else {
+		}
+		else {
 			value.setStubsConfiguration(new StubsConfiguration(value.getStubs()));
 		}
 	}

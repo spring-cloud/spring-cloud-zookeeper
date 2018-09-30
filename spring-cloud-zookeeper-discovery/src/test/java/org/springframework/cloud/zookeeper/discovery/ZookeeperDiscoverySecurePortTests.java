@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector;
@@ -35,8 +37,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Marcin Grzejszczak
@@ -46,9 +47,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		properties = {
 			"feign.hystrix.enabled=false",
 			"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath",
-			"spring.cloud.zookeeper.discovery.instance-ssl-port=8443",
+			"spring.cloud.zookeeper.discovery.instance-ssl-port=8443"
 		},
-		webEnvironment = RANDOM_PORT)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("ribbon")
 @DirtiesContext
 public class ZookeeperDiscoverySecurePortTests {
@@ -67,22 +68,22 @@ public class ZookeeperDiscoverySecurePortTests {
 
 	@Test
 	public void zookeeperServerIntrospectorWorks() {
-		ServerIntrospector serverIntrospector = this.clientFactory.getInstance(springAppName, ServerIntrospector.class);
-		then(serverIntrospector).isInstanceOf(ZookeeperServerIntrospector.class);
+		ServerIntrospector serverIntrospector = this.clientFactory.getInstance(this.springAppName, ServerIntrospector.class);
+		assertThat(serverIntrospector).isInstanceOf(ZookeeperServerIntrospector.class);
 
 		ZookeeperServer zookeeperServer = new ZookeeperServer(this.zookeeperRegistration.getServiceInstance());
-		then(serverIntrospector.isSecure(zookeeperServer)).isTrue();
+		assertThat(serverIntrospector.isSecure(zookeeperServer)).isTrue();
 	}
 
 	@Test
 	public void isSecureIsTrue() {
 		ServiceInstance instance = this.loadBalancerClient.choose(this.springAppName);
-		then(instance.isSecure()).isTrue();
+		assertThat(instance.isSecure()).isTrue();
 	}
 
 	@Test
 	public void shouldSetServiceInstanceSslPort() {
-		then(this.zookeeperRegistration.getServiceInstance().getSslPort()).isEqualTo(8443);
+		assertThat(this.zookeeperRegistration.getServiceInstance().getSslPort()).isEqualTo(8443);
 	}
 
 	@Configuration

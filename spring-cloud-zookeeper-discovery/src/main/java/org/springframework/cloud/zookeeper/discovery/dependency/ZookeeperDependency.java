@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
-
-import static java.util.Collections.singletonList;
 
 /**
  * Represents a particular dependency of Zookeeper instance.
@@ -38,12 +37,12 @@ public class ZookeeperDependency {
 
 	/**
 	 * Path under which the dependency is registered in Zookeeper. The common prefix
-	 * {@link ZookeeperDependencies#prefix} will be applied to this path
+	 * {@link ZookeeperDependencies#prefix} will be applied to this path.
 	 */
 	private String path;
 
 	/**
-	 * Type of load balancer that should be used for this particular dependency
+	 * Type of load balancer that should be used for this particular dependency.
 	 */
 	private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
@@ -57,19 +56,19 @@ public class ZookeeperDependency {
 
 	/**
 	 * Provide the current version number of the dependency. This version will be placed under the
-	 * {@code $version} placeholder in {@link ZookeeperDependency#contentTypeTemplate}
+	 * {@code $version} placeholder in {@link ZookeeperDependency#contentTypeTemplate}.
 	 */
 	private String version = "";
 
 	/**
-	 * You can provide a map of default headers that should be attached when sending a message to the dependency
+	 * You can provide a map of default headers that should be attached when sending a message to the dependency.
 	 */
 	private Map<String, Collection<String>> headers = new HashMap<>();
 
 	/**
-	 * If set to true - if the dependency is not present on startup then the application will not boot successfully
+	 * If set to true - if the dependency is not present on startup then the application will not boot successfully.
 	 * <p/>
-	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;}
+	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier}
 	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.DefaultDependencyWatcher}
 	 */
 	private boolean required;
@@ -96,7 +95,7 @@ public class ZookeeperDependency {
 	}
 
 	/**
-	 * Parsed stubs path
+	 * Parsed stubs path.
 	 */
 	private StubsConfiguration stubsConfiguration;
 
@@ -141,8 +140,9 @@ public class ZookeeperDependency {
 	private void setContentTypeFromTemplate(Map<String, Collection<String>> headers) {
 		Collection<String> contentTypes = headers.get(CONTENT_TYPE_HEADER);
 		if (contentTypes == null || contentTypes.isEmpty()) {
-			headers.put(CONTENT_TYPE_HEADER, singletonList(getContentTypeWithVersion()));
-		} else {
+			headers.put(CONTENT_TYPE_HEADER, Collections.singletonList(getContentTypeWithVersion()));
+		}
+		else {
 			contentTypes.add(getContentTypeWithVersion());
 		}
 	}
@@ -152,7 +152,8 @@ public class ZookeeperDependency {
 			Collection<String> value = newHeaders.get(entry.getKey());
 			if (value == null || value.isEmpty()) {
 				newHeaders.put(entry.getKey(), entry.getValue());
-			} else {
+			}
+			else {
 				value.addAll(entry.getValue());
 			}
 		}

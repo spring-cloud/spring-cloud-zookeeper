@@ -16,13 +16,19 @@
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 /**
- *
- * Represents a dependency's Zookeeper connection state
+ * Represents a dependency's Zookeeper connection state.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
 public enum DependencyState {
+	/**
+	 * Represents the 'connected' connection state.
+	 */
 	CONNECTED,
+
+	/**
+	 * Represents the 'disconnected' connection state.
+	 */
 	DISCONNECTED
 }

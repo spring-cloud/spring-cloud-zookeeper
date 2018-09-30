@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,18 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Spencer Gibb
@@ -39,7 +40,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = ZookeeperLifecycleRegistrationDisabledTests.TestPropsConfig.class,
 	properties = { "spring.application.name=myTestNotRegisteredService",
 		"spring.cloud.zookeeper.discovery.register=false", "spring.cloud.zookeeper.dependency.enabled=false"},
-		webEnvironment = RANDOM_PORT)
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ZookeeperLifecycleRegistrationDisabledTests {
 
 
@@ -49,11 +50,12 @@ public class ZookeeperLifecycleRegistrationDisabledTests {
 	@Test
 	public void contextLoads() {
 		List<ServiceInstance> instances = this.client.getInstances("myTestNotRegisteredService");
-		assertTrue("service was registered", instances.isEmpty());
+		assertThat(instances).isEmpty();
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@Import({ CommonTestConfig.class })
-	static class TestPropsConfig { }
+	static class TestPropsConfig {
+	}
 }

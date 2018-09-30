@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,13 @@ public class DependencyEnvironmentPostProcessor
 	// after ConfigFileEnvironmentPostProcessorr
 	private int order = ConfigFileApplicationListener.DEFAULT_ORDER + 1;
 
-	@Override public int getOrder() {
+	@Override
+	public int getOrder() {
 		return this.order;
 	}
 
-	@Override public void postProcessEnvironment(ConfigurableEnvironment environment,
+	@Override
+	public void postProcessEnvironment(ConfigurableEnvironment environment,
 			SpringApplication application) {
 		String appName = environment.getProperty("spring.application.name");
 		if (StringUtils.hasText(appName) && !appName.contains("/")) {

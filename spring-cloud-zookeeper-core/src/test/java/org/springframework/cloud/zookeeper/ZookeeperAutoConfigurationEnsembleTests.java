@@ -1,7 +1,20 @@
-package org.springframework.cloud.zookeeper;
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+package org.springframework.cloud.zookeeper;
 
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.ensemble.fixed.FixedEnsembleProvider;
@@ -9,10 +22,13 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.test.TestingServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Konrad Kamil Dobrzyński
@@ -21,14 +37,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = { ZookeeperAutoConfigurationEnsembleTests.TestConfig.class, ZookeeperAutoConfiguration.class })
 public class ZookeeperAutoConfigurationEnsembleTests {
 
-	@Autowired(required = false) CuratorFramework curator;
+	@Autowired(required = false)
+	CuratorFramework curator;
 
-	@Autowired TestingServer testingServer;
-	
+	@Autowired
+	TestingServer testingServer;
+
 	@Test
 	public void should_successfully_inject_Curator_with_ensemble_connection_string() {
-		assertEquals(testingServer.getConnectString(), curator.getZookeeperClient().getCurrentConnectionString());
-		assertNotEquals(TestConfig.DUMMY_CONNECTION_STRING, curator.getZookeeperClient().getCurrentConnectionString());
+		assertThat(this.testingServer.getConnectString()).isEqualTo(this.curator.getZookeeperClient().getCurrentConnectionString());
+		assertThat(TestConfig.DUMMY_CONNECTION_STRING).isNotEqualTo(this.curator.getZookeeperClient().getCurrentConnectionString());
 	}
 
 	static class TestConfig {
@@ -36,7 +54,7 @@ public class ZookeeperAutoConfigurationEnsembleTests {
 		static final String DUMMY_CONNECTION_STRING = "dummy-connection-string:2111";
 
 		@Bean
-		EnsembleProvider ensembleProvider(TestingServer testingServer){
+		EnsembleProvider ensembleProvider(TestingServer testingServer) {
 			return new FixedEnsembleProvider(testingServer.getConnectString());
 		}
 
@@ -47,7 +65,8 @@ public class ZookeeperAutoConfigurationEnsembleTests {
 			return properties;
 		}
 
-		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
+		@Bean(destroyMethod = "close")
+		TestingServer testingServer() throws Exception {
 			return new TestingServer();
 		}
 	}

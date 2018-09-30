@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import javax.annotation.PreDestroy;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.PreDestroy;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
+
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -69,8 +71,8 @@ public class ZookeeperServiceWatch implements
 		try {
 			this.cache.start();
 		}
-		catch (Exception e) {
-			ReflectionUtils.rethrowRuntimeException(e);
+		catch (Exception ex) {
+			ReflectionUtils.rethrowRuntimeException(ex);
 		}
 	}
 

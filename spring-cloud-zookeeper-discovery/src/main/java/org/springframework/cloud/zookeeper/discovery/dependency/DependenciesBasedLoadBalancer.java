@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2013-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
- * in the {@link ZookeeperDependency#getLoadBalancerType()}
+ * in the {@link ZookeeperDependency#getLoadBalancerType()}.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -59,7 +58,8 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 		String keyAsString;
 		if ("default".equals(key)) { // this is the default hint, use name instead
 			keyAsString = getName();
-		} else {
+		}
+		else {
 			keyAsString = (String) key;
 		}
 		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2013-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 /**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
+ * that sets up auto-registration with Zookeeper.
+ *
  * @author Spencer Gibb
  */
 @Configuration
 @ConditionalOnMissingBean(type = "org.springframework.cloud.zookeeper.discovery.ZookeeperLifecycle")
 @ConditionalOnZookeeperDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.service-registry.auto-registration.enabled", matchIfMissing = true)
-@AutoConfigureAfter( { ZookeeperServiceRegistryAutoConfiguration.class} )
-@AutoConfigureBefore( {AutoServiceRegistrationAutoConfiguration.class,ZookeeperDiscoveryAutoConfiguration.class} )
+@AutoConfigureAfter({ ZookeeperServiceRegistryAutoConfiguration.class })
+@AutoConfigureBefore({ AutoServiceRegistrationAutoConfiguration.class, ZookeeperDiscoveryAutoConfiguration.class })
 public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 
 	@Bean
