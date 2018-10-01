@@ -39,6 +39,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 
 /**
  * @author Marcin Grzejszczak
+ * @author Tim Ysewyn
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class,
@@ -70,6 +71,7 @@ public class ZookeeperDiscoveryTests {
 		ServiceInstance instance = instances.get(0);
 		//expect:
 		then(registeredServiceStatus(instance)).isEqualTo("UP");
+		then(instance.getInstanceId()).isEqualTo("ribbon-instance-id-123");
 		then(instance.getMetadata().get("testMetadataKey")).isEqualTo("testMetadataValue");
 		then(instance).isInstanceOf(ZookeeperServiceInstance.class);
 		ZookeeperServiceInstance zkInstance = (ZookeeperServiceInstance) instance;
