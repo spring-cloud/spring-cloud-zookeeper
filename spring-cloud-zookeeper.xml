@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Zookeeper</title>
-<date>2018-09-29</date>
+<date>2018-10-01</date>
 </info>
 <preface>
 <title></title>
@@ -130,7 +130,7 @@ values shown in the preceding example need to be in <literal>bootstrap.yml</lite
 <simpara>The default service name, instance ID, and port (taken from the <literal>Environment</literal>) are
 <literal>${spring.application.name}</literal>, the Spring Context ID, and <literal>${server.port}</literal>, respectively.</simpara>
 <simpara>Having <literal>spring-cloud-starter-zookeeper-discovery</literal> on the classpath makes the app into both
-a Zookeeper &#8220;service&#8221; (that is, it registers itself) and a &#8220;client&#8221; (that is, it can
+a Zookeeper <quote>service</quote> (that is, it registers itself) and a <quote>client</quote> (that is, it can
 query Zookeeper to locate other services).</simpara>
 <simpara>If you would like to disable the Zookeeper Discovery Client, you can set
 <literal>spring.cloud.zookeeper.discovery.enabled</literal> to <literal>false</literal>.</simpara>
@@ -313,7 +313,7 @@ applied. You can choose one of the following load balancing strategies:</simpara
 </listitem>
 </itemizedlist>
 </section>
-<section xml:id="__literal_content_type_literal_template_and_version">
+<section xml:id="_content_type_template_and_version">
 <title><literal>Content-Type</literal> Template and Version</title>
 <simpara>The <literal>Content-Type</literal> template and version are represented by the <literal>contentTypeTemplate</literal> and
 <literal>version</literal> YAML properties.</simpara>
@@ -468,7 +468,7 @@ overridden.</simpara>
 that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
 Config is an alternative to the
 <link xl:href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</link>.
-Configuration is loaded into the Spring Environment during the special &#8220;bootstrap&#8221;
+Configuration is loaded into the Spring Environment during the special <quote>bootstrap</quote>
 phase. Configuration is stored in the <literal>/config</literal> namespace by default. Multiple
 <literal>PropertySource</literal> instances are created, based on the application&#8217;s name and the active
 profiles, to mimic the Spring Cloud Config order of resolving properties. For example, an
