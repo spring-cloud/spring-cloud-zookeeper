@@ -1,88 +1,11 @@
----
-# The name of your project
-title: Spring Cloud Zookeeper
-
-badges:
-
-  # Customize your project's badges. Delete any entries that do not apply.
-  custom:
-    - name: Source (GitHub)
-      url:  https://github.com/spring-cloud/spring-cloud-zookeeper
-      icon: github
-
-    - name: StackOverflow
-      url:  http://stackoverflow.com/questions/tagged/spring-cloud
-      icon: stackoverflow
-
----
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en-US">
-
-<!-- Specify the parent of this project (or delete if none) to influence the rendering of the breadcrumb -->
-{% capture parent_link %}
-[Spring Cloud]({{ site.projects_site_url }}/spring-cloud)
-{% endcapture %}
-
-
-{% capture billboard_description %}
-
-Spring Cloud Zookeeper provides [Apache Zookeeper](http://zookeeper.apache.org/) integrations for Spring Boot apps through autoconfiguration and binding to the Spring Environment and other Spring programming model idioms. With a few simple annotations you can quickly enable and configure the common patterns inside your application and build large distributed systems with Zookeeper. The patterns provided include Service Discovery and Distributed Configuration.
-
-{% endcapture %}
-
-{% capture main_content %}
-
-## Features
-
-Spring Cloud Zookeeper features:
-
-* Service Discovery: instances can be registered with Zookeeper and clients can discover the instances using Spring-managed beans
- * Supports Ribbon, the client side load-balancer via Spring Cloud Netflix
- * Supports Zuul, a dynamic router and filter via Spring Cloud Netflix
-* Distributed Configuration: using Zookeeper as a data store
-
-<span id="quick-start"></span>
-
-## Quick Start
-
-<script type="text/javascript">{% include custom.js %}</script>
-{% include download_widget.md %}
-
-As long as Spring Cloud Zookeeper, [Apache Curator](http://curator.apache.org/) and the Zookeeper Java Client are on the
-classpath any Spring Boot application with `@EnableDiscoveryClient` will try to contact a Zookeeper
-agent on `localhost:2181` (the default value of
-`zookeeper.connectString`).
-
-```java
-@Configuration
-@EnableAutoConfiguration
-@EnableDiscoveryClient
-@RestController
-public class Application {
-
-  @RequestMapping("/")
-  public String home() {
-    return "Hello World";
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
-
-}
-```
-
-A local Zookeeper server must be running.  See the [Zookeeper documentation](http://zookeeper.apache.org/doc/trunk/zookeeperStarted.html) on how to run a Zookeeper server.
-
-{% endcapture %}
-
-{% capture related_resources %}
-
-### Sample Projects
-
-* [Zookeeper Sample](https://github.com/spring-cloud/spring-cloud-zookeeper/tree/master/spring-cloud-zookeeper-sample)
-
-{% endcapture %}
-
-{% include project_page.html %}
+  <meta charset="utf-8">
+  <title>Redirecting&hellip;</title>
+  <link rel="canonical" href="http://spring.io/projects/spring-cloud-zookeeper">
+  <meta http-equiv="refresh" content="0; url=http://spring.io/projects/spring-cloud-zookeeper">
+  <meta name="robots" content="noindex">
+  <h1>Redirecting&hellip;</h1>
+  <a href="http://spring.io/projects/spring-cloud-zookeeper">Click here if you are not redirected.</a>
+  <script>location="http://spring.io/projects/spring-cloud-zookeeper"</script>
 </html>
