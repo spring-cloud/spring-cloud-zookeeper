@@ -23,10 +23,82 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-zookeeper</artifactId>
+			<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jcl</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+			</exclusion>
+		</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-zookeeper-config</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jcl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-expression</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -35,6 +107,12 @@
 		<dependency>
 			<groupId>org.apache.curator</groupId>
 			<artifactId>curator-recipes</artifactId>
-		</dependency>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+        </dependency>
 	</dependencies>
 </project>
