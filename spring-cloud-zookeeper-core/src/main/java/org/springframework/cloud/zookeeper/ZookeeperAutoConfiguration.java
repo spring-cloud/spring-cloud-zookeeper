@@ -24,10 +24,6 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -80,17 +76,5 @@ public class ZookeeperAutoConfiguration {
 		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(),
 				properties.getMaxRetries(),
 				properties.getMaxSleepMs());
-	}
-
-	@Configuration
-	@ConditionalOnClass(Endpoint.class)
-	protected static class ZookeeperHealthConfig {
-		@Bean
-		@ConditionalOnMissingBean
-		@ConditionalOnBean(CuratorFramework.class)
-		@ConditionalOnEnabledHealthIndicator("zookeeper")
-		public ZookeeperHealthIndicator zookeeperHealthIndicator(CuratorFramework curator) {
-			return new ZookeeperHealthIndicator(curator);
-		}
 	}
 }
