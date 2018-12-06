@@ -26,6 +26,7 @@ import org.springframework.cloud.client.ServiceInstance;
  * A specific {@link ServiceInstance} describing a zookeeper service instance
  *
  * @author Reda.Housni-Alaoui
+ * @author Tim Ysewyn
  * @since 1.1.0
  */
 public class ZookeeperServiceInstance implements ServiceInstance {
@@ -58,6 +59,11 @@ public class ZookeeperServiceInstance implements ServiceInstance {
 		} else {
 			this.metadata = new HashMap<>();
 		}
+	}
+
+	@Override
+	public String getInstanceId() {
+		return this.serviceInstance.getId();
 	}
 
 	@Override
