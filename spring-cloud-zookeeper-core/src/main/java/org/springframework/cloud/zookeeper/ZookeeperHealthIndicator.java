@@ -38,7 +38,8 @@ public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		try {
-			if (this.curator.getState() != CuratorFrameworkState.STARTED) {
+			CuratorFrameworkState state = this.curator.getState();
+			if (state != CuratorFrameworkState.STARTED) {
 				builder.down().withDetail("error", "Client not started");
 			}
 			else if (this.curator.checkExists().forPath("/") == null) {
@@ -49,7 +50,7 @@ public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
 			}
 			builder.withDetail("connectionString",
 					this.curator.getZookeeperClient().getCurrentConnectionString())
-					.withDetail("state", this.curator.getState());
+					.withDetail("state", state);
 		}
 		catch (Exception e) {
 			builder.down(e);
