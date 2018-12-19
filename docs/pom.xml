@@ -3,20 +3,28 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-zookeeper</artifactId>
-		<version>2.1.0.BUILD-SNAPSHOT</version>
-	</parent>
-	<artifactId>spring-cloud-zookeeper-docs</artifactId>
-	<packaging>pom</packaging>
-	<name>Spring Cloud Zookeeper Docs</name>
-	<description>Spring Cloud Docs</description>
-	<properties>
-		<docs.main>spring-cloud-zookeeper</docs.main>
-		<main.basedir>${basedir}/..</main.basedir>
-		<docs.whitelisted.branches>1.0.x,1.1.x,1.2.x</docs.whitelisted.branches>
-	</properties>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-zookeeper</artifactId>
+	<version>2.1.0.BUILD-SNAPSHOT</version>
+
+	<repositories>
+		<repository>
+			<id>spring-plugins</id>
+			<name>Spring Maven Plugins Repository</name>
+			<url>https://repo.spring.io/plugins-release</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.spring.docresources</groupId>
+			<artifactId>spring-doc-resources</artifactId>
+			<version>0.1.0.RELEASE</version>
+			<type>zip</type>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>docs</id>
@@ -25,25 +33,107 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-doc-resources</id>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<phase>generate-resources</phase>
+								<configuration>
+									<includeGroupIds>io.spring.docresources</includeGroupIds>
+									<includeArtifactIds>spring-doc-resources</includeArtifactIds>
+									<includeTypes>zip</includeTypes>
+									<excludeTransitive>true</excludeTransitive>
+									<outputDirectory>${project.build.directory}/refdocs/</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-asciidoc-resources</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/refdocs/</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/asciidoc</directory>
+											<includes>
+												<include>spring-cloud-zookeeper.adoc</include>
+												<include>intro.adoc</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
-						<inherited>false</inherited>
-					</plugin>
-					<plugin>
-						<groupId>com.agilejava.docbkx</groupId>
-						<artifactId>docbkx-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<inherited>false</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<inherited>false</inherited>
+						<version>1.5.7.1</version>
+						<dependencies>
+							<dependency>
+					 			<groupId>org.asciidoctor</groupId>
+					 			<artifactId>asciidoctorj-pdf</artifactId>
+					 			<version>1.5.0-alpha.16</version>
+					 		</dependency>
+						</dependencies>
+						<configuration>
+							<sourceDirectory>${project.build.directory}/refdocs/</sourceDirectory>
+							<sourceDocumentName>spring-cloud-zookeeper.adoc</sourceDocumentName>
+						</configuration>
+						<executions>
+							<execution>
+								<id>generate-html-documentation</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>process-asciidoc</goal>
+								</goals>
+								<configuration>
+									<backend>html5</backend>
+									<sourceHighlighter>highlight.js</sourceHighlighter>
+									<doctype>book</doctype>
+									<attributes>
+										// these attributes are required to use the doc resources
+										<docinfo>shared</docinfo>
+										<stylesdir>css/</stylesdir>
+										<stylesheet>spring.css</stylesheet>
+										<linkcss>true</linkcss>
+										<icons>font</icons>
+										<highlightjsdir>js/highlight</highlightjsdir>
+										<highlightjs-theme>atom-one-dark-reasonable</highlightjs-theme>
+									</attributes>
+									<outputFile>spring-cloud-zookeeper.html</outputFile>
+								</configuration>
+							</execution>
+							<execution>
+								<id>generate-pdf-documentation</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>process-asciidoc</goal>
+								</goals>
+								<configuration>
+									<backend>pdf</backend>
+									<sourceHighlighter>coderay</sourceHighlighter>
+									<attributes>
+										<icons>font</icons>
+										<pagenums/>
+										<toc/>
+										<idprefix/>
+										<idseparator>-</idseparator>
+									</attributes>
+									<outputFile>spring-cloud-zookeeper.pdf</outputFile>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
