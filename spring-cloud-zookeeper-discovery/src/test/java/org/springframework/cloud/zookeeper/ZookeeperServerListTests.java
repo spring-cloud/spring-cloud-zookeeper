@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.assertj.core.data.MapEntry;
 import org.junit.Test;
+
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServer;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServerList;
@@ -52,7 +53,8 @@ public class ZookeeperServerListTests {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testEmptyInstancesReturnsEmptyList() throws Exception {
-		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
 		when(serviceDiscovery.queryForInstances(anyString())).thenReturn(null);
 
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
@@ -66,27 +68,31 @@ public class ZookeeperServerListTests {
 		ArrayList<ServiceInstance<ZookeeperInstance>> instances = new ArrayList<>();
 		instances.add(serviceInstance(1, null));
 
-		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
-		when(serviceDiscovery.queryForInstances(nullable(String.class))).thenReturn(instances);
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
+		when(serviceDiscovery.queryForInstances(nullable(String.class)))
+				.thenReturn(instances);
 
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		List<ZookeeperServer> servers = serverList.getInitialListOfServers();
 		assertThat(servers).hasSize(1);
 	}
 
-	private ServiceInstance<ZookeeperInstance> serviceInstance(int instanceNum, String instanceStatus) {
+	private ServiceInstance<ZookeeperInstance> serviceInstance(int instanceNum,
+			String instanceStatus) {
 		String id = "instance" + instanceNum + "id";
 		String name = "instance" + instanceNum + "name";
 
 		ZookeeperInstance payload = null;
 
 		if (instanceStatus != null) {
-			payload = new ZookeeperInstance(id, name, Collections.singletonMap(INSTANCE_STATUS_KEY, instanceStatus));
+			payload = new ZookeeperInstance(id, name,
+					Collections.singletonMap(INSTANCE_STATUS_KEY, instanceStatus));
 		}
 		String address = "instance" + instanceNum + "addr";
 		int port = 8080 + instanceNum;
-		return new ServiceInstance<>(name, id, address, port, null, payload,
-				0, null, null);
+		return new ServiceInstance<>(name, id, address, port, null, payload, 0, null,
+				null);
 	}
 
 	@Test
@@ -96,8 +102,10 @@ public class ZookeeperServerListTests {
 		instances.add(serviceInstance(1, STATUS_UP));
 		instances.add(serviceInstance(2, STATUS_OUT_OF_SERVICE));
 
-		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(ServiceDiscovery.class);
-		when(serviceDiscovery.queryForInstances(nullable(String.class))).thenReturn(instances);
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
+		when(serviceDiscovery.queryForInstances(nullable(String.class)))
+				.thenReturn(instances);
 
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		List<ZookeeperServer> servers = serverList.getInitialListOfServers();
@@ -106,4 +114,5 @@ public class ZookeeperServerListTests {
 		assertThat(servers.get(0).getInstance().getPayload().getMetadata())
 				.contains(MapEntry.entry(INSTANCE_STATUS_KEY, STATUS_UP));
 	}
+
 }

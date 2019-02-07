@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,18 @@
 package org.springframework.cloud.zookeeper.config;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.springframework.core.env.EnumerablePropertySource;
 
 /**
- * A {@link EnumerablePropertySource} that has a notion of a context which is
- * the root folder in Zookeeper.
+ * A {@link EnumerablePropertySource} that has a notion of a context which is the root
+ * folder in Zookeeper.
  *
  * @author Spencer Gibb
  * @since 1.0.0
  */
-public abstract class AbstractZookeeperPropertySource extends EnumerablePropertySource<CuratorFramework> {
+public abstract class AbstractZookeeperPropertySource
+		extends EnumerablePropertySource<CuratorFramework> {
 
 	private String context;
 
@@ -45,4 +47,5 @@ public abstract class AbstractZookeeperPropertySource extends EnumerableProperty
 	public String getContext() {
 		return this.context;
 	}
+
 }

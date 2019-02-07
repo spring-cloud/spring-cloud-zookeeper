@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,34 +18,36 @@ package org.springframework.cloud.zookeeper.serviceregistry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 
 /**
- * Zookeeper {@link AbstractAutoServiceRegistration}
- * that uses {@link ZookeeperServiceRegistry} to register and de-register instances.
+ * Zookeeper {@link AbstractAutoServiceRegistration} that uses
+ * {@link ZookeeperServiceRegistry} to register and de-register instances.
  *
  * @author Spencer Gibb
  * @since 1.0.0
  */
-public class ZookeeperAutoServiceRegistration extends AbstractAutoServiceRegistration<ZookeeperRegistration> {
+public class ZookeeperAutoServiceRegistration
+		extends AbstractAutoServiceRegistration<ZookeeperRegistration> {
 
-	private static final Log log = LogFactory.getLog(ZookeeperAutoServiceRegistration.class);
+	private static final Log log = LogFactory
+			.getLog(ZookeeperAutoServiceRegistration.class);
 
 	private ZookeeperRegistration registration;
+
 	private ZookeeperDiscoveryProperties properties;
 
 	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
-											ZookeeperRegistration registration,
-											ZookeeperDiscoveryProperties properties) {
+			ZookeeperRegistration registration, ZookeeperDiscoveryProperties properties) {
 		this(registry, registration, properties, null);
 	}
 
 	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
-											ZookeeperRegistration registration,
-											ZookeeperDiscoveryProperties properties,
-											AutoServiceRegistrationProperties arProperties) {
+			ZookeeperRegistration registration, ZookeeperDiscoveryProperties properties,
+			AutoServiceRegistrationProperties arProperties) {
 		super(registry, arProperties);
 		this.registration = registration;
 		this.properties = properties;
@@ -93,4 +95,5 @@ public class ZookeeperAutoServiceRegistration extends AbstractAutoServiceRegistr
 	protected Object getConfiguration() {
 		return this.properties;
 	}
+
 }

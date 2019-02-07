@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,18 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import javax.annotation.PostConstruct;
 
+import com.netflix.client.config.IClientConfig;
+import com.netflix.config.ConfigurationManager;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.PingUrl;
+import com.netflix.loadbalancer.ServerList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,15 +40,6 @@ import org.springframework.cloud.zookeeper.discovery.dependency.DependenciesBase
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.netflix.client.config.IClientConfig;
-import com.netflix.config.ConfigurationManager;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.PingUrl;
-import com.netflix.loadbalancer.ServerList;
 
 import static com.netflix.client.config.CommonClientConfigKey.DeploymentContextBasedVipAddresses;
 import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity;
@@ -56,9 +56,12 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
  */
 @Configuration
 public class ZookeeperRibbonClientConfiguration {
-	private static final Log log = LogFactory.getLog(ZookeeperRibbonClientConfiguration.class);
+
+	private static final Log log = LogFactory
+			.getLog(ZookeeperRibbonClientConfiguration.class);
 
 	protected static final String VALUE_NOT_SET = "__not__set__";
+
 	protected static final String DEFAULT_NAMESPACE = "ribbon";
 
 	@Value("${ribbon.client.name}")
@@ -75,7 +78,9 @@ public class ZookeeperRibbonClientConfiguration {
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		serverList.initFromDependencies(config, zookeeperDependencies);
-		log.debug(String.format("Server list for Ribbon's dependencies based load balancing is [%s]", serverList));
+		log.debug(String.format(
+				"Server list for Ribbon's dependencies based load balancing is [%s]",
+				serverList));
 		return serverList;
 	}
 
@@ -83,9 +88,11 @@ public class ZookeeperRibbonClientConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnDependenciesPassed
 	@ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.ribbon.loadbalancer", matchIfMissing = true)
-	public ILoadBalancer dependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
-			ServerList<?> serverList, IClientConfig config, IPing iPing) {
-		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList, config, iPing);
+	public ILoadBalancer dependenciesBasedLoadBalancer(
+			ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList,
+			IClientConfig config, IPing iPing) {
+		return new DependenciesBasedLoadBalancer(zookeeperDependencies, serverList,
+				config, iPing);
 	}
 
 	@Bean
@@ -102,10 +109,11 @@ public class ZookeeperRibbonClientConfiguration {
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		ZookeeperServerList serverList = new ZookeeperServerList(serviceDiscovery);
 		serverList.initWithNiwsConfig(config);
-		log.debug(String.format("Server list for Ribbon's non-dependency based load balancing is [%s]", serverList));
+		log.debug(String.format(
+				"Server list for Ribbon's non-dependency based load balancing is [%s]",
+				serverList));
 		return serverList;
 	}
-
 
 	@Bean
 	public ServerIntrospector serverIntrospector() {

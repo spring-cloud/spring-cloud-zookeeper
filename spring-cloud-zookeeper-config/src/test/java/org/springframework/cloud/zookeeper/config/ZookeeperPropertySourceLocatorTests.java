@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,65 +45,53 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Spencer Gibb
  */
 public class ZookeeperPropertySourceLocatorTests {
 
-	private static final Log log = LogFactory.getLog(ZookeeperPropertySourceLocatorTests.class);
+	private static final Log log = LogFactory
+			.getLog(ZookeeperPropertySourceLocatorTests.class);
 
 	public static final String PREFIX = "test__config__";
+
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
+
 	public static final String CONTEXT = ROOT + "/application/";
 
 	public static final String KEY_BASIC = "testProp";
+
 	public static final String KEY_BASIC_PATH = CONTEXT + KEY_BASIC;
+
 	public static final String VAL_BASIC = "testPropVal";
 
 	public static final String KEY_WITH_DOT = "testProp.dot";
+
 	public static final String KEY_WITH_DOT_PATH = CONTEXT + KEY_WITH_DOT;
+
 	public static final String VAL_WITH_DOT = "withDotVal";
 
 	public static final String KEY_NESTED = "testProp.nested";
+
 	public static final String KEY_NESTED_PATH = CONTEXT + KEY_NESTED.replace('.', '/');
+
 	public static final String VAL_NESTED = "nestedVal";
 
 	public static final String KEY_WITHOUT_VALUE = "testProp.novalue";
+
 	public static final String KEY_WITHOUT_VALUE_PATH = CONTEXT + KEY_WITHOUT_VALUE;
 
 	private ConfigurableEnvironment environment;
+
 	private ConfigurableApplicationContext context;
+
 	private TestingServer testingServer;
+
 	private CuratorFramework curator;
+
 	private ZookeeperConfigProperties properties;
-
-	@Configuration
-	@EnableAutoConfiguration
-	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
-		@Bean
-		public CountDownLatch countDownLatch() {
-			return new CountDownLatch(1);
-		}
-
-		@Bean
-		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
-				RefreshScope scope) {
-			return new ContextRefresher(context, scope);
-		}
-
-		@Override
-		public void onApplicationEvent(EnvironmentChangeEvent event) {
-			log.debug("Event keys: " + event.getKeys());
-			if (event.getKeys().contains(KEY_BASIC)) {
-				countDownLatch().countDown();
-			}
-		}
-	}
 
 	@Before
 	public void setup() throws Exception {
@@ -133,10 +121,12 @@ public class ZookeeperPropertySourceLocatorTests {
 		this.curator.close();
 		System.out.println(create);
 
-		this.context = new SpringApplicationBuilder(Config.class).web(WebApplicationType.NONE).run(
-				"--spring.cloud.zookeeper.connectString=" + connectString,
-				"--spring.application.name=testZkPropertySource", "--logging.level.org.springframework.cloud.zookeeper=DEBUG",
-				"--spring.cloud.zookeeper.config.root=" + ROOT);
+		this.context = new SpringApplicationBuilder(Config.class)
+				.web(WebApplicationType.NONE)
+				.run("--spring.cloud.zookeeper.connectString=" + connectString,
+						"--spring.application.name=testZkPropertySource",
+						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
+						"--spring.cloud.zookeeper.config.root=" + ROOT);
 
 		this.curator = this.context.getBean(CuratorFramework.class);
 		this.properties = this.context.getBean(ZookeeperConfigProperties.class);
@@ -168,31 +158,57 @@ public class ZookeeperPropertySourceLocatorTests {
 	@Test
 	public void checkKeyValues() throws Exception {
 		String propValue = this.environment.getProperty(KEY_BASIC);
-		assertThat(KEY_BASIC + " was wrong", propValue, is(equalTo(VAL_BASIC)));
+		assertThat(propValue).as(KEY_BASIC + " was wrong").isEqualTo(VAL_BASIC);
 
 		propValue = this.environment.getProperty(KEY_NESTED);
-		assertThat(VAL_NESTED + " was wrong", propValue, is(equalTo(VAL_NESTED)));
+		assertThat(propValue).as(VAL_NESTED + " was wrong").isEqualTo(VAL_NESTED);
 
 		propValue = this.environment.getProperty(KEY_WITH_DOT);
-		assertThat(VAL_WITH_DOT + " was wrong", propValue, is(equalTo(VAL_WITH_DOT)));
+		assertThat(propValue).as(VAL_WITH_DOT + " was wrong").isEqualTo(VAL_WITH_DOT);
 
 		propValue = this.environment.getProperty(KEY_WITHOUT_VALUE);
-		assertThat(KEY_WITHOUT_VALUE + " was wrong", propValue, is(isEmptyString()));
+		assertThat(propValue).as(KEY_WITHOUT_VALUE + " was wrong").isEmpty();
 	}
 
 	@Test
 	public void propertyLoadedAndUpdated() throws Exception {
 		String testProp = this.environment.getProperty(KEY_BASIC);
-		assertThat("testProp was wrong", testProp, is(equalTo(VAL_BASIC)));
+		assertThat(testProp).as("testProp was wrong").isEqualTo(VAL_BASIC);
 
 		this.curator.setData().forPath(KEY_BASIC_PATH, "testPropValUpdate".getBytes());
 
 		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
 		boolean receivedEvent = latch.await(15, TimeUnit.SECONDS);
-		assertThat("listener didn't receive event", receivedEvent, is(true));
+		assertThat(receivedEvent).as("listener didn't receive event").isTrue();
 
 		testProp = this.environment.getProperty(KEY_BASIC);
-		assertThat("testProp was wrong after update", testProp,
-				is(equalTo("testPropValUpdate")));
+		assertThat(testProp).as("testProp was wrong after update")
+				.isEqualTo("testPropValUpdate");
 	}
+
+	@Configuration
+	@EnableAutoConfiguration
+	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
+
+		@Bean
+		public CountDownLatch countDownLatch() {
+			return new CountDownLatch(1);
+		}
+
+		@Bean
+		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
+				RefreshScope scope) {
+			return new ContextRefresher(context, scope);
+		}
+
+		@Override
+		public void onApplicationEvent(EnvironmentChangeEvent event) {
+			log.debug("Event keys: " + event.getKeys());
+			if (event.getKeys().contains(KEY_BASIC)) {
+				countDownLatch().countDown();
+			}
+		}
+
+	}
+
 }

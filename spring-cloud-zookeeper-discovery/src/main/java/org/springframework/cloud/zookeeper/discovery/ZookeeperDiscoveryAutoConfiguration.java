@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -40,8 +41,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnBean(ZookeeperDiscoveryClientConfiguration.Marker.class)
 @ConditionalOnZookeeperDiscoveryEnabled
-@AutoConfigureBefore({CommonsClientAutoConfiguration.class, NoopDiscoveryClientAutoConfiguration.class})
-@AutoConfigureAfter({ZookeeperDiscoveryClientConfiguration.class})
+@AutoConfigureBefore({ CommonsClientAutoConfiguration.class,
+		NoopDiscoveryClientAutoConfiguration.class })
+@AutoConfigureAfter({ ZookeeperDiscoveryClientConfiguration.class })
 public class ZookeeperDiscoveryAutoConfiguration {
 
 	@Autowired(required = false)
@@ -52,13 +54,15 @@ public class ZookeeperDiscoveryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(InetUtils inetUtils) {
+	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(
+			InetUtils inetUtils) {
 		return new ZookeeperDiscoveryProperties(inetUtils);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	// currently means auto-registration is false. That will change when ZookeeperServiceDiscovery is gone
+	// currently means auto-registration is false. That will change when
+	// ZookeeperServiceDiscovery is gone
 	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
@@ -66,10 +70,17 @@ public class ZookeeperDiscoveryAutoConfiguration {
 				zookeeperDiscoveryProperties);
 	}
 
+	@Bean
+	public ZookeeperServiceWatch zookeeperServiceWatch(
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
+	}
+
 	@Configuration
 	@ConditionalOnEnabledHealthIndicator("zookeeper")
 	@ConditionalOnClass(Endpoint.class)
 	protected static class ZookeeperDiscoveryHealthConfig {
+
 		@Autowired(required = false)
 		private ZookeeperDependencies zookeeperDependencies;
 
@@ -82,11 +93,7 @@ public class ZookeeperDiscoveryAutoConfiguration {
 			return new ZookeeperDiscoveryHealthIndicator(curatorFramework,
 					serviceDiscovery, this.zookeeperDependencies, properties);
 		}
-	}
 
-	@Bean
-	public ZookeeperServiceWatch zookeeperServiceWatch(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
 	}
 
 }

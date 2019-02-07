@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.StringUtils;
 
 /**
- * EnvironmentPostProcessor that sets spring.application.name.
- * Specifically, if spring.application.name doesn't contain a / and
- * spring.cloud.zookeeper.prefix has text, it sets spring.application.name
- * to /${spring.cloud.zookeeper.prefix}/${spring.application.name}
+ * EnvironmentPostProcessor that sets spring.application.name. Specifically, if
+ * spring.application.name doesn't contain a / and spring.cloud.zookeeper.prefix has text,
+ * it sets spring.application.name to
+ * /${spring.cloud.zookeeper.prefix}/${spring.application.name}
  *
  * @author Spencer Gibb
  * @since 1.0.0
@@ -41,11 +41,13 @@ public class DependencyEnvironmentPostProcessor
 	// after ConfigFileEnvironmentPostProcessorr
 	private int order = ConfigFileApplicationListener.DEFAULT_ORDER + 1;
 
-	@Override public int getOrder() {
+	@Override
+	public int getOrder() {
 		return this.order;
 	}
 
-	@Override public void postProcessEnvironment(ConfigurableEnvironment environment,
+	@Override
+	public void postProcessEnvironment(ConfigurableEnvironment environment,
 			SpringApplication application) {
 		String appName = environment.getProperty("spring.application.name");
 		if (StringUtils.hasText(appName) && !appName.contains("/")) {
@@ -61,11 +63,12 @@ public class DependencyEnvironmentPostProcessor
 				}
 				prefixedName.append(appName);
 				MapPropertySource propertySource = new MapPropertySource(
-						"zookeeperDependencyEnvironment", Collections
-						.singletonMap("spring.application.name",
+						"zookeeperDependencyEnvironment",
+						Collections.singletonMap("spring.application.name",
 								(Object) prefixedName.toString()));
 				environment.getPropertySources().addFirst(propertySource);
 			}
 		}
 	}
+
 }

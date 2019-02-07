@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,58 +34,64 @@ import static java.util.Collections.singletonList;
 public class ZookeeperDependency {
 
 	private static final String VERSION_PLACEHOLDER_REGEX = "\\$version";
+
 	private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
 	/**
 	 * Path under which the dependency is registered in Zookeeper. The common prefix
-	 * {@link ZookeeperDependencies#prefix} will be applied to this path
+	 * {@link ZookeeperDependencies#prefix} will be applied to this path.
 	 */
 	private String path;
 
 	/**
-	 * Type of load balancer that should be used for this particular dependency
+	 * Type of load balancer that should be used for this particular dependency.
 	 */
 	private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
 	/**
-	 * Content type template with {@code $version} placeholder which will be filled
-	 * by the {@link ZookeeperDependency#version} variable.
+	 * Content type template with {@code $version} placeholder which will be filled by the
+	 * {@link ZookeeperDependency#version} variable.
 	 * <p/>
 	 * e.g. {@code 'application/vnd.some-service.$version+json'}
 	 */
 	private String contentTypeTemplate = "";
 
 	/**
-	 * Provide the current version number of the dependency. This version will be placed under the
-	 * {@code $version} placeholder in {@link ZookeeperDependency#contentTypeTemplate}
+	 * Provide the current version number of the dependency. This version will be placed
+	 * under the {@code $version} placeholder in
+	 * {@link ZookeeperDependency#contentTypeTemplate}.
 	 */
 	private String version = "";
 
 	/**
-	 * You can provide a map of default headers that should be attached when sending a message to the dependency
+	 * You can provide a map of default headers that should be attached when sending a
+	 * message to the dependency.
 	 */
 	private Map<String, Collection<String>> headers = new HashMap<>();
 
 	/**
-	 * If set to true - if the dependency is not present on startup then the application will not boot successfully
+	 * If set to true - if the dependency is not present on startup then the application
+	 * will not boot successfully.
 	 * <p/>
-	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier;}
+	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.presence.DependencyPresenceOnStartupVerifier}
 	 * {@link org.springframework.cloud.zookeeper.discovery.watcher.DefaultDependencyWatcher}
 	 */
 	private boolean required;
 
 	/**
-	 * Colon separated notation of the stubs. E.g. {@code org.springframework:zookeeper-sample:stubs}. If not provided
-	 * the {@code path} will be parsed to try to split it into groupId and artifactId. If not provided the classifier
-	 * will by default equal {@code stubs}
+	 * Colon separated notation of the stubs. E.g.
+	 * {@code org.springframework:zookeeper-sample:stubs}. If not provided the
+	 * {@code path} will be parsed to try to split it into groupId and artifactId. If not
+	 * provided the classifier will by default equal {@code stubs}
 	 */
 	private String stubs;
 
 	public ZookeeperDependency() {
 	}
 
-	public ZookeeperDependency(String path, LoadBalancerType loadBalancerType, String contentTypeTemplate,
-			String version, Map<String, Collection<String>> headers, boolean required, String stubs) {
+	public ZookeeperDependency(String path, LoadBalancerType loadBalancerType,
+			String contentTypeTemplate, String version,
+			Map<String, Collection<String>> headers, boolean required, String stubs) {
 		this.path = path;
 		this.loadBalancerType = loadBalancerType;
 		this.contentTypeTemplate = contentTypeTemplate;
@@ -96,7 +102,7 @@ public class ZookeeperDependency {
 	}
 
 	/**
-	 * Parsed stubs path
+	 * Parsed stubs path.
 	 */
 	private StubsConfiguration stubsConfiguration;
 
@@ -107,8 +113,10 @@ public class ZookeeperDependency {
 	}
 
 	/**
-	 * Function that will replace the placeholder {@link ZookeeperDependency#VERSION_PLACEHOLDER_REGEX} from the
-	 * {@link ZookeeperDependency#contentTypeTemplate} with value from {@link ZookeeperDependency#version}.
+	 * Function that will replace the placeholder
+	 * {@link ZookeeperDependency#VERSION_PLACEHOLDER_REGEX} from the
+	 * {@link ZookeeperDependency#contentTypeTemplate} with value from
+	 * {@link ZookeeperDependency#version}.
 	 * <p/>
 	 * <p>
 	 * e.g. having:
@@ -117,17 +125,19 @@ public class ZookeeperDependency {
 	 * </p>
 	 * <p/>
 	 * the result of the function will be {@code 'application/vnd.some-service.v1+json'}
-	 *
 	 * @return content type template with version
 	 */
 	public String getContentTypeWithVersion() {
-		if (!StringUtils.hasText(this.contentTypeTemplate) || !StringUtils.hasText(this.version)) {
+		if (!StringUtils.hasText(this.contentTypeTemplate)
+				|| !StringUtils.hasText(this.version)) {
 			return "";
 		}
-		return this.contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX, this.version);
+		return this.contentTypeTemplate.replaceAll(VERSION_PLACEHOLDER_REGEX,
+				this.version);
 	}
 
-	public Map<String, Collection<String>> getUpdatedHeaders(Map<String, Collection<String>> headers) {
+	public Map<String, Collection<String>> getUpdatedHeaders(
+			Map<String, Collection<String>> headers) {
 		Map<String, Collection<String>> newHeaders = new HashMap<>(headers);
 		if (hasContentTypeTemplate()) {
 			setContentTypeFromTemplate(newHeaders);
@@ -142,7 +152,8 @@ public class ZookeeperDependency {
 		Collection<String> contentTypes = headers.get(CONTENT_TYPE_HEADER);
 		if (contentTypes == null || contentTypes.isEmpty()) {
 			headers.put(CONTENT_TYPE_HEADER, singletonList(getContentTypeWithVersion()));
-		} else {
+		}
+		else {
 			contentTypes.add(getContentTypeWithVersion());
 		}
 	}
@@ -152,7 +163,8 @@ public class ZookeeperDependency {
 			Collection<String> value = newHeaders.get(entry.getKey());
 			if (value == null || value.isEmpty()) {
 				newHeaders.put(entry.getKey(), entry.getValue());
-			} else {
+			}
+			else {
 				value.addAll(entry.getValue());
 			}
 		}
@@ -235,7 +247,8 @@ public class ZookeeperDependency {
 		final StringBuffer sb = new StringBuffer("ZookeeperDependency{");
 		sb.append("path='").append(this.path).append('\'');
 		sb.append(", loadBalancerType=").append(this.loadBalancerType);
-		sb.append(", contentTypeTemplate='").append(this.contentTypeTemplate).append('\'');
+		sb.append(", contentTypeTemplate='").append(this.contentTypeTemplate)
+				.append('\'');
 		sb.append(", version='").append(this.version).append('\'');
 		sb.append(", headers=").append(this.headers);
 		sb.append(", required=").append(this.required);
@@ -244,4 +257,5 @@ public class ZookeeperDependency {
 		sb.append('}');
 		return sb.toString();
 	}
+
 }

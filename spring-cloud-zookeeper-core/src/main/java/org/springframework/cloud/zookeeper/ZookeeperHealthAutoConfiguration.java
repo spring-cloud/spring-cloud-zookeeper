@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -28,8 +30,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Auto {@link Configuration} for adding a Zookeeper health endpoint to actuator if
  * required.
- * 
- * @author tgianos
+ *
+ * @author Tom Gianos
  * @since 2.0.1
  */
 @Configuration
@@ -41,7 +43,6 @@ public class ZookeeperHealthAutoConfiguration {
 	/**
 	 * If there is an active curator, if the zookeeper health endpoint is enabled and if a
 	 * health indicator hasn't already been added by a user add one.
-	 * 
 	 * @param curator The curator connection to zookeeper to use
 	 * @return An instance of {@link ZookeeperHealthIndicator} to add to actuator health
 	 * report
@@ -53,4 +54,5 @@ public class ZookeeperHealthAutoConfiguration {
 	public ZookeeperHealthIndicator zookeeperHealthIndicator(CuratorFramework curator) {
 		return new ZookeeperHealthIndicator(curator);
 	}
+
 }

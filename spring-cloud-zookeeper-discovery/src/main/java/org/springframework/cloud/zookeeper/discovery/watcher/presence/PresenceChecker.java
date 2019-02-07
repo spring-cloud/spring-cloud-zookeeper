@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery.watcher.presence;
 
 import java.util.List;
@@ -20,8 +21,8 @@ import java.util.List;
 import org.apache.curator.x.discovery.ServiceInstance;
 
 /**
- * The implementation of this interface will be called upon checking if a dependency with a given name
- * is present upon startup within the provided service instances.
+ * The implementation of this interface will be called upon checking if a dependency with
+ * a given name is present upon startup within the provided service instances.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -29,10 +30,10 @@ import org.apache.curator.x.discovery.ServiceInstance;
 public interface PresenceChecker {
 
 	/**
-	 * Checks if a given dependency is present
-	 *
-	 * @param dependencyName
-	 * @param serviceInstances - instances to check the dependency for
+	 * Checks if a given dependency is present.
+	 * @param dependencyName Name of the dependency.
+	 * @param serviceInstances - instances to check the dependency for.
 	 */
 	void checkPresence(String dependencyName, List<ServiceInstance<?>> serviceInstances);
+
 }

@@ -1,13 +1,33 @@
+/*
+ * Copyright 2015-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.jayway.awaitility.Awaitility;
+import com.netflix.loadbalancer.IPing;
+import com.netflix.loadbalancer.NoOpPing;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.test.TestingServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,35 +45,36 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.jayway.awaitility.Awaitility;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.NoOpPing;
-
 /**
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StickyRuleTests.Config.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = StickyRuleTests.Config.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("loadbalancerclient")
 public class StickyRuleTests {
 
-	@Autowired LoadBalancerClient loadBalancerClient;
-	@Autowired DiscoveryClient discoveryClient;
-	
+	@Autowired
+	LoadBalancerClient loadBalancerClient;
+
+	@Autowired
+	DiscoveryClient discoveryClient;
+
 	@Test
 	public void should_use_sticky_load_balancing_strategy_taken_from_Zookeeper_dependencies() {
-		//given:
-			System.setProperty("spring.cloud.zookeeper.dependency.ribbon.loadbalancer.checkping", "false");	
-		//expect:
-			thereAreTwoRegisteredServices();
-			URI uri = getUriForAlias();
-			Awaitility.await().until(uriMatchesTwice(uri));
+		// given:
+		System.setProperty(
+				"spring.cloud.zookeeper.dependency.ribbon.loadbalancer.checkping",
+				"false");
+		// expect:
+		thereAreTwoRegisteredServices();
+		URI uri = getUriForAlias();
+		Awaitility.await().until(uriMatchesTwice(uri));
 	}
 
 	private Callable<Boolean> uriMatchesTwice(final URI uri) {
 		return new Callable<Boolean>() {
-			@Override public Boolean call() throws Exception {
+			@Override
+			public Boolean call() throws Exception {
 				return uriMatches() && uriMatches();
 			}
 
@@ -73,38 +94,47 @@ public class StickyRuleTests {
 		return alias != null ? alias.getUri() : null;
 	}
 
-
 	@Configuration
 	@EnableAutoConfiguration
 	@Profile("loadbalancerclient")
 	static class Config {
 
 		@Bean
-		@LoadBalanced RestTemplate loadBalancedRestTemplate() {
+		@LoadBalanced
+		RestTemplate loadBalancedRestTemplate() {
 			return new RestTemplate();
 		}
 
-		@Bean(destroyMethod = "close") TestingServer testingServer() throws Exception {
+		@Bean(destroyMethod = "close")
+		TestingServer testingServer() throws Exception {
 			return new TestingServer(SocketUtils.findAvailableTcpPort());
 		}
 
-		@Bean ZookeeperProperties zookeeperProperties() throws Exception {
+		@Bean
+		ZookeeperProperties zookeeperProperties() throws Exception {
 			ZookeeperProperties zookeeperProperties = new ZookeeperProperties();
-			zookeeperProperties.setConnectString("localhost:"+ testingServer().getPort());
+			zookeeperProperties
+					.setConnectString("localhost:" + testingServer().getPort());
 			return zookeeperProperties;
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "stop")
 		TestServiceRegistrar serviceOne(CuratorFramework curatorFramework) {
-			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework);
+			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(),
+					curatorFramework);
 		}
 
-		@Bean(initMethod = "start", destroyMethod = "stop") TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
-			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(), curatorFramework);
+		@Bean(initMethod = "start", destroyMethod = "stop")
+		TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
+			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(),
+					curatorFramework);
 		}
 
-		@Bean IPing noOpPing() {
+		@Bean
+		IPing noOpPing() {
 			return new NoOpPing();
 		}
+
 	}
+
 }

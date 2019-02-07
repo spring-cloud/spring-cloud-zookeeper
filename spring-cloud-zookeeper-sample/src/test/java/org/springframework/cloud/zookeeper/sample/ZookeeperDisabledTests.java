@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.sample;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
@@ -78,21 +79,35 @@ public class ZookeeperDisabledTests {
 	@Autowired(required = false)
 	private CuratorServiceDiscoveryAutoConfiguration curatorServiceDiscoveryAutoConfiguration;
 
-
 	@Test
 	public void allPartsOfZookeeperDisabled() throws Exception {
-		assertThat(this.zookeeperAutoConfiguration).as("ZookeeperAutoConfiguration was not disabled").isNull();
-		assertThat(this.zookeeperConfigAutoConfiguration).as("ZookeeperConfigAutoConfiguration was not disabled").isNull();
-		assertThat(this.ribbonZookeeperAutoConfiguration).as("RibbonZookeeperAutoConfiguration was not disabled").isNull();
-		assertThat(this.zookeeperDiscoveryAutoConfiguration).as("ZookeeperDiscoveryAutoConfiguration was not disabled").isNull();
-		assertThat(this.dependencyFeignClientAutoConfiguration).as("DependencyFeignClientAutoConfiguration was not disabled").isNull();
-		assertThat(this.dependencyRibbonAutoConfiguration).as("DependencyRibbonAutoConfiguration was not disabled").isNull();
-		assertThat(this.dependencyRestTemplateAutoConfiguration).as("DependencyRestTemplateAutoConfiguration was not disabled").isNull();
-		assertThat(this.zookeeperDependenciesAutoConfiguration).as("ZookeeperDependenciesAutoConfiguration was not disabled").isNull();
-		assertThat(this.dependencyWatcherAutoConfiguration).as("DependencyWatcherAutoConfiguration was not disabled").isNull();
-		assertThat(this.zookeeperAutoServiceRegistrationAutoConfiguration).as("ZookeeperAutoServiceRegistrationAutoConfiguration was not disabled").isNull();
-		assertThat(this.zookeeperServiceRegistryAutoConfiguration).as("ZookeeperServiceRegistryAutoConfiguration was not disabled").isNull();
-		assertThat(this.curatorServiceDiscoveryAutoConfiguration).as("CuratorServiceDiscoveryAutoConfiguration was not disabled").isNull();
+		assertThat(this.zookeeperAutoConfiguration)
+				.as("ZookeeperAutoConfiguration was not disabled").isNull();
+		assertThat(this.zookeeperConfigAutoConfiguration)
+				.as("ZookeeperConfigAutoConfiguration was not disabled").isNull();
+		assertThat(this.ribbonZookeeperAutoConfiguration)
+				.as("RibbonZookeeperAutoConfiguration was not disabled").isNull();
+		assertThat(this.zookeeperDiscoveryAutoConfiguration)
+				.as("ZookeeperDiscoveryAutoConfiguration was not disabled").isNull();
+		assertThat(this.dependencyFeignClientAutoConfiguration)
+				.as("DependencyFeignClientAutoConfiguration was not disabled").isNull();
+		assertThat(this.dependencyRibbonAutoConfiguration)
+				.as("DependencyRibbonAutoConfiguration was not disabled").isNull();
+		assertThat(this.dependencyRestTemplateAutoConfiguration)
+				.as("DependencyRestTemplateAutoConfiguration was not disabled").isNull();
+		assertThat(this.zookeeperDependenciesAutoConfiguration)
+				.as("ZookeeperDependenciesAutoConfiguration was not disabled").isNull();
+		assertThat(this.dependencyWatcherAutoConfiguration)
+				.as("DependencyWatcherAutoConfiguration was not disabled").isNull();
+		assertThat(this.zookeeperAutoServiceRegistrationAutoConfiguration)
+				.as("ZookeeperAutoServiceRegistrationAutoConfiguration was not disabled")
+				.isNull();
+		assertThat(this.zookeeperServiceRegistryAutoConfiguration)
+				.as("ZookeeperServiceRegistryAutoConfiguration was not disabled")
+				.isNull();
+		assertThat(this.curatorServiceDiscoveryAutoConfiguration)
+				.as("CuratorServiceDiscoveryAutoConfiguration was not disabled").isNull();
 
 	}
+
 }

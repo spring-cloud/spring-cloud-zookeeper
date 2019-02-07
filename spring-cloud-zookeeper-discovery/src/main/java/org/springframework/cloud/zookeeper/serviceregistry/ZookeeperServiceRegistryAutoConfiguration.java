@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.springframework.cloud.zookeeper.serviceregistry;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,7 +41,8 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnZookeeperDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.service-registry.enabled", matchIfMissing = true)
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)
-public class ZookeeperServiceRegistryAutoConfiguration implements ApplicationContextAware {
+public class ZookeeperServiceRegistryAutoConfiguration
+		implements ApplicationContextAware {
 
 	private ApplicationContext context;
 
@@ -63,7 +65,9 @@ public class ZookeeperServiceRegistryAutoConfiguration implements ApplicationCon
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(InetUtils inetUtils) {
+	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties(
+			InetUtils inetUtils) {
 		return new ZookeeperDiscoveryProperties(inetUtils);
 	}
+
 }

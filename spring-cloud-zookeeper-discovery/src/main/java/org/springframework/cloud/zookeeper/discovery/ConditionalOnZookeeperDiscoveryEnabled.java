@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 
 /**
- * Wrapper annotation to enable Zookeeper Discovery
+ * Wrapper annotation to enable Zookeeper Discovery.
  *
+ * @author Marcin Grzejszczak
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.discovery.enabled", matchIfMissing = true)
 public @interface ConditionalOnZookeeperDiscoveryEnabled {
+
 }

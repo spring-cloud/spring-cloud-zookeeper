@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.KeeperException;
+
 import org.springframework.util.ReflectionUtils;
 
 /**
- * {@link org.springframework.core.env.PropertySource} that stores properties
- * from Zookeeper inside a map. Properties are loaded upon class initialization.
+ * {@link org.springframework.core.env.PropertySource} that stores properties from
+ * Zookeeper inside a map. Properties are loaded upon class initialization.
  *
  * @author Spencer Gibb
  * @since 1.0.0
@@ -56,13 +57,15 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 			byte[] bytes = null;
 			try {
 				bytes = this.getSource().getData().forPath(fullPath);
-			} catch (KeeperException e) {
+			}
+			catch (KeeperException e) {
 				if (e.code() != KeeperException.Code.NONODE) { // not found
 					throw e;
 				}
 			}
 			return bytes;
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 		return null;
@@ -92,15 +95,18 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 					if (childPathChildren == null || childPathChildren.isEmpty()) {
 						registerKeyValue(childPath, "");
 					}
-				} else {
-					registerKeyValue(childPath, new String(bytes, Charset.forName("UTF-8")));
+				}
+				else {
+					registerKeyValue(childPath,
+							new String(bytes, Charset.forName("UTF-8")));
 				}
 
 				// Check children even if we have found a value for the current znode
 				findProperties(childPath, childPathChildren);
 			}
 			log.trace("leaving findProperties for path: " + path);
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			ReflectionUtils.rethrowRuntimeException(exception);
 		}
 	}
@@ -114,7 +120,8 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 		List<String> children = null;
 		try {
 			children = this.getSource().getChildren().forPath(path);
-		} catch (KeeperException e) {
+		}
+		catch (KeeperException e) {
 			if (e.code() != KeeperException.Code.NONODE) { // not found
 				throw e;
 			}

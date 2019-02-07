@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
+
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
@@ -31,28 +33,33 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * This Dependency Watcher will verify the presence of dependencies upon startup and registers listeners
- * to changing of state of dependencies during the application's lifecycle.
+ * This Dependency Watcher will verify the presence of dependencies upon startup and
+ * registers listeners to changing of state of dependencies during the application's
+ * lifecycle.
  *
  * @author Marcin Grzejszczak
  * @author Michal Chmielarz, 4financeIT
  * @since 1.0.0
- *
  * @see DependencyPresenceOnStartupVerifier
  * @see DependencyWatcherListener
  */
-public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider, ApplicationListener<InstanceRegisteredEvent<?>> {
+public class DefaultDependencyWatcher implements DependencyRegistrationHookProvider,
+		ApplicationListener<InstanceRegisteredEvent<?>> {
 
 	private final Map<String, ServiceCache<?>> dependencyRegistry = new ConcurrentHashMap<>();
+
 	private final List<DependencyWatcherListener> listeners;
+
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+
 	private final DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier;
+
 	private final ZookeeperDependencies zookeeperDependencies;
 
 	public DefaultDependencyWatcher(ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
-									DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
-									List<DependencyWatcherListener> dependencyWatcherListeners,
-									ZookeeperDependencies zookeeperDependencies) {
+			DependencyPresenceOnStartupVerifier dependencyPresenceOnStartupVerifier,
+			List<DependencyWatcherListener> dependencyWatcherListeners,
+			ZookeeperDependencies zookeeperDependencies) {
 		this.serviceDiscovery = serviceDiscovery;
 		this.dependencyPresenceOnStartupVerifier = dependencyPresenceOnStartupVerifier;
 		this.listeners = dependencyWatcherListeners;
@@ -66,19 +73,22 @@ public class DefaultDependencyWatcher implements DependencyRegistrationHookProvi
 
 	@Override
 	public void registerDependencyRegistrationHooks() {
-		for (ZookeeperDependency zookeeperDependency : this.zookeeperDependencies.getDependencyConfigurations()) {
+		for (ZookeeperDependency zookeeperDependency : this.zookeeperDependencies
+				.getDependencyConfigurations()) {
 			String dependencyPath = zookeeperDependency.getPath();
-			ServiceCache<?> serviceCache = getServiceDiscovery()
-					.serviceCacheBuilder().name(dependencyPath).build();
+			ServiceCache<?> serviceCache = getServiceDiscovery().serviceCacheBuilder()
+					.name(dependencyPath).build();
 			try {
 				serviceCache.start();
 			}
 			catch (Exception e) {
 				ReflectionUtils.rethrowRuntimeException(e);
 			}
-			this.dependencyPresenceOnStartupVerifier.verifyDependencyPresence(dependencyPath, serviceCache, zookeeperDependency.isRequired());
+			this.dependencyPresenceOnStartupVerifier.verifyDependencyPresence(
+					dependencyPath, serviceCache, zookeeperDependency.isRequired());
 			this.dependencyRegistry.put(dependencyPath, serviceCache);
-			serviceCache.addListener(new DependencyStateChangeListenerRegistry(this.listeners, dependencyPath, serviceCache));
+			serviceCache.addListener(new DependencyStateChangeListenerRegistry(
+					this.listeners, dependencyPath, serviceCache));
 		}
 	}
 

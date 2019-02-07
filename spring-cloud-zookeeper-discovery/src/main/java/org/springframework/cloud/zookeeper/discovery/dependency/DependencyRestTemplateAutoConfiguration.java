@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,33 +53,45 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureAfter(DependencyRibbonAutoConfiguration.class)
 public class DependencyRestTemplateAutoConfiguration {
 
-	@Autowired @LoadBalanced RestTemplate restTemplate;
-	@Autowired ZookeeperDependencies zookeeperDependencies;
+	@Autowired
+	@LoadBalanced
+	RestTemplate restTemplate;
+
+	@Autowired
+	ZookeeperDependencies zookeeperDependencies;
 
 	@PostConstruct
 	void customizeRestTemplate() {
 		this.restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
 			@Override
-			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+			public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+					ClientHttpRequestExecution execution) throws IOException {
 				String clientName = request.getURI().getHost();
-				ZookeeperDependency dependencyForAlias = DependencyRestTemplateAutoConfiguration.this.zookeeperDependencies.getDependencyForAlias(clientName);
-				HttpHeaders headers = getUpdatedHeadersIfPossible(request, dependencyForAlias);
+				ZookeeperDependency dependencyForAlias = DependencyRestTemplateAutoConfiguration.this.zookeeperDependencies
+						.getDependencyForAlias(clientName);
+				HttpHeaders headers = getUpdatedHeadersIfPossible(request,
+						dependencyForAlias);
 				request.getHeaders().putAll(headers);
 				return execution.execute(request, body);
 			}
 
-			private HttpHeaders getUpdatedHeadersIfPossible(HttpRequest request, ZookeeperDependency dependencyForAlias) {
+			private HttpHeaders getUpdatedHeadersIfPossible(HttpRequest request,
+					ZookeeperDependency dependencyForAlias) {
 				HttpHeaders httpHeaders = new HttpHeaders();
 				if (dependencyForAlias != null) {
-					Map<String, Collection<String>> updatedHeaders = dependencyForAlias.getUpdatedHeaders(convertHeadersFromListToCollection(request.getHeaders()));
-					httpHeaders.putAll(convertHeadersFromCollectionToList(updatedHeaders));
+					Map<String, Collection<String>> updatedHeaders = dependencyForAlias
+							.getUpdatedHeaders(convertHeadersFromListToCollection(
+									request.getHeaders()));
+					httpHeaders
+							.putAll(convertHeadersFromCollectionToList(updatedHeaders));
 					return httpHeaders;
 				}
 				httpHeaders.putAll(request.getHeaders());
 				return httpHeaders;
 			}
 
-			private Map<String, Collection<String>> convertHeadersFromListToCollection(HttpHeaders headers) {
+			private Map<String, Collection<String>> convertHeadersFromListToCollection(
+					HttpHeaders headers) {
 				Map<String, Collection<String>> transformedHeaders = new HashMap<>();
 				for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
 					transformedHeaders.put(entry.getKey(), entry.getValue());
@@ -86,10 +99,12 @@ public class DependencyRestTemplateAutoConfiguration {
 				return transformedHeaders;
 			}
 
-			private Map<String, List<String>> convertHeadersFromCollectionToList(Map<String, Collection<String>> headers) {
+			private Map<String, List<String>> convertHeadersFromCollectionToList(
+					Map<String, Collection<String>> headers) {
 				Map<String, List<String>> transformedHeaders = new HashMap<>();
 				for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
-					transformedHeaders.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+					transformedHeaders.put(entry.getKey(),
+							new ArrayList<>(entry.getValue()));
 				}
 				return transformedHeaders;
 			}

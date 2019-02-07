@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ import org.springframework.util.StringUtils;
 @ConfigurationProperties("spring.cloud.zookeeper.discovery")
 public class ZookeeperDiscoveryProperties {
 
+	/**
+	 * Default URI spec.
+	 */
 	public static final String DEFAULT_URI_SPEC = "{scheme}://{address}:{port}";
 
 	private InetUtils.HostInfo hostInfo;
@@ -40,12 +43,12 @@ public class ZookeeperDiscoveryProperties {
 	private boolean enabled = true;
 
 	/**
-	 * Root Zookeeper folder in which all instances are registered
+	 * Root Zookeeper folder in which all instances are registered.
 	 */
 	private String root = "/services";
 
 	/**
-	 * The URI specification to resolve during service registration in Zookeeper
+	 * The URI specification to resolve during service registration in Zookeeper.
 	 */
 	private String uriSpec = DEFAULT_URI_SPEC;
 
@@ -58,16 +61,17 @@ public class ZookeeperDiscoveryProperties {
 	 */
 	private String instanceHost;
 
-	/** IP address to use when accessing service (must also set preferIpAddress
-            to use) */
+	/**
+	 * IP address to use when accessing service (must also set preferIpAddress to use).
+	 */
 	private String instanceIpAddress;
 
 	/**
-	 * Use ip address rather than hostname during registration
+	 * Use ip address rather than hostname during registration.
 	 */
 	private boolean preferIpAddress = false;
 
-	/** Port to register the service under (defaults to listening port) */
+	/** Port to register the service under (defaults to listening port). */
 	private Integer instancePort;
 
 	/** Ssl port of the registered service. */
@@ -85,17 +89,20 @@ public class ZookeeperDiscoveryProperties {
 	private Map<String, String> metadata = new HashMap<>();
 
 	/**
-	 * The initial status of this instance (defaults to {@link StatusConstants#STATUS_UP}).
+	 * The initial status of this instance (defaults to
+	 * {@link StatusConstants#STATUS_UP}).
 	 */
 	private String initialStatus = StatusConstants.STATUS_UP;
 
 	/**
-	 * Order of the discovery client used by `CompositeDiscoveryClient` for sorting available clients.
+	 * Order of the discovery client used by `CompositeDiscoveryClient` for sorting
+	 * available clients.
 	 */
 	private int order = 0;
 
 	// Visible for Testing
-	protected ZookeeperDiscoveryProperties() {}
+	protected ZookeeperDiscoveryProperties() {
+	}
 
 	public ZookeeperDiscoveryProperties(InetUtils inetUtils) {
 		this.hostInfo = inetUtils.findFirstNonLoopbackHostInfo();
@@ -206,17 +213,13 @@ public class ZookeeperDiscoveryProperties {
 
 	@Override
 	public String toString() {
-		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled +
-				", root='" + this.root + '\'' +
-				", uriSpec='" + this.uriSpec + '\'' +
-				", instanceId='" + this.instanceId + '\'' +
-				", instanceHost='" + this.instanceHost + '\'' +
-				", instancePort='" + this.instancePort + '\'' +
-				", instanceSslPort='" + this.instanceSslPort + '\'' +
-				", metadata=" + this.metadata +
-				", register=" + this.register +
-				", initialStatus=" + this.initialStatus +
-				", order=" + this.order +
-				'}';
+		return "ZookeeperDiscoveryProperties{" + "enabled=" + this.enabled + ", root='"
+				+ this.root + '\'' + ", uriSpec='" + this.uriSpec + '\''
+				+ ", instanceId='" + this.instanceId + '\'' + ", instanceHost='"
+				+ this.instanceHost + '\'' + ", instancePort='" + this.instancePort + '\''
+				+ ", instanceSslPort='" + this.instanceSslPort + '\'' + ", metadata="
+				+ this.metadata + ", register=" + this.register + ", initialStatus="
+				+ this.initialStatus + ", order=" + this.order + '}';
 	}
+
 }

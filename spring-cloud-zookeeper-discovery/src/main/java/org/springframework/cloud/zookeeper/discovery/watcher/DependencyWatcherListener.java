@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 /**
- * Performs logic upon change of state of a dependency {@link DependencyState}
- * in the service discovery system.
+ * Performs logic upon change of state of a dependency {@link DependencyState} in the
+ * service discovery system.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
- *
  * @see org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies
  */
 public interface DependencyWatcherListener {
 
 	/**
-	 * Method executed upon state change of a dependency
-	 *
+	 * Method executed upon state change of a dependency.
 	 * @param dependencyName - alias from microservice configuration
 	 * @param newState - new state of the dependency
 	 */
 	void stateChanged(String dependencyName, DependencyState newState);
+
 }

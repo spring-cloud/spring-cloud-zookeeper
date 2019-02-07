@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,11 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class ZookeeperInstance {
+
 	private String id;
+
 	private String name;
+
 	private Map<String, String> metadata = new HashMap<>();
 
 	@SuppressWarnings("unused")
@@ -66,9 +69,8 @@ public class ZookeeperInstance {
 
 	@Override
 	public String toString() {
-		return "ZookeeperInstance{" + "id='" + this.id + '\'' +
-				", name='" + this.name + '\'' +
-				", metadata=" + this.metadata +
-				'}';
+		return "ZookeeperInstance{" + "id='" + this.id + '\'' + ", name='" + this.name
+				+ '\'' + ", metadata=" + this.metadata + '}';
 	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import com.netflix.loadbalancer.RandomRule;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * LoadBalancer that delegates to other rules depending on the provided load balancing strategy
- * in the {@link ZookeeperDependency#getLoadBalancerType()}
+ * LoadBalancer that delegates to other rules depending on the provided load balancing
+ * strategy in the {@link ZookeeperDependency#getLoadBalancerType()}.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -46,7 +45,8 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 
 	private final ZookeeperDependencies zookeeperDependencies;
 
-	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies, ServerList<?> serverList, IClientConfig config, IPing iPing) {
+	public DependenciesBasedLoadBalancer(ZookeeperDependencies zookeeperDependencies,
+			ServerList<?> serverList, IClientConfig config, IPing iPing) {
 		super(config);
 		this.zookeeperDependencies = zookeeperDependencies;
 		setServersList(serverList.getInitialListOfServers());
@@ -59,17 +59,24 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 		String keyAsString;
 		if ("default".equals(key)) { // this is the default hint, use name instead
 			keyAsString = getName();
-		} else {
+		}
+		else {
 			keyAsString = (String) key;
 		}
-		ZookeeperDependency dependency = this.zookeeperDependencies.getDependencyForAlias(keyAsString);
-		log.debug(String.format("Current dependencies are [%s]", this.zookeeperDependencies));
+		ZookeeperDependency dependency = this.zookeeperDependencies
+				.getDependencyForAlias(keyAsString);
+		log.debug(String.format("Current dependencies are [%s]",
+				this.zookeeperDependencies));
 		if (dependency == null) {
-			log.debug(String.format("No dependency found for alias [%s] - will use the default rule which is [%s]", keyAsString, this.rule));
+			log.debug(String.format(
+					"No dependency found for alias [%s] - will use the default rule which is [%s]",
+					keyAsString, this.rule));
 			return this.rule.choose(key);
 		}
 		cacheEntryIfMissing(keyAsString, dependency);
-		log.debug(String.format("Will try to retrieve dependency for key [%s]. Current cache contents [%s]", keyAsString, this.ruleCache));
+		log.debug(String.format(
+				"Will try to retrieve dependency for key [%s]. Current cache contents [%s]",
+				keyAsString, this.ruleCache));
 		updateListOfServers();
 		return this.ruleCache.get(keyAsString).choose(key);
 	}
@@ -77,20 +84,21 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 	private void cacheEntryIfMissing(String keyAsString, ZookeeperDependency dependency) {
 		if (!this.ruleCache.containsKey(keyAsString)) {
 			log.debug(String.format("Cache doesn't contain entry for [%s]", keyAsString));
-			this.ruleCache.put(keyAsString, chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
+			this.ruleCache.put(keyAsString,
+					chooseRuleForLoadBalancerType(dependency.getLoadBalancerType()));
 		}
 	}
 
 	private IRule chooseRuleForLoadBalancerType(LoadBalancerType type) {
 		switch (type) {
-			case ROUND_ROBIN:
-				return getRoundRobinRule();
-			case RANDOM:
-				return getRandomRule();
-			case STICKY:
-				return getStickyRule();
-			default:
-				throw new IllegalArgumentException("Unknown load balancer type " + type);
+		case ROUND_ROBIN:
+			return getRoundRobinRule();
+		case RANDOM:
+			return getRandomRule();
+		case STICKY:
+			return getStickyRule();
+		default:
+			throw new IllegalArgumentException("Unknown load balancer type " + type);
 		}
 	}
 
@@ -109,4 +117,5 @@ public class DependenciesBasedLoadBalancer extends DynamicServerListLoadBalancer
 		stickyRule.setLoadBalancer(this);
 		return stickyRule;
 	}
+
 }

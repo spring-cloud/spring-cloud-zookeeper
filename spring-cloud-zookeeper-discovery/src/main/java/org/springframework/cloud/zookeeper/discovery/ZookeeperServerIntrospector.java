@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.util.Map;
+
 import com.netflix.loadbalancer.Server;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.netflix.ribbon.DefaultServerIntrospector;
 
-import java.util.Map;
+import org.springframework.cloud.netflix.ribbon.DefaultServerIntrospector;
 
 /**
  * @author Spencer Gibb
  */
 public class ZookeeperServerIntrospector extends DefaultServerIntrospector {
+
 	@Override
 	public boolean isSecure(Server server) {
 		if (server instanceof ZookeeperServer) {
@@ -47,4 +49,5 @@ public class ZookeeperServerIntrospector extends DefaultServerIntrospector {
 		}
 		return super.getMetadata(server);
 	}
+
 }

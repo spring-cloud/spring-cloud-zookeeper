@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import javax.annotation.PostConstruct;
 import java.io.Closeable;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +31,7 @@ import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.zookeeper.KeeperException;
+
 import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -39,20 +41,25 @@ import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NOD
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_UPDATED;
 
 /**
- * Class that registers a {@link TreeCache} for each context.
- * It publishes events upon element change in Zookeeper.
+ * Class that registers a {@link TreeCache} for each context. It publishes events upon
+ * element change in Zookeeper.
  *
  * @author Spencer Gibb
  * @since 1.0.0
  */
-public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationEventPublisherAware{
+public class ConfigWatcher
+		implements Closeable, TreeCacheListener, ApplicationEventPublisherAware {
 
 	private static final Log log = LogFactory.getLog(ConfigWatcher.class);
 
 	private AtomicBoolean running = new AtomicBoolean(false);
+
 	private List<String> contexts;
+
 	private CuratorFramework source;
+
 	private ApplicationEventPublisher publisher;
+
 	private HashMap<String, TreeCache> caches;
 
 	public ConfigWatcher(List<String> contexts, CuratorFramework source) {
@@ -80,9 +87,11 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 					this.caches.put(context, cache);
 					// no race condition since ZookeeperAutoConfiguration.curatorFramework
 					// calls curator.blockUntilConnected
-				} catch (KeeperException.NoNodeException e) {
+				}
+				catch (KeeperException.NoNodeException e) {
 					// no node, ignore
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					log.error("Error initializing listener for context " + context, e);
 				}
 			}
@@ -100,10 +109,13 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 	}
 
 	@Override
-	public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
+	public void childEvent(CuratorFramework client, TreeCacheEvent event)
+			throws Exception {
 		TreeCacheEvent.Type eventType = event.getType();
-		if (eventType == NODE_ADDED || eventType == NODE_REMOVED || eventType == NODE_UPDATED) {
-			this.publisher.publishEvent(new RefreshEvent(this, event, getEventDesc(event)));
+		if (eventType == NODE_ADDED || eventType == NODE_REMOVED
+				|| eventType == NODE_UPDATED) {
+			this.publisher
+					.publishEvent(new RefreshEvent(this, event, getEventDesc(event)));
 		}
 	}
 
@@ -117,4 +129,5 @@ public class ConfigWatcher implements Closeable, TreeCacheListener, ApplicationE
 		}
 		return out.toString();
 	}
+
 }

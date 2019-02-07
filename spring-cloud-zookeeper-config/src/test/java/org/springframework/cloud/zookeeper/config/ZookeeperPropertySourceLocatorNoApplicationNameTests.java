@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ package org.springframework.cloud.zookeeper.config;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.mock.env.MockEnvironment;
 
 import static org.mockito.Mockito.mock;
@@ -36,7 +34,9 @@ public class ZookeeperPropertySourceLocatorNoApplicationNameTests {
 	public void defaultSpringApplicationNameWorks() {
 		CuratorFramework curator = mock(CuratorFramework.class);
 		when(curator.getChildren()).thenReturn(mock(GetChildrenBuilder.class));
-		ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(curator, new ZookeeperConfigProperties());
+		ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(
+				curator, new ZookeeperConfigProperties());
 		locator.locate(new MockEnvironment());
 	}
+
 }

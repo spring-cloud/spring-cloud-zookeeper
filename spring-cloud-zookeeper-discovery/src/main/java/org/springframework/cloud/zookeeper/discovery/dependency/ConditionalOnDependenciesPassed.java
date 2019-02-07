@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,15 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Conditional;
 
 /**
- * Annotation to turn on a feature if Zookeeper dependencies have been passed. 
- * Also checks if switch for zookeeper dependencies is turned on.
+ * Annotation to turn on a feature if Zookeeper dependencies have been passed. Also checks
+ * if switch for zookeeper dependencies is turned on.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Conditional(DependenciesPassedCondition.class)
 public @interface ConditionalOnDependenciesPassed {
+
 }

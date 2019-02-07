@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.io.IOException;
@@ -26,7 +27,9 @@ import org.apache.curator.x.discovery.UriSpec;
 public class TestServiceRegistrar {
 
 	private final int serverPort;
+
 	private final CuratorFramework curatorFramework;
+
 	private final ServiceDiscovery serviceDiscovery;
 
 	public TestServiceRegistrar(int serverPort, CuratorFramework curatorFramework) {
@@ -38,32 +41,28 @@ public class TestServiceRegistrar {
 	public void start() {
 		try {
 			this.serviceDiscovery.start();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public ServiceInstance serviceInstance() {
 		try {
-			return ServiceInstance.builder().uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
-					.address("localhost")
-					.port(this.serverPort)
-					.name("testInstance")
+			return ServiceInstance.builder()
+					.uriSpec(new UriSpec("{scheme}://{address}:{port}/"))
+					.address("localhost").port(this.serverPort).name("testInstance")
 					.build();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public ServiceDiscovery serviceDiscovery() {
-		return ServiceDiscoveryBuilder
-				.builder(Void.class)
-				.basePath("/services")
-				.client(this.curatorFramework)
-				.thisInstance(serviceInstance())
-				.build();
+		return ServiceDiscoveryBuilder.builder(Void.class).basePath("/services")
+				.client(this.curatorFramework).thisInstance(serviceInstance()).build();
 	}
-
 
 	public void stop() {
 		try {
@@ -73,4 +72,5 @@ public class TestServiceRegistrar {
 			throw new RuntimeException(e);
 		}
 	}
+
 }

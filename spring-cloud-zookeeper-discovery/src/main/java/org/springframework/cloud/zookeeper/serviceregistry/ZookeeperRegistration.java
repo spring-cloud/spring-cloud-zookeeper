@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.serviceregistry;
 
 import org.apache.curator.x.discovery.ServiceInstance;
+
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 
@@ -28,4 +29,5 @@ public interface ZookeeperRegistration extends Registration {
 	ServiceInstance<ZookeeperInstance> getServiceInstance();
 
 	void setPort(int port);
+
 }

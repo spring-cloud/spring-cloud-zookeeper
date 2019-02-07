@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.io.IOException;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
+
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -36,8 +37,8 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 /**
  * @author Spencer Gibb
  */
-public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegistration>, SmartInitializingSingleton,
-		Closeable {
+public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegistration>,
+		SmartInitializingSingleton, Closeable {
 
 	// private AtomicBoolean started = new AtomicBoolean();
 
@@ -48,24 +49,28 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	// protected InstanceSerializer<ZookeeperInstance> instanceSerializer;
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
-	public ZookeeperServiceRegistry(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
+	public ZookeeperServiceRegistry(
+			ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
 		this.serviceDiscovery = serviceDiscovery;
 	}
 
 	/**
-	 * TODO: add when ZookeeperServiceDiscovery is removed
-	 * One can override this method to provide custom way of registering {@link ServiceDiscovery}
+	 * TODO: add when ZookeeperServiceDiscovery is removed One can override this method to
+	 * provide custom way of registering {@link ServiceDiscovery}
 	 */
-	/*private void configureServiceDiscovery() {
-		this.zookeeperServiceDiscovery.configureServiceDiscovery(this.zookeeperServiceDiscovery.getServiceDiscoveryRef(),
-				this.curator, this.properties, this.instanceSerializer, this.zookeeperServiceDiscovery.getServiceInstanceRef());
-	}*/
+	/*
+	 * private void configureServiceDiscovery() {
+	 * this.zookeeperServiceDiscovery.configureServiceDiscovery(this.
+	 * zookeeperServiceDiscovery.getServiceDiscoveryRef(), this.curator, this.properties,
+	 * this.instanceSerializer, this.zookeeperServiceDiscovery.getServiceInstanceRef()); }
+	 */
 
 	@Override
 	public void register(ZookeeperRegistration registration) {
 		try {
 			getServiceDiscovery().registerService(registration.getServiceInstance());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			rethrowRuntimeException(e);
 		}
 	}
@@ -78,7 +83,8 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	public void deregister(ZookeeperRegistration registration) {
 		try {
 			getServiceDiscovery().unregisterService(registration.getServiceInstance());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			rethrowRuntimeException(e);
 		}
 	}
@@ -87,7 +93,8 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	public void afterSingletonsInstantiated() {
 		try {
 			getServiceDiscovery().start();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			rethrowRuntimeException(e);
 		}
 	}
@@ -96,19 +103,22 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 	public void close() {
 		try {
 			getServiceDiscovery().close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			rethrowRuntimeException(e);
 		}
 	}
 
 	@Override
 	public void setStatus(ZookeeperRegistration registration, String status) {
-		ServiceInstance<ZookeeperInstance> serviceInstance = registration.getServiceInstance();
+		ServiceInstance<ZookeeperInstance> serviceInstance = registration
+				.getServiceInstance();
 		ZookeeperInstance instance = serviceInstance.getPayload();
 		instance.getMetadata().put(INSTANCE_STATUS_KEY, status);
 		try {
 			getServiceDiscovery().updateService(serviceInstance);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
 		}
 	}
@@ -129,7 +139,10 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 		return this.curator;
 	}
 
-	/*protected AtomicReference<ServiceDiscovery<ZookeeperInstance>> getServiceDiscoveryRef() {
-		return this.zookeeperServiceDiscovery.getServiceDiscoveryRef();
-	}*/
+	/*
+	 * protected AtomicReference<ServiceDiscovery<ZookeeperInstance>>
+	 * getServiceDiscoveryRef() { return
+	 * this.zookeeperServiceDiscovery.getServiceDiscoveryRef(); }
+	 */
+
 }

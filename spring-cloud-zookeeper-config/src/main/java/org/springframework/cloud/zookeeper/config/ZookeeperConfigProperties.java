@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,27 +26,27 @@ import org.springframework.validation.annotation.Validated;
  *
  * @author Spencer Gibb
  * @since 1.0.0
- *
  * @see ZookeeperPropertySourceLocator
  */
 @Validated
 @ConfigurationProperties("spring.cloud.zookeeper.config")
 public class ZookeeperConfigProperties {
+
 	private boolean enabled = true;
 
 	/**
-	 * Root folder where the configuration for Zookeeper is kept
+	 * Root folder where the configuration for Zookeeper is kept.
 	 */
 	private String root = "config";
 
 	/**
-	 * The name of the default context
+	 * The name of the default context.
 	 */
 	@NotEmpty
 	private String defaultContext = "application";
 
 	/**
-	 * Separator for profile appended to the application name
+	 * Separator for profile appended to the application name.
 	 */
 	@NotEmpty
 	private String profileSeparator = ",";
@@ -94,4 +95,5 @@ public class ZookeeperConfigProperties {
 	public void setFailFast(boolean failFast) {
 		this.failFast = failFast;
 	}
+
 }

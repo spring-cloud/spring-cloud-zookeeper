@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
@@ -38,8 +39,11 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 			.getLog(ZookeeperDiscoveryHealthIndicator.class);
 
 	private CuratorFramework curatorFramework;
+
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+
 	private final ZookeeperDependencies zookeeperDependencies;
+
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
 	public ZookeeperDiscoveryHealthIndicator(CuratorFramework curatorFramework,
@@ -61,10 +65,9 @@ public class ZookeeperDiscoveryHealthIndicator implements DiscoveryHealthIndicat
 	public Health health() {
 		Health.Builder builder = Health.unknown();
 		try {
-			Iterable<ServiceInstance<ZookeeperInstance>> allInstances =
-					new ZookeeperServiceInstances(this.curatorFramework,
-						this.serviceDiscovery, this.zookeeperDependencies,
-						this.zookeeperDiscoveryProperties);
+			Iterable<ServiceInstance<ZookeeperInstance>> allInstances = new ZookeeperServiceInstances(
+					this.curatorFramework, this.serviceDiscovery,
+					this.zookeeperDependencies, this.zookeeperDiscoveryProperties);
 			builder.up().withDetail("services", allInstances);
 		}
 		catch (Exception e) {

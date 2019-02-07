@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import com.netflix.loadbalancer.Server;
 import org.apache.curator.x.discovery.ServiceInstance;
 
-import com.netflix.loadbalancer.Server;
-
 /**
- * A Zookeeper version of a {@link Server Ribbon Server}
+ * A Zookeeper version of a {@link Server Ribbon Server}.
  *
  * @author Spencer Gibb
  * @since 1.0.0
@@ -29,6 +28,7 @@ import com.netflix.loadbalancer.Server;
 public class ZookeeperServer extends Server {
 
 	private final MetaInfo metaInfo;
+
 	private ServiceInstance<ZookeeperInstance> instance;
 
 	public ZookeeperServer(final ServiceInstance<ZookeeperInstance> instance) {
@@ -66,4 +66,5 @@ public class ZookeeperServer extends Server {
 	public ServiceInstance<ZookeeperInstance> getInstance() {
 		return this.instance;
 	}
+
 }

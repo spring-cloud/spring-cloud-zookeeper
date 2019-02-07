@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.springframework.cloud.zookeeper;
 
-import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
+
+import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Properties related to connecting to Zookeeper
+ * Properties related to connecting to Zookeeper.
  *
  * @author Spencer Gibb
  * @since 1.0.0
@@ -33,38 +34,38 @@ import org.springframework.validation.annotation.Validated;
 public class ZookeeperProperties {
 
 	/**
-	 * Connection string to the Zookeeper cluster
+	 * Connection string to the Zookeeper cluster.
 	 */
 	@NotNull
 	private String connectString = "localhost:2181";
 
 	/**
-	 * Is Zookeeper enabled
+	 * Is Zookeeper enabled.
 	 */
 	private boolean enabled = true;
 
 	/**
-	 * Initial amount of time to wait between retries
+	 * Initial amount of time to wait between retries.
 	 */
 	private Integer baseSleepTimeMs = 50;
 
 	/**
-	 * Max number of times to retry
+	 * Max number of times to retry.
 	 */
 	private Integer maxRetries = 10;
 
 	/**
-	 * Max time in ms to sleep on each retry
+	 * Max time in ms to sleep on each retry.
 	 */
 	private Integer maxSleepMs = 500;
 
 	/**
-	 * Wait time to block on connection to Zookeeper
+	 * Wait time to block on connection to Zookeeper.
 	 */
 	private Integer blockUntilConnectedWait = 10;
 
 	/**
-	 * The unit of time related to blocking on connection to Zookeeper
+	 * The unit of time related to blocking on connection to Zookeeper.
 	 */
 	private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
 
@@ -123,4 +124,5 @@ public class ZookeeperProperties {
 	public void setBlockUntilConnectedUnit(TimeUnit blockUntilConnectedUnit) {
 		this.blockUntilConnectedUnit = blockUntilConnectedUnit;
 	}
+
 }

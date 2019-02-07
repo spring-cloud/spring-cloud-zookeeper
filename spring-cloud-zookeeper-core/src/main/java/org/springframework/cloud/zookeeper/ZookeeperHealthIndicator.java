@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
+
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -29,6 +30,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 1.0.0
  */
 public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
+
 	private final CuratorFramework curator;
 
 	public ZookeeperHealthIndicator(CuratorFramework curator) {
@@ -56,4 +58,5 @@ public class ZookeeperHealthIndicator extends AbstractHealthIndicator {
 			builder.down(e);
 		}
 	}
+
 }

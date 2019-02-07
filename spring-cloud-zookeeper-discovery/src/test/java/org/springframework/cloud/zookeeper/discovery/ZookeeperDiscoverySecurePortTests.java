@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -42,13 +43,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * @author Marcin Grzejszczak
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ZookeeperDiscoverySecurePortTests.Config.class,
-		properties = {
-			"feign.hystrix.enabled=false",
-			"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath",
-			"spring.cloud.zookeeper.discovery.instance-ssl-port=8443",
-		},
-		webEnvironment = RANDOM_PORT)
+@SpringBootTest(classes = ZookeeperDiscoverySecurePortTests.Config.class, properties = {
+		"feign.hystrix.enabled=false",
+		"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath",
+		"spring.cloud.zookeeper.discovery.instance-ssl-port=8443" }, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
 @DirtiesContext
 public class ZookeeperDiscoverySecurePortTests {
@@ -67,10 +65,12 @@ public class ZookeeperDiscoverySecurePortTests {
 
 	@Test
 	public void zookeeperServerIntrospectorWorks() {
-		ServerIntrospector serverIntrospector = this.clientFactory.getInstance(springAppName, ServerIntrospector.class);
+		ServerIntrospector serverIntrospector = this.clientFactory
+				.getInstance(springAppName, ServerIntrospector.class);
 		then(serverIntrospector).isInstanceOf(ZookeeperServerIntrospector.class);
 
-		ZookeeperServer zookeeperServer = new ZookeeperServer(this.zookeeperRegistration.getServiceInstance());
+		ZookeeperServer zookeeperServer = new ZookeeperServer(
+				this.zookeeperRegistration.getServiceInstance());
 		then(serverIntrospector.isSecure(zookeeperServer)).isTrue();
 	}
 
@@ -82,7 +82,8 @@ public class ZookeeperDiscoverySecurePortTests {
 
 	@Test
 	public void shouldSetServiceInstanceSslPort() {
-		then(this.zookeeperRegistration.getServiceInstance().getSslPort()).isEqualTo(8443);
+		then(this.zookeeperRegistration.getServiceInstance().getSslPort())
+				.isEqualTo(8443);
 	}
 
 	@Configuration
@@ -90,6 +91,7 @@ public class ZookeeperDiscoverySecurePortTests {
 	@Import(CommonTestConfig.class)
 	@Profile("ribbon")
 	static class Config {
+
 	}
 
 }

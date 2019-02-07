@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration}
- * that sets up Ribbon for Zookeeper.
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * Auto-configuration} that sets up Ribbon for Zookeeper.
  *
  * @author Dave Syer
  * @since 1.0.0
@@ -40,4 +40,5 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
 @RibbonClients(defaultConfiguration = ZookeeperRibbonClientConfiguration.class)
 public class RibbonZookeeperAutoConfiguration {
+
 }

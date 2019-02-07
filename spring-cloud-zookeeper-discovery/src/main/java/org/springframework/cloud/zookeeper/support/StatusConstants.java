@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,31 @@
 
 package org.springframework.cloud.zookeeper.support;
 
+import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
+
 /**
  * @author Spencer Gibb
  */
-public interface StatusConstants {
+public final class StatusConstants {
+
+	private StatusConstants() {
+	}
+
 	/**
-	 * Key to the {@link org.springframework.cloud.zookeeper.discovery.ZookeeperInstance#metadata} map.
+	 * Key to the
+	 * {@link ZookeeperInstance#getMetadata()}
+	 * map.
 	 */
-	String INSTANCE_STATUS_KEY = "instance_status";
+	public static final String INSTANCE_STATUS_KEY = "instance_status";
 
 	/**
 	 * UP value for {@link StatusConstants#INSTANCE_STATUS_KEY} key.
 	 */
-	String STATUS_UP = "UP";
+	public static final String STATUS_UP = "UP";
 
 	/**
 	 * OUT_OF_SERVICE value for {@link StatusConstants#INSTANCE_STATUS_KEY} key.
 	 */
-	String STATUS_OUT_OF_SERVICE = "OUT_OF_SERVICE";
+	public static final String STATUS_OUT_OF_SERVICE = "OUT_OF_SERVICE";
+
 }

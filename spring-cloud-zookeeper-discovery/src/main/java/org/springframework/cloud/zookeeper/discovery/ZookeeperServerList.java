@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
-import org.springframework.util.StringUtils;
-
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceInstance;
+
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
+import org.springframework.util.StringUtils;
 
 import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTANCE_STATUS_KEY;
 import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 /**
- * Zookeeper version of {@link AbstractServerList} that returns the list of
- * servers on which instances are ran. The implementation is capable of resolving
- * the servers from {@link ZookeeperDependencies}.
+ * Zookeeper version of {@link AbstractServerList} that returns the list of servers on
+ * which instances are ran. The implementation is capable of resolving the servers from
+ * {@link ZookeeperDependencies}.
  *
  * @author Spencer Gibb
  * @author Marcin Grzejszczak
@@ -45,6 +45,7 @@ import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 
 	private String serviceId;
+
 	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
 	public ZookeeperServerList(ServiceDiscovery<ZookeeperInstance> serviceDiscovery) {
@@ -56,13 +57,18 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 		this.serviceId = clientConfig.getClientName();
 	}
 
-	public void initFromDependencies(IClientConfig clientConfig, ZookeeperDependencies zookeeperDependencies) {
-		this.serviceId = getServiceIdFromDepsOrClientName(clientConfig, zookeeperDependencies);
+	public void initFromDependencies(IClientConfig clientConfig,
+			ZookeeperDependencies zookeeperDependencies) {
+		this.serviceId = getServiceIdFromDepsOrClientName(clientConfig,
+				zookeeperDependencies);
 	}
 
-	private String getServiceIdFromDepsOrClientName(IClientConfig clientConfig, ZookeeperDependencies zookeeperDependencies) {
-		String serviceIdFromDeps = zookeeperDependencies.getPathForAlias(clientConfig.getClientName());
-		return StringUtils.hasText(serviceIdFromDeps) ? serviceIdFromDeps : clientConfig.getClientName();
+	private String getServiceIdFromDepsOrClientName(IClientConfig clientConfig,
+			ZookeeperDependencies zookeeperDependencies) {
+		String serviceIdFromDeps = zookeeperDependencies
+				.getPathForAlias(clientConfig.getClientName());
+		return StringUtils.hasText(serviceIdFromDeps) ? serviceIdFromDeps
+				: clientConfig.getClientName();
 	}
 
 	@Override
@@ -89,8 +95,10 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 			List<ZookeeperServer> servers = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : instances) {
 				String instanceStatus = null;
-				if (instance.getPayload() != null && instance.getPayload().getMetadata() != null) {
-					instanceStatus = instance.getPayload().getMetadata().get(INSTANCE_STATUS_KEY);
+				if (instance.getPayload() != null
+						&& instance.getPayload().getMetadata() != null) {
+					instanceStatus = instance.getPayload().getMetadata()
+							.get(INSTANCE_STATUS_KEY);
 				}
 				if (!StringUtils.hasText(instanceStatus) // backwards compatibility
 						|| instanceStatus.equalsIgnoreCase(STATUS_UP)) {
@@ -104,4 +112,5 @@ public class ZookeeperServerList extends AbstractServerList<ZookeeperServer> {
 		}
 		return Collections.EMPTY_LIST;
 	}
+
 }

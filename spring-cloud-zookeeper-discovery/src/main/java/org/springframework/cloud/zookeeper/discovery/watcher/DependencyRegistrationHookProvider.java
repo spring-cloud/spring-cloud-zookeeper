@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.zookeeper.discovery.watcher;
 
 import java.io.IOException;
 
 /**
- * Implementations of this interface are required to register dependency registration hooks
- * on startup and their cleaning upon application context shutdown.
+ * Implementations of this interface are required to register dependency registration
+ * hooks on startup and their cleaning upon application context shutdown.
  *
  * @author Marcin Grzejszczak
  * @since 1.0.0
@@ -27,16 +28,14 @@ import java.io.IOException;
 public interface DependencyRegistrationHookProvider {
 
 	/**
-	 * Register hooks upon dependencies registration
-	 *
-	 * @throws Exception
+	 * Register hooks upon dependencies registration.
+	 * @throws Exception if registration fails.
 	 */
 	void registerDependencyRegistrationHooks() throws Exception;
 
 	/**
-	 * Unregister hooks upon dependencies registration
-	 *
-	 * @throws IOException
+	 * Unregister hooks upon dependencies registration.
+	 * @throws IOException if clearing fails.
 	 */
 	void clearDependencyRegistrationHooks() throws IOException;
 

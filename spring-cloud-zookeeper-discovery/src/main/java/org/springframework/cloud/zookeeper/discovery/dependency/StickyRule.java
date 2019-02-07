@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,9 +36,13 @@ import org.apache.commons.logging.LogFactory;
  * @since 1.0.0
  */
 public class StickyRule extends AbstractLoadBalancerRule {
+
 	private static final Log log = LogFactory.getLog(StickyRule.class);
+
 	private final IRule masterStrategy;
+
 	private final AtomicReference<Server> ourInstance = new AtomicReference<>(null);
+
 	private final AtomicInteger instanceNumber = new AtomicInteger(-1);
 
 	public StickyRule(IRule masterStrategy) {
@@ -70,10 +73,10 @@ public class StickyRule extends AbstractLoadBalancerRule {
 	}
 
 	/**
-	 * Each time a new instance is picked, an internal counter is incremented. This way you
-	 * can track when/if the instance changes. The instance can change when the selected instance
-	 * is not in the current list of instances returned by the instance provider
-	 *
+	 * Each time a new instance is picked, an internal counter is incremented. This way
+	 * you can track when/if the instance changes. The instance can change when the
+	 * selected instance is not in the current list of instances returned by the instance
+	 * provider
 	 * @return instance number
 	 */
 	public int getInstanceNumber() {

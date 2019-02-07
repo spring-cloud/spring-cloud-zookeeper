@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,9 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	private static final Log log = LogFactory.getLog(ZookeeperDiscoveryClient.class);
 
 	private final ZookeeperDependencies zookeeperDependencies;
+
 	private final ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
 	public ZookeeperDiscoveryClient(ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
@@ -62,7 +64,8 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		return "Spring Cloud Zookeeper Discovery Client";
 	}
 
-	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
+	private static org.springframework.cloud.client.ServiceInstance createServiceInstance(
+			String serviceId, ServiceInstance<ZookeeperInstance> serviceInstance) {
 		return new ZookeeperServiceInstance(serviceId, serviceInstance);
 	}
 
@@ -74,19 +77,24 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 				return Collections.EMPTY_LIST;
 			}
 			String serviceIdToQuery = getServiceIdToQuery(serviceId);
-			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = getServiceDiscovery().queryForInstances(serviceIdToQuery);
+			Collection<ServiceInstance<ZookeeperInstance>> zkInstances = getServiceDiscovery()
+					.queryForInstances(serviceIdToQuery);
 			List<org.springframework.cloud.client.ServiceInstance> instances = new ArrayList<>();
 			for (ServiceInstance<ZookeeperInstance> instance : zkInstances) {
 				instances.add(createServiceInstance(serviceIdToQuery, instance));
 			}
 			return instances;
-		} catch (KeeperException.NoNodeException e) {
+		}
+		catch (KeeperException.NoNodeException e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting instances from zookeeper. Possibly, no service has registered.", e);
+				log.debug(
+						"Error getting instances from zookeeper. Possibly, no service has registered.",
+						e);
 			}
 			// this means that nothing has registered as a service yes
 			return Collections.emptyList();
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			rethrowRuntimeException(exception);
 		}
 		return new ArrayList<>();
@@ -97,7 +105,8 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	}
 
 	private String getServiceIdToQuery(String serviceId) {
-		if (this.zookeeperDependencies != null && this.zookeeperDependencies.hasDependencies()) {
+		if (this.zookeeperDependencies != null
+				&& this.zookeeperDependencies.hasDependencies()) {
 			String pathForAlias = this.zookeeperDependencies.getPathForAlias(serviceId);
 			return pathForAlias.isEmpty() ? serviceId : pathForAlias;
 		}
@@ -108,7 +117,8 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	public List<String> getServices() {
 		List<String> services = null;
 		if (getServiceDiscovery() == null) {
-			log.warn("Service Discovery is not yet ready - returning empty list of services");
+			log.warn(
+					"Service Discovery is not yet ready - returning empty list of services");
 			return Collections.emptyList();
 		}
 		try {
@@ -120,7 +130,9 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 		}
 		catch (KeeperException.NoNodeException e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting services from zookeeper. Possibly, no service has registered.", e);
+				log.debug(
+						"Error getting services from zookeeper. Possibly, no service has registered.",
+						e);
 			}
 			// this means that nothing has registered as a service yes
 			return Collections.emptyList();
@@ -135,4 +147,5 @@ public class ZookeeperDiscoveryClient implements DiscoveryClient {
 	public int getOrder() {
 		return this.zookeeperDiscoveryProperties.getOrder();
 	}
+
 }

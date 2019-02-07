@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.zookeeper.discovery;
 
 import java.util.ArrayList;
@@ -10,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
+
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.sanitize;
@@ -19,6 +36,7 @@ import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.
  * {@link ZookeeperDependencies} it will return a list of registered Zookeeper instances
  * corresponding to the ones defined in the dependencies.
  *
+ * @author Marcin Grzejszczak
  * @since 1.0.0
  */
 public class ZookeeperServiceInstances
@@ -27,9 +45,13 @@ public class ZookeeperServiceInstances
 	private static final Log log = LogFactory.getLog(ZookeeperServiceInstances.class);
 
 	private ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+
 	private final ZookeeperDependencies zookeeperDependencies;
+
 	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
+
 	private final List<ServiceInstance<ZookeeperInstance>> allInstances;
+
 	private final CuratorFramework curator;
 
 	public ZookeeperServiceInstances(CuratorFramework curator,
@@ -74,9 +96,11 @@ public class ZookeeperServiceInstances
 		try {
 			List<String> children = this.curator.getChildren().forPath(parentPath);
 			return iterateOverChildren(accumulator, parentPath, children);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (log.isTraceEnabled()) {
-				log.trace("Exception occurred while trying to retrieve children of [" + parentPath + "]", e);
+				log.trace("Exception occurred while trying to retrieve children of ["
+						+ parentPath + "]", e);
 			}
 			return injectZookeeperServiceInstances(accumulator, parentPath);
 		}
@@ -90,8 +114,7 @@ public class ZookeeperServiceInstances
 	private Collection<ServiceInstance<ZookeeperInstance>> tryToGetInstances(
 			String path) {
 		try {
-			return getServiceDiscovery()
-					.queryForInstances(getPathWithoutRoot(path));
+			return getServiceDiscovery().queryForInstances(getPathWithoutRoot(path));
 		}
 		catch (Exception e) {
 			log.trace("Exception occurred while trying to retrieve instances of [" + path
@@ -111,7 +134,8 @@ public class ZookeeperServiceInstances
 	private List<ServiceInstance<ZookeeperInstance>> injectZookeeperServiceInstances(
 			List<ServiceInstance<ZookeeperInstance>> accumulator, String name)
 			throws Exception {
-		Collection<ServiceInstance<ZookeeperInstance>> instances = getServiceDiscovery().queryForInstances(name);
+		Collection<ServiceInstance<ZookeeperInstance>> instances = getServiceDiscovery()
+				.queryForInstances(name);
 		accumulator.addAll(convertCollectionToList(instances));
 		return accumulator;
 	}
