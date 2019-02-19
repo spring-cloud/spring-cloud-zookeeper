@@ -229,11 +229,11 @@
 
 	<properties>
 		<checkstyle.version>2.17</checkstyle.version>
-		<spring-cloud-build.version>2.0.2.RELEASE</spring-cloud-build.version>
-		<spring-cloud-commons.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-config.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-config.version>
-		<spring-cloud-netflix.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-openfeign.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-openfeign.version>
+		<spring-cloud-build.version>2.0.4.RELEASE</spring-cloud-build.version>
+		<spring-cloud-commons.version>2.0.3.BUILD-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-config.version>2.0.3.BUILD-SNAPSHOT</spring-cloud-config.version>
+		<spring-cloud-netflix.version>2.0.3.BUILD-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-openfeign.version>2.0.3.BUILD-SNAPSHOT</spring-cloud-openfeign.version>
 	</properties>
 
 	<profiles>
