@@ -15,3 +15,4 @@ _site/
 *.log
 .checkstyle
 .DS_Store
+.vscode/
