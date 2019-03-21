@@ -86,7 +86,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 							then(bean.discoveryClient.getInstances("hello-world"))
 									.isNotEmpty();
 							String string = bean.restTemplate
-									.getForObject("https://hello-world/", String.class);
+									.getForObject("http://hello-world/", String.class);
 							then(string).isEqualTo("foo");
 						}
 						catch (IllegalStateException e) {
