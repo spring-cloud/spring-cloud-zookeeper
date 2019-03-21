@@ -6,8 +6,8 @@ include::intro.adoc[]
 
 ZooKeeper is a centralized service for maintaining configuration information, naming,
 providing distributed synchronization, and providing group services. See the
-http://zookeeper.apache.org[Zookeeper site] for more information. Spring Cloud Zookeeper
-also builds on the http://curator.apache.org[Apache Curator] project, which started life
+https://zookeeper.apache.org[Zookeeper site] for more information. Spring Cloud Zookeeper
+also builds on the https://curator.apache.org[Apache Curator] project, which started life
 at Netflix.
 
 == Spring Cloud Zookeeper Features
@@ -19,11 +19,11 @@ Spring Cloud Zookeeper includes the following features:
 
 == Running the Sample
 
-. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_Download[Install
+. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_Download[Install
 zookeeper] (On a mac with homebrew, use `brew install zookeeper`).
-. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_InstallingSingleMode[Start
+. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_InstallingSingleMode[Start
 zookeeper].
-. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_ConnectingToZooKeeper[Verify
+. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_ConnectingToZooKeeper[Verify
 zookeeper is running].
 . Run `mvn --settings .settings.xml package`.
 Doing so brings in the required Spring Cloud Maven repositories and Build.
