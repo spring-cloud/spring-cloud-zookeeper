@@ -36,7 +36,7 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * Zookeeper provides a <a href=
- * "http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical
+ * "https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical
  * namespace</a> that allows clients to store arbitrary data, such as configuration data.
  * Spring Cloud Zookeeper Config is an alternative to the
  * <a href="https://github.com/spring-cloud/spring-cloud-config">Config Server and
