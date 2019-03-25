@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?asciidoc-toc?>
 <?asciidoc-numbered?>
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<book xmlns="https://docbook.org/ns/docbook" xmlns:xl="https://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Zookeeper</title>
 <date>2019-03-08</date>
@@ -18,7 +18,7 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 </preface>
 <chapter xml:id="spring-cloud-zookeeper-install">
 <title>Install Zookeeper</title>
-<simpara>See the <link xl:href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation
+<simpara>See the <link xl:href="https://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation
 documentation</link> for instructions on how to install Zookeeper.</simpara>
 <simpara>Spring Cloud Zookeeper uses Apache Curator behind the scenes.
 While Zookeeper 3.5.x is still considered "beta" by the Zookeeper development team,
@@ -71,8 +71,8 @@ compile('org.apache.zookeeper:zookeeper:3.4.12') {
 <title>Service Discovery with Zookeeper</title>
 <simpara>Service Discovery is one of the key tenets of a microservice based architecture. Trying to
 hand-configure each client or some form of convention can be difficult to do and can be
-brittle. <link xl:href="http://curator.apache.org">Curator</link>(A Java library for Zookeeper) provides Service
-Discovery through a <link xl:href="http://curator.apache.org/curator-x-discovery/">Service Discovery
+brittle. <link xl:href="https://curator.apache.org">Curator</link>(A Java library for Zookeeper) provides Service
+Discovery through a <link xl:href="https://curator.apache.org/curator-x-discovery/">Service Discovery
 Extension</link>. Spring Cloud Zookeeper uses this extension for service registration and
 discovery.</simpara>
 <section xml:id="_activating">
@@ -200,7 +200,7 @@ filters out all non-null instance statuses that do not equal <literal>UP</litera
 field is empty, it is considered to be <literal>UP</literal> for backwards compatibility. To change the
 status of an instance, make a <literal>POST</literal> with <literal>OUT_OF_SERVICE</literal> to the <literal>ServiceRegistry</literal>
 instance status actuator endpoint, as shown in the following example:</simpara>
-<programlisting language="sh" linenumbering="unnumbered">$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE</programlisting>
+<programlisting language="sh" linenumbering="unnumbered">$ http POST https://localhost:8081/service-registry status=OUT_OF_SERVICE</programlisting>
 <note>
 <simpara>The preceding example uses the <literal>http</literal> command from <link xl:href="https://httpie.org">https://httpie.org</link>.</simpara>
 </note>
@@ -464,7 +464,7 @@ overridden.</simpara>
 <chapter xml:id="spring-cloud-zookeeper-config">
 <title>Distributed Configuration with Zookeeper</title>
 <simpara>Zookeeper provides a
-<link xl:href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link>
+<link xl:href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link>
 that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
 Config is an alternative to the
 <link xl:href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</link>.

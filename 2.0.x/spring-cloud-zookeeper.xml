@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?asciidoc-toc?>
 <?asciidoc-numbered?>
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<book xmlns="https://docbook.org/ns/docbook" xmlns:xl="https://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
 <title>Spring Cloud Zookeeper</title>
 <date>2017-11-28</date>
@@ -18,11 +18,11 @@ Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon), Circuit Brea
 </preface>
 <chapter xml:id="spring-cloud-zookeeper-install">
 <title>Install Zookeeper</title>
-<simpara>Please see the <link xl:href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation documentation</link> for instructions on how to install Zookeeper.</simpara>
+<simpara>Please see the <link xl:href="https://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation documentation</link> for instructions on how to install Zookeeper.</simpara>
 </chapter>
 <chapter xml:id="spring-cloud-zookeeper-discovery">
 <title>Service Discovery with Zookeeper</title>
-<simpara>Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. <link xl:href="http://curator.apache.org">Curator</link>(A java library for Zookeeper) provides Service Discovery services via <link xl:href="http://curator.apache.org/curator-x-discovery/">Service Discovery Extension</link>. Spring Cloud Zookeeper leverages this extension for service registration and discovery.</simpara>
+<simpara>Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. <link xl:href="https://curator.apache.org">Curator</link>(A java library for Zookeeper) provides Service Discovery services via <link xl:href="https://curator.apache.org/curator-x-discovery/">Service Discovery Extension</link>. Spring Cloud Zookeeper leverages this extension for service registration and discovery.</simpara>
 <section xml:id="_how_to_activate">
 <title>How to activate</title>
 <simpara>Including a dependency on <literal>org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</literal> will enable auto-configuration that will setup Spring Cloud Zookeeper Discovery.</simpara>
@@ -109,7 +109,7 @@ public void registerThings() {
 <title>Instance Status</title>
 <simpara>Netflix Eureka supports having instances registered with the server that are <literal>OUT_OF_SERVICE</literal> and not returned as active service instances. This is very useful for behaviors such as blue/green deployments. The Curator Service Discovery recipe does not support this behavior. Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement <literal>OUT_OF_SERVICE</literal> by updating some specific metadata and then filtering on that metadata in the Ribbon <literal>ZookeeperServerList</literal>. The <literal>ZookeeperServerList</literal> filters out all non-null instance statuses that do not equal <literal>UP</literal>. If the instance status field is empty, it is considered <literal>UP</literal> for backwards compatibility. To change the status of an instance POST <literal>OUT_OF_SERVICE</literal> to the <literal>ServiceRegistry</literal> instance status actuator endpoint.</simpara>
 <literallayout class="monospaced">----
-$ echo -n OUT_OF_SERVICE | http POST http://localhost:8081/service-registry/instance-status
+$ echo -n OUT_OF_SERVICE | http POST https://localhost:8081/service-registry/instance-status
 ----</literallayout>
 <literallayout class="monospaced">NOTE: The above example uses the `http` command from https://httpie.org</literallayout>
 </section>
@@ -318,7 +318,7 @@ of your dependencies.</simpara>
 </chapter>
 <chapter xml:id="spring-cloud-zookeeper-config">
 <title>Distributed Configuration with Zookeeper</title>
-<simpara>Zookeeper provides a <link xl:href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link> that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the <link xl:href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</link>.  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the <literal>/config</literal> namespace by default.  Multiple <literal>PropertySource</literal> instances are created based on the application&#8217;s name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:</simpara>
+<simpara>Zookeeper provides a <link xl:href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link> that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the <link xl:href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</link>.  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the <literal>/config</literal> namespace by default.  Multiple <literal>PropertySource</literal> instances are created based on the application&#8217;s name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:</simpara>
 <screen>config/testApp,dev
 config/testApp
 config/application,dev
