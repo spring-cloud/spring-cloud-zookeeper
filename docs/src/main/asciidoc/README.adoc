@@ -6,7 +6,7 @@ include::intro.adoc[]
 
 "ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services."
 
-See the http://zookeeper.apache.org[Zookeeper site] for more information.  Spring Cloud Zookeeper also builds on the http://curator.apache.org[Apache Curator] project which started life at Netflix.
+See the https://zookeeper.apache.org[Zookeeper site] for more information.  Spring Cloud Zookeeper also builds on the https://curator.apache.org[Apache Curator] project which started life at Netflix.
 
 == Spring Cloud Zookeeper Features
 
@@ -16,9 +16,9 @@ See the http://zookeeper.apache.org[Zookeeper site] for more information.  Sprin
 
 == Running the sample
 
-1. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_Download[Install zookeeper] (On a mac with homebrew `brew install zookeeper`).
-2. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_InstallingSingleMode[Start zookeeper].
-3. http://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_ConnectingToZooKeeper[Verify zookeeper is running].
+1. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_Download[Install zookeeper] (On a mac with homebrew `brew install zookeeper`).
+2. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_InstallingSingleMode[Start zookeeper].
+3. https://zookeeper.apache.org/doc/current/zookeeperStarted.html#sc_ConnectingToZooKeeper[Verify zookeeper is running].
 4. Run `mvn --settings .settings.xml package` this will bring in the required spring cloud maven repositories and build
 5. Run `java -jar spring-cloud-zookeeper-sample/target/spring-cloud-zookeeper-sample-1.0.5.BUILD-SNAPSHOT.jar`
 6. Visit http://localhost:8080, verify that `{"serviceId":"testZookeeperApp","host":"<yourhost>","port":8080}` results
