@@ -6,7 +6,7 @@ idioms. With a few annotations, you can quickly enable and configure the common 
 inside your application and build large distributed systems with Zookeeper based
 components. The provided patterns include Service Discovery and Configuration. Integration
 with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
-(Ribbon), and Circuit Breaker (Hystrix).</p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-install" href="#spring-cloud-zookeeper-install"></a>1.&nbsp;Install Zookeeper</h1></div></div></div><p>See the <a class="link" href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html" target="_top">installation
+(Ribbon), and Circuit Breaker (Hystrix).</p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-install" href="#spring-cloud-zookeeper-install"></a>1.&nbsp;Install Zookeeper</h1></div></div></div><p>See the <a class="link" href="https://zookeeper.apache.org/doc/current/zookeeperStarted.html" target="_top">installation
 documentation</a> for instructions on how to install Zookeeper.</p><p>Spring Cloud Zookeeper uses Apache Curator behind the scenes.
 While Zookeeper 3.5.x is still considered "beta" by the Zookeeper development team,
 the reality is that it is used in production by many users.
@@ -45,8 +45,8 @@ compile(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">'org.apa
 }</pre><p>
 </p></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-discovery" href="#spring-cloud-zookeeper-discovery"></a>2.&nbsp;Service Discovery with Zookeeper</h1></div></div></div><p>Service Discovery is one of the key tenets of a microservice based architecture. Trying to
 hand-configure each client or some form of convention can be difficult to do and can be
-brittle. <a class="link" href="http://curator.apache.org" target="_top">Curator</a>(A Java library for Zookeeper) provides Service
-Discovery through a <a class="link" href="http://curator.apache.org/curator-x-discovery/" target="_top">Service Discovery
+brittle. <a class="link" href="https://curator.apache.org" target="_top">Curator</a>(A Java library for Zookeeper) provides Service
+Discovery through a <a class="link" href="https://curator.apache.org/curator-x-discovery/" target="_top">Service Discovery
 Extension</a>. Spring Cloud Zookeeper uses this extension for service registration and
 discovery.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_activating" href="#_activating"></a>2.1&nbsp;Activating</h2></div></div></div><p>Including a dependency on
 <code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-discovery</code> enables
@@ -222,7 +222,7 @@ boots, it throws an exception and shuts down.</li><li class="listitem">If the de
 logs that the dependency is missing at the <code class="literal">WARN</code> level.</li></ol></div><p>Because the <code class="literal">DefaultDependencyPresenceOnStartupVerifier</code> is registered only when there is
 no bean of type <code class="literal">DependencyPresenceOnStartupVerifier</code>, this functionality can be
 overridden.</p></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-config" href="#spring-cloud-zookeeper-config"></a>7.&nbsp;Distributed Configuration with Zookeeper</h1></div></div></div><p>Zookeeper provides a
-<a class="link" href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace" target="_top">hierarchical namespace</a>
+<a class="link" href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace" target="_top">hierarchical namespace</a>
 that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
 Config is an alternative to the
 <a class="link" href="https://github.com/spring-cloud/spring-cloud-config" target="_top">Config Server and Client</a>.
