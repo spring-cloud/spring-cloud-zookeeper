@@ -18,7 +18,7 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 </preface>
 <chapter xml:id="spring-cloud-zookeeper-install">
 <title>Install Zookeeper</title>
-<simpara>See the <link xl:href="http://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation
+<simpara>See the <link xl:href="https://zookeeper.apache.org/doc/current/zookeeperStarted.html">installation
 documentation</link> for instructions on how to install Zookeeper.</simpara>
 <simpara>Spring Cloud Zookeeper uses Apache Curator behind the scenes.
 While Zookeeper 3.5.x is still considered "beta" by the Zookeeper development team,
@@ -71,8 +71,8 @@ compile('org.apache.zookeeper:zookeeper:3.4.12') {
 <title>Service Discovery with Zookeeper</title>
 <simpara>Service Discovery is one of the key tenets of a microservice based architecture. Trying to
 hand-configure each client or some form of convention can be difficult to do and can be
-brittle. <link xl:href="http://curator.apache.org">Curator</link>(A Java library for Zookeeper) provides Service
-Discovery through a <link xl:href="http://curator.apache.org/curator-x-discovery/">Service Discovery
+brittle. <link xl:href="https://curator.apache.org">Curator</link>(A Java library for Zookeeper) provides Service
+Discovery through a <link xl:href="https://curator.apache.org/curator-x-discovery/">Service Discovery
 Extension</link>. Spring Cloud Zookeeper uses this extension for service registration and
 discovery.</simpara>
 <section xml:id="_activating">
@@ -464,7 +464,7 @@ overridden.</simpara>
 <chapter xml:id="spring-cloud-zookeeper-config">
 <title>Distributed Configuration with Zookeeper</title>
 <simpara>Zookeeper provides a
-<link xl:href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link>
+<link xl:href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</link>
 that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
 Config is an alternative to the
 <link xl:href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</link>.
