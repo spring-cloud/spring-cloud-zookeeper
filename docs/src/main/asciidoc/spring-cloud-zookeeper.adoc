@@ -1,7 +1,7 @@
 :github-tag: master
 :github-repo: spring-cloud/spring-cloud-zookeeper
-:github-raw: http://raw.github.com/{github-repo}/{github-tag}
-:github-code: http://github.com/{github-repo}/tree/{github-tag}
+:github-raw: https://raw.github.com/{github-repo}/{github-tag}
+:github-code: https://github.com/{github-repo}/tree/{github-tag}
 :toc: left
 :nofooter:
 
@@ -11,12 +11,12 @@ include::intro.adoc[]
 
 [[spring-cloud-zookeeper-install]]
 == Install Zookeeper
-Please see the http://zookeeper.apache.org/doc/current/zookeeperStarted.html[installation documentation] for instructions on how to install Zookeeper.
+Please see the https://zookeeper.apache.org/doc/current/zookeeperStarted.html[installation documentation] for instructions on how to install Zookeeper.
 
 [[spring-cloud-zookeeper-discovery]]
 == Service Discovery with Zookeeper
 
-Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. http://curator.apache.org[Curator](A java library for Zookeeper) provides Service Discovery services via http://curator.apache.org/curator-x-discovery/[Service Discovery Extension]. Spring Cloud Zookeeper leverages this extension for service registration and discovery.
+Service Discovery is one of the key tenets of a microservice based architecture. Trying to hand configure each client or some form of convention can be very difficult to do and can be very brittle. https://curator.apache.org[Curator](A java library for Zookeeper) provides Service Discovery services via https://curator.apache.org/curator-x-discovery/[Service Discovery Extension]. Spring Cloud Zookeeper leverages this extension for service registration and discovery.
 
 === How to activate
 
@@ -298,7 +298,7 @@ The functionality can be overriden since the `DefaultDependencyPresenceOnStartup
 
 == Distributed Configuration with Zookeeper
 
-Zookeeper provides a http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace[hierarchical namespace] that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the https://github.com/spring-cloud/spring-cloud-config[Config Server and Client].  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the `/config` namespace by default.  Multiple `PropertySource` instances are created based on the application's name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:
+Zookeeper provides a https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace[hierarchical namespace] that allows clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the https://github.com/spring-cloud/spring-cloud-config[Config Server and Client].  Configuration is loaded into the Spring Environment during the special "bootstrap" phase.  Configuration is stored in the `/config` namespace by default.  Multiple `PropertySource` instances are created based on the application's name and the active profiles that mimicks the Spring Cloud Config order of resolving properties.  For example, an application with the name "testApp" and with the "dev" profile will have the following property sources created:
 
 ----
 config/testApp,dev
