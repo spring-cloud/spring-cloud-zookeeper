@@ -30,7 +30,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
 /**
- * Zookeeper provides a <a href="http://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</a> that allows
+ * Zookeeper provides a <a href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace">hierarchical namespace</a> that allows
  * clients to store arbitrary data, such as configuration data.  Spring Cloud Zookeeper Config is an alternative to the
  * <a href="https://github.com/spring-cloud/spring-cloud-config">Config Server and Client</a>.  Configuration is loaded into the Spring Environment during
  * the special "bootstrap" phase.  Configuration is stored in the {@code /config} namespace by default.  Multiple
