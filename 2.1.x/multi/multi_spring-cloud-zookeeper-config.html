@@ -1,0 +1,61 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>7.&nbsp;Distributed Configuration with Zookeeper</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="multi_spring-cloud-zookeeper.html" title="Spring Cloud Zookeeper"><link rel="up" href="multi_spring-cloud-zookeeper.html" title="Spring Cloud Zookeeper"><link rel="prev" href="multi_spring-cloud-zookeeper-dependency-watcher.html" title="6.&nbsp;Spring Cloud Zookeeper Dependency Watcher"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">7.&nbsp;Distributed Configuration with Zookeeper</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multi_spring-cloud-zookeeper-dependency-watcher.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;</td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="spring-cloud-zookeeper-config" href="#spring-cloud-zookeeper-config"></a>7.&nbsp;Distributed Configuration with Zookeeper</h1></div></div></div><p>Zookeeper provides a
+<a class="link" href="https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace" target="_top">hierarchical namespace</a>
+that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
+Config is an alternative to the
+<a class="link" href="https://github.com/spring-cloud/spring-cloud-config" target="_top">Config Server and Client</a>.
+Configuration is loaded into the Spring Environment during the special <span class="quote">&#8220;<span class="quote">bootstrap</span>&#8221;</span>
+phase. Configuration is stored in the <code class="literal">/config</code> namespace by default. Multiple
+<code class="literal">PropertySource</code> instances are created, based on the application&#8217;s name and the active
+profiles, to mimic the Spring Cloud Config order of resolving properties. For example, an
+application with a name of <code class="literal">testApp</code> and with the <code class="literal">dev</code> profile has the following property
+sources created for it:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">config/testApp,dev</code></li><li class="listitem"><code class="literal">config/testApp</code></li><li class="listitem"><code class="literal">config/application,dev</code></li><li class="listitem"><code class="literal">config/application</code></li></ul></div><p>The most specific property source is at the top, with the least specific at the bottom.
+Properties in the <code class="literal">config/application</code> namespace apply to all applications that use
+zookeeper for configuration. Properties in the <code class="literal">config/testApp</code> namespace are available
+only to the instances of the service named <code class="literal">testApp</code>.</p><p>Configuration is currently read on startup of the application. Sending a HTTP <code class="literal">POST</code>
+request to <code class="literal">/refresh</code> causes the configuration to be reloaded. Watching the configuration
+namespace (which Zookeeper supports) is not currently implemented.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_activating_3" href="#_activating_3"></a>7.1&nbsp;Activating</h2></div></div></div><p>Including a dependency on
+<code class="literal">org.springframework.cloud:spring-cloud-starter-zookeeper-config</code> enables
+autoconfiguration that sets up Spring Cloud Zookeeper Config.</p><div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/caution.png"></td><th align="left">Caution</th></tr><tr><td align="left" valign="top"><p>When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <a class="link" href="multi_spring-cloud-zookeeper-install.html" title="1.&nbsp;Install Zookeeper">here</a>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_customizing" href="#_customizing"></a>7.2&nbsp;Customizing</h2></div></div></div><p>Zookeeper Config may be customized by setting the following properties:</p><p><b>bootstrap.yml.&nbsp;</b>
+</p><pre class="programlisting">spring:
+  cloud:
+    zookeeper:
+      config:
+        enabled: true
+        root: configuration
+        defaultContext: apps
+        profileSeparator: '::'</pre><p>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">enabled</code>: Setting this value to <code class="literal">false</code> disables Zookeeper Config.</li><li class="listitem"><code class="literal">root</code>: Sets the base namespace for configuration values.</li><li class="listitem"><code class="literal">defaultContext</code>: Sets the name used by all applications.</li><li class="listitem"><code class="literal">profileSeparator</code>: Sets the value of the separator used to separate the profile name in
+property sources with profiles.</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_access_control_lists_acls" href="#_access_control_lists_acls"></a>7.3&nbsp;Access Control Lists (ACLs)</h2></div></div></div><p>You can add authentication information for Zookeeper ACLs by calling the <code class="literal">addAuthInfo</code>
+method of a <code class="literal">CuratorFramework</code> bean. One way to accomplish this is to provide your own
+<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomCuratorFrameworkConfig {
+
+  <em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> CuratorFramework curatorFramework() {
+    CuratorFramework curator = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> CuratorFramework();
+    curator.addAuthInfo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"digest"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"user:password"</span>.getBytes());
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> curator;
+  }
+
+}</pre><p>Consult
+<a class="link" href="https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java" target="_top">the ZookeeperAutoConfiguration class</a>
+to see how the <code class="literal">CuratorFramework</code> bean&#8217;s default configuration.</p><p>Alternatively, you can add your credentials from a class that depends on the existing
+<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> DefaultCuratorFrameworkConfig {
+
+  <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> ZookeeperConfig(CuratorFramework curator) {
+    curator.addAuthInfo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"digest"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"user:password"</span>.getBytes());
+  }
+
+}</pre><p>The creation of this bean must occur during the boostrapping phase. You can register
+configuration classes to run during this phase by annotating them with
+<code class="literal">@BootstrapConfiguration</code> and including them in a comma-separated list that you set as the
+value of the <code class="literal">org.springframework.cloud.bootstrap.BootstrapConfiguration</code> property in the
+<code class="literal">resources/META-INF/spring.factories</code> file, as shown in the following example:</p><p><b>resources/META-INF/spring.factories.&nbsp;</b>
+</p><pre class="screen">org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+my.project.CustomCuratorFrameworkConfig,\
+my.project.DefaultCuratorFrameworkConfig</pre><p>
+</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi_spring-cloud-zookeeper-dependency-watcher.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;</td></tr><tr><td width="40%" align="left" valign="top">6.&nbsp;Spring Cloud Zookeeper Dependency Watcher&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-zookeeper.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;</td></tr></table></div></body></html>
