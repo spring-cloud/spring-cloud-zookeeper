@@ -37,9 +37,9 @@ the constraints of Ribbon, which requires that the application ID be placed in t
 Consequently, you cannot pass any complex path, suchas  <code class="literal">/myApp/myRoute/name</code>). The alias
 is the name you use instead of the <code class="literal">serviceId</code> for <code class="literal">DiscoveryClient</code>, <code class="literal">Feign</code>, or
 <code class="literal">RestTemplate</code>.</p><p>In the previous examples, the aliases are <code class="literal">newsletter</code> and <code class="literal">mailing</code>. The following
-example shows Feign usage with a <code class="literal">newsletter</code> alias:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@FeignClient("newsletter")</span></em>
+example shows Feign usage with a <code class="literal">newsletter</code> alias:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@FeignClient("newsletter")</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">interface</span> NewsletterService {
-        <em><span class="hl-annotation" style="color: gray">@RequestMapping(method = RequestMethod.GET, value = "/newsletter")</span></em>
+        <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RequestMapping(method = RequestMethod.GET, value = "/newsletter")</xslthl:annotation>
         String getNewsletters();
 }</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_path" href="#_path"></a>5.3.2&nbsp;Path</h3></div></div></div><p>The path is represented by the <code class="literal">path</code> YAML property and is the path under which the
 dependency is registered under Zookeeper. As described in the

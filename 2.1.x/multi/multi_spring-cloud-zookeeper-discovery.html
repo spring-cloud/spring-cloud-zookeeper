@@ -10,11 +10,11 @@ discovery.</p><div class="section"><div class="titlepage"><div><div><h2 class="t
 autoconfiguration that sets up Spring Cloud Zookeeper Discovery.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>For web functionality, you still need to include
 <code class="literal">org.springframework.boot:spring-boot-starter-web</code>.</p></td></tr></table></div><div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/caution.png"></td><th align="left">Caution</th></tr><tr><td align="left" valign="top"><p>When working with version 3.4 of Zookeeper you need to change
 the way you include the dependency as described <a class="link" href="multi_spring-cloud-zookeeper-install.html" title="1.&nbsp;Install Zookeeper">here</a>.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_registering_with_zookeeper" href="#_registering_with_zookeeper"></a>2.2&nbsp;Registering with Zookeeper</h2></div></div></div><p>When a client registers with Zookeeper, it provides metadata (such as host and port, ID,
-and name) about itself.</p><p>The following example shows a Zookeeper client:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@SpringBootApplication</span></em>
-<em><span class="hl-annotation" style="color: gray">@RestController</span></em>
+and name) about itself.</p><p>The following example shows a Zookeeper client:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@SpringBootApplication</xslthl:annotation>
+<xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RestController</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> Application {
 
-    <em><span class="hl-annotation" style="color: gray">@RequestMapping("/")</span></em>
+    <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@RequestMapping("/")</xslthl:annotation>
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> String home() {
         <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"Hello world"</span>;
     }
@@ -41,13 +41,13 @@ query Zookeeper to locate other services).</p><p>If you would like to disable th
 <a class="link" href="https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon" target="_top">Spring
 <code class="literal">RestTemplate</code></a>, using logical service names instead of physical URLs.</p><p>You can also use the <code class="literal">org.springframework.cloud.client.discovery.DiscoveryClient</code>, which
 provides a simple API for discovery clients that is not specific to Netflix, as shown in
-the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+the following example:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Autowired</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">private</span> DiscoveryClient discoveryClient;
 
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> String serviceUrl() {
     List&lt;ServiceInstance&gt; list = discoveryClient.getInstances(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"STORES"</span>);
-    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (list != null &amp;&amp; list.size() &gt; <span class="hl-number">0</span> ) {
-        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> list.get(<span class="hl-number">0</span>).getUri().toString();
+    <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">if</span> (list != null &amp;&amp; list.size() &gt; <xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number> ) {
+        <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> list.get(<xslthl:number xmlns:xslthl="http://xslthl.sourceforge.net/">0</xslthl:number>).getUri().toString();
     }
     <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">return</span> null;
 }</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multi_spring-cloud-zookeeper-install.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="multi_spring-cloud-zookeeper-netflix.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">1.&nbsp;Install Zookeeper&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="multi_spring-cloud-zookeeper.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;3.&nbsp;Using Spring Cloud Zookeeper with Spring Cloud Netflix Components</td></tr></table></div></body></html>

@@ -30,10 +30,10 @@ the way you include the dependency as described <a class="link" href="multi_spri
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">enabled</code>: Setting this value to <code class="literal">false</code> disables Zookeeper Config.</li><li class="listitem"><code class="literal">root</code>: Sets the base namespace for configuration values.</li><li class="listitem"><code class="literal">defaultContext</code>: Sets the name used by all applications.</li><li class="listitem"><code class="literal">profileSeparator</code>: Sets the value of the separator used to separate the profile name in
 property sources with profiles.</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_access_control_lists_acls" href="#_access_control_lists_acls"></a>7.3&nbsp;Access Control Lists (ACLs)</h2></div></div></div><p>You can add authentication information for Zookeeper ACLs by calling the <code class="literal">addAuthInfo</code>
 method of a <code class="literal">CuratorFramework</code> bean. One way to accomplish this is to provide your own
-<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@BoostrapConfiguration</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> CustomCuratorFrameworkConfig {
 
-  <em><span class="hl-annotation" style="color: gray">@Bean</span></em>
+  <xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@Bean</xslthl:annotation>
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> CuratorFramework curatorFramework() {
     CuratorFramework curator = <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">new</span> CuratorFramework();
     curator.addAuthInfo(<span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"digest"</span>, <span xmlns:d="http://docbook.org/ns/docbook" class="hl-string">"user:password"</span>.getBytes());
@@ -43,7 +43,7 @@ method of a <code class="literal">CuratorFramework</code> bean. One way to accom
 }</pre><p>Consult
 <a class="link" href="https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java" target="_top">the ZookeeperAutoConfiguration class</a>
 to see how the <code class="literal">CuratorFramework</code> bean&#8217;s default configuration.</p><p>Alternatively, you can add your credentials from a class that depends on the existing
-<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@BoostrapConfiguration</span></em>
+<code class="literal">CuratorFramework</code> bean, as shown in the following example:</p><pre class="programlisting"><xslthl:annotation xmlns:xslthl="http://xslthl.sourceforge.net/">@BoostrapConfiguration</xslthl:annotation>
 <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">class</span> DefaultCuratorFrameworkConfig {
 
   <span xmlns:d="http://docbook.org/ns/docbook" class="hl-keyword">public</span> ZookeeperConfig(CuratorFramework curator) {
