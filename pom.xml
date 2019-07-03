@@ -6,7 +6,7 @@
 
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-zookeeper</artifactId>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<version>2.2.0.M1</version>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Zookeeper</name>
 	<description>Spring Cloud Zookeeper</description>
@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.2.0.M3</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -175,11 +175,11 @@
 	</dependencyManagement>
 
 	<properties>
-		<spring-cloud-build.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-commons.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-config.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-config.version>
-		<spring-cloud-netflix.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-openfeign.version>2.2.0.BUILD-SNAPSHOT</spring-cloud-openfeign.version>
+		<spring-cloud-build.version>2.2.0.M3</spring-cloud-build.version>
+		<spring-cloud-commons.version>2.2.0.M1</spring-cloud-commons.version>
+		<spring-cloud-config.version>2.2.0.M1</spring-cloud-config.version>
+		<spring-cloud-netflix.version>2.2.0.M1</spring-cloud-netflix.version>
+		<spring-cloud-openfeign.version>2.2.0.M1</spring-cloud-openfeign.version>
 	</properties>
 
 	<profiles>
