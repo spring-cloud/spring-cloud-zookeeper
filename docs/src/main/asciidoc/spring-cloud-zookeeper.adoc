@@ -141,9 +141,10 @@ If you would like to disable the Zookeeper Discovery Client, you can set
 
 Spring Cloud has support for
 https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign]
-(a REST client builder) and
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon[Spring
-`RestTemplate`], using logical service names instead of physical URLs.
+(a REST client builder),
+https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/ascii[Spring
+`RestTemplate`] and
+https://cloud.spring.io/spring-cloud-commons/reference/html/#loadbalanced-webclient[Spring WebFlux], using logical service names instead of physical URLs.
 
 You can also use the `org.springframework.cloud.client.discovery.DiscoveryClient`, which
 provides a simple API for discovery clients that is not specific to Netflix, as shown in
@@ -239,7 +240,10 @@ Spring Cloud Zookeeper gives you a possibility to provide dependencies of your a
 as properties. As dependencies, you can understand other applications that are registered
 in Zookeeper and which you would like to call through
 https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign]
-(a REST client builder) and https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-ribbon[Spring `RestTemplate`].
+(a REST client builder),
+https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/ascii[Spring
+`RestTemplate`] and
+https://cloud.spring.io/spring-cloud-commons/reference/html/#loadbalanced-webclient[Spring WebFlux].
 
 You can also use the Zookeeper Dependency Watchers functionality to control and monitor
 the state of your dependencies.
