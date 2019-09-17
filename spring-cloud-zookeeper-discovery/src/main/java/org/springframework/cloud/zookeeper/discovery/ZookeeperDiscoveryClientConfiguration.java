@@ -16,7 +16,14 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.client.ConditionalOnBlockingDiscoveryEnabled;
+import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,11 +32,29 @@ import org.springframework.context.annotation.Configuration;
  * Zookeeper.
  *
  * @author Spencer Gibb
+ * @author Tim Ysewyn
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.discovery.enabled", matchIfMissing = true)
+@ConditionalOnDiscoveryEnabled
+@ConditionalOnBlockingDiscoveryEnabled
+@ConditionalOnZookeeperDiscoveryEnabled
+@AutoConfigureBefore({ ZookeeperDiscoveryAutoConfiguration.class })
 public class ZookeeperDiscoveryClientConfiguration {
+
+	@Autowired(required = false)
+	private ZookeeperDependencies zookeeperDependencies;
+
+	@Bean
+	@ConditionalOnMissingBean
+	// currently means auto-registration is false. That will change when
+	// ZookeeperServiceDiscovery is gone
+	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
+			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
+			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+		return new ZookeeperDiscoveryClient(serviceDiscovery, zookeeperDependencies,
+				zookeeperDiscoveryProperties);
+	}
 
 	@Bean
 	public Marker zookeeperDiscoveryClientMarker() {

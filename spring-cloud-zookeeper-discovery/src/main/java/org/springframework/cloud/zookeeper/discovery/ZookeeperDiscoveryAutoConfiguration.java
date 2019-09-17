@@ -22,12 +22,12 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
+import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
 import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClientAutoConfiguration;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
@@ -36,18 +36,15 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Spencer Gibb
+ * @author Tim Ysewyn
  * @since 1.1.0
  */
 @Configuration
-@ConditionalOnBean(ZookeeperDiscoveryClientConfiguration.Marker.class)
+@ConditionalOnDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore({ CommonsClientAutoConfiguration.class,
 		NoopDiscoveryClientAutoConfiguration.class })
-@AutoConfigureAfter({ ZookeeperDiscoveryClientConfiguration.class })
 public class ZookeeperDiscoveryAutoConfiguration {
-
-	@Autowired(required = false)
-	private ZookeeperDependencies zookeeperDependencies;
 
 	@Autowired
 	private CuratorFramework curator;
@@ -60,25 +57,13 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	// currently means auto-registration is false. That will change when
-	// ZookeeperServiceDiscovery is gone
-	public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
-			ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
-			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperDiscoveryClient(serviceDiscovery, this.zookeeperDependencies,
-				zookeeperDiscoveryProperties);
-	}
-
-	@Bean
 	public ZookeeperServiceWatch zookeeperServiceWatch(
 			ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperServiceWatch(this.curator, zookeeperDiscoveryProperties);
+		return new ZookeeperServiceWatch(curator, zookeeperDiscoveryProperties);
 	}
 
 	@Configuration
-	@ConditionalOnEnabledHealthIndicator("zookeeper")
-	@ConditionalOnClass(Endpoint.class)
+	@ConditionalOnClass({ Endpoint.class, HealthIndicator.class })
 	protected static class ZookeeperDiscoveryHealthConfig {
 
 		@Autowired(required = false)
@@ -86,12 +71,13 @@ public class ZookeeperDiscoveryAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
+		@ConditionalOnEnabledHealthIndicator("zookeeper")
 		public ZookeeperDiscoveryHealthIndicator zookeeperDiscoveryHealthIndicator(
 				CuratorFramework curatorFramework,
 				ServiceDiscovery<ZookeeperInstance> serviceDiscovery,
 				ZookeeperDiscoveryProperties properties) {
 			return new ZookeeperDiscoveryHealthIndicator(curatorFramework,
-					serviceDiscovery, this.zookeeperDependencies, properties);
+					serviceDiscovery, zookeeperDependencies, properties);
 		}
 
 	}
