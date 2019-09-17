@@ -95,23 +95,23 @@ $(addBlockSwitches);
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_zookeeper_overview">Zookeeper overview</a></li>
-<li><a href="#_spring_cloud_zookeeper_features">Spring Cloud Zookeeper Features</a></li>
-<li><a href="#_running_the_sample">Running the Sample</a></li>
-<li><a href="#_building">Building</a>
+<li><a href="#zookeeper-overview">1. Zookeeper overview</a></li>
+<li><a href="#spring-cloud-zookeeper-features">2. Spring Cloud Zookeeper Features</a></li>
+<li><a href="#running-the-sample">3. Running the Sample</a></li>
+<li><a href="#building">4. Building</a>
 <ul class="sectlevel2">
-<li><a href="#_basic_compile_and_test">Basic Compile and Test</a></li>
-<li><a href="#_documentation">Documentation</a></li>
-<li><a href="#_working_with_the_code">Working with the code</a></li>
+<li><a href="#basic-compile-and-test">4.1. Basic Compile and Test</a></li>
+<li><a href="#documentation">4.2. Documentation</a></li>
+<li><a href="#working-with-the-code">4.3. Working with the code</a></li>
 </ul>
 </li>
-<li><a href="#_contributing">Contributing</a>
+<li><a href="#contributing">5. Contributing</a>
 <ul class="sectlevel2">
-<li><a href="#_sign_the_contributor_license_agreement">Sign the Contributor License Agreement</a></li>
-<li><a href="#_code_of_conduct">Code of Conduct</a></li>
-<li><a href="#_code_conventions_and_housekeeping">Code Conventions and Housekeeping</a></li>
-<li><a href="#_checkstyle">Checkstyle</a></li>
-<li><a href="#_ide_setup">IDE setup</a></li>
+<li><a href="#sign-the-contributor-license-agreement">5.1. Sign the Contributor License Agreement</a></li>
+<li><a href="#code-of-conduct">5.2. Code of Conduct</a></li>
+<li><a href="#code-conventions-and-housekeeping">5.3. Code Conventions and Housekeeping</a></li>
+<li><a href="#checkstyle">5.4. Checkstyle</a></li>
+<li><a href="#ide-setup">5.5. IDE setup</a></li>
 </ul>
 </li>
 </ul>
@@ -137,7 +137,7 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_zookeeper_overview"><a class="link" href="#_zookeeper_overview">Zookeeper overview</a></h2>
+<h2 id="zookeeper-overview"><a class="anchor" href="#zookeeper-overview"></a><a class="link" href="#zookeeper-overview">1. Zookeeper overview</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>ZooKeeper is a centralized service for maintaining configuration information, naming,
@@ -149,7 +149,7 @@ at Netflix.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_spring_cloud_zookeeper_features"><a class="link" href="#_spring_cloud_zookeeper_features">Spring Cloud Zookeeper Features</a></h2>
+<h2 id="spring-cloud-zookeeper-features"><a class="anchor" href="#spring-cloud-zookeeper-features"></a><a class="link" href="#spring-cloud-zookeeper-features">2. Spring Cloud Zookeeper Features</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spring Cloud Zookeeper includes the following features:</p>
@@ -167,7 +167,7 @@ at Netflix.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_running_the_sample"><a class="link" href="#_running_the_sample">Running the Sample</a></h2>
+<h2 id="running-the-sample"><a class="anchor" href="#running-the-sample"></a><a class="link" href="#running-the-sample">3. Running the Sample</a></h2>
 <div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
@@ -191,23 +191,23 @@ Doing so brings in the required Spring Cloud Maven repositories and Build.</p>
 <p>Run <code>java -jar spring-cloud-zookeeper-sample/target/spring-cloud-zookeeper-sample-1.2.0.BUILD-SNAPSHOT.jar</code>.</p>
 </li>
 <li>
-<p>Visit <a href="http://localhost:8080" class="bare">http://localhost:8080</a> to verify that <code>{"serviceId":"testZookeeperApp","host":"&lt;yourhost&gt;","port":8080}</code> works.</p>
+<p>Visit <a href="http://localhost:8080" class="bare">localhost:8080</a> to verify that <code>{"serviceId":"testZookeeperApp","host":"&lt;yourhost&gt;","port":8080}</code> works.</p>
 </li>
 <li>
 <p>Run <code>java -jar spring-cloud-zookeeper-sample/target/spring-cloud-zookeeper-sample-1.2.0.BUILD-SNAPSHOT.jar --server.port=8081</code></p>
 </li>
 <li>
-<p>Visit <a href="http://localhost:8080" class="bare">http://localhost:8080</a> again to verify that <code>{"serviceId":"testZookeeperApp","host":"&lt;yourhost&gt;","port":8081}</code> eventually shows up in the results in a round-robin fashion. (It may take a minute or so.)</p>
+<p>Visit <a href="http://localhost:8080" class="bare">localhost:8080</a> again to verify that <code>{"serviceId":"testZookeeperApp","host":"&lt;yourhost&gt;","port":8081}</code> eventually shows up in the results in a round-robin fashion. (It may take a minute or so.)</p>
 </li>
 </ol>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building"><a class="link" href="#_building">Building</a></h2>
+<h2 id="building"><a class="anchor" href="#building"></a><a class="link" href="#building">4. Building</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_basic_compile_and_test"><a class="link" href="#_basic_compile_and_test">Basic Compile and Test</a></h3>
+<h3 id="basic-compile-and-test"><a class="anchor" href="#basic-compile-and-test"></a><a class="link" href="#basic-compile-and-test">4.1. Basic Compile and Test</a></h3>
 <div class="paragraph">
 <p>To build the source you will need to install JDK 1.7.</p>
 </div>
@@ -285,7 +285,7 @@ If all else fails, build with the command from <code>.travis.yml</code> (usually
 </div>
 </div>
 <div class="sect2">
-<h3 id="_documentation"><a class="link" href="#_documentation">Documentation</a></h3>
+<h3 id="documentation"><a class="anchor" href="#documentation"></a><a class="link" href="#documentation">4.2. Documentation</a></h3>
 <div class="paragraph">
 <p>The spring-cloud-build module has a "docs" profile, and if you switch
 that on it will try to build asciidoc sources from
@@ -298,7 +298,7 @@ a modified file in the correct place. Just commit it and push the change.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_working_with_the_code"><a class="link" href="#_working_with_the_code">Working with the code</a></h3>
+<h3 id="working-with-the-code"><a class="anchor" href="#working-with-the-code"></a><a class="link" href="#working-with-the-code">4.3. Working with the code</a></h3>
 <div class="paragraph">
 <p>If you don&#8217;t have an IDE preference we would recommend that you use
 <a href="https://www.springsource.com/developer/sts">Spring Tools Suite</a> or
@@ -307,7 +307,7 @@ a modified file in the correct place. Just commit it and push the change.</p>
 should also work without issue as long as they use Maven 3.3.3 or better.</p>
 </div>
 <div class="sect3">
-<h4 id="_importing_into_eclipse_with_m2eclipse"><a class="link" href="#_importing_into_eclipse_with_m2eclipse">Importing into eclipse with m2eclipse</a></h4>
+<h4 id="importing-into-eclipse-with-m2eclipse"><a class="anchor" href="#importing-into-eclipse-with-m2eclipse"></a><a class="link" href="#importing-into-eclipse-with-m2eclipse">4.3.1. Importing into eclipse with m2eclipse</a></h4>
 <div class="paragraph">
 <p>We recommend the <a href="https://eclipse.org/m2e/">m2eclipse</a> eclipse plugin when working with
 eclipse. If you don&#8217;t already have m2eclipse installed it is available from the "eclipse
@@ -334,7 +334,7 @@ pom into your <code>settings.xml</code>.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_importing_into_eclipse_without_m2eclipse"><a class="link" href="#_importing_into_eclipse_without_m2eclipse">Importing into eclipse without m2eclipse</a></h4>
+<h4 id="importing-into-eclipse-without-m2eclipse"><a class="anchor" href="#importing-into-eclipse-without-m2eclipse"></a><a class="link" href="#importing-into-eclipse-without-m2eclipse">4.3.2. Importing into eclipse without m2eclipse</a></h4>
 <div class="paragraph">
 <p>If you prefer not to use m2eclipse you can generate eclipse project metadata using the
 following command:</p>
@@ -353,7 +353,7 @@ from the <code>file</code> menu.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_contributing"><a class="link" href="#_contributing">Contributing</a></h2>
+<h2 id="contributing"><a class="anchor" href="#contributing"></a><a class="link" href="#contributing">5. Contributing</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spring Cloud is released under the non-restrictive Apache 2.0 license,
@@ -363,7 +363,7 @@ to contribute even something trivial please do not hesitate, but
 follow the guidelines below.</p>
 </div>
 <div class="sect2">
-<h3 id="_sign_the_contributor_license_agreement"><a class="link" href="#_sign_the_contributor_license_agreement">Sign the Contributor License Agreement</a></h3>
+<h3 id="sign-the-contributor-license-agreement"><a class="anchor" href="#sign-the-contributor-license-agreement"></a><a class="link" href="#sign-the-contributor-license-agreement">5.1. Sign the Contributor License Agreement</a></h3>
 <div class="paragraph">
 <p>Before we accept a non-trivial patch or pull request we will need you to sign the
 <a href="https://cla.pivotal.io/sign/spring">Contributor License Agreement</a>.
@@ -374,7 +374,7 @@ given the ability to merge pull requests.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_code_of_conduct"><a class="link" href="#_code_of_conduct">Code of Conduct</a></h3>
+<h3 id="code-of-conduct"><a class="anchor" href="#code-of-conduct"></a><a class="link" href="#code-of-conduct">5.2. Code of Conduct</a></h3>
 <div class="paragraph">
 <p>This project adheres to the Contributor Covenant <a href="https://github.com/spring-cloud/spring-cloud-build/blob/master/docs/src/main/asciidoc/code-of-conduct.adoc">code of
 conduct</a>. By participating, you  are expected to uphold this code. Please report
@@ -382,7 +382,7 @@ unacceptable behavior to <a href="mailto:spring-code-of-conduct@pivotal.io">spri
 </div>
 </div>
 <div class="sect2">
-<h3 id="_code_conventions_and_housekeeping"><a class="link" href="#_code_conventions_and_housekeeping">Code Conventions and Housekeeping</a></h3>
+<h3 id="code-conventions-and-housekeeping"><a class="anchor" href="#code-conventions-and-housekeeping"></a><a class="link" href="#code-conventions-and-housekeeping">5.3. Code Conventions and Housekeeping</a></h3>
 <div class="paragraph">
 <p>None of these is essential for a pull request, but they will all help.  They can also be
 added after the original pull request but before a merge.</p>
@@ -430,7 +430,7 @@ message (where XXXX is the issue number).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_checkstyle"><a class="link" href="#_checkstyle">Checkstyle</a></h3>
+<h3 id="checkstyle"><a class="anchor" href="#checkstyle"></a><a class="link" href="#checkstyle">5.4. Checkstyle</a></h3>
 <div class="paragraph">
 <p>Spring Cloud Build comes with a set of checkstyle rules. You can find them in the <code>spring-cloud-build-tools</code> module. The most notable files under the module are:</p>
 </div>
@@ -463,7 +463,7 @@ message (where XXXX is the issue number).</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_checkstyle_configuration"><a class="link" href="#_checkstyle_configuration">Checkstyle configuration</a></h4>
+<h4 id="checkstyle-configuration"><a class="anchor" href="#checkstyle-configuration"></a><a class="link" href="#checkstyle-configuration">5.4.1. Checkstyle configuration</a></h4>
 <div class="paragraph">
 <p>Checkstyle rules are <strong>disabled by default</strong>. To add checkstyle to your project just define the following properties and plugins.</p>
 </div>
@@ -533,11 +533,11 @@ message (where XXXX is the issue number).</p>
 <div class="content">
 <pre>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE suppressions PUBLIC
-		"-//Puppy Crawl//DTD Suppressions 1.1//EN"
-		"https://www.puppycrawl.com/dtds/suppressions_1_1.dtd"&gt;
+        "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+        "https://www.puppycrawl.com/dtds/suppressions_1_1.dtd"&gt;
 &lt;suppressions&gt;
-	&lt;suppress files=".*ConfigServerApplication\.java" checks="HideUtilityClassConstructor"/&gt;
-	&lt;suppress files=".*ConfigClientWatch\.java" checks="LineLengthCheck"/&gt;
+    &lt;suppress files=".*ConfigServerApplication\.java" checks="HideUtilityClassConstructor"/&gt;
+    &lt;suppress files=".*ConfigClientWatch\.java" checks="LineLengthCheck"/&gt;
 &lt;/suppressions&gt;</pre>
 </div>
 </div>
@@ -553,9 +553,9 @@ $ touch .springformat</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ide_setup"><a class="link" href="#_ide_setup">IDE setup</a></h3>
+<h3 id="ide-setup"><a class="anchor" href="#ide-setup"></a><a class="link" href="#ide-setup">5.5. IDE setup</a></h3>
 <div class="sect3">
-<h4 id="_intellij_idea"><a class="link" href="#_intellij_idea">Intellij IDEA</a></h4>
+<h4 id="intellij-idea"><a class="anchor" href="#intellij-idea"></a><a class="link" href="#intellij-idea">5.5.1. Intellij IDEA</a></h4>
 <div class="paragraph">
 <p>In order to setup Intellij you should import our coding conventions, inspection profiles and set up the checkstyle plugin.
 The following files can be found in the <a href="https://github.com/spring-cloud/spring-cloud-build/tree/master/spring-cloud-build-tools">Spring Cloud Build</a> project.</p>
@@ -627,15 +627,15 @@ The following files can be found in the <a href="https://github.com/spring-cloud
 </div>
 </div>
 <div class="paragraph">
-<p>Go to <code>File</code> &#8594; <code>Settings</code> &#8594; <code>Other settings</code> &#8594; <code>Checkstyle</code>. There click on the <code>+</code> icon in the <code>Configuration file</code> section. There, you&#8217;ll have to define where the checkstyle rules should be picked from. In the image above, we&#8217;ve picked the rules from the cloned Spring Cloud Build repository. However, you can point to the Spring Cloud Build&#8217;s GitHub repository (e.g. for the <code>checkstyle.xml</code> : <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle.xml" class="bare">https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle.xml</a></code>). We need to provide the following variables:</p>
+<p>Go to <code>File</code> &#8594; <code>Settings</code> &#8594; <code>Other settings</code> &#8594; <code>Checkstyle</code>. There click on the <code>+</code> icon in the <code>Configuration file</code> section. There, you&#8217;ll have to define where the checkstyle rules should be picked from. In the image above, we&#8217;ve picked the rules from the cloned Spring Cloud Build repository. However, you can point to the Spring Cloud Build&#8217;s GitHub repository (e.g. for the <code>checkstyle.xml</code> : <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle.xml" class="bare">raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle.xml</a></code>). We need to provide the following variables:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>checkstyle.header.file</code> - please point it to the Spring Cloud Build&#8217;s, <code>spring-cloud-build-tools/src/main/resources/checkstyle-header.txt</code> file either in your cloned repo or via the <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle-header.txt" class="bare">https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle-header.txt</a></code> URL.</p>
+<p><code>checkstyle.header.file</code> - please point it to the Spring Cloud Build&#8217;s, <code>spring-cloud-build-tools/src/main/resources/checkstyle-header.txt</code> file either in your cloned repo or via the <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle-header.txt" class="bare">raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/main/resources/checkstyle-header.txt</a></code> URL.</p>
 </li>
 <li>
-<p><code>checkstyle.suppressions.file</code> - default suppressions. Please point it to the Spring Cloud Build&#8217;s, <code>spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml</code> file either in your cloned repo or via the <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml" class="bare">https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml</a></code> URL.</p>
+<p><code>checkstyle.suppressions.file</code> - default suppressions. Please point it to the Spring Cloud Build&#8217;s, <code>spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml</code> file either in your cloned repo or via the <code><a href="https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml" class="bare">raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml</a></code> URL.</p>
 </li>
 <li>
 <p><code>checkstyle.additional.suppressions.file</code> - this variable corresponds to suppressions in your local project. E.g. you&#8217;re working on <code>spring-cloud-contract</code>. Then point to the <code>project-root/src/checkstyle/checkstyle-suppressions.xml</code> folder. Example for <code>spring-cloud-contract</code> would be: <code>/home/username/spring-cloud-contract/src/checkstyle/checkstyle-suppressions.xml</code>.</p>
