@@ -6,6 +6,24 @@ Edit the files in the src/main/asciidoc/ directory instead.
 
 image::https://travis-ci.org/spring-cloud/spring-cloud-zookeeper.svg?branch=master[Build Status, link=https://travis-ci.org/spring-cloud/spring-cloud-zookeeper]
 
+
+
+:doctype: book
+:idprefix:
+:idseparator: -
+:toc: left
+:toclevels: 4
+:tabsize: 4
+:numbered:
+:sectanchors:
+:sectnums:
+:icons: font
+:hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+:project-full-name: Spring Cloud Zookeeper
+
 This project provides Zookeeper integrations for Spring Boot applications through
 autoconfiguration and binding to the Spring Environment and other Spring programming model
 idioms. With a few annotations, you can quickly enable and configure the common patterns
@@ -13,6 +31,23 @@ inside your application and build large distributed systems with Zookeeper based
 components. The provided patterns include Service Discovery and Configuration. Integration
 with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
 (Ribbon), and Circuit Breaker (Hystrix).
+
+
+:doctype: book
+:idprefix:
+:idseparator: -
+:toc: left
+:toclevels: 4
+:tabsize: 4
+:numbered:
+:sectanchors:
+:sectnums:
+:icons: font
+:hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+:project-full-name: Spring Cloud Zookeeper
 
 == Zookeeper overview
 

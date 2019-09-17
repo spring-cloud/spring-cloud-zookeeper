@@ -2,6 +2,8 @@ image::https://travis-ci.org/spring-cloud/spring-cloud-zookeeper.svg?branch=mast
 
 include::intro.adoc[]
 
+include::_attributes.adoc[]
+
 == Zookeeper overview
 
 ZooKeeper is a centralized service for maintaining configuration information, naming,

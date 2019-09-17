@@ -1,3 +1,6 @@
+
+include::_attributes.adoc[]
+
 Spring Cloud Zookeeper provides http://zookeeper.apache.org/[Apache Zookeeper] integrations for Spring Boot apps through autoconfiguration and binding to the Spring Environment and other Spring programming model idioms. With a few simple annotations you can quickly enable and configure the common patterns inside your application and build large distributed systems with Zookeeper. The patterns provided include Service Discovery and Distributed Configuration.
 
 ## Features
