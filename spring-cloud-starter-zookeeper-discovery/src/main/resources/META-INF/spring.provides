@@ -1,1 +1,0 @@
-provides: spring-cloud-zookeeper-discovery, curator-x-discovery
