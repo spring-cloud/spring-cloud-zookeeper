@@ -19,8 +19,3 @@ org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPo
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperDiscoveryClientConfigServiceBootstrapConfiguration
-
-# Discovery Client Configuration
-org.springframework.cloud.client.discovery.EnableDiscoveryClient=\
-org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration, \
-org.springframework.cloud.zookeeper.discovery.reactive.ZookeeperReactiveDiscoveryClientConfiguration
