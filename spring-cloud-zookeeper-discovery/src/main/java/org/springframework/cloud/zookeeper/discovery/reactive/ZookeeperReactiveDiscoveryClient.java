@@ -68,7 +68,7 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 		String serviceIdToQuery = serviceIdToQuery(serviceId);
 		return Mono.justOrEmpty(serviceIdToQuery)
 				.flatMapMany(getInstancesFromZookeeper())
-				.subscribeOn(Schedulers.elastic())
+				.subscribeOn(Schedulers.boundedElastic())
 				.map(zkInstance -> toZookeeperServiceInstance(serviceIdToQuery, zkInstance));
 	}
 
@@ -92,7 +92,7 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 	@Override
 	public Flux<String> getServices() {
 		return Flux.defer(getServicesFromZookeeper())
-				.subscribeOn(Schedulers.elastic());
+				.subscribeOn(Schedulers.boundedElastic());
 	}
 
 	private Supplier<Publisher<String>> getServicesFromZookeeper() {
