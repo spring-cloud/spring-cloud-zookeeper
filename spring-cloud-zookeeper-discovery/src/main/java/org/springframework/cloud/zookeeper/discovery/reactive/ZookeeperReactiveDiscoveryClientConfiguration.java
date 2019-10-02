@@ -19,7 +19,6 @@ package org.springframework.cloud.zookeeper.discovery.reactive;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -65,7 +64,7 @@ public class ZookeeperReactiveDiscoveryClientConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnClass(ReactiveHealthIndicator.class)
+	@ConditionalOnClass(name = "org.springframework.boot.actuate.health.ReactiveHealthIndicator")
 	@ConditionalOnDiscoveryHealthIndicatorEnabled
 	public ReactiveDiscoveryClientHealthIndicator zookeeperReactiveDiscoveryClientHealthIndicator(
 			ZookeeperReactiveDiscoveryClient client,
