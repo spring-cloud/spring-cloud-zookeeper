@@ -1,3 +1,6 @@
+
+include::_attributes.adoc[]
+
 This project provides Zookeeper integrations for Spring Boot applications through
 autoconfiguration and binding to the Spring Environment and other Spring programming model
 idioms. With a few annotations, you can quickly enable and configure the common patterns
