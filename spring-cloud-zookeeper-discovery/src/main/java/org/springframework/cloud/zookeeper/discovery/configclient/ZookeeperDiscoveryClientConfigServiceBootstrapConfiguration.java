@@ -18,6 +18,8 @@ package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.health.DiscoveryClientHealthIndicatorProperties;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.config.client.ConfigServicePropertySourceLocator;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
@@ -34,6 +36,7 @@ import org.springframework.core.annotation.Order;
  * Helper for config client that wants to lookup the config server via discovery.
  *
  * @author Spencer Gibb
+ * @author Tim Ysewyn
  */
 @ConditionalOnClass(ConfigServicePropertySourceLocator.class)
 @ConditionalOnProperty(value = "spring.cloud.config.discovery.enabled", matchIfMissing = false)
@@ -41,6 +44,7 @@ import org.springframework.core.annotation.Order;
 @Import({ ZookeeperAutoConfiguration.class, ZookeeperDiscoveryClientConfiguration.class,
 		CuratorServiceDiscoveryAutoConfiguration.class,
 		ZookeeperDiscoveryAutoConfiguration.class })
+@EnableConfigurationProperties({DiscoveryClientHealthIndicatorProperties.class})
 @Order(0)
 public class ZookeeperDiscoveryClientConfigServiceBootstrapConfiguration {
 

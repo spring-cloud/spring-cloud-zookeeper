@@ -49,7 +49,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
@@ -57,7 +56,6 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.6</version>
 					<configuration>
 						<useFile>false</useFile>
 						<includes>
