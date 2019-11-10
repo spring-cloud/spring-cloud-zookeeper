@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-zookeeper</artifactId>
-    <version>2.2.0.RC2</version>
+    <version>2.2.0.BUILD-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-  <version>2.2.0.RC2</version>
+  <version>2.2.0.BUILD-SNAPSHOT</version>
   <name>Spring Cloud Starter Zookeeper Discovery</name>
   <description>Spring Cloud Starter Zookeeper Discovery</description>
   <url>https://projects.spring.io/spring-cloud</url>
@@ -100,13 +100,13 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-zookeeper</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-zookeeper-discovery</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -128,25 +128,25 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-netflix-hystrix</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-archaius</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-      <version>2.2.0.RC2</version>
+      <version>2.2.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
