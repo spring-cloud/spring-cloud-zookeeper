@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Tim Ysewyn
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnBlockingDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled

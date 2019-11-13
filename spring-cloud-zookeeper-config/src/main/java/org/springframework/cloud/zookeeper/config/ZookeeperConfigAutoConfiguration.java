@@ -32,12 +32,12 @@ import org.springframework.context.annotation.Configuration;
  * @author Spencer Gibb
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
 public class ZookeeperConfigAutoConfiguration {
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(RefreshEndpoint.class)
 	protected static class ZkRefreshConfiguration {
 

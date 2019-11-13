@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Import;
  * @author Spencer Gibb
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnZookeeperEnabled
 @Import(ZookeeperAutoConfiguration.class)
 public class ZookeeperConfigBootstrapConfiguration {

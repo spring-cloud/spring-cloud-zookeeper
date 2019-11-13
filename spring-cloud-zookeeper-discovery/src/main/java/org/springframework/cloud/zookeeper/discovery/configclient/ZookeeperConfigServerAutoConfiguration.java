@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Dave Syer
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
 @ConditionalOnClass({ ZookeeperDiscoveryProperties.class, CuratorFramework.class,
 		ConfigServerProperties.class })

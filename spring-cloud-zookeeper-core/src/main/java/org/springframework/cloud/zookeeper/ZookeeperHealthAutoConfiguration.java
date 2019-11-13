@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Tom Gianos
  * @since 2.0.1
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnZookeeperEnabled
 @ConditionalOnClass(Endpoint.class)
 @AutoConfigureAfter({ ZookeeperAutoConfiguration.class })

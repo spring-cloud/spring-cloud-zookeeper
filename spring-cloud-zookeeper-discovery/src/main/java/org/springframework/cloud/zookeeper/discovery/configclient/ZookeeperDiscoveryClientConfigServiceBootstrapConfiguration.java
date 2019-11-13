@@ -40,7 +40,7 @@ import org.springframework.core.annotation.Order;
  */
 @ConditionalOnClass(ConfigServicePropertySourceLocator.class)
 @ConditionalOnProperty(value = "spring.cloud.config.discovery.enabled", matchIfMissing = false)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Import({ ZookeeperAutoConfiguration.class, ZookeeperDiscoveryClientConfiguration.class,
 		CuratorServiceDiscoveryAutoConfiguration.class,
 		ZookeeperDiscoveryAutoConfiguration.class })

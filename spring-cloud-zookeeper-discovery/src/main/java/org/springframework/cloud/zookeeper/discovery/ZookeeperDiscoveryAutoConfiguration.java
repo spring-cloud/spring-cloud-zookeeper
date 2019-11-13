@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Tim Ysewyn
  * @since 1.1.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore({ CommonsClientAutoConfiguration.class,
@@ -62,7 +62,7 @@ public class ZookeeperDiscoveryAutoConfiguration {
 		return new ZookeeperServiceWatch(curator, zookeeperDiscoveryProperties);
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass({ Endpoint.class, HealthIndicator.class })
 	protected static class ZookeeperDiscoveryHealthConfig {
 

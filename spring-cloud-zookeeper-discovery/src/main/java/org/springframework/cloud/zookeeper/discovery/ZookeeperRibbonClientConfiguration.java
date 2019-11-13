@@ -54,7 +54,7 @@ import static com.netflix.client.config.CommonClientConfigKey.EnableZoneAffinity
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ZookeeperRibbonClientConfiguration {
 
 	private static final Log log = LogFactory

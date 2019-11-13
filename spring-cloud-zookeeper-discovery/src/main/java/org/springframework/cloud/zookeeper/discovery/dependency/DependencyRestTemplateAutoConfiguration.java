@@ -45,7 +45,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Marcin Grzejszczak
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnZookeeperEnabled
 @ConditionalOnRibbonZookeeper
 @ConditionalOnDependenciesPassed

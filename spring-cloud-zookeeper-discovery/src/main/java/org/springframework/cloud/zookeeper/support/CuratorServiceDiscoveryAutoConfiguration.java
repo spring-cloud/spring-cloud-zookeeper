@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Spencer Gibb
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore({ ZookeeperDiscoveryAutoConfiguration.class,

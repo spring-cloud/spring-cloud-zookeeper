@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dave Syer
  * @since 1.0.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
 @ConditionalOnZookeeperEnabled
 @ConditionalOnBean(SpringClientFactory.class)

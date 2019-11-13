@@ -39,7 +39,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author Spencer Gibb
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableAutoConfiguration
 @RestController
 @EnableFeignClients
