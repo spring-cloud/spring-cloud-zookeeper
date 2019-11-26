@@ -9,7 +9,7 @@
         <relativePath/>
 	</parent>
 	<artifactId>spring-cloud-zookeeper-dependencies</artifactId>
-	<version>2.2.0.RELEASE</version>
+	<version>2.2.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
