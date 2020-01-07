@@ -238,7 +238,7 @@
     <dependency>
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-core</artifactId>
-      <version>10.4.0</version>
+      <version>10.7.0</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
