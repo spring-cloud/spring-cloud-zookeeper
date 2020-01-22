@@ -70,8 +70,9 @@ public class DiscoveryClientConfigServiceAutoConfigurationTests {
 				"spring.cloud.zookeeper.discovery.instance-port:7001",
 				"spring.cloud.zookeeper.discovery.instance-host:foo",
 				"spring.cloud.config.discovery.service-id:configserver");
-		assertThat(this.context.getBeanNamesForType(
-				ZookeeperConfigServerAutoConfiguration.class).length).isEqualTo(1);
+		assertThat(this.context
+				.getBeanNamesForType(ZookeeperConfigServerAutoConfiguration.class).length)
+						.isEqualTo(1);
 		ZookeeperDiscoveryClient client = this.context.getParent()
 				.getBean(ZookeeperDiscoveryClient.class);
 		verify(client, atLeast(2)).getInstances("configserver");
@@ -105,8 +106,9 @@ public class DiscoveryClientConfigServiceAutoConfigurationTests {
 		public ZookeeperDiscoveryClient zookeeperDiscoveryClient(
 				ZookeeperDiscoveryProperties properties) {
 			ZookeeperDiscoveryClient client = mock(ZookeeperDiscoveryClient.class);
-			ServiceInstance instance = new DefaultServiceInstance("configserver",
-					properties.getInstanceHost(), properties.getInstancePort(), false);
+			ServiceInstance instance = new DefaultServiceInstance("configserver1",
+					"configserver", properties.getInstanceHost(),
+					properties.getInstancePort(), false);
 			given(client.getInstances("configserver"))
 					.willReturn(Arrays.asList(instance));
 			return client;
