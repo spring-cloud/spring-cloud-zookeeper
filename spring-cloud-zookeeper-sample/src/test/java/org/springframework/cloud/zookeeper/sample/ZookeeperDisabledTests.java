@@ -23,11 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
-import org.springframework.cloud.zookeeper.discovery.RibbonZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependencyFeignClientAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependencyRestTemplateAutoConfiguration;
-import org.springframework.cloud.zookeeper.discovery.dependency.DependencyRibbonAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAutoConfiguration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration;
@@ -50,16 +48,10 @@ public class ZookeeperDisabledTests {
 	private ZookeeperConfigAutoConfiguration zookeeperConfigAutoConfiguration;
 
 	@Autowired(required = false)
-	private RibbonZookeeperAutoConfiguration ribbonZookeeperAutoConfiguration;
-
-	@Autowired(required = false)
 	private ZookeeperDiscoveryAutoConfiguration zookeeperDiscoveryAutoConfiguration;
 
 	@Autowired(required = false)
 	private DependencyFeignClientAutoConfiguration dependencyFeignClientAutoConfiguration;
-
-	@Autowired(required = false)
-	private DependencyRibbonAutoConfiguration dependencyRibbonAutoConfiguration;
 
 	@Autowired(required = false)
 	private DependencyRestTemplateAutoConfiguration dependencyRestTemplateAutoConfiguration;
@@ -85,14 +77,10 @@ public class ZookeeperDisabledTests {
 				.as("ZookeeperAutoConfiguration was not disabled").isNull();
 		assertThat(this.zookeeperConfigAutoConfiguration)
 				.as("ZookeeperConfigAutoConfiguration was not disabled").isNull();
-		assertThat(this.ribbonZookeeperAutoConfiguration)
-				.as("RibbonZookeeperAutoConfiguration was not disabled").isNull();
 		assertThat(this.zookeeperDiscoveryAutoConfiguration)
 				.as("ZookeeperDiscoveryAutoConfiguration was not disabled").isNull();
 		assertThat(this.dependencyFeignClientAutoConfiguration)
 				.as("DependencyFeignClientAutoConfiguration was not disabled").isNull();
-		assertThat(this.dependencyRibbonAutoConfiguration)
-				.as("DependencyRibbonAutoConfiguration was not disabled").isNull();
 		assertThat(this.dependencyRestTemplateAutoConfiguration)
 				.as("DependencyRestTemplateAutoConfiguration was not disabled").isNull();
 		assertThat(this.zookeeperDependenciesAutoConfiguration)

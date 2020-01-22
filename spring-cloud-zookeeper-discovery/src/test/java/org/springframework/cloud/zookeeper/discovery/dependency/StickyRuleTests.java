@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.jayway.awaitility.Awaitility;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.NoOpPing;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.test.TestingServer;
 import org.junit.Test;
@@ -128,11 +126,6 @@ public class StickyRuleTests {
 		TestServiceRegistrar serviceTwo(CuratorFramework curatorFramework) {
 			return new TestServiceRegistrar(SocketUtils.findAvailableTcpPort(),
 					curatorFramework);
-		}
-
-		@Bean
-		IPing noOpPing() {
-			return new NoOpPing();
 		}
 
 	}
