@@ -22,18 +22,18 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author Marcin Grzejszczak
  */
-public class TestRibbonClient extends TestServiceRestClient {
+public class TestLoadBalancedClient extends TestServiceRestClient {
 
 	public static final String BASE_PATH = new WebEndpointProperties().getBasePath();
 
 	private final String thisAppName;
 
-	public TestRibbonClient(RestTemplate restTemplate) {
+	public TestLoadBalancedClient(RestTemplate restTemplate) {
 		super(restTemplate);
 		this.thisAppName = "someName";
 	}
 
-	public TestRibbonClient(RestTemplate restTemplate, String thisAppName) {
+	public TestLoadBalancedClient(RestTemplate restTemplate, String thisAppName) {
 		super(restTemplate);
 		this.thisAppName = thisAppName;
 	}
