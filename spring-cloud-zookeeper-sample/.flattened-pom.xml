@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-zookeeper</artifactId>
-    <version>2.2.1.BUILD-SNAPSHOT</version>
+    <version>3.0.0.BUILD-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-zookeeper-sample</artifactId>
-  <version>2.2.1.BUILD-SNAPSHOT</version>
+  <version>3.0.0.BUILD-SNAPSHOT</version>
   <name>Spring Cloud Zookeeper Sample</name>
   <description>Spring Cloud Zookeeper Sample</description>
   <url>https://spring.io/spring-cloud/spring-cloud-zookeeper/spring-cloud-zookeeper-sample</url>
@@ -100,7 +100,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-zookeeper-all</artifactId>
-      <version>2.2.1.BUILD-SNAPSHOT</version>
+      <version>3.0.0.BUILD-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

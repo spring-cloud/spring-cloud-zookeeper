@@ -16,3 +16,4 @@ _site/
 .checkstyle
 .DS_Store
 .vscode/
+.flattened-pom.xml

@@ -27,14 +27,17 @@ import feign.Client;
 import feign.Request;
 import feign.Response;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
-import org.springframework.cloud.openfeign.ribbon.CachingSpringLoadBalancerFactory;
-import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
+import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerClientAutoConfiguration;
+import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient;
+import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
+import org.springframework.cloud.openfeign.loadbalancer.FeignLoadBalancerAutoConfiguration;
 import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.context.annotation.Bean;
@@ -52,26 +55,34 @@ import org.springframework.context.annotation.Primary;
 @ConditionalOnDependenciesPassed
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.headers.enabled", matchIfMissing = true)
-@ConditionalOnClass({ Client.class, LoadBalancerFeignClient.class })
-@AutoConfigureAfter({ RibbonAutoConfiguration.class,
-		FeignRibbonClientAutoConfiguration.class })
+@ConditionalOnClass(Client.class)
+@AutoConfigureAfter({ LoadBalancerAutoConfiguration.class, ReactorLoadBalancerClientAutoConfiguration.class,
+		FeignLoadBalancerAutoConfiguration.class })
 public class DependencyFeignClientAutoConfiguration {
 
-	@Autowired(required = false)
-	private LoadBalancerFeignClient ribbonClient;
+	@Configuration
+	@ConditionalOnBean(BlockingLoadBalancerClient.class)
+	static class BlockingDependencyFeignClientAutoConfigurtaion {
+		@Bean
+		@Primary
+		Client dependencyBasedFeignClient(ObjectProvider<BlockingLoadBalancerClient>) {
+	}
+
+	@Configuration
+	@ConditionalOnBean(ReactorLoadBalancer.class)
+	static class ReactorDependencyFeignClientAutoConfigurtaion {
+		@Bean
+		@Primary
+		Client dependencyBasedFeignClient() {
+	}
 
 	@Autowired
 	private ZookeeperDependencies zookeeperDependencies;
 
-	@Autowired
-	private CachingSpringLoadBalancerFactory loadBalancerFactory;
-
-	@Autowired
-	private SpringClientFactory springClientFactory;
-
 	@Bean
 	@Primary
 	Client dependencyBasedFeignClient() {
+		return
 		return new LoadBalancerFeignClient(new Client.Default(null, null),
 				this.loadBalancerFactory, this.springClientFactory) {
 
@@ -84,8 +95,8 @@ public class DependencyFeignClientAutoConfiguration {
 						.getDependencyForAlias(clientName);
 				Map<String, Collection<String>> headers = getUpdatedHeadersIfPossible(
 						request, dependencyForAlias);
-				if (DependencyFeignClientAutoConfiguration.this.ribbonClient != null) {
-					return DependencyFeignClientAutoConfiguration.this.ribbonClient
+				if (DependencyFeignClientAutoConfiguration.this.loadBalancerClient != null) {
+					return DependencyFeignClientAutoConfiguration.this.loadBalancerClient
 							.execute(request(request, headers), options);
 				}
 				return super.execute(request(request, headers), options);
