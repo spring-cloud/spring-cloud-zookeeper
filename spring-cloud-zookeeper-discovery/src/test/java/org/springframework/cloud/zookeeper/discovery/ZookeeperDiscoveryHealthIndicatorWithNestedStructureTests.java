@@ -33,7 +33,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
@@ -47,7 +47,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
+import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -62,7 +62,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 			.getLog(MethodHandles.lookup().lookupClass());
 
 	@Autowired
-	TestRibbonClient testRibbonClient;
+	TestLoadBalancedClient testLoadBalancedClient;
 
 	@Autowired
 	CuratorFramework curatorFramework;
@@ -72,7 +72,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 	public void should_return_a_response_that_app_is_in_a_healthy_state_when_nested_folders_in_zookeeper_are_present()
 			throws Exception {
 		// when:
-		String response = this.testRibbonClient.callService("me", BASE_PATH + "/health");
+		String response = this.testLoadBalancedClient.callService("me", BASE_PATH + "/health");
 		// then:
 		log.info("Received response [" + response + "]");
 		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();
@@ -110,9 +110,9 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 		}
 
 		@Bean
-		TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
-			return new TestRibbonClient(restTemplate, springAppName);
+			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}
 
 	}

@@ -28,7 +28,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
+import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -50,7 +50,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 
 	@Autowired
-	TestRibbonClient testRibbonClient;
+	TestLoadBalancedClient testLoadBalancedClient;
 
 	@Autowired
 	DiscoveryClient discoveryClient;
@@ -212,20 +212,20 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	}
 
 	private boolean callingServiceAtBeansEndpointIsNotEmpty() {
-		return !this.testRibbonClient.callService("someAlias", BASE_PATH + "/beans")
+		return !this.testLoadBalancedClient.callService("someAlias", BASE_PATH + "/beans")
 				.isEmpty();
 	}
 
 	private boolean callingServiceViaUrlOnBeansEndpointIsNotEmpty(
 			ServiceInstance instance) {
-		return !this.testRibbonClient
+		return !this.testLoadBalancedClient
 				.callOnUrl(instance.getHost() + ":" + instance.getPort(),
 						BASE_PATH + "/beans")
 				.isEmpty();
 	}
 
 	private void callingServiceToCheckIfHeadersArePassed() {
-		this.testRibbonClient.callService("someAlias", "checkHeaders");
+		this.testLoadBalancedClient.callService("someAlias", "checkHeaders");
 	}
 
 	@Configuration

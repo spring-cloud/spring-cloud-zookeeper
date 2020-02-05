@@ -34,7 +34,7 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +51,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient.BASE_PATH;
+import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient.BASE_PATH;
 
 /**
  * @author Marcin Grzejszczak
@@ -67,7 +67,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 public class ZookeeperDiscoveryTests {
 
 	@Autowired
-	TestRibbonClient testRibbonClient;
+	TestLoadBalancedClient testLoadBalancedClient;
 
 	@Autowired
 	DiscoveryClient discoveryClient;
@@ -131,12 +131,12 @@ public class ZookeeperDiscoveryTests {
 	}
 
 	private String registeredServiceStatusViaServiceName() {
-		return JsonPath.builder(this.testRibbonClient.thisHealthCheck()).field("status")
+		return JsonPath.builder(this.testLoadBalancedClient.thisHealthCheck()).field("status")
 				.read(String.class);
 	}
 
 	private String registeredServiceStatus(ServiceInstance instance) {
-		return JsonPath.builder(this.testRibbonClient.callOnUrl(
+		return JsonPath.builder(this.testLoadBalancedClient.callOnUrl(
 				instance.getHost() + ":" + instance.getPort(), BASE_PATH + "/health"))
 				.field("status").read(String.class);
 	}
@@ -165,9 +165,9 @@ public class ZookeeperDiscoveryTests {
 	static class Config {
 
 		@Bean
-		TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
-			return new TestRibbonClient(restTemplate, springAppName);
+			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}
 
 		@RequestMapping("/hi")

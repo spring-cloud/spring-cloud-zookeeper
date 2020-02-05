@@ -25,8 +25,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.netflix.ribbon.ServerIntrospector;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.context.annotation.Configuration;
@@ -57,22 +55,8 @@ public class ZookeeperDiscoverySecurePortTests {
 	@Autowired
 	private ZookeeperRegistration zookeeperRegistration;
 
-	@Autowired
-	private SpringClientFactory clientFactory;
-
 	@Value("${spring.application.name}")
 	private String springAppName;
-
-	@Test
-	public void zookeeperServerIntrospectorWorks() {
-		ServerIntrospector serverIntrospector = this.clientFactory
-				.getInstance(springAppName, ServerIntrospector.class);
-		then(serverIntrospector).isInstanceOf(ZookeeperServerIntrospector.class);
-
-		ZookeeperServer zookeeperServer = new ZookeeperServer(
-				this.zookeeperRegistration.getServiceInstance());
-		then(serverIntrospector.isSecure(zookeeperServer)).isTrue();
-	}
 
 	@Test
 	public void isSecureIsTrue() {

@@ -24,7 +24,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +45,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class DependencyConfig {
 
 	@Bean
-	TestRibbonClient testRibbonClient(@LoadBalanced RestTemplate restTemplate) {
-		return new TestRibbonClient(restTemplate);
+	TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate) {
+		return new TestLoadBalancedClient(restTemplate);
 	}
 
 	@Bean

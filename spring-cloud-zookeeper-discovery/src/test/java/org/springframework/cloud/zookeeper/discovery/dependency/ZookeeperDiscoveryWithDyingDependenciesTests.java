@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -118,7 +118,7 @@ public class ZookeeperDiscoveryWithDyingDependenciesTests {
 	}
 
 	private Integer callServiceAtPortEndpoint(ApplicationContext applicationContext) {
-		return applicationContext.getBean(TestRibbonClient.class)
+		return applicationContext.getBean(TestLoadBalancedClient.class)
 				.callService("testInstance", "port", Integer.class);
 	}
 
