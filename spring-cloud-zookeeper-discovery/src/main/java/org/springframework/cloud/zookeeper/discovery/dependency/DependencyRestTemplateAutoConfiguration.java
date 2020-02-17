@@ -26,9 +26,11 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
+import org.springframework.cloud.zookeeper.discovery.ConditionalOnLoadBalancerForZookeeperEnabled;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -45,8 +47,10 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnZookeeperEnabled
+@ConditionalOnLoadBalancerForZookeeperEnabled
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.resttemplate.enabled", matchIfMissing = true)
+@AutoConfigureAfter(DependencyLoadBalancerAutoConfiguration.class)
 public class DependencyRestTemplateAutoConfiguration {
 
 	@Autowired

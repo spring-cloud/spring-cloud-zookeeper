@@ -3,12 +3,14 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyFeignClientAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyRestTemplateAutoConfiguration,\
+org.springframework.cloud.zookeeper.discovery.dependency.DependencyLoadBalancerAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAutoConfiguration,\
 org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration,\
 org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration,\
 org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration,\
 org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration, \
+org.springframework.cloud.zookeeper.discovery.LoadBalancerZookeeperAutoConfiguration, \
 org.springframework.cloud.zookeeper.discovery.reactive.ZookeeperReactiveDiscoveryClientConfiguration
 
 # Environment Post Processors
