@@ -18,58 +18,61 @@ package org.springframework.cloud.zookeeper.config;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Enrique Recarte Llorens
  */
 public class ZookeeperPropertySourceLocatorFailFastTests {
 
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		// This system property makes Curator fail faster, otherwise it takes 15 seconds
 		// to trigger a retry
 		System.setProperty("curator-default-connection-timeout", "0");
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		System.clearProperty("curator-default-connection-timeout");
 	}
 
 	@Test
-	public void testFailFastFalseLoadsTheApplicationContext() throws Exception {
-		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
-				.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
-						"--spring.cloud.zookeeper.config.connectString=localhost:2188",
-						"--spring.cloud.zookeeper.baseSleepTimeMs=0",
-						"--spring.cloud.zookeeper.maxRetries=0",
-						"--spring.cloud.zookeeper.maxSleepMs=0",
-						"--spring.cloud.zookeeper.blockUntilConnectedWait=0",
-						"--spring.cloud.zookeeper.config.failFast=false");
+	public void testFailFastFalseLoadsTheApplicationContext() {
+		assertThatCode(() -> {
+			new SpringApplicationBuilder().sources(Config.class)
+					.web(WebApplicationType.NONE)
+					.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
+							"--spring.cloud.zookeeper.config.connectString=localhost:2188",
+							"--spring.cloud.zookeeper.baseSleepTimeMs=0",
+							"--spring.cloud.zookeeper.maxRetries=0",
+							"--spring.cloud.zookeeper.maxSleepMs=0",
+							"--spring.cloud.zookeeper.blockUntilConnectedWait=0",
+							"--spring.cloud.zookeeper.config.failFast=false");
+		}).doesNotThrowAnyException();
 	}
 
 	@Test
-	public void testFailFastTrueDoesNotLoadTheApplicationContext() throws Exception {
-		expectedException.expect(Exception.class);
-
-		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
-				.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
-						"--spring.cloud.zookeeper.config.connectString=localhost:2188",
-						"--spring.cloud.zookeeper.baseSleepTimeMs=0",
-						"--spring.cloud.zookeeper.maxRetries=0",
-						"--spring.cloud.zookeeper.maxSleepMs=0",
-						"--spring.cloud.zookeeper.blockUntilConnectedWait=0",
-						"--spring.cloud.zookeeper.config.failFast=true");
+	public void testFailFastTrueDoesNotLoadTheApplicationContext() {
+		assertThatThrownBy(() -> {
+			new SpringApplicationBuilder().sources(Config.class)
+					.web(WebApplicationType.NONE)
+					.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
+							"--spring.cloud.zookeeper.config.connectString=localhost:2188",
+							"--spring.cloud.zookeeper.baseSleepTimeMs=0",
+							"--spring.cloud.zookeeper.maxRetries=0",
+							"--spring.cloud.zookeeper.maxSleepMs=0",
+							"--spring.cloud.zookeeper.blockUntilConnectedWait=0",
+							"--spring.cloud.zookeeper.config.failFast=true");
+		})
+				.isNotNull();
 	}
 
 	@SpringBootApplication

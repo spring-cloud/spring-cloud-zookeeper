@@ -30,6 +30,7 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,8 +65,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 	}
 
 	@Test
-	public void should_work_when_using_web_client_without_the_web_environment()
-			throws Exception {
+	public void should_work_when_using_web_client_without_the_web_environment() {
 		SpringApplication producerApp = new SpringApplicationBuilder(HelloProducer.class)
 				.web(WebApplicationType.SERVLET).build();
 		SpringApplication clientApplication = new SpringApplicationBuilder(
@@ -113,6 +113,11 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 		@Autowired
 		RestTemplate restTemplate;
+
+		@Bean
+		ZookeeperDependencies zookeeperDependencies() {
+			return new ZookeeperDependencies();
+		}
 
 	}
 
