@@ -7,6 +7,7 @@ import org.springframework.cloud.client.loadbalancer.reactive.ReactiveLoadBalanc
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
+import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependenciesAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnZookeeperEnabled
 @ConditionalOnBean(ReactiveLoadBalancer.Factory.class)
 @ConditionalOnLoadBalancerForZookeeperEnabled
-@AutoConfigureAfter(LoadBalancerAutoConfiguration.class)
+@AutoConfigureAfter({LoadBalancerAutoConfiguration.class, ZookeeperDependenciesAutoConfiguration.class})
 @LoadBalancerClients(defaultConfiguration = ZookeeperLoadBalancerConfiguration.class)
 public class LoadBalancerZookeeperAutoConfiguration {
 }

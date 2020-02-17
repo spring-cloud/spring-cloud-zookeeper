@@ -17,7 +17,6 @@
 package org.springframework.cloud.zookeeper.discovery.dependency;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,8 +43,8 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalance
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class, properties = {
-		"feign.hystrix.enabled=false", "debug=true",
-		"management.endpoints.web.exposure.include=*" }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+		"debug=true",
+		"management.endpoints.web.exposure.include=*"}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dependencies")
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 
@@ -69,12 +68,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		// given:
 		final DiscoveryClient discoveryClient = this.discoveryClient;
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return !discoveryClient.getInstances("nameWithoutAlias").isEmpty();
-			}
-		});
+		await().until(() -> !discoveryClient.getInstances("nameWithoutAlias").isEmpty());
 	}
 
 	@Test
@@ -94,25 +88,16 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		// given:
 		final IdUsingFeignClient idUsingFeignClient = this.idUsingFeignClient;
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				then(idUsingFeignClient.getBeans()).isNotEmpty();
-				return true;
-			}
+		await().until(() -> {
+			then(idUsingFeignClient.getBeans()).isNotEmpty();
+			return true;
 		});
 	}
 
-	@Ignore // FIXME 2.0.0
 	@Test
 	public void should_find_a_collaborator_via_load_balanced_rest_template_by_using_its_alias_from_dependencies() {
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return callingServiceAtBeansEndpointIsNotEmpty();
-			}
-		});
+		await().until(() -> callingServiceAtBeansEndpointIsNotEmpty());
 	}
 
 	@Ignore // FIXME 2.0.0
@@ -121,39 +106,29 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		// given:
 		final AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				then(aliasUsingFeignClient.getBeans()).isNotEmpty();
-				return true;
-			}
+		await().until(() -> {
+			then(aliasUsingFeignClient.getBeans()).isNotEmpty();
+			return true;
 		});
 	}
 
 	@Test
 	public void should_have_headers_from_dependencies_attached_to_the_request_via_load_balanced_rest_template() {
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				callingServiceToCheckIfHeadersArePassed();
-				return true;
-			}
+		await().until(() -> {
+			callingServiceToCheckIfHeadersArePassed();
+			return true;
 		});
 	}
 
-	@Ignore // FIXME 2.0.0
 	@Test
 	public void should_have_headers_from_dependencies_attached_to_the_request_via_feign() {
 		// given:
 		final AliasUsingFeignClient aliasUsingFeignClient = this.aliasUsingFeignClient;
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				aliasUsingFeignClient.checkHeaders();
-				return true;
-			}
+		await().until(() -> {
+			aliasUsingFeignClient.checkHeaders();
+			return true;
 		});
 	}
 
@@ -164,12 +139,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 		List<ServiceInstance> instances = discoveryClient.getInstances("someAlias");
 		final ServiceInstance instance = instances.get(0);
 		// expect:
-		await().until(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return callingServiceViaUrlOnBeansEndpointIsNotEmpty(instance);
-			}
-		});
+		await().until(() -> callingServiceViaUrlOnBeansEndpointIsNotEmpty(instance));
 	}
 
 	@Test

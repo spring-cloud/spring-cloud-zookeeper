@@ -85,15 +85,4 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 
 	}
 
-	@Controller
-	@Profile("ribbon")
-	class PingController {
-
-		@RequestMapping("/ping")
-		String ping() {
-			return "pong";
-		}
-
-	}
-
 }
