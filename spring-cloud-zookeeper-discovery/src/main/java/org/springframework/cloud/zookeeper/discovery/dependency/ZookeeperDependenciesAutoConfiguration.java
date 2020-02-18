@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
 @ConditionalOnZookeeperEnabled
-@ConditionalOnDependenciesPassed
 @AutoConfigureAfter(ZookeeperAutoConfiguration.class)
 public class ZookeeperDependenciesAutoConfiguration {
 

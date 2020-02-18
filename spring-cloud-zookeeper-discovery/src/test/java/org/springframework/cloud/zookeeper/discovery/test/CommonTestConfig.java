@@ -20,7 +20,6 @@ import org.apache.curator.test.TestingServer;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.SocketUtils;
@@ -48,11 +47,6 @@ public class CommonTestConfig {
 		ZookeeperProperties zookeeperProperties = new ZookeeperProperties();
 		zookeeperProperties.setConnectString("localhost:" + testingServer.getPort());
 		return zookeeperProperties;
-	}
-
-	@Bean
-	ZookeeperDependencies zookeeperDependencies() {
-		return new ZookeeperDependencies();
 	}
 
 }

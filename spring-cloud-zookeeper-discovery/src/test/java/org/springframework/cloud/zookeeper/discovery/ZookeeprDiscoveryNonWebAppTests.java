@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -113,11 +112,6 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 		@Autowired
 		RestTemplate restTemplate;
-
-		@Bean
-		ZookeeperDependencies zookeeperDependencies() {
-			return new ZookeeperDependencies();
-		}
 
 	}
 

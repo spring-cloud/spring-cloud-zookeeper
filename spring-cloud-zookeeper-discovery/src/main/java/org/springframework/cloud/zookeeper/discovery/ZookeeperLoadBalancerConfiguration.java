@@ -39,7 +39,7 @@ public class ZookeeperLoadBalancerConfiguration {
 	@Bean
 	@ConditionalOnBean(DiscoveryClient.class)
 	@ConditionalOnMissingBean
-	public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
+	public ServiceInstanceListSupplier zookeeperDiscoveryClientServiceInstanceListSupplier(
 			DiscoveryClient discoveryClient, Environment env,
 			ApplicationContext context,
 			ZookeeperDependencies zookeeperDependencies) {
