@@ -67,7 +67,13 @@ public class BlockingDependencyLoadBalancerConfiguration {
 							serviceId));
 					Response<ServiceInstance> loadBalancerResponse = Mono
 							.from(loadBalancer.choose())
-							.switchIfEmpty(Mono.from(chooseDefault())).block();
+							.flatMap(response -> {
+								if (response instanceof EmptyResponse) {
+									return Mono.defer(this::chooseDefault);
+								}
+								return Mono.defer(() -> Mono.just(response));
+							})
+							.switchIfEmpty(Mono.defer(this::chooseDefault)).block();
 					return getServiceInstance(loadBalancerResponse);
 				}
 				return getServiceInstance(chooseDefault().block());

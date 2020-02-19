@@ -38,11 +38,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(WebClient.class)
 @ConditionalOnBean(ReactiveLoadBalancer.Factory.class)
-public class ReactiveDependencyLoadBalancerConfiguration {
+public class ReactorDependencyLoadBalancerConfiguration {
 
 	private final ReactiveLoadBalancer.Factory<ServiceInstance> loadBalancerFactory;
 
-	public ReactiveDependencyLoadBalancerConfiguration(ReactiveLoadBalancer.Factory<ServiceInstance> loadBalancerFactory) {
+	public ReactorDependencyLoadBalancerConfiguration(ReactiveLoadBalancer.Factory<ServiceInstance> loadBalancerFactory) {
 		this.loadBalancerFactory = loadBalancerFactory;
 	}
 

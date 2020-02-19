@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfigureBefore({ReactorLoadBalancerClientAutoConfiguration.class,
 		BlockingLoadBalancerClientAutoConfiguration.class})
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.loadbalancer.enabled", matchIfMissing = true)
-@Import({ReactiveDependencyLoadBalancerConfiguration.class, BlockingDependencyLoadBalancerConfiguration.class})
+@Import({ReactorDependencyLoadBalancerConfiguration.class, BlockingDependencyLoadBalancerConfiguration.class})
 public class DependencyLoadBalancerAutoConfiguration {
 
 }
