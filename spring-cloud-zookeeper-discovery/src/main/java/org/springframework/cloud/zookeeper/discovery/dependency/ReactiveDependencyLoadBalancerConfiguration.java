@@ -64,6 +64,12 @@ public class ReactiveDependencyLoadBalancerConfiguration {
 							"Dependencies are set - will try to load-balance via LoadBalancer for key [%s]",
 							serviceId));
 					return Mono.from(loadBalancer.choose())
+							.flatMap(response -> {
+								if (response instanceof EmptyResponse) {
+									return Mono.defer(this::chooseDefault);
+								}
+								return Mono.defer(() -> Mono.just(response));
+							})
 							.switchIfEmpty(Mono.defer(this::chooseDefault));
 				}
 				return chooseDefault();

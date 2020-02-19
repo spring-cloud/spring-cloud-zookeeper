@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.client.loadbalancer.reactive.EmptyResponse;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactiveLoadBalancer;
 import org.springframework.cloud.client.loadbalancer.reactive.Response;
@@ -49,7 +50,7 @@ public class BlockingDependencyLoadBalancerConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	BlockingLoadBalancerClient zookeeperBlockingLoadBalancerClient() {
+	LoadBalancerClient zookeeperBlockingLoadBalancerClient() {
 		return new BlockingLoadBalancerClient(loadBalancerClientFactory) {
 
 			private final Log log = LogFactory

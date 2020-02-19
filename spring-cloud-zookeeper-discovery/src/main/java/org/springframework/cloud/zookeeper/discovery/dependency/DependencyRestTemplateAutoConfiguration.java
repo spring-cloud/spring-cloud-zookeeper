@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
@@ -51,6 +52,7 @@ import org.springframework.web.client.RestTemplate;
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.resttemplate.enabled", matchIfMissing = true)
 @AutoConfigureAfter(DependencyLoadBalancerAutoConfiguration.class)
+@ConditionalOnBean(RestTemplate.class)
 public class DependencyRestTemplateAutoConfiguration {
 
 	@Autowired
