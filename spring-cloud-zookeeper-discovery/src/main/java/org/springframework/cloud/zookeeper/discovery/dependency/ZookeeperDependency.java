@@ -29,6 +29,7 @@ import static java.util.Collections.singletonList;
  *
  * @author Marcin Grzejszczak
  * @author Spencer Gibb
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 public class ZookeeperDependency {
@@ -42,11 +43,6 @@ public class ZookeeperDependency {
 	 * {@link ZookeeperDependencies#prefix} will be applied to this path.
 	 */
 	private String path;
-
-	/**
-	 * Type of load balancer that should be used for this particular dependency.
-	 */
-	private LoadBalancerType loadBalancerType = LoadBalancerType.ROUND_ROBIN;
 
 	/**
 	 * Content type template with {@code $version} placeholder which will be filled by the
@@ -89,11 +85,9 @@ public class ZookeeperDependency {
 	public ZookeeperDependency() {
 	}
 
-	public ZookeeperDependency(String path, LoadBalancerType loadBalancerType,
-			String contentTypeTemplate, String version,
+	public ZookeeperDependency(String path, String contentTypeTemplate, String version,
 			Map<String, Collection<String>> headers, boolean required, String stubs) {
 		this.path = path;
-		this.loadBalancerType = loadBalancerType;
 		this.contentTypeTemplate = contentTypeTemplate;
 		this.version = version;
 		this.headers = headers;
@@ -182,10 +176,6 @@ public class ZookeeperDependency {
 		return this.path;
 	}
 
-	public LoadBalancerType getLoadBalancerType() {
-		return this.loadBalancerType;
-	}
-
 	public String getContentTypeTemplate() {
 		return this.contentTypeTemplate;
 	}
@@ -212,10 +202,6 @@ public class ZookeeperDependency {
 
 	public void setPath(String path) {
 		this.path = path;
-	}
-
-	public void setLoadBalancerType(LoadBalancerType loadBalancerType) {
-		this.loadBalancerType = loadBalancerType;
 	}
 
 	public void setContentTypeTemplate(String contentTypeTemplate) {
@@ -246,7 +232,6 @@ public class ZookeeperDependency {
 	public String toString() {
 		final StringBuffer sb = new StringBuffer("ZookeeperDependency{");
 		sb.append("path='").append(this.path).append('\'');
-		sb.append(", loadBalancerType=").append(this.loadBalancerType);
 		sb.append(", contentTypeTemplate='").append(this.contentTypeTemplate)
 				.append('\'');
 		sb.append(", version='").append(this.version).append('\'');

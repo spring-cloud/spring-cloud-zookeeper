@@ -50,7 +50,7 @@ public class ZookeeperDiscoveryWithDyingDependenciesTests {
 
 	// Issue: #45
 	@Test
-	public void should_refresh_a_dependency_in_Ribbon_when_the_dependency_has_deregistered_and_registered_in_Zookeeper()
+	public void should_refresh_a_dependency_in_LoadBalancer_when_the_dependency_has_deregistered_and_registered_in_Zookeeper()
 			throws Exception {
 		ConfigurableApplicationContext serverContext = null;
 		ConfigurableApplicationContext clientContext = null;

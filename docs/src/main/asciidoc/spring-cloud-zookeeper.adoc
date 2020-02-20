@@ -164,14 +164,14 @@ public String serviceUrl() {
 == Using Spring Cloud Zookeeper with Spring Cloud Netflix Components
 
 Spring Cloud Netflix supplies useful tools that work regardless of which `DiscoveryClient`
-implementation you use. Feign, Turbine, Ribbon, and Zuul all work with Spring Cloud
-Zookeeper.
+implementation you use.
+Feign and Spring Cloud LoadBalancer also work with Spring Cloud Zookeeper.
 
-=== Ribbon with Zookeeper
+=== Spring Cloud LoadBalancer with Zookeeper
 
-Spring Cloud Zookeeper provides an implementation of Ribbon's `ServerList`. When you use
-the  `spring-cloud-starter-zookeeper-discovery`, Ribbon is autoconfigured to use the
-`ZookeeperServerList` by default.
+Spring Cloud Zookeeper provides an implementation of Spring Cloud LoadBalancer `ServiceInstanceListSupplier`.
+When you use the  `spring-cloud-starter-zookeeper-discovery`, Spring Cloud LoadBalancer is autoconfigured to use the
+`ZookeeperServiceInstanceListSupplier` by default.
 
 [[spring-cloud-zookeeper-service-registry]]
 == Spring Cloud Zookeeper and Service Registry
@@ -201,15 +201,13 @@ public void registerThings() {
 
 === Instance Status
 
-Netflix Eureka supports having instances that are `OUT_OF_SERVICE` registered with the
-server. These instances are not returned as active service instances. This is useful for
-behaviors such as blue/green deployments. (Note that the Curator Service Discovery recipe
-does not  support this behavior.) Taking advantage of the flexible payload has let Spring
-Cloud Zookeeper implement `OUT_OF_SERVICE` by updating some specific metadata and then
-filtering on that metadata in the Ribbon `ZookeeperServerList`. The `ZookeeperServerList`
-filters out all non-null instance statuses that do not equal `UP`. If the instance status
-field is empty, it is considered to be `UP` for backwards compatibility. To change the
-status of an instance, make a `POST` with `OUT_OF_SERVICE` to the `ServiceRegistry`
+Netflix Eureka supports having instances that are `OUT_OF_SERVICE` registered with the server.
+These instances are not returned as active service instances.
+This is useful for behaviors such as blue/green deployments.
+(Note that the Curator Service Discovery recipe does not support this behavior.) Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement `OUT_OF_SERVICE` by updating some specific metadata and then filtering on that metadata in the Spring Cloud LoadBalancer `ZookeeperServiceInstanceListSupplier`.
+The `ZookeeperServiceInstanceListSupplier` filters out all non-null instance statuses that do not equal `UP`.
+If the instance status field is empty, it is considered to be `UP` for backwards compatibility.
+To change the status of an instance, make a `POST` with `OUT_OF_SERVICE` to the `ServiceRegistry`
 instance status actuator endpoint, as shown in the following example:
 
 [source,sh,indent=0]
@@ -290,14 +288,14 @@ name is `spring.cloud.zookeeper.dependencies`.
 [[spring-cloud-zookeeper-dependencies-setting-up-aliases]]
 ==== Aliases
 
-Below the root property you have to represent each dependency as an alias. This is due to
-the constraints of Ribbon, which requires that the application ID be placed in the URL.
-Consequently, you cannot pass any complex path, suchas  `/myApp/myRoute/name`). The alias
-is the name you use instead of the `serviceId` for `DiscoveryClient`, `Feign`, or
+Below the root property you have to represent each dependency as an alias.
+This is due to the constraints of Spring Cloud LoadBalancer, which requires that the application ID be placed in the URL.
+Consequently, you cannot pass any complex path, suchas  `/myApp/myRoute/name`).
+The alias is the name you use instead of the `serviceId` for `DiscoveryClient`, `Feign`, or
 `RestTemplate`.
 
-In the previous examples, the aliases are `newsletter` and `mailing`. The following
-example shows Feign usage with a `newsletter` alias:
+In the previous examples, the aliases are `newsletter` and `mailing`.
+The following example shows Feign usage with a `newsletter` alias:
 
 [source,java,indent=0]
 ----
@@ -310,19 +308,18 @@ public interface NewsletterService {
 
 ==== Path
 
-The path is represented by the `path` YAML property and is the path under which the
-dependency is registered under Zookeeper. As described in the
-<<spring-cloud-zookeeper-dependencies-setting-up-aliases,previous section>>, Ribbon
-operates on URLs. As a result, this path is not compliant with its requirement.
+The path is represented by the `path` YAML property and is the path under which the dependency is registered under Zookeeper.
+As described in the
+<<spring-cloud-zookeeper-dependencies-setting-up-aliases,previous section>>, Spring Cloud LoadBalancer operates on URLs.
+As a result, this path is not compliant with its requirement.
 That is why Spring Cloud Zookeeper maps the alias to the proper path.
 
 ==== Load Balancer Type
 
 The load balancer type is represented by `loadBalancerType` YAML property.
 
-If you know what kind of load-balancing strategy has to be applied when calling this
-particular dependency, you can provide it in the YAML file, and it is automatically
-applied. You can choose one of the following load balancing strategies:
+If you know what kind of load-balancing strategy has to be applied when calling this particular dependency, you can provide it in the YAML file, and it is automatically applied.
+You can choose one of the following load balancing strategies:
 
 * STICKY: Once chosen, the instance is always called.
 * RANDOM: Picks an instance randomly.
@@ -412,29 +409,15 @@ example:
 [[spring-cloud-zookeeper-dependencies-configuring]]
 === Configuring Spring Cloud Zookeeper Dependencies
 
-You can set the following properties to enable or disable parts of Zookeeper Dependencies
-functionalities:
+You can set the following properties to enable or disable parts of Zookeeper Dependencies functionalities:
 
-* `spring.cloud.zookeeper.dependencies`: If you do not set this property, you cannot use
-Zookeeper Dependencies.
-* `spring.cloud.zookeeper.dependency.ribbon.enabled` (enabled by default): Ribbon requires
-either explicit global configuration or a particular one for a dependency. By turning on
-this property, runtime load balancing strategy resolution is possible, and you can use the
-`loadBalancerType` section of the Zookeeper Dependencies. The configuration that needs
-this property has an implementation of `LoadBalancerClient` that delegates to the
-`ILoadBalancer` presented in the next bullet.
-* `spring.cloud.zookeeper.dependency.ribbon.loadbalancer` (enabled by default): Thanks to
-this property, the custom `ILoadBalancer` knows that the part of the URI passed to Ribbon
-might actually be the alias that has to be resolved to a proper path in Zookeeper. Without
-this property, you cannot register applications under nested paths.
-* `spring.cloud.zookeeper.dependency.headers.enabled` (enabled by default): This property
-registers a `RibbonClient` that automatically appends appropriate headers and content
-types with their versions, as presented in the Dependency configuration. Without this
-setting, those two parameters do not work.
-* `spring.cloud.zookeeper.dependency.resttemplate.enabled` (enabled by default): When
-enabled, this property modifies the request headers of a `@LoadBalanced`-annotated
-`RestTemplate` such that it passes headers and content type with the version set in
-dependency configuration. Without this setting, those two parameters do not work.
+* `spring.cloud.zookeeper.dependencies`: If you do not set this property, you cannot use Zookeeper Dependencies.
+* `spring.cloud.zookeeper.dependency.loadbalancer.enabled` (enabled by default): Turns on Zookeeper-specific custom load-balancing strategies, including `ZookeeperServiceInstanceListSupplier` and dependency-based load-balanced `RestTemplate` setup.
+* `spring.cloud.zookeeper.dependency.headers.enabled` (enabled by default): This property registers a `FeignBlockingLoadBalancerClient` that automatically appends appropriate headers and content types with their versions, as presented in the Dependency configuration.
+Without this setting, those two parameters do not work.
+* `spring.cloud.zookeeper.dependency.resttemplate.enabled` (enabled by default): When enabled, this property modifies the request headers of a `@LoadBalanced`-annotated
+`RestTemplate` such that it passes headers and content type with the version set in dependency configuration.
+Without this setting, those two parameters do not work.
 
 [[spring-cloud-zookeeper-dependency-watcher]]
 == Spring Cloud Zookeeper Dependency Watcher

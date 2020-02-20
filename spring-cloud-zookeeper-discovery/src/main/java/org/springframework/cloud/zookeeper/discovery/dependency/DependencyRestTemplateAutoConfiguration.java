@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -44,6 +43,7 @@ import org.springframework.web.client.RestTemplate;
  * Customizes RestTemplate to support passing of params from dependency.
  *
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)
@@ -51,7 +51,6 @@ import org.springframework.web.client.RestTemplate;
 @ConditionalOnLoadBalancerForZookeeperEnabled
 @ConditionalOnDependenciesPassed
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.dependency.resttemplate.enabled", matchIfMissing = true)
-@AutoConfigureAfter(DependencyLoadBalancerAutoConfiguration.class)
 @ConditionalOnBean(RestTemplate.class)
 public class DependencyRestTemplateAutoConfiguration {
 

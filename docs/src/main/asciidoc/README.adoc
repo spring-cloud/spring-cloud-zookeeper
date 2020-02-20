@@ -6,17 +6,16 @@ include::_attributes.adoc[]
 
 == Zookeeper overview
 
-ZooKeeper is a centralized service for maintaining configuration information, naming,
-providing distributed synchronization, and providing group services. See the
-https://zookeeper.apache.org[Zookeeper site] for more information. Spring Cloud Zookeeper
-also builds on the https://curator.apache.org[Apache Curator] project, which started life
-at Netflix.
+ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
+See the
+https://zookeeper.apache.org[Zookeeper site] for more information.
+Spring Cloud Zookeeper also builds on the https://curator.apache.org[Apache Curator] project, which started life at Netflix.
 
 == Spring Cloud Zookeeper Features
 
 Spring Cloud Zookeeper includes the following features:
 
-* Spring Cloud `DiscoveryClient` implementation (supports Ribbon and Zuul)
+* Spring Cloud `DiscoveryClient` implementation (supports Spring Cloud LoadBalancer)
 * Zookeeper-based `PropertySource` loaded during the 'bootstrap' phase
 
 == Running the Sample

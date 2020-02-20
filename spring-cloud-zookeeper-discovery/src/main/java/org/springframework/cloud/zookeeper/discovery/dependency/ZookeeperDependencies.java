@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.zookeeper.discovery.dependency.StubsConfiguration.DependencyPath;
 import org.springframework.util.StringUtils;
@@ -35,6 +34,7 @@ import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.
  * Representation of this service's dependencies in Zookeeper.
  *
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 @ConfigurationProperties("spring.cloud.zookeeper")
@@ -46,16 +46,10 @@ public class ZookeeperDependencies {
 	private String prefix = "";
 
 	/**
-	 * Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias is
-	 * actually serviceID since Ribbon can't accept nested structures in serviceID.
+	 * Mapping of alias to ZookeeperDependency. From LoadBalancer perspective the alias is
+	 * actually serviceID since SC LoadBalancer can't accept nested structures in serviceID.
 	 */
 	private Map<String, ZookeeperDependency> dependencies = new LinkedHashMap<>();
-
-	/**
-	 * Default health endpoint that will be checked to verify that a dependency is alive.
-	 */
-	@Value("${spring.cloud.zookeeper.dependency.ribbon.loadbalancer.defaulthealthendpoint:/health}")
-	private String defaultHealthEndpoint;
 
 	@PostConstruct
 	public void init() {
@@ -153,10 +147,6 @@ public class ZookeeperDependencies {
 		return this.dependencies;
 	}
 
-	public String getDefaultHealthEndpoint() {
-		return this.defaultHealthEndpoint;
-	}
-
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -165,17 +155,11 @@ public class ZookeeperDependencies {
 		this.dependencies = dependencies;
 	}
 
-	public void setDefaultHealthEndpoint(String defaultHealthEndpoint) {
-		this.defaultHealthEndpoint = defaultHealthEndpoint;
-	}
-
 	@Override
 	public String toString() {
 		final StringBuffer sb = new StringBuffer("ZookeeperDependencies{");
 		sb.append("prefix='").append(this.prefix).append('\'');
 		sb.append(", dependencies=").append(this.dependencies);
-		sb.append(", defaultHealthEndpoint='").append(this.defaultHealthEndpoint)
-				.append('\'');
 		sb.append('}');
 		return sb.toString();
 	}

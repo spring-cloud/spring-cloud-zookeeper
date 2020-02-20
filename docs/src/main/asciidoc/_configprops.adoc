@@ -5,8 +5,7 @@
 |spring.cloud.zookeeper.block-until-connected-unit |  | The unit of time related to blocking on connection to Zookeeper.
 |spring.cloud.zookeeper.block-until-connected-wait | 10 | Wait time to block on connection to Zookeeper.
 |spring.cloud.zookeeper.connect-string | localhost:2181 | Connection string to the Zookeeper cluster.
-|spring.cloud.zookeeper.default-health-endpoint |  | Default health endpoint that will be checked to verify that a dependency is alive.
-|spring.cloud.zookeeper.dependencies |  | Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias is actually serviceID since Ribbon can't accept nested structures in serviceID.
+|spring.cloud.zookeeper.dependencies |  | Mapping of alias to ZookeeperDependency. From LoadBalancer perspective the alias is actually serviceID since SC LoadBalancer can't accept nested structures in serviceID.
 |spring.cloud.zookeeper.dependency-configurations |  | 
 |spring.cloud.zookeeper.dependency-names |  | 
 |spring.cloud.zookeeper.discovery.enabled | true | 

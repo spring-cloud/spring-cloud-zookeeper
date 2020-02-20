@@ -40,6 +40,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 /**
  * @author Spencer Gibb
+ * @author Olga Maciaszek-Sharma
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryAutoRegistrationFalseTests.Config.class, properties = {

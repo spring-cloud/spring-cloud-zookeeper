@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Enrique Recarte Llorens
+ * @author Olga Maciaszek-Sharma
  */
 public class ZookeeperPropertySourceLocatorFailFastTests {
 

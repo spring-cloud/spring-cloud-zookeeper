@@ -110,7 +110,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 		}
 
 		@Bean
-		TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		TestLoadBalancedClient testLoadBalancedClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
 			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}

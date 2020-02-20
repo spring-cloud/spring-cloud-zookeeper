@@ -30,7 +30,10 @@ import static org.springframework.cloud.zookeeper.support.StatusConstants.INSTAN
 import static org.springframework.cloud.zookeeper.support.StatusConstants.STATUS_UP;
 
 /**
+ * A {@link ServiceInstanceListSupplier} implementation that filters available instances based on status retrieved from Zookeeper.
+ *
  * @author Olga Maciaszek-Sharma
+ * @since 3.0.0
  */
 public class ZookeeperServiceInstanceListSupplier implements ServiceInstanceListSupplier {
 

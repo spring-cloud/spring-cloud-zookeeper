@@ -84,7 +84,7 @@ public class ZookeeperDiscoveryTests {
 	Registration registration;
 
 	@Test
-	public void should_find_the_app_by_its_name_via_Ribbon() {
+	public void should_find_the_app_by_its_name_via_LoadBalancer() {
 		// expect:
 		then(registeredServiceStatusViaServiceName()).isEqualTo("UP");
 	}
@@ -164,7 +164,7 @@ public class ZookeeperDiscoveryTests {
 	static class Config {
 
 		@Bean
-		TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		TestLoadBalancedClient testLoadBalancedClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
 			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}

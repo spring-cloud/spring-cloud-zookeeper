@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Primary;
  * used.
  *
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)

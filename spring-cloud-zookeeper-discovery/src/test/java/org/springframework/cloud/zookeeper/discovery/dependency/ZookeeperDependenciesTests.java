@@ -32,14 +32,14 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class ZookeeperDependenciesTests {
 
 	private static final ZookeeperDependency EXPECTED_DEPENDENCY = new ZookeeperDependency(
-			"path", LoadBalancerType.RANDOM, "contentTypeTemplate", "version",
+			"path", "contentTypeTemplate", "version",
 			defaultHeader(), false, "");
 
 	private static final Map<String, ZookeeperDependency> DEPENDENCIES = defaultDependencies();
 
 	private static Map<String, Collection<String>> defaultHeader() {
 		return Collections.singletonMap("header",
-				(Collection<String>) Collections.singletonList("value"));
+				Collections.singletonList("value"));
 	}
 
 	private static Map<String, ZookeeperDependency> defaultDependencies() {

@@ -6,8 +6,8 @@ Spring Cloud Zookeeper provides http://zookeeper.apache.org/[Apache Zookeeper] i
 ## Features
 
 * Service Discovery: instances can be registered with Zookeeper and clients can discover the instances using Spring-managed beans
- * Supports Ribbon, the client side load-balancer via Spring Cloud Netflix
- * Supports Zuul, a dynamic router and filter via Spring Cloud Netflix
+ * Supports Spring Cloud LoadBalancer - client-side load-balancing solution
+ * Supports Spring Cloud OpenFeign
 * Distributed Configuration: using Zookeeper as a data store
 
 ## Quick Start

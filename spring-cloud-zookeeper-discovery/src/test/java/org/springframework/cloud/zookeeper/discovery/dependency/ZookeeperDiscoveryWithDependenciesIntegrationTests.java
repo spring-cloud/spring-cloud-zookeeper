@@ -40,6 +40,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalance
 
 /**
  * @author Marcin Grzejszczak
+ * @author Olga Maciaszek-Sharma
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryWithDependenciesIntegrationTests.Config.class, properties = {

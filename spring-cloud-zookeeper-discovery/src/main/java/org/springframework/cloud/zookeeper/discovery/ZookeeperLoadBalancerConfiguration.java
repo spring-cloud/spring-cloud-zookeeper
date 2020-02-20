@@ -31,7 +31,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
+ * Zookeeper-specific {@link ServiceInstanceListSupplier} that provides a delegate that
+ * filters available instances based on status retrieved from Zookeeper.
+ *
  * @author Olga Maciaszek-Sharma
+ * @since 3.0.0
  */
 @Configuration(proxyBeanMethods = false)
 public class ZookeeperLoadBalancerConfiguration {
