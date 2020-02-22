@@ -43,8 +43,7 @@ public class CommonTestConfig {
 	}
 
 	@Bean
-	ZookeeperProperties zookeeperProperties(TestingServer testingServer)
-			throws Exception {
+	ZookeeperProperties zookeeperProperties(TestingServer testingServer) {
 		ZookeeperProperties zookeeperProperties = new ZookeeperProperties();
 		zookeeperProperties.setConnectString("localhost:" + testingServer.getPort());
 		return zookeeperProperties;

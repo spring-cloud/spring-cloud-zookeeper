@@ -28,9 +28,8 @@ This project provides Zookeeper integrations for Spring Boot applications throug
 autoconfiguration and binding to the Spring Environment and other Spring programming model
 idioms. With a few annotations, you can quickly enable and configure the common patterns
 inside your application and build large distributed systems with Zookeeper based
-components. The provided patterns include Service Discovery and Configuration. Integration
-with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
-(Ribbon), and Circuit Breaker (Hystrix).
+components. The provided patterns include Service Discovery and Configuration. The project
+also provides client-side load-balancing via integration with Spring Cloud LoadBalancer.
 
 
 :doctype: book
@@ -51,17 +50,16 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 
 == Zookeeper overview
 
-ZooKeeper is a centralized service for maintaining configuration information, naming,
-providing distributed synchronization, and providing group services. See the
-https://zookeeper.apache.org[Zookeeper site] for more information. Spring Cloud Zookeeper
-also builds on the https://curator.apache.org[Apache Curator] project, which started life
-at Netflix.
+ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
+See the
+https://zookeeper.apache.org[Zookeeper site] for more information.
+Spring Cloud Zookeeper also builds on the https://curator.apache.org[Apache Curator] project, which started life at Netflix.
 
 == Spring Cloud Zookeeper Features
 
 Spring Cloud Zookeeper includes the following features:
 
-* Spring Cloud `DiscoveryClient` implementation (supports Ribbon and Zuul)
+* Spring Cloud `DiscoveryClient` implementation (supports Spring Cloud LoadBalancer)
 * Zookeeper-based `PropertySource` loaded during the 'bootstrap' phase
 
 == Running the Sample

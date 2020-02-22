@@ -32,17 +32,15 @@ import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryCl
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Controller;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * @author Spencer Gibb
+ * @author Olga Maciaszek-Sharma
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryAutoRegistrationFalseTests.Config.class, properties = {
@@ -82,17 +80,6 @@ public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 	@Import(CommonTestConfig.class)
 	@EnableDiscoveryClient(autoRegister = false)
 	static class Config {
-
-	}
-
-	@Controller
-	@Profile("ribbon")
-	class PingController {
-
-		@RequestMapping("/ping")
-		String ping() {
-			return "pong";
-		}
 
 	}
 

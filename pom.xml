@@ -4,7 +4,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-zookeeper</artifactId>
 	<version>3.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -169,6 +168,7 @@
 		<spring-cloud-config.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-netflix.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-netflix.version>
 		<spring-cloud-openfeign.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-openfeign.version>
+		<hibernate-validator.version>6.1.1.Final</hibernate-validator.version>
 	</properties>
 
 	<profiles>

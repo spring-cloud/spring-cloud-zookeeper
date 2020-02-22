@@ -31,6 +31,10 @@
 			<artifactId>spring-cloud-zookeeper-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-x-discovery</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-context</artifactId>
 			<optional>true</optional>

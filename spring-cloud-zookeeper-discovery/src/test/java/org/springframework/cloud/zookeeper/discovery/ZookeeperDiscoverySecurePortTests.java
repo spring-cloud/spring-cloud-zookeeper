@@ -45,7 +45,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		"feign.hystrix.enabled=false",
 		"spring.cloud.zookeeper.discovery.uriSpec={scheme}://{address}:{port}/contextPath",
 		"spring.cloud.zookeeper.discovery.instance-ssl-port=8443" }, webEnvironment = RANDOM_PORT)
-@ActiveProfiles("ribbon")
+@ActiveProfiles("loadbalancer")
 @DirtiesContext
 public class ZookeeperDiscoverySecurePortTests {
 
@@ -73,7 +73,7 @@ public class ZookeeperDiscoverySecurePortTests {
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
-	@Profile("ribbon")
+	@Profile("loadbalancer")
 	static class Config {
 
 	}

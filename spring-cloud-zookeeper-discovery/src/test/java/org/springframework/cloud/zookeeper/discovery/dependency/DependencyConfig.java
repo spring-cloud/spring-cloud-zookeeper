@@ -45,7 +45,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class DependencyConfig {
 
 	@Bean
-	TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate) {
+	TestLoadBalancedClient testLoadBalancedClient(@LoadBalanced RestTemplate restTemplate) {
 		return new TestLoadBalancedClient(restTemplate);
 	}
 

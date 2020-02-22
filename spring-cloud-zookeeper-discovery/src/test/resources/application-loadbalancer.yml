@@ -1,13 +1,13 @@
 spring:
   application:
-    name: ribbonApp
+    name: loadBalancerApp
   cloud:
     zookeeper:
       discovery:
         metadata:
           testMetadataKey: testMetadataValue
         uriSpec: "{scheme}://{address}:{port}/contextPath"
-        instance-id: ribbon-instance-id-123
+        instance-id: loadbalancer-instance-id-123
 management:
   security:
     enabled: false

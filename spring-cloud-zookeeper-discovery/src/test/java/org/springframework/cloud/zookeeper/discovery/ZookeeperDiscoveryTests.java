@@ -59,10 +59,9 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestLoadBalance
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZookeeperDiscoveryTests.Config.class, properties = {
-		"feign.hystrix.enabled=false",
 		"spring.cloud.zookeeper.discovery.uri-spec={scheme}://{address}:{port}/contextPath",
 		"management.endpoints.web.exposure.include=*" }, webEnvironment = RANDOM_PORT)
-@ActiveProfiles("ribbon")
+@ActiveProfiles("loadbalancer")
 @DirtiesContext
 public class ZookeeperDiscoveryTests {
 
@@ -85,7 +84,7 @@ public class ZookeeperDiscoveryTests {
 	Registration registration;
 
 	@Test
-	public void should_find_the_app_by_its_name_via_Ribbon() {
+	public void should_find_the_app_by_its_name_via_LoadBalancer() {
 		// expect:
 		then(registeredServiceStatusViaServiceName()).isEqualTo("UP");
 	}
@@ -98,12 +97,12 @@ public class ZookeeperDiscoveryTests {
 		ServiceInstance instance = instances.get(0);
 		// expect:
 		then(registeredServiceStatus(instance)).isEqualTo("UP");
-		then(instance.getInstanceId()).isEqualTo("ribbon-instance-id-123");
+		then(instance.getInstanceId()).isEqualTo("loadbalancer-instance-id-123");
 		then(instance.getMetadata().get("testMetadataKey"))
 				.isEqualTo("testMetadataValue");
 		then(instance).isInstanceOf(ZookeeperServiceInstance.class);
 		ZookeeperServiceInstance zkInstance = (ZookeeperServiceInstance) instance;
-		then(zkInstance.getServiceInstance().getId()).isEqualTo("ribbon-instance-id-123");
+		then(zkInstance.getServiceInstance().getId()).isEqualTo("loadbalancer-instance-id-123");
 	}
 
 	@Test
@@ -148,7 +147,7 @@ public class ZookeeperDiscoveryTests {
 				.isEqualTo(this.registration.getHost());
 	}
 
-	@FeignClient("ribbonApp")
+	@FeignClient("loadBalancerApp")
 	public interface IdUsingFeignClient {
 
 		@RequestMapping(method = RequestMethod.GET, value = "/hi")
@@ -160,12 +159,12 @@ public class ZookeeperDiscoveryTests {
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
 	@EnableFeignClients(clients = { IdUsingFeignClient.class })
-	@Profile("ribbon")
+	@Profile("loadbalancer")
 	@RestController
 	static class Config {
 
 		@Bean
-		TestLoadBalancedClient testRibbonClient(@LoadBalanced RestTemplate restTemplate,
+		TestLoadBalancedClient testLoadBalancedClient(@LoadBalanced RestTemplate restTemplate,
 				@Value("${spring.application.name}") String springAppName) {
 			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}
@@ -178,7 +177,7 @@ public class ZookeeperDiscoveryTests {
 	}
 
 	@Controller
-	@Profile("ribbon")
+	@Profile("loadbalancer")
 	class PingController {
 
 		@RequestMapping("/ping")
