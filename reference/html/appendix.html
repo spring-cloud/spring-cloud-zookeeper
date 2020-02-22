@@ -155,14 +155,9 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">Connection string to the Zookeeper cluster.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.default-health-endpoint</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default health endpoint that will be checked to verify that a dependency is alive.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.dependencies</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias is actually serviceID since Ribbon can&#8217;t accept nested structures in serviceID.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mapping of alias to ZookeeperDependency. From LoadBalancer perspective the alias is actually serviceID since SC LoadBalancer can&#8217;t accept nested structures in serviceID.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.dependency-configurations</p></td>

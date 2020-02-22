@@ -106,7 +106,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#spring-cloud-zookeeper-netflix">3. Using Spring Cloud Zookeeper with Spring Cloud Netflix Components</a>
 <ul class="sectlevel2">
-<li><a href="#ribbon-with-zookeeper">3.1. Ribbon with Zookeeper</a></li>
+<li><a href="#spring-cloud-loadbalancer-with-zookeeper">3.1. Spring Cloud LoadBalancer with Zookeeper</a></li>
 </ul>
 </li>
 <li><a href="#spring-cloud-zookeeper-service-registry">4. Spring Cloud Zookeeper and Service Registry</a>
@@ -147,9 +147,8 @@ $(addBlockSwitches);
 autoconfiguration and binding to the Spring Environment and other Spring programming model
 idioms. With a few annotations, you can quickly enable and configure the common patterns
 inside your application and build large distributed systems with Zookeeper based
-components. The provided patterns include Service Discovery and Configuration. Integration
-with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
-(Ribbon), and Circuit Breaker (Hystrix).</p>
+components. The provided patterns include Service Discovery and Configuration. The project
+also provides client-side load-balancing via integration with Spring Cloud LoadBalancer.</p>
 </div>
 </div>
 </div>
@@ -374,15 +373,15 @@ public String serviceUrl() {
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spring Cloud Netflix supplies useful tools that work regardless of which <code>DiscoveryClient</code>
-implementation you use. Feign, Turbine, Ribbon, and Zuul all work with Spring Cloud
-Zookeeper.</p>
+implementation you use.
+Feign and Spring Cloud LoadBalancer also work with Spring Cloud Zookeeper.</p>
 </div>
 <div class="sect2">
-<h3 id="ribbon-with-zookeeper"><a class="anchor" href="#ribbon-with-zookeeper"></a><a class="link" href="#ribbon-with-zookeeper">3.1. Ribbon with Zookeeper</a></h3>
+<h3 id="spring-cloud-loadbalancer-with-zookeeper"><a class="anchor" href="#spring-cloud-loadbalancer-with-zookeeper"></a><a class="link" href="#spring-cloud-loadbalancer-with-zookeeper">3.1. Spring Cloud LoadBalancer with Zookeeper</a></h3>
 <div class="paragraph">
-<p>Spring Cloud Zookeeper provides an implementation of Ribbon&#8217;s <code>ServerList</code>. When you use
-the  <code>spring-cloud-starter-zookeeper-discovery</code>, Ribbon is autoconfigured to use the
-<code>ZookeeperServerList</code> by default.</p>
+<p>Spring Cloud Zookeeper provides an implementation of Spring Cloud LoadBalancer <code>ServiceInstanceListSupplier</code>.
+When you use the  <code>spring-cloud-starter-zookeeper-discovery</code>, Spring Cloud LoadBalancer is autoconfigured to use the
+<code>ZookeeperServiceInstanceListSupplier</code> by default.</p>
 </div>
 </div>
 </div>
@@ -418,15 +417,13 @@ public void registerThings() {
 <div class="sect2">
 <h3 id="instance-status"><a class="anchor" href="#instance-status"></a><a class="link" href="#instance-status">4.1. Instance Status</a></h3>
 <div class="paragraph">
-<p>Netflix Eureka supports having instances that are <code>OUT_OF_SERVICE</code> registered with the
-server. These instances are not returned as active service instances. This is useful for
-behaviors such as blue/green deployments. (Note that the Curator Service Discovery recipe
-does not  support this behavior.) Taking advantage of the flexible payload has let Spring
-Cloud Zookeeper implement <code>OUT_OF_SERVICE</code> by updating some specific metadata and then
-filtering on that metadata in the Ribbon <code>ZookeeperServerList</code>. The <code>ZookeeperServerList</code>
-filters out all non-null instance statuses that do not equal <code>UP</code>. If the instance status
-field is empty, it is considered to be <code>UP</code> for backwards compatibility. To change the
-status of an instance, make a <code>POST</code> with <code>OUT_OF_SERVICE</code> to the <code>ServiceRegistry</code>
+<p>Netflix Eureka supports having instances that are <code>OUT_OF_SERVICE</code> registered with the server.
+These instances are not returned as active service instances.
+This is useful for behaviors such as blue/green deployments.
+(Note that the Curator Service Discovery recipe does not support this behavior.) Taking advantage of the flexible payload has let Spring Cloud Zookeeper implement <code>OUT_OF_SERVICE</code> by updating some specific metadata and then filtering on that metadata in the Spring Cloud LoadBalancer <code>ZookeeperServiceInstanceListSupplier</code>.
+The <code>ZookeeperServiceInstanceListSupplier</code> filters out all non-null instance statuses that do not equal <code>UP</code>.
+If the instance status field is empty, it is considered to be <code>UP</code> for backwards compatibility.
+To change the status of an instance, make a <code>POST</code> with <code>OUT_OF_SERVICE</code> to the <code>ServiceRegistry</code>
 instance status actuator endpoint, as shown in the following example:</p>
 </div>
 <div class="listingblock">
@@ -536,15 +533,15 @@ name is <code>spring.cloud.zookeeper.dependencies</code>.</p>
 <div class="sect3">
 <h4 id="spring-cloud-zookeeper-dependencies-setting-up-aliases"><a class="anchor" href="#spring-cloud-zookeeper-dependencies-setting-up-aliases"></a><a class="link" href="#spring-cloud-zookeeper-dependencies-setting-up-aliases">5.3.1. Aliases</a></h4>
 <div class="paragraph">
-<p>Below the root property you have to represent each dependency as an alias. This is due to
-the constraints of Ribbon, which requires that the application ID be placed in the URL.
-Consequently, you cannot pass any complex path, suchas  <code>/myApp/myRoute/name</code>). The alias
-is the name you use instead of the <code>serviceId</code> for <code>DiscoveryClient</code>, <code>Feign</code>, or
+<p>Below the root property you have to represent each dependency as an alias.
+This is due to the constraints of Spring Cloud LoadBalancer, which requires that the application ID be placed in the URL.
+Consequently, you cannot pass any complex path, suchas  <code>/myApp/myRoute/name</code>).
+The alias is the name you use instead of the <code>serviceId</code> for <code>DiscoveryClient</code>, <code>Feign</code>, or
 <code>RestTemplate</code>.</p>
 </div>
 <div class="paragraph">
-<p>In the previous examples, the aliases are <code>newsletter</code> and <code>mailing</code>. The following
-example shows Feign usage with a <code>newsletter</code> alias:</p>
+<p>In the previous examples, the aliases are <code>newsletter</code> and <code>mailing</code>.
+The following example shows Feign usage with a <code>newsletter</code> alias:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -559,10 +556,10 @@ public interface NewsletterService {
 <div class="sect3">
 <h4 id="path"><a class="anchor" href="#path"></a><a class="link" href="#path">5.3.2. Path</a></h4>
 <div class="paragraph">
-<p>The path is represented by the <code>path</code> YAML property and is the path under which the
-dependency is registered under Zookeeper. As described in the
-<a href="#spring-cloud-zookeeper-dependencies-setting-up-aliases">previous section</a>, Ribbon
-operates on URLs. As a result, this path is not compliant with its requirement.
+<p>The path is represented by the <code>path</code> YAML property and is the path under which the dependency is registered under Zookeeper.
+As described in the
+<a href="#spring-cloud-zookeeper-dependencies-setting-up-aliases">previous section</a>, Spring Cloud LoadBalancer operates on URLs.
+As a result, this path is not compliant with its requirement.
 That is why Spring Cloud Zookeeper maps the alias to the proper path.</p>
 </div>
 </div>
@@ -572,9 +569,8 @@ That is why Spring Cloud Zookeeper maps the alias to the proper path.</p>
 <p>The load balancer type is represented by <code>loadBalancerType</code> YAML property.</p>
 </div>
 <div class="paragraph">
-<p>If you know what kind of load-balancing strategy has to be applied when calling this
-particular dependency, you can provide it in the YAML file, and it is automatically
-applied. You can choose one of the following load balancing strategies:</p>
+<p>If you know what kind of load-balancing strategy has to be applied when calling this particular dependency, you can provide it in the YAML file, and it is automatically applied.
+You can choose one of the following load balancing strategies:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -707,40 +703,24 @@ example:</p>
 <div class="sect2">
 <h3 id="spring-cloud-zookeeper-dependencies-configuring"><a class="anchor" href="#spring-cloud-zookeeper-dependencies-configuring"></a><a class="link" href="#spring-cloud-zookeeper-dependencies-configuring">5.4. Configuring Spring Cloud Zookeeper Dependencies</a></h3>
 <div class="paragraph">
-<p>You can set the following properties to enable or disable parts of Zookeeper Dependencies
-functionalities:</p>
+<p>You can set the following properties to enable or disable parts of Zookeeper Dependencies functionalities:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>spring.cloud.zookeeper.dependencies</code>: If you do not set this property, you cannot use
-Zookeeper Dependencies.</p>
+<p><code>spring.cloud.zookeeper.dependencies</code>: If you do not set this property, you cannot use Zookeeper Dependencies.</p>
 </li>
 <li>
-<p><code>spring.cloud.zookeeper.dependency.ribbon.enabled</code> (enabled by default): Ribbon requires
-either explicit global configuration or a particular one for a dependency. By turning on
-this property, runtime load balancing strategy resolution is possible, and you can use the
-<code>loadBalancerType</code> section of the Zookeeper Dependencies. The configuration that needs
-this property has an implementation of <code>LoadBalancerClient</code> that delegates to the
-<code>ILoadBalancer</code> presented in the next bullet.</p>
+<p><code>spring.cloud.zookeeper.dependency.loadbalancer.enabled</code> (enabled by default): Turns on Zookeeper-specific custom load-balancing strategies, including <code>ZookeeperServiceInstanceListSupplier</code> and dependency-based load-balanced <code>RestTemplate</code> setup.</p>
 </li>
 <li>
-<p><code>spring.cloud.zookeeper.dependency.ribbon.loadbalancer</code> (enabled by default): Thanks to
-this property, the custom <code>ILoadBalancer</code> knows that the part of the URI passed to Ribbon
-might actually be the alias that has to be resolved to a proper path in Zookeeper. Without
-this property, you cannot register applications under nested paths.</p>
+<p><code>spring.cloud.zookeeper.dependency.headers.enabled</code> (enabled by default): This property registers a <code>FeignBlockingLoadBalancerClient</code> that automatically appends appropriate headers and content types with their versions, as presented in the Dependency configuration.
+Without this setting, those two parameters do not work.</p>
 </li>
 <li>
-<p><code>spring.cloud.zookeeper.dependency.headers.enabled</code> (enabled by default): This property
-registers a <code>RibbonClient</code> that automatically appends appropriate headers and content
-types with their versions, as presented in the Dependency configuration. Without this
-setting, those two parameters do not work.</p>
-</li>
-<li>
-<p><code>spring.cloud.zookeeper.dependency.resttemplate.enabled</code> (enabled by default): When
-enabled, this property modifies the request headers of a <code>@LoadBalanced</code>-annotated
-<code>RestTemplate</code> such that it passes headers and content type with the version set in
-dependency configuration. Without this setting, those two parameters do not work.</p>
+<p><code>spring.cloud.zookeeper.dependency.resttemplate.enabled</code> (enabled by default): When enabled, this property modifies the request headers of a <code>@LoadBalanced</code>-annotated
+<code>RestTemplate</code> such that it passes headers and content type with the version set in dependency configuration.
+Without this setting, those two parameters do not work.</p>
 </li>
 </ul>
 </div>

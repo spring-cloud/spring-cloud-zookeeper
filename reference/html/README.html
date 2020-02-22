@@ -130,9 +130,8 @@ $(addBlockSwitches);
 autoconfiguration and binding to the Spring Environment and other Spring programming model
 idioms. With a few annotations, you can quickly enable and configure the common patterns
 inside your application and build large distributed systems with Zookeeper based
-components. The provided patterns include Service Discovery and Configuration. Integration
-with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load Balancing
-(Ribbon), and Circuit Breaker (Hystrix).</p>
+components. The provided patterns include Service Discovery and Configuration. The project
+also provides client-side load-balancing via integration with Spring Cloud LoadBalancer.</p>
 </div>
 </div>
 </div>
@@ -140,11 +139,10 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 <h2 id="zookeeper-overview"><a class="anchor" href="#zookeeper-overview"></a><a class="link" href="#zookeeper-overview">1. Zookeeper overview</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>ZooKeeper is a centralized service for maintaining configuration information, naming,
-providing distributed synchronization, and providing group services. See the
-<a href="https://zookeeper.apache.org">Zookeeper site</a> for more information. Spring Cloud Zookeeper
-also builds on the <a href="https://curator.apache.org">Apache Curator</a> project, which started life
-at Netflix.</p>
+<p>ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
+See the
+<a href="https://zookeeper.apache.org">Zookeeper site</a> for more information.
+Spring Cloud Zookeeper also builds on the <a href="https://curator.apache.org">Apache Curator</a> project, which started life at Netflix.</p>
 </div>
 </div>
 </div>
@@ -157,7 +155,7 @@ at Netflix.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Spring Cloud <code>DiscoveryClient</code> implementation (supports Ribbon and Zuul)</p>
+<p>Spring Cloud <code>DiscoveryClient</code> implementation (supports Spring Cloud LoadBalancer)</p>
 </li>
 <li>
 <p>Zookeeper-based <code>PropertySource</code> loaded during the 'bootstrap' phase</p>
