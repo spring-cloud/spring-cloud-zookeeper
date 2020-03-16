@@ -19,12 +19,13 @@ package org.springframework.cloud.zookeeper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.drivers.TracerDriver;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -44,9 +45,6 @@ public class ZookeeperAutoConfiguration {
 
 	private static final Log log = LogFactory.getLog(ZookeeperAutoConfiguration.class);
 
-	@Autowired(required = false)
-	private EnsembleProvider ensembleProvider;
-
 	@Bean
 	@ConditionalOnMissingBean
 	public ZookeeperProperties zookeeperProperties() {
@@ -55,16 +53,26 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
-	public CuratorFramework curatorFramework(RetryPolicy retryPolicy,
-			ZookeeperProperties properties) throws Exception {
+	public CuratorFramework curatorFramework(
+			RetryPolicy retryPolicy,
+			ZookeeperProperties properties,
+			ObjectProvider<EnsembleProvider> optionalEnsembleProvider,
+			ObjectProvider<TracerDriver> optionalTracerDriverProvider)
+	throws Exception {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
-		if (this.ensembleProvider != null) {
-			builder.ensembleProvider(this.ensembleProvider);
+		EnsembleProvider ensembleProvider = optionalEnsembleProvider.getIfAvailable();
+		if (ensembleProvider != null) {
+			builder.ensembleProvider(ensembleProvider);
 		}
 		else {
 			builder.connectString(properties.getConnectString());
 		}
 		CuratorFramework curator = builder.retryPolicy(retryPolicy).build();
+		TracerDriver tracerDriver = optionalTracerDriverProvider.getIfAvailable();
+		if (curator.getZookeeperClient() != null && tracerDriver != null) {
+			curator.getZookeeperClient().setTracerDriver(tracerDriver);
+		}
+
 		curator.start();
 		log.trace("blocking until connected to zookeeper for "
 				+ properties.getBlockUntilConnectedWait()
