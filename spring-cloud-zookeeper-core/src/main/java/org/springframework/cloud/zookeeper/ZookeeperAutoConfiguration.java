@@ -53,13 +53,13 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
-	public CuratorFramework curatorFramework(
-			RetryPolicy retryPolicy,
+	public CuratorFramework curatorFramework(RetryPolicy retryPolicy,
 			ZookeeperProperties properties,
+			ObjectProvider<CuratorFrameworkCustomizer> optionalCuratorFrameworkCustomizerProvider,
 			ObjectProvider<EnsembleProvider> optionalEnsembleProvider,
-			ObjectProvider<TracerDriver> optionalTracerDriverProvider)
-	throws Exception {
+			ObjectProvider<TracerDriver> optionalTracerDriverProvider) throws Exception {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
+
 		EnsembleProvider ensembleProvider = optionalEnsembleProvider.getIfAvailable();
 		if (ensembleProvider != null) {
 			builder.ensembleProvider(ensembleProvider);
@@ -67,7 +67,15 @@ public class ZookeeperAutoConfiguration {
 		else {
 			builder.connectString(properties.getConnectString());
 		}
-		CuratorFramework curator = builder.retryPolicy(retryPolicy).build();
+		builder.sessionTimeoutMs((int) properties.getSessionTimeout().toMillis())
+				.connectionTimeoutMs((int) properties.getConnectionTimeout().toMillis())
+				.retryPolicy(retryPolicy);
+
+		optionalCuratorFrameworkCustomizerProvider.orderedStream()
+				.forEach(curatorFrameworkCustomizer -> curatorFrameworkCustomizer
+						.customize(builder));
+
+		CuratorFramework curator = builder.build();
 		TracerDriver tracerDriver = optionalTracerDriverProvider.getIfAvailable();
 		if (curator.getZookeeperClient() != null && tracerDriver != null) {
 			curator.getZookeeperClient().setTracerDriver(tracerDriver);
