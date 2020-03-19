@@ -35,7 +35,7 @@ public class ZookeeperHealthAutoConfigurationTests {
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(ZookeeperAutoConfiguration.class,
 					ZookeeperHealthAutoConfiguration.class))
-			.withUserConfiguration(ZookeeperAutoConfigurationTests.TestConfig.class);
+			.withUserConfiguration(ZookeeperAutoConfigurationTests.BaseTestConfig.class);
 
 	@Test
 	public void testDefaultPropertiesCreateZookeeperHealthIndicator() {

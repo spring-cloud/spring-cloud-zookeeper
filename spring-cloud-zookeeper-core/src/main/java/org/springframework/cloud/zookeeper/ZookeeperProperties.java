@@ -16,11 +16,14 @@
 
 package org.springframework.cloud.zookeeper;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.convert.DurationUnit;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -68,6 +71,23 @@ public class ZookeeperProperties {
 	 * The unit of time related to blocking on connection to Zookeeper.
 	 */
 	private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
+
+	/**
+	 * The configured/negotiated session timeout in milliseconds. Please refer to
+	 * <a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'>Curator's Tech
+	 * Note 14</a> to understand how Curator implements connection sessions.
+	 *
+	 * @see <a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'>Curator's
+	 * Tech Note 14</a>
+	 */
+	@DurationUnit(ChronoUnit.MILLIS)
+	private Duration sessionTimeout = Duration.of(60 * 1000, ChronoUnit.MILLIS);
+
+	/**
+	 * The configured connection timeout in milliseconds.
+	 */
+	@DurationUnit(ChronoUnit.MILLIS)
+	private Duration connectionTimeout = Duration.of(15 * 1000, ChronoUnit.MILLIS);
 
 	public String getConnectString() {
 		return this.connectString;
@@ -123,6 +143,22 @@ public class ZookeeperProperties {
 
 	public void setBlockUntilConnectedUnit(TimeUnit blockUntilConnectedUnit) {
 		this.blockUntilConnectedUnit = blockUntilConnectedUnit;
+	}
+
+	public Duration getSessionTimeout() {
+		return sessionTimeout;
+	}
+
+	public void setSessionTimeout(Duration sessionTimeout) {
+		this.sessionTimeout = sessionTimeout;
+	}
+
+	public Duration getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public void setConnectionTimeout(Duration connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
 	}
 
 }
