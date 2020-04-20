@@ -76,10 +76,11 @@ public class ZookeeperAutoConfiguration {
 						.customize(builder));
 
 		CuratorFramework curator = builder.build();
-		TracerDriver tracerDriver = optionalTracerDriverProvider.getIfAvailable();
-		if (curator.getZookeeperClient() != null && tracerDriver != null) {
-			curator.getZookeeperClient().setTracerDriver(tracerDriver);
-		}
+		optionalTracerDriverProvider.ifAvailable(tracerDriver -> {
+			if (curator.getZookeeperClient() != null) {
+				curator.getZookeeperClient().setTracerDriver(tracerDriver);
+			}
+		});
 
 		curator.start();
 		log.trace("blocking until connected to zookeeper for "
