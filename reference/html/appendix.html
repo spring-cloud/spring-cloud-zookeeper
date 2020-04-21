@@ -174,6 +174,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">Connection string to the Zookeeper cluster.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.connection-timeout</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The configured connection timeout in milliseconds.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.dependencies</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mapping of alias to ZookeeperDependency. From LoadBalancer perspective the alias is actually serviceID since SC LoadBalancer can&#8217;t accept nested structures in serviceID.</p></td>
@@ -262,6 +267,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.prefix</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Common prefix that will be applied to all Zookeeper dependencies' paths.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">spring.cloud.zookeeper.session-timeout</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The configured/negotiated session timeout in milliseconds. Please refer to &lt;a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'&gt;Curator&#8217;s Tech Note 14&lt;/a&gt; to understand how Curator implements connection sessions. @see &lt;a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'&gt;Curator&#8217;s Tech Note 14&lt;/a&gt;</p></td>
 </tr>
 </tbody>
 </table>
