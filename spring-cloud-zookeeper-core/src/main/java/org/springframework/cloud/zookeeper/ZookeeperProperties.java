@@ -20,11 +20,9 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.convert.DurationUnit;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.Assert;
 
 /**
  * Properties related to connecting to Zookeeper.
@@ -32,14 +30,12 @@ import org.springframework.validation.annotation.Validated;
  * @author Spencer Gibb
  * @since 1.0.0
  */
-@Validated
 @ConfigurationProperties("spring.cloud.zookeeper")
 public class ZookeeperProperties {
 
 	/**
 	 * Connection string to the Zookeeper cluster.
 	 */
-	@NotNull
 	private String connectString = "localhost:2181";
 
 	/**
@@ -118,6 +114,7 @@ public class ZookeeperProperties {
 	}
 
 	public void setConnectString(String connectString) {
+		Assert.hasText(connectString, "spring.cloud.zookeeper.connect-string may not be empty");
 		this.connectString = connectString;
 	}
 

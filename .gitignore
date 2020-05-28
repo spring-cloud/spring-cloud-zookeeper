@@ -17,3 +17,4 @@ _site/
 .DS_Store
 .vscode/
 .flattened-pom.xml
+.sdkmanrc
