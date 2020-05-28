@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import javax.validation.constraints.NotEmpty;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.Assert;
 
 /**
  * Properties related to keeping configuration in Zookeeper.
@@ -28,7 +26,6 @@ import org.springframework.validation.annotation.Validated;
  * @since 1.0.0
  * @see ZookeeperPropertySourceLocator
  */
-@Validated
 @ConfigurationProperties("spring.cloud.zookeeper.config")
 public class ZookeeperConfigProperties {
 
@@ -42,13 +39,11 @@ public class ZookeeperConfigProperties {
 	/**
 	 * The name of the default context.
 	 */
-	@NotEmpty
 	private String defaultContext = "application";
 
 	/**
 	 * Separator for profile appended to the application name.
 	 */
-	@NotEmpty
 	private String profileSeparator = ",";
 
 	/**
@@ -85,10 +80,12 @@ public class ZookeeperConfigProperties {
 	}
 
 	public void setDefaultContext(String defaultContext) {
+		Assert.hasText(defaultContext, "spring.cloud.zookeeper.config.default-context may not be empty");
 		this.defaultContext = defaultContext;
 	}
 
 	public void setProfileSeparator(String profileSeparator) {
+		Assert.hasText(profileSeparator, "spring.cloud.zookeeper.config.profile-separator may not be empty");
 		this.profileSeparator = profileSeparator;
 	}
 

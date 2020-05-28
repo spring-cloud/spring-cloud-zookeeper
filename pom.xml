@@ -177,7 +177,7 @@
 	</dependencyManagement>
 
 	<properties>
-		<spring-cloud-build.version>2.2.3.RELEASE</spring-cloud-build.version>
+		<spring-cloud-build.version>2.3.0.BUILD-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-commons.version>2.2.3.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>2.2.3.BUILD-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-netflix.version>2.2.3.BUILD-SNAPSHOT</spring-cloud-netflix.version>
