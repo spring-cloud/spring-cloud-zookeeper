@@ -5,6 +5,7 @@
 |spring.cloud.zookeeper.block-until-connected-unit |  | The unit of time related to blocking on connection to Zookeeper.
 |spring.cloud.zookeeper.block-until-connected-wait | 10 | Wait time to block on connection to Zookeeper.
 |spring.cloud.zookeeper.connect-string | localhost:2181 | Connection string to the Zookeeper cluster.
+|spring.cloud.zookeeper.connection-timeout |  | The configured connection timeout in milliseconds.
 |spring.cloud.zookeeper.default-health-endpoint |  | Default health endpoint that will be checked to verify that a dependency is alive.
 |spring.cloud.zookeeper.dependencies |  | Mapping of alias to ZookeeperDependency. From Ribbon perspective the alias is actually serviceID since Ribbon can't accept nested structures in serviceID.
 |spring.cloud.zookeeper.dependency-configurations |  | 
@@ -24,5 +25,6 @@
 |spring.cloud.zookeeper.max-retries | 10 | Max number of times to retry.
 |spring.cloud.zookeeper.max-sleep-ms | 500 | Max time in ms to sleep on each retry.
 |spring.cloud.zookeeper.prefix |  | Common prefix that will be applied to all Zookeeper dependencies' paths.
+|spring.cloud.zookeeper.session-timeout |  | The configured/negotiated session timeout in milliseconds. Please refer to <a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'>Curator's Tech Note 14</a> to understand how Curator implements connection sessions. @see <a href='https://cwiki.apache.org/confluence/display/CURATOR/TN14'>Curator's Tech Note 14</a>
 
 |===
