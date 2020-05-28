@@ -160,7 +160,6 @@
 		<spring-cloud-commons.version>3.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>3.0.0-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>3.0.0-SNAPSHOT</spring-cloud-openfeign.version>
-		<hibernate-validator.version>6.1.1.Final</hibernate-validator.version>
 	</properties>
 
 	<profiles>
