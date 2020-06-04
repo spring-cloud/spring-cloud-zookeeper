@@ -15,9 +15,9 @@
 	<properties>
 		<docs.main>spring-cloud-zookeeper</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
-		<docs.whitelisted.branches>2.1.x,2.2.x</docs.whitelisted.branches>
 		<configprops.inclusionPattern>spring.cloud.zookeeper.*|
 		</configprops.inclusionPattern>
+		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,11 +35,9 @@
 						<artifactId>git-commit-id-plugin</artifactId>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
 					</plugin>
 					<plugin>
@@ -51,8 +49,10 @@
 						<artifactId>asciidoctor-maven-plugin</artifactId>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>
