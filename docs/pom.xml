@@ -15,7 +15,6 @@
 	<properties>
 		<docs.main>spring-cloud-zookeeper</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
-		<docs.whitelisted.branches>2.1.x,2.2.x</docs.whitelisted.branches>
 		<configprops.inclusionPattern>spring.cloud.zookeeper.*|
 		</configprops.inclusionPattern>
 		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
@@ -26,6 +25,9 @@
 			<artifactId>spring-cloud-starter-zookeeper-all</artifactId>
 		</dependency>
 	</dependencies>
+	<build>
+		<sourceDirectory>src/main/asciidoc</sourceDirectory>
+	</build>
 	<profiles>
 		<profile>
 			<id>docs</id>
