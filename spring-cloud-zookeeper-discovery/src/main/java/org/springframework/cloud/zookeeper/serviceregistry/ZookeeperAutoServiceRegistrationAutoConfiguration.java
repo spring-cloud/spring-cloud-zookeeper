@@ -26,6 +26,7 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfi
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration.RegistrationBuilder;
+import org.springframework.cloud.zookeeper.support.StatusConstants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +61,8 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 		if (!StringUtils.hasText(host)) {
 			throw new IllegalStateException("instanceHost must not be empty");
 		}
+
+		properties.getMetadata().put(StatusConstants.INSTANCE_STATUS_KEY, properties.getInitialStatus());
 
 		ZookeeperInstance zookeeperInstance = new ZookeeperInstance(context.getId(),
 				appName, properties.getMetadata());
