@@ -36,4 +36,4 @@ public class Application {
 }
 ```
 
-A local Zookeeper server must be running.  See the http://zookeeper.apache.org/doc/trunk/zookeeperStarted.html[Zookeeper documentation] on how to run a Zookeeper server.
+A local Zookeeper server must be running.  See the http://zookeeper.apache.org/[Zookeeper documentation] on how to run a Zookeeper server.

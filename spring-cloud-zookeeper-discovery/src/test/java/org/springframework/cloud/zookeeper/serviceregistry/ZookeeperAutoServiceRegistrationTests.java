@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
+import org.springframework.cloud.zookeeper.support.StatusConstants;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -41,7 +42,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
-		"spring.application.name=myTestService1-F" }, webEnvironment = RANDOM_PORT)
+		"spring.application.name=myTestService1-F",
+		"spring.cloud.zookeeper.discovery.initial-status=OUT_OF_SERVICE"
+}, webEnvironment = RANDOM_PORT)
 public class ZookeeperAutoServiceRegistrationTests {
 
 	@Autowired
@@ -62,6 +65,8 @@ public class ZookeeperAutoServiceRegistrationTests {
 		ServiceInstance<ZookeeperInstance> instance = instances.iterator().next();
 		assertThat(instance).isNotNull();
 		assertThat(instance.getName()).isEqualTo("myTestService1-F");
+		assertThat(instance.getPayload().getMetadata().get(StatusConstants.INSTANCE_STATUS_KEY))
+				.isEqualTo(StatusConstants.STATUS_OUT_OF_SERVICE);
 		/*
 		 * Response<Map<String, Service>> response = consul.getAgentServices();
 		 * Map<String, Service> services = response.getValue(); Service service =
