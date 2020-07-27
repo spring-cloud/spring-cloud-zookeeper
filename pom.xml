@@ -157,7 +157,7 @@
 
 	<properties>
 		<spring-cloud-build.version>3.0.0-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-commons.version>3.0.0-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>3.0.0.BUILD-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>3.0.0-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>3.0.0-SNAPSHOT</spring-cloud-openfeign.version>
 	</properties>
