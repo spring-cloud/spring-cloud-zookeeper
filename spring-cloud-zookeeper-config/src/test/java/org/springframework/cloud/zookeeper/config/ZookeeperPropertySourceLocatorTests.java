@@ -37,6 +37,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.context.refresh.LegacyContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -198,7 +199,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		@Bean
 		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
 				RefreshScope scope) {
-			return new ContextRefresher(context, scope);
+			return new LegacyContextRefresher(context, scope);
 		}
 
 		@Override
