@@ -51,6 +51,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 			new SpringApplicationBuilder().sources(Config.class)
 					.web(WebApplicationType.NONE)
 					.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
+							"--spring.config.use-legacy-processing=true",
 							"--spring.cloud.zookeeper.config.connectString=localhost:2188",
 							"--spring.cloud.zookeeper.baseSleepTimeMs=0",
 							"--spring.cloud.zookeeper.maxRetries=0",
@@ -66,6 +67,7 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 			new SpringApplicationBuilder().sources(Config.class)
 					.web(WebApplicationType.NONE)
 					.run("--spring.application.name=testZookeeperPropertySourceLocatorFailFast",
+							"--spring.config.use-legacy-processing=true",
 							"--spring.cloud.zookeeper.config.connectString=localhost:2188",
 							"--spring.cloud.zookeeper.baseSleepTimeMs=0",
 							"--spring.cloud.zookeeper.maxRetries=0",

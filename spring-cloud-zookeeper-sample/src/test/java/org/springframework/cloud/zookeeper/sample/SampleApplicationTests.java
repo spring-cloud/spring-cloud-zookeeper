@@ -39,6 +39,7 @@ public class SampleApplicationTests {
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				SampleZookeeperApplication.class).run("--server.port=" + port,
+						"--spring.config.use-legacy-processing=true",
 						"--management.endpoints.web.exposure.include=*",
 						"--spring.cloud.zookeeper.connect-string=localhost:" + zkPort);
 

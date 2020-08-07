@@ -56,6 +56,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder()
 				.sources(Config.class).web(WebApplicationType.NONE)
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToFalse",
+						"--spring.config.use-legacy-processing=true",
 						"--spring.jmx.default-domain=testZookeeperConfigEnabledSetToFalse",
 						"--spring.cloud.zookeeper.config.connectString=localhost:2188",
 						"--spring.cloud.zookeeper.baseSleepTimeMs=0",
@@ -75,6 +76,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 
 		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToTrue",
+						"--spring.config.use-legacy-processing=true",
 						"--spring.jmx.default-domain=testZookeeperConfigEnabledSetToTrue",
 						"--spring.cloud.zookeeper.config.connectString=localhost:2188",
 						"--spring.cloud.zookeeper.baseSleepTimeMs=0",

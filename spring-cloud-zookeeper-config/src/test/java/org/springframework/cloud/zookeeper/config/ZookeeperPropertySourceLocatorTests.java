@@ -125,6 +125,7 @@ public class ZookeeperPropertySourceLocatorTests {
 		this.context = new SpringApplicationBuilder(Config.class)
 				.web(WebApplicationType.NONE)
 				.run("--spring.cloud.zookeeper.connectString=" + connectString,
+						"--spring.config.use-legacy-processing=true",
 						"--spring.application.name=testZkPropertySource",
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
 						"--spring.cloud.zookeeper.config.root=" + ROOT);
