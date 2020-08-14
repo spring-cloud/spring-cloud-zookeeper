@@ -83,12 +83,16 @@ public class ZookeeperAutoConfiguration {
 		});
 
 		curator.start();
-		log.trace("blocking until connected to zookeeper for "
-				+ properties.getBlockUntilConnectedWait()
-				+ properties.getBlockUntilConnectedUnit());
+		if (log.isTraceEnabled()) {
+			log.trace("blocking until connected to zookeeper for "
+					+ properties.getBlockUntilConnectedWait()
+					+ properties.getBlockUntilConnectedUnit());
+		}
 		curator.blockUntilConnected(properties.getBlockUntilConnectedWait(),
 				properties.getBlockUntilConnectedUnit());
-		log.trace("connected to zookeeper");
+		if (log.isTraceEnabled()) {
+			log.trace("connected to zookeeper");
+		}
 		return curator;
 	}
 
