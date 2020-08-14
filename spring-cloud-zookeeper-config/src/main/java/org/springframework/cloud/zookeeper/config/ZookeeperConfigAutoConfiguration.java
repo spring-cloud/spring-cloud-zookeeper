@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.config;
 
 import org.apache.curator.framework.CuratorFramework;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
@@ -42,6 +43,8 @@ public class ZookeeperConfigAutoConfiguration {
 	protected static class ZkRefreshConfiguration {
 
 		@Bean
+		@ConditionalOnBean(ZookeeperPropertySourceLocator.class)
+		//FIXME: setup config watcher for ConfigData
 		@ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", matchIfMissing = true)
 		public ConfigWatcher configWatcher(ZookeeperPropertySourceLocator locator,
 				CuratorFramework curator) {
