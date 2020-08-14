@@ -124,6 +124,7 @@ public class ZookeeperConfigDataIntegrationTests {
 		this.context = new SpringApplicationBuilder(Config.class)
 				.web(WebApplicationType.NONE)
 				.run("--spring.cloud.zookeeper.connectString=" + connectString,
+						"--debug=true",
 						"--spring.config.import=zookeeper:",
 						"--spring.application.name=testZkConfigDataIntegration",
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
@@ -171,7 +172,6 @@ public class ZookeeperConfigDataIntegrationTests {
 	}
 
 	@Test
-	@Ignore // FIXME: add support for ConfigWatcher
 	public void propertyLoadedAndUpdated() throws Exception {
 		String testProp = this.environment.getProperty(KEY_BASIC);
 		assertThat(testProp).as("testProp was wrong").isEqualTo(VAL_BASIC);
