@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -27,10 +24,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
+import org.springframework.cloud.zookeeper.config.ZookeeperConfigDataAutoConfiguration.SpringCloudCuratorFramework;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertySource;
 
 /**
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -46,11 +42,11 @@ public class ZookeeperConfigAutoConfiguration {
 
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(RefreshEndpoint.class)
+	@ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", matchIfMissing = true)
 	protected static class ZkRefreshConfiguration {
 
 		@Bean
 		@ConditionalOnBean(ZookeeperPropertySourceLocator.class)
-		@ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", matchIfMissing = true)
 		public ConfigWatcher propertySourceLocatorConfigWatcher(ZookeeperPropertySourceLocator locator,
 				CuratorFramework curator) {
 			return new ConfigWatcher(locator.getContexts(), curator);
@@ -58,16 +54,8 @@ public class ZookeeperConfigAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean(ZookeeperPropertySourceLocator.class)
-		public ConfigWatcher configDataConfigWatcher(ConfigurableEnvironment env) {
-			// move to separate class
-			List<PropertySource<?>> sources = env.getPropertySources().stream()
-					.filter(propertySource -> propertySource instanceof ZookeeperPropertySource)
-					.collect(Collectors.toList());
-			List<String> contexts = sources.stream()
-					.map(propertySource -> ((ZookeeperPropertySource) propertySource).getContext())
-					.collect(Collectors.toList());
-			CuratorFramework source = (CuratorFramework) sources.get(0).getSource();
-			return new ConfigWatcher(contexts, source);
+		public ConfigWatcher configDataConfigWatcher(SpringCloudCuratorFramework curator) {
+			return new ConfigWatcher(curator.getContexts(), curator);
 		}
 
 	}

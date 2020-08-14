@@ -30,15 +30,14 @@ import org.apache.curator.test.TestingServer;
 import org.apache.zookeeper.KeeperException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.refresh.ConfigDataContextRefresher;
 import org.springframework.cloud.context.refresh.ContextRefresher;
-import org.springframework.cloud.context.refresh.LegacyContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -125,6 +124,7 @@ public class ZookeeperConfigDataIntegrationTests {
 				.web(WebApplicationType.NONE)
 				.run("--spring.cloud.zookeeper.connectString=" + connectString,
 						"--debug=true",
+						//"--spring.cloud.bootstrap.enabled=false",
 						"--spring.config.import=zookeeper:",
 						"--spring.application.name=testZkConfigDataIntegration",
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
@@ -199,7 +199,7 @@ public class ZookeeperConfigDataIntegrationTests {
 		@Bean
 		public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
 				RefreshScope scope) {
-			return new LegacyContextRefresher(context, scope);
+			return new ConfigDataContextRefresher(context, scope);
 		}
 
 		@Override
