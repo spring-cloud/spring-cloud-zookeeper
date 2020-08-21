@@ -1,7 +1,6 @@
 # Auto Configuration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration,\
-org.springframework.cloud.zookeeper.config.ZookeeperConfigDataAutoConfiguration
+org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration
 
 # Bootstrap Configuration
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\

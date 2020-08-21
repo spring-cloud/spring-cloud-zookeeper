@@ -20,8 +20,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -78,7 +79,8 @@ public class ZookeeperPropertySourceLocatorFailFastTests {
 				.isNotNull();
 	}
 
-	@SpringBootApplication
+	@SpringBootConfiguration
+	@EnableAutoConfiguration
 	static class Config {
 
 	}

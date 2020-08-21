@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.context.config.ConfigData;
 import org.springframework.boot.context.config.ConfigDataLoader;
+import org.springframework.boot.context.config.ConfigDataLoaderContext;
 import org.springframework.util.ReflectionUtils;
 
 public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataLocation> {
@@ -31,7 +32,7 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 	private static final Log log = LogFactory.getLog(ZookeeperPropertySourceLocator.class);
 
 	@Override
-	public ConfigData load(ZookeeperConfigDataLocation location) throws IOException {
+	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) throws IOException {
 		try {
 			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(location.getContext(),
 					location.getCurator());

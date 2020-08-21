@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.zookeeper.config;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -24,9 +27,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
-import org.springframework.cloud.zookeeper.config.ZookeeperConfigDataAutoConfiguration.SpringCloudCuratorFramework;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -54,8 +57,10 @@ public class ZookeeperConfigAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean(ZookeeperPropertySourceLocator.class)
-		public ConfigWatcher configDataConfigWatcher(SpringCloudCuratorFramework curator) {
-			return new ConfigWatcher(curator.getContexts(), curator);
+		public ConfigWatcher configDataConfigWatcher(CuratorFramework curator, Environment env) {
+			List<String> contexts = env.getProperty("spring.cloud.zookeeper.config.property-source-contexts",
+					List.class, Collections.emptyList());
+			return new ConfigWatcher(contexts, curator);
 		}
 
 	}

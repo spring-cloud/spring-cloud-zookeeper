@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -34,6 +35,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.ReflectionUtils;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
@@ -55,11 +57,12 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context, String location, Profiles profiles) {
+	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
+			String location, Profiles profiles) {
 		// TODO use location for host:port
 		CuratorFramework curator = curatorFramework(loadProperties(context.getBinder()));
-		String appName = context.getBinder().bind("spring.application.name", String.class)
-				.orElse("application");
+
+		String appName = context.getBinder().bind("spring.application.name", String.class).orElse("application");
 
 		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
 		String root = properties.getRoot();
@@ -79,14 +82,24 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		Collections.reverse(contexts);
 
+		context.getBootstrapRegistry().register(CuratorFramework.class, () -> curator)
+				.onApplicationContextPrepared((ctxt, curatorFramework) -> {
+					ctxt.getBeanFactory().registerSingleton("configDataCuratorFramework", curatorFramework);
+					HashMap<String, Object> source = new HashMap<>();
+					source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts);
+					MapPropertySource propertySource = new MapPropertySource("zookeeperConfigData", source);
+					ctxt.getEnvironment().getPropertySources().addFirst(propertySource);
+				});
+
 		ArrayList<ZookeeperConfigDataLocation> locations = new ArrayList<>();
-		contexts.forEach(propertySourceContext -> locations.add(new ZookeeperConfigDataLocation(curator, properties, propertySourceContext)));
+		contexts.forEach(propertySourceContext -> locations
+				.add(new ZookeeperConfigDataLocation(curator, properties, propertySourceContext)));
 
 		return locations;
 	}
 
-	private void addProfiles(List<String> contexts, String baseContext,
-			Profiles profiles, ZookeeperConfigProperties properties) {
+	private void addProfiles(List<String> contexts, String baseContext, Profiles profiles,
+			ZookeeperConfigProperties properties) {
 		for (String profile : profiles.getAccepted()) {
 			contexts.add(baseContext + properties.getProfileSeparator() + profile);
 		}
@@ -104,8 +117,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		curator.start();
 		if (log.isTraceEnabled()) {
-			log.trace("blocking until connected to zookeeper for "
-					+ properties.getBlockUntilConnectedWait()
+			log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait()
 					+ properties.getBlockUntilConnectedUnit());
 		}
 		try {
@@ -123,22 +135,19 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	protected RetryPolicy retryPolicy(ZookeeperProperties properties) {
-		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(),
-				properties.getMaxRetries(), properties.getMaxSleepMs());
+		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
+				properties.getMaxSleepMs());
 	}
 
 	protected ZookeeperProperties loadProperties(Binder binder) {
-		ZookeeperProperties properties = binder
-				.bind(ZookeeperProperties.PREFIX,
-						Bindable.of(ZookeeperProperties.class))
+		ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
 				.orElse(new ZookeeperProperties());
 		return properties;
 	}
 
 	protected ZookeeperConfigProperties loadConfigProperties(Binder binder) {
 		ZookeeperConfigProperties properties = binder
-				.bind(ZookeeperConfigProperties.PREFIX,
-						Bindable.of(ZookeeperConfigProperties.class))
+				.bind(ZookeeperConfigProperties.PREFIX, Bindable.of(ZookeeperConfigProperties.class))
 				.orElse(new ZookeeperConfigProperties());
 		return properties;
 	}
