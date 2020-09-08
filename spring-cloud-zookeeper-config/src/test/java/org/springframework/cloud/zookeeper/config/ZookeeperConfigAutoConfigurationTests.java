@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import java.net.ConnectException;
-
+import org.apache.zookeeper.KeeperException;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,8 +25,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -72,7 +73,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 	@Test
 	public void testConfigEnabledTrueLoadsZookeeperConfigAutoConfiguration()
 			throws Exception {
-		expectedException.expect(ConnectException.class);
+		expectedException.expectCause(Matchers.isA(KeeperException.class));
 
 		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToTrue",
@@ -87,7 +88,8 @@ public class ZookeeperConfigAutoConfigurationTests {
 						"--spring.cloud.zookeeper.config.enabled=true");
 	}
 
-	@SpringBootApplication
+	@SpringBootConfiguration
+	@EnableAutoConfiguration
 	static class Config {
 
 	}

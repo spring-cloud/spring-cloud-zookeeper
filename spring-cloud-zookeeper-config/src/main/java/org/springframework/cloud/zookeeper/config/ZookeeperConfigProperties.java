@@ -26,8 +26,13 @@ import org.springframework.util.Assert;
  * @since 1.0.0
  * @see ZookeeperPropertySourceLocator
  */
-@ConfigurationProperties("spring.cloud.zookeeper.config")
+@ConfigurationProperties(ZookeeperConfigProperties.PREFIX)
 public class ZookeeperConfigProperties {
+
+	/**
+	 * Configuration prefix for config properties.
+	 */
+	public static final String PREFIX = "spring.cloud.zookeeper.config";
 
 	private boolean enabled = true;
 

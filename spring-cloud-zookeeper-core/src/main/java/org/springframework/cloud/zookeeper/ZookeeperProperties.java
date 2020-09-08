@@ -30,9 +30,13 @@ import org.springframework.util.Assert;
  * @author Spencer Gibb
  * @since 1.0.0
  */
-@ConfigurationProperties("spring.cloud.zookeeper")
+@ConfigurationProperties(ZookeeperProperties.PREFIX)
 public class ZookeeperProperties {
 
+	/**
+	 * Configuration prefix.
+	 */
+	public static final String PREFIX = "spring.cloud.zookeeper";
 	/**
 	 * Connection string to the Zookeeper cluster.
 	 */
