@@ -28,11 +28,13 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 	private final CuratorFramework curator;
 	private final ZookeeperConfigProperties properties;
 	private final String context;
+	private final boolean optional;
 
-	public ZookeeperConfigDataLocation(CuratorFramework curator, ZookeeperConfigProperties properties, String context) {
+	public ZookeeperConfigDataLocation(CuratorFramework curator, ZookeeperConfigProperties properties, String context, boolean optional) {
 		this.curator = curator;
 		this.properties = properties;
 		this.context = context;
+		this.optional = optional;
 	}
 
 	public CuratorFramework getCurator() {
@@ -47,6 +49,10 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 		return this.context;
 	}
 
+	public boolean isOptional() {
+		return this.optional;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -58,6 +64,7 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 		ZookeeperConfigDataLocation that = (ZookeeperConfigDataLocation) o;
 		return this.curator.equals(that.curator) &&
 				this.properties.equals(that.properties) &&
+				this.optional == that.optional &&
 				this.context.equals(that.context);
 	}
 
@@ -69,8 +76,9 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 	@Override
 	public String toString() {
 		return new ToStringCreator(this)
-				.append("curator", curator)
 				.append("context", context)
+				.append("optional", optional)
+				.append("properties", properties)
 				.toString();
 
 	}

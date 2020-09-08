@@ -28,6 +28,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
@@ -36,7 +37,6 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
-import org.springframework.util.ReflectionUtils;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
 
@@ -52,15 +52,14 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolve(ConfigDataLocationResolverContext context, String location) {
+	public List<ZookeeperConfigDataLocation> resolve(ConfigDataLocationResolverContext context, String location, boolean optional) throws ConfigDataLocationNotFoundException {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
-			String location, Profiles profiles) {
+	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context, String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
 		// TODO use location for host:port
-		CuratorFramework curator = curatorFramework(loadProperties(context.getBinder()));
+		CuratorFramework curator = curatorFramework(optional, loadProperties(context.getBinder()));
 
 		String appName = context.getBinder().bind("spring.application.name", String.class).orElse("application");
 
@@ -93,7 +92,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		ArrayList<ZookeeperConfigDataLocation> locations = new ArrayList<>();
 		contexts.forEach(propertySourceContext -> locations
-				.add(new ZookeeperConfigDataLocation(curator, properties, propertySourceContext)));
+				.add(new ZookeeperConfigDataLocation(curator, properties, propertySourceContext, optional)));
 
 		return locations;
 	}
@@ -105,7 +104,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		}
 	}
 
-	protected CuratorFramework curatorFramework(ZookeeperProperties properties) {
+	protected CuratorFramework curatorFramework(boolean optional, ZookeeperProperties properties) {
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 
 		builder.connectString(properties.getConnectString())
@@ -125,8 +124,13 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 					properties.getBlockUntilConnectedUnit());
 		}
 		catch (InterruptedException e) {
-			log.error("Unable to connect to zookeepr", e);
-			ReflectionUtils.rethrowRuntimeException(e);
+			if (!optional) {
+				log.error("Unable to connect to zookeeper", e);
+				throw new ConfigDataLocationNotFoundException("Unable to connect to zookeeper", null, e);
+			}
+			else if (log.isDebugEnabled()) {
+				log.debug("Unable to connect to zookeeper", e);
+			}
 		}
 		if (log.isTraceEnabled()) {
 			log.trace("connected to zookeeper");
