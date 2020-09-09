@@ -52,13 +52,14 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolve(ConfigDataLocationResolverContext context, String location, boolean optional) throws ConfigDataLocationNotFoundException {
+	public List<ZookeeperConfigDataLocation> resolve(ConfigDataLocationResolverContext context, String location,
+			boolean optional) throws ConfigDataLocationNotFoundException {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context, String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
-		CuratorFramework curator = curatorFramework(optional, loadProperties(context, location));
+	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
+			String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
 
 		String appName = context.getBinder().bind("spring.application.name", String.class).orElse("application");
 
@@ -80,7 +81,8 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		Collections.reverse(contexts);
 
-		context.getBootstrapRegistry().register(CuratorFramework.class, () -> curator)
+		context.getBootstrapRegistry()
+				.register(CuratorFramework.class, () -> curatorFramework(optional, loadProperties(context, location)))
 				.onApplicationContextPrepared((ctxt, curatorFramework) -> {
 					ctxt.getBeanFactory().registerSingleton("configDataCuratorFramework", curatorFramework);
 					HashMap<String, Object> source = new HashMap<>();
@@ -142,9 +144,9 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				properties.getMaxSleepMs());
 	}
 
-
 	private ZookeeperProperties loadProperties(ConfigDataLocationResolverContext context, String location) {
-		ZookeeperProperties properties = context.getBinder().bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+		ZookeeperProperties properties = context.getBinder()
+				.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
 				.orElse(new ZookeeperProperties());
 
 		String connectString = location.substring("zookeeper:".length());
@@ -152,7 +154,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 			properties.setConnectString(connectString);
 		}
 
-		//TODO: support ZookeeperConfigProperties.root
+		// TODO: support ZookeeperConfigProperties.root
 
 		return properties;
 	}
