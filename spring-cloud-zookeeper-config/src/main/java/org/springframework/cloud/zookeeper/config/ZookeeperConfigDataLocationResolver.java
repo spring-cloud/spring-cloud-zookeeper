@@ -91,7 +91,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		ArrayList<ZookeeperConfigDataLocation> locations = new ArrayList<>();
 		contexts.forEach(propertySourceContext -> locations
-				.add(new ZookeeperConfigDataLocation(curator, properties, propertySourceContext, optional)));
+				.add(new ZookeeperConfigDataLocation(properties, propertySourceContext, optional)));
 
 		return locations;
 	}

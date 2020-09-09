@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.context.config.ConfigData;
 import org.springframework.boot.context.config.ConfigDataLoader;
@@ -33,8 +34,10 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 	@Override
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) {
 		try {
+			CuratorFramework curator = context.getBootstrapRegistry().getRegistration(CuratorFramework.class)
+					.get();
 			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(location.getContext(),
-					location.getCurator());
+					curator);
 			return new ConfigData(Collections.singletonList(propertySource));
 		}
 		catch (Exception e) {

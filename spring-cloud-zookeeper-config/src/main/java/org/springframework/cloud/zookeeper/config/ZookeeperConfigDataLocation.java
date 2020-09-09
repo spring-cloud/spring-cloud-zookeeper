@@ -18,27 +18,19 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.Objects;
 
-import org.apache.curator.framework.CuratorFramework;
-
 import org.springframework.boot.context.config.ConfigDataLocation;
 import org.springframework.core.style.ToStringCreator;
 
 public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 
-	private final CuratorFramework curator;
 	private final ZookeeperConfigProperties properties;
 	private final String context;
 	private final boolean optional;
 
-	public ZookeeperConfigDataLocation(CuratorFramework curator, ZookeeperConfigProperties properties, String context, boolean optional) {
-		this.curator = curator;
+	public ZookeeperConfigDataLocation(ZookeeperConfigProperties properties, String context, boolean optional) {
 		this.properties = properties;
 		this.context = context;
 		this.optional = optional;
-	}
-
-	public CuratorFramework getCurator() {
-		return this.curator;
 	}
 
 	public ZookeeperConfigProperties getProperties() {
@@ -62,15 +54,14 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 			return false;
 		}
 		ZookeeperConfigDataLocation that = (ZookeeperConfigDataLocation) o;
-		return this.curator.equals(that.curator) &&
-				this.properties.equals(that.properties) &&
+		return this.properties.equals(that.properties) &&
 				this.optional == that.optional &&
 				this.context.equals(that.context);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.curator, this.properties, this.context);
+		return Objects.hash(this.optional, this.properties, this.context);
 	}
 
 	@Override
