@@ -36,6 +36,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.util.StringUtils;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
 
@@ -57,8 +58,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 	@Override
 	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context, String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
-		// TODO use location for host:port
-		CuratorFramework curator = curatorFramework(optional, loadProperties(context.getBinder()));
+		CuratorFramework curator = curatorFramework(optional, loadProperties(context, location));
 
 		String appName = context.getBinder().bind("spring.application.name", String.class).orElse("application");
 
@@ -142,9 +142,18 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				properties.getMaxSleepMs());
 	}
 
-	protected ZookeeperProperties loadProperties(Binder binder) {
-		ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+
+	private ZookeeperProperties loadProperties(ConfigDataLocationResolverContext context, String location) {
+		ZookeeperProperties properties = context.getBinder().bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
 				.orElse(new ZookeeperProperties());
+
+		String connectString = location.substring("zookeeper:".length());
+		if (StringUtils.hasText(connectString)) {
+			properties.setConnectString(connectString);
+		}
+
+		//TODO: support ZookeeperConfigProperties.root
+
 		return properties;
 	}
 
