@@ -28,7 +28,7 @@ import org.springframework.boot.context.config.ConfigDataLocationNotFoundExcepti
 
 public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataLocation> {
 
-	private static final Log log = LogFactory.getLog(ZookeeperPropertySourceLocator.class);
+	private static final Log log = LogFactory.getLog(ZookeeperConfigDataLoader.class);
 
 	@Override
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) {

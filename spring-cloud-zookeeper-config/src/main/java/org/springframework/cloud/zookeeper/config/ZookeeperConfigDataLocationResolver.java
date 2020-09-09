@@ -34,13 +34,12 @@ import org.springframework.boot.context.config.ConfigDataLocationResolverContext
 import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
 
-	private static final Log log = LogFactory.getLog(ZookeeperAutoConfiguration.class);
+	private static final Log log = LogFactory.getLog(ZookeeperConfigDataLocationResolver.class);
 
 	@Override
 	public boolean isResolvable(ConfigDataLocationResolverContext context, String location) {
