@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -42,6 +43,11 @@ public class ZookeeperConfigProperties {
 	private String root = "config";
 
 	/**
+	 * Alternative to spring.application.name to use in looking up values in zookeeper.
+	 */
+	private String name;
+
+	/**
 	 * The name of the default context.
 	 */
 	private String defaultContext = "application";
@@ -60,28 +66,28 @@ public class ZookeeperConfigProperties {
 		return this.enabled;
 	}
 
-	public String getRoot() {
-		return this.root;
-	}
-
-	public String getDefaultContext() {
-		return this.defaultContext;
-	}
-
-	public String getProfileSeparator() {
-		return this.profileSeparator;
-	}
-
-	public boolean isFailFast() {
-		return this.failFast;
-	}
-
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
+	public String getRoot() {
+		return this.root;
+	}
+
 	public void setRoot(String root) {
 		this.root = root;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDefaultContext() {
+		return this.defaultContext;
 	}
 
 	public void setDefaultContext(String defaultContext) {
@@ -89,13 +95,33 @@ public class ZookeeperConfigProperties {
 		this.defaultContext = defaultContext;
 	}
 
+	public String getProfileSeparator() {
+		return this.profileSeparator;
+	}
+
 	public void setProfileSeparator(String profileSeparator) {
 		Assert.hasText(profileSeparator, "spring.cloud.zookeeper.config.profile-separator may not be empty");
 		this.profileSeparator = profileSeparator;
+	}
+
+	public boolean isFailFast() {
+		return this.failFast;
 	}
 
 	public void setFailFast(boolean failFast) {
 		this.failFast = failFast;
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringCreator(this)
+				.append("enabled", enabled)
+				.append("root", root)
+				.append("name", name)
+				.append("defaultContext", defaultContext)
+				.append("profileSeparator", profileSeparator)
+				.append("failFast", failFast)
+				.toString();
+
+	}
 }

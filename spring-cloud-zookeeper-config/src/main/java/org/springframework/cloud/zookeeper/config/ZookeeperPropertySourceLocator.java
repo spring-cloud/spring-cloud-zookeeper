@@ -33,6 +33,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Zookeeper provides a <a href=
@@ -88,12 +89,13 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	public PropertySource<?> locate(Environment environment) {
 		if (environment instanceof ConfigurableEnvironment) {
 			ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
-			String appName = env.getProperty("spring.application.name");
-			if (appName == null) {
+			String appName = properties.getName();
+			if (StringUtils.isEmpty(appName)) {
 				// use default "application" (which config client does)
-				appName = "application";
-				log.warn(
-						"spring.application.name is not set. Using default of 'application'");
+				appName = env.getProperty("spring.application.name", "application");
+				if (appName.equals("application")) {
+					log.warn("spring.application.name is not set. Using default of 'application'");
+				}
 			}
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
 

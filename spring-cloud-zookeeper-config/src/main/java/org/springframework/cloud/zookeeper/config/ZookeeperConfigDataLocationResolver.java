@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,11 +37,20 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.lang.Nullable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
 
 	private static final Log log = LogFactory.getLog(ZookeeperConfigDataLocationResolver.class);
+
+	/**
+	 * Zookeeper Config Data prefix.
+	 */
+	public static final String PREFIX = "zookeeper:";
 
 	@Override
 	public boolean isResolvable(ConfigDataLocationResolverContext context, String location) {
@@ -48,7 +58,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				.orElse(true);
 		boolean zkConfigEnabled = context.getBinder().bind(ZookeeperConfigProperties.PREFIX + ".enabled", Boolean.class)
 				.orElse(true);
-		return location.startsWith("zookeeper:") && zkConfigEnabled && zkEnabled;
+		return location.startsWith(PREFIX) && zkConfigEnabled && zkEnabled;
 	}
 
 	@Override
@@ -60,29 +70,16 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	@Override
 	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
 			String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
-
-		String appName = context.getBinder().bind("spring.application.name", String.class).orElse("application");
+		UriComponents locationUri = parseLocation(context, location);
 
 		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
-		String root = properties.getRoot();
-		List<String> contexts = new ArrayList<>();
 
-		String defaultContext = root + "/" + properties.getDefaultContext();
-		contexts.add(defaultContext);
-		addProfiles(contexts, defaultContext, profiles, properties);
-
-		StringBuilder baseContext = new StringBuilder(root);
-		if (!appName.startsWith("/")) {
-			baseContext.append("/");
-		}
-		baseContext.append(appName);
-		contexts.add(baseContext.toString());
-		addProfiles(contexts, baseContext.toString(), profiles, properties);
-
-		Collections.reverse(contexts);
+		List<String> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
+				? getAutomaticContexts(profiles, properties) : getCustomContexts(locationUri, properties);
 
 		context.getBootstrapRegistry()
-				.register(CuratorFramework.class, () -> curatorFramework(optional, loadProperties(context, location)))
+				.register(CuratorFramework.class,
+						() -> curatorFramework(optional, loadProperties(context.getBinder(), locationUri)))
 				.onApplicationContextPrepared((ctxt, curatorFramework) -> {
 					ctxt.getBeanFactory().registerSingleton("configDataCuratorFramework", curatorFramework);
 					HashMap<String, Object> source = new HashMap<>();
@@ -96,6 +93,50 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				.add(new ZookeeperConfigDataLocation(properties, propertySourceContext, optional)));
 
 		return locations;
+	}
+
+	protected List<String> getCustomContexts(UriComponents uriComponents, ZookeeperConfigProperties properties) {
+		if (StringUtils.isEmpty(uriComponents.getPath())) {
+			return Collections.emptyList();
+		}
+
+		return Arrays.asList(uriComponents.getPath().split(";"));
+	}
+
+	protected List<String> getAutomaticContexts(Profiles profiles, ZookeeperConfigProperties properties) {
+		String root = properties.getRoot();
+		List<String> contexts = new ArrayList<>();
+
+		String defaultContext = root + "/" + properties.getDefaultContext();
+		contexts.add(defaultContext);
+		addProfiles(contexts, defaultContext, profiles, properties);
+
+		StringBuilder baseContext = new StringBuilder(root);
+		if (!properties.getName().startsWith("/")) {
+			baseContext.append("/");
+		}
+		// getName() defaults to ${spring.application.name} or application
+		baseContext.append(properties.getName());
+		contexts.add(baseContext.toString());
+		addProfiles(contexts, baseContext.toString(), profiles, properties);
+
+		Collections.reverse(contexts);
+		return contexts;
+	}
+
+	@Nullable
+	protected UriComponents parseLocation(ConfigDataLocationResolverContext context, String location) {
+		String uri = location.substring(PREFIX.length());
+		if (!StringUtils.hasText(uri)) {
+			return null;
+		}
+		if (!uri.startsWith("//")) {
+			uri = PREFIX + "//" + uri;
+		}
+		else {
+			uri = location;
+		}
+		return UriComponentsBuilder.fromUriString(uri).build();
 	}
 
 	private void addProfiles(List<String> contexts, String baseContext, Profiles profiles,
@@ -144,17 +185,16 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				properties.getMaxSleepMs());
 	}
 
-	private ZookeeperProperties loadProperties(ConfigDataLocationResolverContext context, String location) {
-		ZookeeperProperties properties = context.getBinder()
-				.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+	protected ZookeeperProperties loadProperties(Binder binder, UriComponents location) {
+		ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
 				.orElse(new ZookeeperProperties());
 
-		String connectString = location.substring("zookeeper:".length());
-		if (StringUtils.hasText(connectString)) {
-			properties.setConnectString(connectString);
+		if (location != null && StringUtils.hasText(location.getHost())) {
+			if (location.getPort() < 0) {
+				throw new IllegalArgumentException("zookeeper port must be greater than or equal to zero: " + location.getPort());
+			}
+			properties.setConnectString(location.getHost() + ":" + location.getPort());
 		}
-
-		// TODO: support ZookeeperConfigProperties.root
 
 		return properties;
 	}
@@ -163,6 +203,11 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		ZookeeperConfigProperties properties = binder
 				.bind(ZookeeperConfigProperties.PREFIX, Bindable.of(ZookeeperConfigProperties.class))
 				.orElse(new ZookeeperConfigProperties());
+
+		if (StringUtils.isEmpty(properties.getName())) {
+			properties.setName(binder.bind("spring.application.name", String.class).orElse("application"));
+		}
+
 		return properties;
 	}
 
