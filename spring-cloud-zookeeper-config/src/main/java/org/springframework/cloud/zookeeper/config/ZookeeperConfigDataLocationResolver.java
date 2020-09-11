@@ -54,11 +54,15 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 	@Override
 	public boolean isResolvable(ConfigDataLocationResolverContext context, String location) {
+		if (!location.startsWith(PREFIX)) {
+			return false;
+		}
+		// only bind on correct prefix
 		boolean zkEnabled = context.getBinder().bind(ZookeeperProperties.PREFIX + ".enabled", Boolean.class)
 				.orElse(true);
 		boolean zkConfigEnabled = context.getBinder().bind(ZookeeperConfigProperties.PREFIX + ".enabled", Boolean.class)
 				.orElse(true);
-		return location.startsWith(PREFIX) && zkConfigEnabled && zkEnabled;
+		return zkConfigEnabled && zkEnabled;
 	}
 
 	@Override
