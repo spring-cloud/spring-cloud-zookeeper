@@ -21,20 +21,26 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.drivers.TracerDriver;
+import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.cloud.zookeeper.CuratorFactory;
+import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.lang.Nullable;
@@ -74,32 +80,41 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	@Override
 	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
 			String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
-		UriComponents locationUri = parseLocation(context, location);
+		UriComponents locationUri = parseLocation(location);
 
 		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
+		context.getBootstrapContext().register(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
+
+		ZookeeperProperties zookeeperProperties = loadProperties(context.getBinder(), locationUri);
+		context.getBootstrapContext().register(ZookeeperProperties.class, InstanceSupplier.of(zookeeperProperties));
+
+		context.getBootstrapContext().registerIfAbsent(RetryPolicy.class,
+				InstanceSupplier.from(() -> CuratorFactory.retryPolicy(zookeeperProperties)));
+
+		context.getBootstrapContext().registerIfAbsent(CuratorFramework.class, InstanceSupplier
+				.from(() -> curatorFramework(context.getBootstrapContext(), zookeeperProperties, optional)));
 
 		List<String> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
-				? getAutomaticContexts(profiles, properties) : getCustomContexts(locationUri, properties);
+				? getAutomaticContexts(profiles, properties) : getCustomContexts(locationUri);
 
-		context.getBootstrapRegistry()
-				.register(CuratorFramework.class,
-						() -> curatorFramework(optional, loadProperties(context.getBinder(), locationUri)))
-				.onApplicationContextPrepared((ctxt, curatorFramework) -> {
-					ctxt.getBeanFactory().registerSingleton("configDataCuratorFramework", curatorFramework);
-					HashMap<String, Object> source = new HashMap<>();
-					source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts);
-					MapPropertySource propertySource = new MapPropertySource("zookeeperConfigData", source);
-					ctxt.getEnvironment().getPropertySources().addFirst(propertySource);
-				});
+		context.getBootstrapContext().addCloseListener(event -> {
+			CuratorFramework curatorFramework = event.getBootstrapContext().get(CuratorFramework.class);
+			event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
+					curatorFramework);
+			HashMap<String, Object> source = new HashMap<>();
+			source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts);
+			MapPropertySource propertySource = new MapPropertySource("zookeeperConfigData", source);
+			event.getApplicationContext().getEnvironment().getPropertySources().addFirst(propertySource);
+		});
 
 		ArrayList<ZookeeperConfigDataLocation> locations = new ArrayList<>();
 		contexts.forEach(propertySourceContext -> locations
-				.add(new ZookeeperConfigDataLocation(properties, propertySourceContext, optional)));
+				.add(new ZookeeperConfigDataLocation(propertySourceContext, optional)));
 
 		return locations;
 	}
 
-	protected List<String> getCustomContexts(UriComponents uriComponents, ZookeeperConfigProperties properties) {
+	protected List<String> getCustomContexts(UriComponents uriComponents) {
 		if (StringUtils.isEmpty(uriComponents.getPath())) {
 			return Collections.emptyList();
 		}
@@ -129,7 +144,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Nullable
-	protected UriComponents parseLocation(ConfigDataLocationResolverContext context, String location) {
+	protected UriComponents parseLocation(String location) {
 		String uri = location.substring(PREFIX.length());
 		if (!StringUtils.hasText(uri)) {
 			return null;
@@ -150,26 +165,21 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		}
 	}
 
-	protected CuratorFramework curatorFramework(boolean optional, ZookeeperProperties properties) {
-		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
+	protected CuratorFramework curatorFramework(ConfigurableBootstrapContext context, ZookeeperProperties properties,
+			boolean optional) {
 
-		builder.connectString(properties.getConnectString())
-				.sessionTimeoutMs((int) properties.getSessionTimeout().toMillis())
-				.connectionTimeoutMs((int) properties.getConnectionTimeout().toMillis())
-				.retryPolicy(retryPolicy(properties));
-
-		CuratorFramework curator = builder.build();
-
-		curator.start();
-		if (log.isTraceEnabled()) {
-			log.trace("blocking until connected to zookeeper for " + properties.getBlockUntilConnectedWait()
-					+ properties.getBlockUntilConnectedUnit());
-		}
 		try {
-			curator.blockUntilConnected(properties.getBlockUntilConnectedWait(),
-					properties.getBlockUntilConnectedUnit());
+			Supplier<Stream<CuratorFrameworkCustomizer>> customizers;
+			if (context.isRegistered(CuratorFrameworkCustomizer.class)) {
+				customizers = () -> Stream.of(context.get(CuratorFrameworkCustomizer.class));
+			}
+			else {
+				customizers = () -> null;
+			}
+			return CuratorFactory.curatorFramework(properties, context.get(RetryPolicy.class), customizers,
+					supplier(context, EnsembleProvider.class), supplier(context, TracerDriver.class));
 		}
-		catch (InterruptedException e) {
+		catch (Exception e) {
 			if (!optional) {
 				log.error("Unable to connect to zookeeper", e);
 				throw new ConfigDataLocationNotFoundException("Unable to connect to zookeeper", null, e);
@@ -178,15 +188,11 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				log.debug("Unable to connect to zookeeper", e);
 			}
 		}
-		if (log.isTraceEnabled()) {
-			log.trace("connected to zookeeper");
-		}
-		return curator;
+		return null;
 	}
 
-	protected RetryPolicy retryPolicy(ZookeeperProperties properties) {
-		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
-				properties.getMaxSleepMs());
+	private <T> Supplier<T> supplier(ConfigurableBootstrapContext context, Class<T> type) {
+		return () -> context.isRegistered(type) ? context.get(type) : null;
 	}
 
 	protected ZookeeperProperties loadProperties(Binder binder, UriComponents location) {
@@ -195,7 +201,8 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		if (location != null && StringUtils.hasText(location.getHost())) {
 			if (location.getPort() < 0) {
-				throw new IllegalArgumentException("zookeeper port must be greater than or equal to zero: " + location.getPort());
+				throw new IllegalArgumentException(
+						"zookeeper port must be greater than or equal to zero: " + location.getPort());
 			}
 			properties.setConnectString(location.getHost() + ":" + location.getPort());
 		}

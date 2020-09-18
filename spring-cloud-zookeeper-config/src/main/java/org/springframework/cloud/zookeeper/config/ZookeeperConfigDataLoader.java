@@ -34,14 +34,15 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 	@Override
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) {
 		try {
-			CuratorFramework curator = context.getBootstrapRegistry().getRegistration(CuratorFramework.class)
-					.get();
+			CuratorFramework curator = context.getBootstrapContext().get(CuratorFramework.class);
 			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(location.getContext(),
 					curator);
 			return new ConfigData(Collections.singletonList(propertySource));
 		}
 		catch (Exception e) {
-			if (location.getProperties().isFailFast() || !location.isOptional()) {
+			ZookeeperConfigProperties properties = context.getBootstrapContext()
+					.get(ZookeeperConfigProperties.class);
+			if (properties.isFailFast() || !location.isOptional()) {
 				throw new ConfigDataLocationNotFoundException(location, e);
 			}
 			else {

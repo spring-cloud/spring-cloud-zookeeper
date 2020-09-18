@@ -23,18 +23,12 @@ import org.springframework.core.style.ToStringCreator;
 
 public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 
-	private final ZookeeperConfigProperties properties;
 	private final String context;
 	private final boolean optional;
 
-	public ZookeeperConfigDataLocation(ZookeeperConfigProperties properties, String context, boolean optional) {
-		this.properties = properties;
+	public ZookeeperConfigDataLocation(String context, boolean optional) {
 		this.context = context;
 		this.optional = optional;
-	}
-
-	public ZookeeperConfigProperties getProperties() {
-		return this.properties;
 	}
 
 	public String getContext() {
@@ -54,14 +48,13 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 			return false;
 		}
 		ZookeeperConfigDataLocation that = (ZookeeperConfigDataLocation) o;
-		return this.properties.equals(that.properties) &&
-				this.optional == that.optional &&
+		return this.optional == that.optional &&
 				this.context.equals(that.context);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.optional, this.properties, this.context);
+		return Objects.hash(this.optional, this.context);
 	}
 
 	@Override
@@ -69,7 +62,6 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 		return new ToStringCreator(this)
 				.append("context", context)
 				.append("optional", optional)
-				.append("properties", properties)
 				.toString();
 
 	}

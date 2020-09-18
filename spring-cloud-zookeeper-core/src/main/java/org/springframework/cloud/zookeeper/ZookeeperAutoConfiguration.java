@@ -22,8 +22,6 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.drivers.TracerDriver;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -53,54 +51,19 @@ public class ZookeeperAutoConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
-	public CuratorFramework curatorFramework(RetryPolicy retryPolicy,
-			ZookeeperProperties properties,
+	public CuratorFramework curatorFramework(ZookeeperProperties properties, RetryPolicy retryPolicy,
 			ObjectProvider<CuratorFrameworkCustomizer> optionalCuratorFrameworkCustomizerProvider,
 			ObjectProvider<EnsembleProvider> optionalEnsembleProvider,
 			ObjectProvider<TracerDriver> optionalTracerDriverProvider) throws Exception {
-		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
-
-		EnsembleProvider ensembleProvider = optionalEnsembleProvider.getIfAvailable();
-		if (ensembleProvider != null) {
-			builder.ensembleProvider(ensembleProvider);
-		}
-		else {
-			builder.connectString(properties.getConnectString());
-		}
-		builder.sessionTimeoutMs((int) properties.getSessionTimeout().toMillis())
-				.connectionTimeoutMs((int) properties.getConnectionTimeout().toMillis())
-				.retryPolicy(retryPolicy);
-
-		optionalCuratorFrameworkCustomizerProvider.orderedStream()
-				.forEach(curatorFrameworkCustomizer -> curatorFrameworkCustomizer
-						.customize(builder));
-
-		CuratorFramework curator = builder.build();
-		optionalTracerDriverProvider.ifAvailable(tracerDriver -> {
-			if (curator.getZookeeperClient() != null) {
-				curator.getZookeeperClient().setTracerDriver(tracerDriver);
-			}
-		});
-
-		curator.start();
-		if (log.isTraceEnabled()) {
-			log.trace("blocking until connected to zookeeper for "
-					+ properties.getBlockUntilConnectedWait()
-					+ properties.getBlockUntilConnectedUnit());
-		}
-		curator.blockUntilConnected(properties.getBlockUntilConnectedWait(),
-				properties.getBlockUntilConnectedUnit());
-		if (log.isTraceEnabled()) {
-			log.trace("connected to zookeeper");
-		}
-		return curator;
+		return CuratorFactory.curatorFramework(properties, retryPolicy,
+				optionalCuratorFrameworkCustomizerProvider::orderedStream, optionalEnsembleProvider::getIfAvailable,
+				optionalTracerDriverProvider::getIfAvailable);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public RetryPolicy exponentialBackoffRetry(ZookeeperProperties properties) {
-		return new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(),
-				properties.getMaxRetries(), properties.getMaxSleepMs());
+		return CuratorFactory.retryPolicy(properties);
 	}
 
 }

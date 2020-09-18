@@ -22,17 +22,16 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.env.BootstrapRegistry;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,12 +40,12 @@ public class ZookeeperConfigDataLocationResolverTests {
 	@Test
 	public void testParseLocation() {
 		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver();
-		UriComponents uriComponents = resolver.parseLocation(null,
+		UriComponents uriComponents = resolver.parseLocation(
 				"zookeeper:myhost:2182/mypath1;/mypath2;/mypath3");
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
 				.hasPort(2182).hasPath("/mypath1;/mypath2;/mypath3");
 
-		uriComponents = resolver.parseLocation(null, "zookeeper:myhost:2182");
+		uriComponents = resolver.parseLocation("zookeeper:myhost:2182");
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
 				.hasPort(2182).hasPath("");
 	}
@@ -62,7 +61,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 
 	@Test
 	public void testResolveProfileSpecificWithAutomaticPaths() {
-		String location = "zookeeper:myhost";
+		String location = "zookeeper:myhost:1234";
 		List<ZookeeperConfigDataLocation> locations = testResolveProfileSpecific(location);
 		assertThat(locations).hasSize(4);
 		assertThat(toContexts(locations)).containsExactly("config/testapp,dev",
@@ -88,13 +87,12 @@ public class ZookeeperConfigDataLocationResolverTests {
 		MockEnvironment env = new MockEnvironment();
 		env.setProperty("spring.application.name", "testapp");
 
-		BootstrapRegistry registry = mock(BootstrapRegistry.class);
-		when(registry.register(any(), any())).thenReturn(mock(BootstrapRegistry.Registration.class));
+		ConfigurableBootstrapContext bootstrapContext = mock(ConfigurableBootstrapContext.class);
 
 		ConfigDataLocationResolverContext context = mock(
 				ConfigDataLocationResolverContext.class);
 
-		when(context.getBootstrapRegistry()).thenReturn(registry);
+		when(context.getBootstrapContext()).thenReturn(bootstrapContext);
 		when(context.getBinder()).thenReturn(Binder.get(env));
 
 		Profiles profiles = mock(Profiles.class);
