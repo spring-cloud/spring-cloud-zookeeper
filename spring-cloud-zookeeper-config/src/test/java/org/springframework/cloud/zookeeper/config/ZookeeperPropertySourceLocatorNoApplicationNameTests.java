@@ -34,8 +34,10 @@ public class ZookeeperPropertySourceLocatorNoApplicationNameTests {
 	public void defaultSpringApplicationNameWorks() {
 		CuratorFramework curator = mock(CuratorFramework.class);
 		when(curator.getChildren()).thenReturn(mock(GetChildrenBuilder.class));
+		ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
+		properties.setName("notempty");
 		ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(
-				curator, new ZookeeperConfigProperties());
+				curator, properties);
 		locator.locate(new MockEnvironment());
 	}
 

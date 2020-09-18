@@ -24,6 +24,8 @@ import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 
 /**
  * Bootstrap Configuration for Zookeeper Configuration.
@@ -45,8 +47,12 @@ public class ZookeeperConfigBootstrapConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ZookeeperConfigProperties zookeeperConfigProperties() {
-		return new ZookeeperConfigProperties();
+	public ZookeeperConfigProperties zookeeperConfigProperties(Environment env) {
+		ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
+		if (StringUtils.isEmpty(properties.getName())) {
+			properties.setName(env.getProperty("spring.application.name", "application"));
+		}
+		return properties;
 	}
 
 }

@@ -18,8 +18,6 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.context.config.ConfigData;
@@ -28,8 +26,6 @@ import org.springframework.boot.context.config.ConfigDataLoaderContext;
 import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 
 public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataLocation> {
-
-	private static final Log log = LogFactory.getLog(ZookeeperConfigDataLoader.class);
 
 	@Override
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) {
@@ -40,16 +36,8 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 			return new ConfigData(Collections.singletonList(propertySource));
 		}
 		catch (Exception e) {
-			ZookeeperConfigProperties properties = context.getBootstrapContext()
-					.get(ZookeeperConfigProperties.class);
-			if (properties.isFailFast() || !location.isOptional()) {
-				throw new ConfigDataLocationNotFoundException(location, e);
-			}
-			else {
-				log.warn("Unable to load zookeeper config from " + location.getContext(), e);
-			}
+			throw new ConfigDataLocationNotFoundException(location, e);
 		}
-		return null;
 	}
 
 }

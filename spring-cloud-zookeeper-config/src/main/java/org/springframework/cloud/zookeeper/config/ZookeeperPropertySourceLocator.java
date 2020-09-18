@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +31,7 @@ import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * Zookeeper provides a <a href=
@@ -78,6 +76,7 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	public ZookeeperPropertySourceLocator(CuratorFramework curator,
 			ZookeeperConfigProperties properties) {
 		this.curator = curator;
+		Assert.hasText(properties.getName(), ZookeeperConfigProperties.PREFIX + ".name must not be empty");
 		this.properties = properties;
 	}
 
@@ -89,50 +88,19 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	public PropertySource<?> locate(Environment environment) {
 		if (environment instanceof ConfigurableEnvironment) {
 			ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
-			String appName = properties.getName();
-			if (StringUtils.isEmpty(appName)) {
-				// use default "application" (which config client does)
-				appName = env.getProperty("spring.application.name", "application");
-				if (appName.equals("application")) {
-					log.warn("spring.application.name is not set. Using default of 'application'");
-				}
-			}
+
 			List<String> profiles = Arrays.asList(env.getActiveProfiles());
 
-			String root = this.properties.getRoot();
-			this.contexts = new ArrayList<>();
-
-			String defaultContext = root + "/" + this.properties.getDefaultContext();
-			this.contexts.add(defaultContext);
-			addProfiles(this.contexts, defaultContext, profiles);
-
-			StringBuilder baseContext = new StringBuilder(root);
-			if (!appName.startsWith("/")) {
-				baseContext.append("/");
-			}
-			baseContext.append(appName);
-			this.contexts.add(baseContext.toString());
-			addProfiles(this.contexts, baseContext.toString(), profiles);
+			ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
+			this.contexts = sources.getAutomaticContexts(profiles);
 
 			CompositePropertySource composite = new CompositePropertySource("zookeeper");
 
 			Collections.reverse(this.contexts);
 
 			for (String propertySourceContext : this.contexts) {
-				try {
-					PropertySource propertySource = create(propertySourceContext);
-					composite.addPropertySource(propertySource);
-					// TODO: howto call close when /refresh
-				}
-				catch (Exception e) {
-					if (this.properties.isFailFast()) {
-						ReflectionUtils.rethrowRuntimeException(e);
-					}
-					else {
-						log.warn("Unable to load zookeeper config from "
-								+ propertySourceContext, e);
-					}
-				}
+				PropertySource<CuratorFramework> propertySource = sources.createPropertySource(propertySourceContext, true, this.curator);
+				composite.addPropertySource(propertySource);
 			}
 
 			return composite;

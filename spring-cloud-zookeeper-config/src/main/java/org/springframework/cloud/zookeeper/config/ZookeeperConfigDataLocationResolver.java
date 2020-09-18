@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.drivers.TracerDriver;
 import org.apache.curator.ensemble.EnsembleProvider;
@@ -51,12 +50,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
 
-	private static final Log log = LogFactory.getLog(ZookeeperConfigDataLocationResolver.class);
-
 	/**
 	 * Zookeeper Config Data prefix.
 	 */
 	public static final String PREFIX = "zookeeper:";
+
+	private final Log log;
+
+	public ZookeeperConfigDataLocationResolver(Log log) {
+		this.log = log;
+	}
 
 	@Override
 	public boolean isResolvable(ConfigDataLocationResolverContext context, String location) {
@@ -94,8 +97,10 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		context.getBootstrapContext().registerIfAbsent(CuratorFramework.class, InstanceSupplier
 				.from(() -> curatorFramework(context.getBootstrapContext(), zookeeperProperties, optional)));
 
+		ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
+
 		List<String> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
-				? getAutomaticContexts(profiles, properties) : getCustomContexts(locationUri);
+				? sources.getAutomaticContexts(profiles.getAccepted()) : getCustomContexts(locationUri);
 
 		context.getBootstrapContext().addCloseListener(event -> {
 			CuratorFramework curatorFramework = event.getBootstrapContext().get(CuratorFramework.class);
@@ -122,27 +127,6 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		return Arrays.asList(uriComponents.getPath().split(";"));
 	}
 
-	protected List<String> getAutomaticContexts(Profiles profiles, ZookeeperConfigProperties properties) {
-		String root = properties.getRoot();
-		List<String> contexts = new ArrayList<>();
-
-		String defaultContext = root + "/" + properties.getDefaultContext();
-		contexts.add(defaultContext);
-		addProfiles(contexts, defaultContext, profiles, properties);
-
-		StringBuilder baseContext = new StringBuilder(root);
-		if (!properties.getName().startsWith("/")) {
-			baseContext.append("/");
-		}
-		// getName() defaults to ${spring.application.name} or application
-		baseContext.append(properties.getName());
-		contexts.add(baseContext.toString());
-		addProfiles(contexts, baseContext.toString(), profiles, properties);
-
-		Collections.reverse(contexts);
-		return contexts;
-	}
-
 	@Nullable
 	protected UriComponents parseLocation(String location) {
 		String uri = location.substring(PREFIX.length());
@@ -156,13 +140,6 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 			uri = location;
 		}
 		return UriComponentsBuilder.fromUriString(uri).build();
-	}
-
-	private void addProfiles(List<String> contexts, String baseContext, Profiles profiles,
-			ZookeeperConfigProperties properties) {
-		for (String profile : profiles.getAccepted()) {
-			contexts.add(baseContext + properties.getProfileSeparator() + profile);
-		}
 	}
 
 	protected CuratorFramework curatorFramework(ConfigurableBootstrapContext context, ZookeeperProperties properties,

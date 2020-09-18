@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.ConfigurableBootstrapContext;
@@ -39,7 +40,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 
 	@Test
 	public void testParseLocation() {
-		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver();
+		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver(LogFactory.getLog(getClass()));
 		UriComponents uriComponents = resolver.parseLocation(
 				"zookeeper:myhost:2182/mypath1;/mypath2;/mypath3");
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
@@ -102,7 +103,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 	}
 
 	private ZookeeperConfigDataLocationResolver createResolver() {
-		return new ZookeeperConfigDataLocationResolver();
+		return new ZookeeperConfigDataLocationResolver(LogFactory.getLog(getClass()));
 	}
 
 }
