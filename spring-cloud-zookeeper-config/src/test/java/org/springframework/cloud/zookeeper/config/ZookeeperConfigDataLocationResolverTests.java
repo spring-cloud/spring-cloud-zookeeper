@@ -27,10 +27,8 @@ import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -67,14 +65,6 @@ public class ZookeeperConfigDataLocationResolverTests {
 		assertThat(locations).hasSize(4);
 		assertThat(toContexts(locations)).containsExactly("config/testapp,dev",
 				"config/testapp", "config/application,dev", "config/application");
-	}
-
-	@Test
-	public void testLoadProperties() {
-		ZookeeperProperties properties = createResolver().loadProperties(
-				Binder.get(new MockEnvironment()),
-				UriComponentsBuilder.fromUriString("zookeeper://myhost:8502").build());
-		assertThat(properties.getConnectString()).isEqualTo("myhost:8502");
 	}
 
 	private List<String> toContexts(List<ZookeeperConfigDataLocation> locations) {

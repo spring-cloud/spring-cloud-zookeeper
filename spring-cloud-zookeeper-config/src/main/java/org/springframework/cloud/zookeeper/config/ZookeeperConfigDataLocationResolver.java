@@ -21,17 +21,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.drivers.TracerDriver;
-import org.apache.curator.ensemble.EnsembleProvider;
-import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
@@ -39,7 +32,6 @@ import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.CuratorFactory;
-import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.lang.Nullable;
@@ -86,14 +78,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		UriComponents locationUri = parseLocation(location);
 
 		// create curator
-		ZookeeperProperties zookeeperProperties = loadProperties(context.getBinder(), locationUri);
-		context.getBootstrapContext().register(ZookeeperProperties.class, InstanceSupplier.of(zookeeperProperties));
-
-		context.getBootstrapContext().registerIfAbsent(RetryPolicy.class,
-				InstanceSupplier.from(() -> CuratorFactory.retryPolicy(zookeeperProperties)));
-
-		context.getBootstrapContext().registerIfAbsent(CuratorFramework.class, InstanceSupplier
-				.from(() -> curatorFramework(context.getBootstrapContext(), zookeeperProperties, optional)));
+		CuratorFactory.registerCurator(context.getBootstrapContext(), locationUri, optional);
 
 		// create locations
 		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
@@ -106,9 +91,6 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		// promote beans to context
 		context.getBootstrapContext().addCloseListener(event -> {
-			CuratorFramework curatorFramework = event.getBootstrapContext().get(CuratorFramework.class);
-			event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
-					curatorFramework);
 			HashMap<String, Object> source = new HashMap<>();
 			source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts);
 			MapPropertySource propertySource = new MapPropertySource("zookeeperConfigData", source);
@@ -143,51 +125,6 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 			uri = location;
 		}
 		return UriComponentsBuilder.fromUriString(uri).build();
-	}
-
-	protected CuratorFramework curatorFramework(ConfigurableBootstrapContext context, ZookeeperProperties properties,
-			boolean optional) {
-
-		try {
-			Supplier<Stream<CuratorFrameworkCustomizer>> customizers;
-			if (context.isRegistered(CuratorFrameworkCustomizer.class)) {
-				customizers = () -> Stream.of(context.get(CuratorFrameworkCustomizer.class));
-			}
-			else {
-				customizers = () -> null;
-			}
-			return CuratorFactory.curatorFramework(properties, context.get(RetryPolicy.class), customizers,
-					supplier(context, EnsembleProvider.class), supplier(context, TracerDriver.class));
-		}
-		catch (Exception e) {
-			if (!optional) {
-				log.error("Unable to connect to zookeeper", e);
-				throw new ConfigDataLocationNotFoundException("Unable to connect to zookeeper", null, e);
-			}
-			else if (log.isDebugEnabled()) {
-				log.debug("Unable to connect to zookeeper", e);
-			}
-		}
-		return null;
-	}
-
-	private <T> Supplier<T> supplier(ConfigurableBootstrapContext context, Class<T> type) {
-		return () -> context.isRegistered(type) ? context.get(type) : null;
-	}
-
-	protected ZookeeperProperties loadProperties(Binder binder, UriComponents location) {
-		ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
-				.orElse(new ZookeeperProperties());
-
-		if (location != null && StringUtils.hasText(location.getHost())) {
-			if (location.getPort() < 0) {
-				throw new IllegalArgumentException(
-						"zookeeper port must be greater than or equal to zero: " + location.getPort());
-			}
-			properties.setConnectString(location.getHost() + ":" + location.getPort());
-		}
-
-		return properties;
 	}
 
 	protected ZookeeperConfigProperties loadConfigProperties(Binder binder) {
