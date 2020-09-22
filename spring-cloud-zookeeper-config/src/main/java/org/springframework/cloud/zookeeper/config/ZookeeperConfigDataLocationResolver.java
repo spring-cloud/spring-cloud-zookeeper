@@ -85,9 +85,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 			String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
 		UriComponents locationUri = parseLocation(location);
 
-		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
-		context.getBootstrapContext().register(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
-
+		// create curator
 		ZookeeperProperties zookeeperProperties = loadProperties(context.getBinder(), locationUri);
 		context.getBootstrapContext().register(ZookeeperProperties.class, InstanceSupplier.of(zookeeperProperties));
 
@@ -97,11 +95,16 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		context.getBootstrapContext().registerIfAbsent(CuratorFramework.class, InstanceSupplier
 				.from(() -> curatorFramework(context.getBootstrapContext(), zookeeperProperties, optional)));
 
+		// create locations
+		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
+		context.getBootstrapContext().register(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
+
 		ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
 
 		List<String> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
 				? sources.getAutomaticContexts(profiles.getAccepted()) : getCustomContexts(locationUri);
 
+		// promote beans to context
 		context.getBootstrapContext().addCloseListener(event -> {
 			CuratorFramework curatorFramework = event.getBootstrapContext().get(CuratorFramework.class);
 			event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",

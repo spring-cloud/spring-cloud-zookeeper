@@ -37,8 +37,13 @@ import static org.springframework.cloud.zookeeper.discovery.DependencyPathUtils.
  * @author Olga Maciaszek-Sharma
  * @since 1.0.0
  */
-@ConfigurationProperties("spring.cloud.zookeeper")
+@ConfigurationProperties(ZookeeperDependencies.PREFIX)
 public class ZookeeperDependencies {
+
+	/**
+	 * Zookeeper Dependencies prefix.
+	 */
+	public static final String PREFIX = "spring.cloud.zookeeper";
 
 	/**
 	 * Common prefix that will be applied to all Zookeeper dependencies' paths.

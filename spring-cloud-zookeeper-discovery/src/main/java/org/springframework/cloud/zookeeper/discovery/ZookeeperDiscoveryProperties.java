@@ -30,8 +30,13 @@ import org.springframework.util.StringUtils;
  * @author Spencer Gibb
  * @since 1.0.0
  */
-@ConfigurationProperties("spring.cloud.zookeeper.discovery")
+@ConfigurationProperties(ZookeeperDiscoveryProperties.PREFIX)
 public class ZookeeperDiscoveryProperties {
+
+	/**
+	 * Zookeeper Discovery Properties prefix.
+	 */
+	public static final String PREFIX = "spring.cloud.zookeeper.discovery";
 
 	/**
 	 * Default URI spec.
