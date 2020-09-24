@@ -18,9 +18,7 @@ package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.curator.test.TestingServer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.SpringBootConfiguration;
@@ -28,40 +26,27 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ZookeeperConfigServerBootstrapperTests {
 
-	private TestingServer testingServer;
-
 	private ConfigurableApplicationContext context;
 
-	private int port;
-
-	@BeforeEach
-	public void init() throws Exception {
-		port = SocketUtils.findAvailableTcpPort();
-		testingServer = new TestingServer(port);
-	}
-
 	@AfterEach
-	public void after() throws Exception {
+	public void after() {
 		if (context != null) {
 			context.close();
-		}
-		if (testingServer != null) {
-			testingServer.close();
 		}
 	}
 
 	@Test
 	public void notEnabledDoesNotAddInstanceProviderFn() {
 		new SpringApplicationBuilder(TestConfig.class)
-				.properties("--server.port=0", "spring.cloud.service-registry.auto-registration.enabled=false",
-						"spring.cloud.zookeeper.connect-string=localhost:" + port)
+				.listeners(new ZookeeperTestingServer())
+				.properties("--server.port=0", "spring.cloud.service-registry.auto-registration.enabled=false")
 				.addBootstrapper(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
@@ -74,8 +59,8 @@ public class ZookeeperConfigServerBootstrapperTests {
 	public void enabledAddsInstanceProviderFn() {
 		AtomicReference<ZookeeperDiscoveryClient> bootstrapDiscoveryClient = new AtomicReference<>();
 		context = new SpringApplicationBuilder(TestConfig.class)
+				.listeners(new ZookeeperTestingServer())
 				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
-						"spring.cloud.zookeeper.connect-string=localhost:" + port,
 						"spring.cloud.service-registry.auto-registration.enabled=false")
 				.addBootstrapper(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()

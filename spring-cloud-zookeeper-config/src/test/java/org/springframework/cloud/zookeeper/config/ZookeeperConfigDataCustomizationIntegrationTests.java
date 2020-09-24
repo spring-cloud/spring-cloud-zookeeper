@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkImpl;
-import org.apache.curator.test.TestingServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +33,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.zookeeper.CuratorFactory;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,18 +54,13 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 
 	private ConfigurableApplicationContext context;
 
-	private TestingServer testingServer;
-
 	@Before
-	public void setup() throws Exception {
-		int port = SocketUtils.findAvailableTcpPort();
-		this.testingServer = new TestingServer(port);
-		String connectString = "localhost:" + port;
-
+	public void setup() {
 		this.context = new SpringApplicationBuilder(Config.class)
+				.listeners(new ZookeeperTestingServer())
 				.web(WebApplicationType.NONE)
 				.addBootstrapper(ZookeeperBootstrapper.fromBootstrapContext(this::curatorFramework))
-				.run("--spring.config.import=zookeeper:" + connectString,
+				.run("--spring.config.import=zookeeper:",
 						"--spring.application.name=testZkConfigDataIntegration",
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
 						"--spring.cloud.zookeeper.config.root=" + ROOT);
@@ -76,9 +70,6 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	public void after() throws Exception {
 		if (context != null) {
 			this.context.close();
-		}
-		if (testingServer != null) {
-			this.testingServer.close();
 		}
 	}
 
