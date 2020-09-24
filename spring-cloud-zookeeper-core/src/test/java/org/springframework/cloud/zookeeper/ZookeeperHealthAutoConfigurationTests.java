@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 public class ZookeeperHealthAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+			.withInitializer(new ZookeeperTestingServer.Initializer())
 			.withConfiguration(AutoConfigurations.of(ZookeeperAutoConfiguration.class,
 					ZookeeperHealthAutoConfiguration.class))
 			.withUserConfiguration(ZookeeperAutoConfigurationTests.BaseTestConfig.class);

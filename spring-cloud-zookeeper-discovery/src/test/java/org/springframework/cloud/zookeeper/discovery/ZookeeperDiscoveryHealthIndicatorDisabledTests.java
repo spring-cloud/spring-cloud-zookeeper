@@ -24,7 +24,9 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -34,7 +36,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * @author Spencer Gibb
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = "management.health.zookeeper.enabled=false")
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "management.health.zookeeper.enabled=false",
+		"spring.cloud.service-registry.auto-registration.enabled=false" })
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperDiscoveryHealthIndicatorDisabledTests {
 
 	@Autowired(required = false)

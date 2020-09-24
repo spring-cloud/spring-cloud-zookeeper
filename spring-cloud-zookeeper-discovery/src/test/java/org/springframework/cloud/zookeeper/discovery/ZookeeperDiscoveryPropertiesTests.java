@@ -16,47 +16,40 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.commons.util.InetUtilsProperties;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.then;
 
-/**
- * @author wmz7year
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(properties = { "pring.application.name=testZookeeperDiscovery",
-		"spring.cloud.zookeeper.discovery.instance-id=zkpropstestid-123",
-		"spring.cloud.zookeeper.discovery.preferIpAddress=true",
-		"spring.cloud.zookeeper.discovery.instanceIpAddress=1.1.1.1" },
-		classes = ZookeeperDiscoveryPropertiesTests.Config.class,
-		webEnvironment = WebEnvironment.RANDOM_PORT)
+@RunWith(Parameterized.class)
 public class ZookeeperDiscoveryPropertiesTests {
 
-	@Autowired
-	private ZookeeperDiscoveryProperties discoveryProperties;
+	private String root;
 
-	@Test
-	public void testPreferIpAddress() {
-		assertThat(this.discoveryProperties.getInstanceId())
-				.isEqualTo("zkpropstestid-123");
-		assertThat(this.discoveryProperties.getInstanceHost()).isEqualTo("1.1.1.1");
+	public ZookeeperDiscoveryPropertiesTests(String root) {
+		this.root = root;
 	}
 
-	@Configuration
-	@EnableAutoConfiguration
-	@Import(CommonTestConfig.class)
-	static class Config {
+	@Parameterized.Parameters(name = "With root {0}")
+	public static Iterable<String> rootVariations() {
+		return Arrays.asList("es", "es/", "/es");
+	}
 
+	@Test
+	public void should_escape_root() {
+		// given:
+		ZookeeperDiscoveryProperties zookeeperDiscoveryProperties = new ZookeeperDiscoveryProperties(
+				new InetUtils(new InetUtilsProperties()));
+		// when:
+		zookeeperDiscoveryProperties.setRoot(root);
+		// then:
+		then(zookeeperDiscoveryProperties.getRoot()).isEqualTo("/es");
 	}
 
 }

@@ -16,44 +16,48 @@
 
 package org.springframework.cloud.zookeeper.discovery;
 
-import org.apache.curator.framework.CuratorFramework;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Marcin Grzejszczak
+ * @author wmz7year
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = ZookeeperDiscoveryDisabledTests.SomeApp.class,
-		webEnvironment = WebEnvironment.RANDOM_PORT, properties = {
-		"spring.cloud.zookeeper.discovery.enabled=false", "debug=true" })
+@SpringBootTest(properties = { "spring.application.name=testZookeeperDiscovery",
+		"spring.cloud.service-registry.auto-registration.enabled=false",
+		"spring.cloud.zookeeper.discovery.instance-id=zkpropstestid-123",
+		"spring.cloud.zookeeper.discovery.preferIpAddress=true",
+		"spring.cloud.zookeeper.discovery.instanceIpAddress=1.1.1.1" },
+		classes = ZookeeperDiscoveryPropertiesIntegrationTests.Config.class,
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
-public class ZookeeperDiscoveryDisabledTests {
+public class ZookeeperDiscoveryPropertiesIntegrationTests {
+
+	@Autowired
+	private ZookeeperDiscoveryProperties discoveryProperties;
 
 	@Test
-	public void should_start_the_context_with_discovery_disabled() {
+	public void testPreferIpAddress() {
+		assertThat(this.discoveryProperties.getInstanceId())
+				.isEqualTo("zkpropstestid-123");
+		assertThat(this.discoveryProperties.getInstanceHost()).isEqualTo("1.1.1.1");
 	}
 
 	@Configuration
 	@EnableAutoConfiguration
 	@Import(CommonTestConfig.class)
-	static class SomeApp {
-
-		@Bean
-		CuratorFramework curator() {
-			return null;
-		}
+	static class Config {
 
 	}
 

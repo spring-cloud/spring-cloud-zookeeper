@@ -30,9 +30,11 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -46,6 +48,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(classes = ZookeeperDiscoveryAutoRegistrationFalseTests.Config.class, properties = {
 		"spring.application.name=testzkautoregfalse",
 		"debug=true" }, webEnvironment = RANDOM_PORT)
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 @DirtiesContext
 public class ZookeeperDiscoveryAutoRegistrationFalseTests {
 

@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -68,6 +69,7 @@ public class ZookeeperConfigServerAutoConfigurationTests {
 				PropertyPlaceholderAutoConfiguration.class,
 				ZookeeperConfigServerAutoConfiguration.class,
 				ConfigServerProperties.class, ZookeeperDiscoveryProperties.class)
+				.listeners(new ZookeeperTestingServer())
 						.web(WebApplicationType.NONE).properties(env).run();
 	}
 

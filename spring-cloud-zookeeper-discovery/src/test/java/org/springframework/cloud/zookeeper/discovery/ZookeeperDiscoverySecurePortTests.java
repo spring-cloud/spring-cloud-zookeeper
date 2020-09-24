@@ -27,11 +27,13 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -47,6 +49,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		"spring.cloud.zookeeper.discovery.instance-ssl-port=8443" }, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("loadbalancer")
 @DirtiesContext
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperDiscoverySecurePortTests {
 
 	@Autowired

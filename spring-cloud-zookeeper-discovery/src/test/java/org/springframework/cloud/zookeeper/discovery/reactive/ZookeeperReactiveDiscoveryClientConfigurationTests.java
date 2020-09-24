@@ -29,6 +29,7 @@ import org.springframework.cloud.client.discovery.health.reactive.ReactiveDiscov
 import org.springframework.cloud.commons.util.UtilAutoConfiguration;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
 import org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.mock;
 class ZookeeperReactiveDiscoveryClientConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+			.withInitializer(new ZookeeperTestingServer.Initializer())
 			.withConfiguration(
 					AutoConfigurations.of(UtilAutoConfiguration.class,
 							ReactiveCommonsClientAutoConfiguration.class,

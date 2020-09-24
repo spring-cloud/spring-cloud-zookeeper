@@ -29,6 +29,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -52,9 +53,9 @@ public class ZookeeperConfigAutoConfigurationTests {
 	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
-	public void testConfigEnabledFalseDoesNotLoadZookeeperConfigAutoConfiguration()
-			throws Exception {
+	public void testConfigEnabledFalseDoesNotLoadZookeeperConfigAutoConfiguration() {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder()
+				.listeners(new ZookeeperTestingServer())
 				.sources(Config.class).web(WebApplicationType.NONE)
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToFalse",
 						"--spring.config.use-legacy-processing=true",
@@ -76,6 +77,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 		expectedException.expectCause(Matchers.isA(KeeperException.class));
 
 		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
+				.listeners(new ZookeeperTestingServer())
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToTrue",
 						"--spring.config.use-legacy-processing=true",
 						"--spring.jmx.default-domain=testZookeeperConfigEnabledSetToTrue",
