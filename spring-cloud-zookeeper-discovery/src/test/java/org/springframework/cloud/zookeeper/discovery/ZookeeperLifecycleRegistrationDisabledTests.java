@@ -26,8 +26,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		"spring.application.name=myTestNotRegisteredService",
 		"spring.cloud.zookeeper.discovery.register=false",
 		"spring.cloud.zookeeper.dependency.enabled=false" }, webEnvironment = RANDOM_PORT)
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperLifecycleRegistrationDisabledTests {
 
 	@Autowired

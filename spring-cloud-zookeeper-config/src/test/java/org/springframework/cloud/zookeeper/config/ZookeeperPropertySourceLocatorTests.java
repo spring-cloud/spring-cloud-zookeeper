@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
-import org.apache.curator.test.TestingServer;
 import org.apache.zookeeper.KeeperException;
 import org.junit.After;
 import org.junit.Before;
@@ -38,12 +37,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,7 +86,7 @@ public class ZookeeperPropertySourceLocatorTests {
 
 	private ConfigurableApplicationContext context;
 
-	private TestingServer testingServer;
+	private ZookeeperTestingServer testingServer;
 
 	private CuratorFramework curator;
 
@@ -95,9 +94,9 @@ public class ZookeeperPropertySourceLocatorTests {
 
 	@Before
 	public void setup() throws Exception {
-		int port = SocketUtils.findAvailableTcpPort();
-		this.testingServer = new TestingServer(port);
-		String connectString = "localhost:" + port;
+		this.testingServer = new ZookeeperTestingServer();
+		testingServer.start();
+		String connectString = "localhost:" + testingServer.getPort();
 		this.curator = CuratorFrameworkFactory.builder()
 				.retryPolicy(new RetryOneTime(500)).connectString(connectString).build();
 		this.curator.start();

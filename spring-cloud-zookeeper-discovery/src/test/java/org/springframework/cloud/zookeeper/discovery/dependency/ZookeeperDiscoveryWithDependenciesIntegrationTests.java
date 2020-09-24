@@ -29,10 +29,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -47,6 +49,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 		"feign.hystrix.enabled=false", "debug=true",
 		"management.endpoints.web.exposure.include=*" }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dependencies")
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 
 	@Autowired

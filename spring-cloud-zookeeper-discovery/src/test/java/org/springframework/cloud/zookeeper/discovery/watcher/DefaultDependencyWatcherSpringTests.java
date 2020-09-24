@@ -19,10 +19,6 @@ package org.springframework.cloud.zookeeper.discovery.watcher;
 import java.util.concurrent.Callable;
 
 import com.jayway.awaitility.Awaitility;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.test.TestingServer;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,13 +32,14 @@ import org.springframework.cloud.zookeeper.discovery.watcher.presence.Dependency
 import org.springframework.cloud.zookeeper.discovery.watcher.presence.LogMissingDependencyChecker;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -53,6 +50,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DefaultDependencyWatcherSpringTests.Config.class, webEnvironment = RANDOM_PORT)
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 @ActiveProfiles("watcher")
 public class DefaultDependencyWatcherSpringTests {
 
@@ -105,19 +103,6 @@ public class DefaultDependencyWatcherSpringTests {
 		@Bean
 		static PropertySourcesPlaceholderConfigurer propertiesConfigurer() {
 			return new PropertySourcesPlaceholderConfigurer();
-		}
-
-		@Bean(destroyMethod = "close")
-		TestingServer testingServer() throws Exception {
-			return new TestingServer(SocketUtils.findAvailableTcpPort());
-		}
-
-		@Bean(initMethod = "start", destroyMethod = "close")
-		CuratorFramework curatorFramework() throws Exception {
-			CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(
-					testingServer().getConnectString(),
-					new ExponentialBackoffRetry(20, 20, 500));
-			return curatorFramework;
 		}
 
 		@Bean

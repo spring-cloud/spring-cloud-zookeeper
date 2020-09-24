@@ -37,11 +37,13 @@ import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperRegistration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistry;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,10 +58,10 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 @SpringBootTest(classes = ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests.Config.class,
 		properties = "management.endpoints.web.exposure.include=*", webEnvironment = RANDOM_PORT)
 @ActiveProfiles("nestedstructure")
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 
-	private static final Log log = LogFactory
-			.getLog(MethodHandles.lookup().lookupClass());
+	private static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
 	@Autowired
 	TestRibbonClient testRibbonClient;
@@ -76,8 +78,7 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 		// then:
 		log.info("Received response [" + response + "]");
 		then(this.curatorFramework.getChildren().forPath("/services/me")).isNotEmpty();
-		then(this.curatorFramework.getChildren()
-				.forPath("/services/a/b/c/d/anotherservice")).isNotEmpty();
+		then(this.curatorFramework.getChildren().forPath("/services/a/b/c/d/anotherservice")).isNotEmpty();
 	}
 
 	@Configuration
@@ -94,9 +95,8 @@ public class ZookeeperDiscoveryHealthIndicatorWithNestedStructureTests {
 		@PostConstruct
 		void registerNestedDependency() {
 			try {
-				this.registration = ServiceInstanceRegistration.builder().defaultUriSpec()
-						.address("anyUrl").port(10).name("/a/b/c/d/anotherservice")
-						.build();
+				this.registration = ServiceInstanceRegistration.builder().defaultUriSpec().address("anyUrl").port(10)
+						.name("/a/b/c/d/anotherservice").build();
 				this.serviceRegistry.register(registration);
 			}
 			catch (Exception e) {

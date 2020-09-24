@@ -31,7 +31,9 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryPropertie
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.support.StatusConstants;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +47,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		"spring.application.name=myTestService1-F",
 		"spring.cloud.zookeeper.discovery.initial-status=OUT_OF_SERVICE"
 }, webEnvironment = RANDOM_PORT)
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperAutoServiceRegistrationTests {
 
 	@Autowired

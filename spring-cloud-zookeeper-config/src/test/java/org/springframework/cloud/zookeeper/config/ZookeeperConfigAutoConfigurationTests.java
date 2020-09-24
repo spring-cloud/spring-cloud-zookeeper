@@ -28,6 +28,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -51,9 +52,9 @@ public class ZookeeperConfigAutoConfigurationTests {
 	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
-	public void testConfigEnabledFalseDoesNotLoadZookeeperConfigAutoConfiguration()
-			throws Exception {
+	public void testConfigEnabledFalseDoesNotLoadZookeeperConfigAutoConfiguration() {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder()
+				.listeners(new ZookeeperTestingServer())
 				.sources(Config.class).web(WebApplicationType.NONE)
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToFalse",
 						"--spring.jmx.default-domain=testZookeeperConfigEnabledSetToFalse",
@@ -74,6 +75,7 @@ public class ZookeeperConfigAutoConfigurationTests {
 		expectedException.expect(ConnectException.class);
 
 		new SpringApplicationBuilder().sources(Config.class).web(WebApplicationType.NONE)
+				.listeners(new ZookeeperTestingServer())
 				.run("--spring.application.name=testZookeeperConfigEnabledSetToTrue",
 						"--spring.jmx.default-domain=testZookeeperConfigEnabledSetToTrue",
 						"--spring.cloud.zookeeper.config.connectString=localhost:2188",

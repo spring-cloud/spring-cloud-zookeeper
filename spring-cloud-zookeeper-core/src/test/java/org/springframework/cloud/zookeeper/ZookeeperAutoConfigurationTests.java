@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.test.annotation.DirtiesContext;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.mock;
 public class ZookeeperAutoConfigurationTests {
 
 	@RunWith(SpringRunner.class)
-	@ContextConfiguration(
+	@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class,
 			classes = { BaseTestConfig.class, ZookeeperAutoConfiguration.class })
 	public static class BaseTests {
 
@@ -78,7 +79,7 @@ public class ZookeeperAutoConfigurationTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@ContextConfiguration(
+	@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class,
 			classes = { EnsembleTestConfig.class, ZookeeperAutoConfiguration.class })
 	public static class EnsembleTests {
 
@@ -122,7 +123,8 @@ public class ZookeeperAutoConfigurationTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@ContextConfiguration(classes = { BaseTestConfig.class,
+	@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class,
+			classes = { BaseTestConfig.class,
 			ZookeeperAutoConfiguration.class, CuratorFrameworkCustomizerConfig.class })
 	@DirtiesContext
 	public static class CuratorFrameworkCustomizerTest {
@@ -162,7 +164,8 @@ public class ZookeeperAutoConfigurationTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@ContextConfiguration(classes = { BaseTestConfig.class, TracerDriverTestConfig.class,
+	@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class,
+			classes = { BaseTestConfig.class, TracerDriverTestConfig.class,
 			ZookeeperAutoConfiguration.class })
 	public static class TracerDriverTests {
 

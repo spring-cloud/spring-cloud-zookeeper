@@ -36,6 +36,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.zookeeper.discovery.test.CommonTestConfig;
 import org.springframework.cloud.zookeeper.discovery.test.TestRibbonClient;
 import org.springframework.cloud.zookeeper.serviceregistry.ServiceInstanceRegistration;
+import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,6 +66,7 @@ import static org.springframework.cloud.zookeeper.discovery.test.TestRibbonClien
 		"management.endpoints.web.exposure.include=*" }, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("ribbon")
 @DirtiesContext
+@ContextConfiguration(loader = ZookeeperTestingServer.Loader.class)
 public class ZookeeperDiscoveryTests {
 
 	@Autowired
