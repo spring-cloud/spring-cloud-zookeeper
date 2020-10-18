@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.ConfigurableBootstrapContext;
+import org.springframework.boot.context.config.ConfigDataLocation;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -40,11 +41,11 @@ public class ZookeeperConfigDataLocationResolverTests {
 	public void testParseLocation() {
 		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver(LogFactory.getLog(getClass()));
 		UriComponents uriComponents = resolver.parseLocation(
-				"zookeeper:myhost:2182/mypath1;/mypath2;/mypath3");
+				ConfigDataLocation.of("zookeeper:myhost:2182/mypath1;/mypath2;/mypath3"));
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
 				.hasPort(2182).hasPath("/mypath1;/mypath2;/mypath3");
 
-		uriComponents = resolver.parseLocation("zookeeper:myhost:2182");
+		uriComponents = resolver.parseLocation(ConfigDataLocation.of("zookeeper:myhost:2182"));
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
 				.hasPort(2182).hasPath("");
 	}
@@ -52,7 +53,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 	@Test
 	public void testResolveProfileSpecificWithCustomPaths() {
 		String location = "zookeeper:myhost:2182/mypath1;/mypath2;/mypath3";
-		List<ZookeeperConfigDataLocation> locations = testResolveProfileSpecific(location);
+		List<ZookeeperConfigDataResource> locations = testResolveProfileSpecific(location);
 		assertThat(locations).hasSize(3);
 		assertThat(toContexts(locations)).containsExactly("/mypath1", "/mypath2",
 				"/mypath3");
@@ -61,18 +62,18 @@ public class ZookeeperConfigDataLocationResolverTests {
 	@Test
 	public void testResolveProfileSpecificWithAutomaticPaths() {
 		String location = "zookeeper:myhost:1234";
-		List<ZookeeperConfigDataLocation> locations = testResolveProfileSpecific(location);
+		List<ZookeeperConfigDataResource> locations = testResolveProfileSpecific(location);
 		assertThat(locations).hasSize(4);
 		assertThat(toContexts(locations)).containsExactly("config/testapp,dev",
 				"config/testapp", "config/application,dev", "config/application");
 	}
 
-	private List<String> toContexts(List<ZookeeperConfigDataLocation> locations) {
-		return locations.stream().map(ZookeeperConfigDataLocation::getContext)
+	private List<String> toContexts(List<ZookeeperConfigDataResource> locations) {
+		return locations.stream().map(ZookeeperConfigDataResource::getContext)
 				.collect(Collectors.toList());
 	}
 
-	private List<ZookeeperConfigDataLocation> testResolveProfileSpecific(String location) {
+	private List<ZookeeperConfigDataResource> testResolveProfileSpecific(String location) {
 		ZookeeperConfigDataLocationResolver resolver = createResolver();
 
 		MockEnvironment env = new MockEnvironment();
@@ -89,7 +90,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 		Profiles profiles = mock(Profiles.class);
 		when(profiles.getAccepted()).thenReturn(Collections.singletonList("dev"));
 
-		return resolver.resolveProfileSpecific(context, location, false, profiles);
+		return resolver.resolveProfileSpecific(context, ConfigDataLocation.of(location), profiles);
 	}
 
 	private ZookeeperConfigDataLocationResolver createResolver() {

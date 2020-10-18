@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.cloud.context.refresh.ConfigDataContextRefresher;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -57,7 +57,7 @@ public class ZookeeperConfigDataNotOptionalIntegrationTests {
 					context.close();
 				}
 			}
-		}).isInstanceOf(ConfigDataLocationNotFoundException.class);
+		}).isInstanceOf(ConfigDataResourceNotFoundException.class);
 	}
 
 	@Configuration

@@ -23,20 +23,20 @@ import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.context.config.ConfigData;
 import org.springframework.boot.context.config.ConfigDataLoader;
 import org.springframework.boot.context.config.ConfigDataLoaderContext;
-import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 
-public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataLocation> {
+public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataResource> {
 
 	@Override
-	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataLocation location) {
+	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataResource resource) {
 		try {
 			CuratorFramework curator = context.getBootstrapContext().get(CuratorFramework.class);
-			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(location.getContext(),
+			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(resource.getContext(),
 					curator);
 			return new ConfigData(Collections.singletonList(propertySource));
 		}
 		catch (Exception e) {
-			throw new ConfigDataLocationNotFoundException(location, e);
+			throw new ConfigDataResourceNotFoundException(resource, e);
 		}
 	}
 

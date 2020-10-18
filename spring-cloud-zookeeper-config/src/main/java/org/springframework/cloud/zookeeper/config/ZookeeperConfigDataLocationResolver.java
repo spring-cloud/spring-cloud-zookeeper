@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 
 import org.springframework.boot.BootstrapRegistry.InstanceSupplier;
+import org.springframework.boot.context.config.ConfigDataLocation;
 import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
@@ -40,7 +41,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataLocation> {
+public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationResolver<ZookeeperConfigDataResource> {
 
 	/**
 	 * Zookeeper Config Data prefix.
@@ -54,8 +55,8 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Override
-	public boolean isResolvable(ConfigDataLocationResolverContext context, String location) {
-		if (!location.startsWith(PREFIX)) {
+	public boolean isResolvable(ConfigDataLocationResolverContext context, ConfigDataLocation location) {
+		if (!location.hasPrefix(PREFIX)) {
 			return false;
 		}
 		// only bind on correct prefix
@@ -67,18 +68,18 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolve(ConfigDataLocationResolverContext context, String location,
-			boolean optional) throws ConfigDataLocationNotFoundException {
+	public List<ZookeeperConfigDataResource> resolve(ConfigDataLocationResolverContext context, ConfigDataLocation location)
+			throws ConfigDataLocationNotFoundException {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ZookeeperConfigDataLocation> resolveProfileSpecific(ConfigDataLocationResolverContext context,
-			String location, boolean optional, Profiles profiles) throws ConfigDataLocationNotFoundException {
+	public List<ZookeeperConfigDataResource> resolveProfileSpecific(ConfigDataLocationResolverContext context,
+			ConfigDataLocation location, Profiles profiles) throws ConfigDataLocationNotFoundException {
 		UriComponents locationUri = parseLocation(location);
 
 		// create curator
-		CuratorFactory.registerCurator(context.getBootstrapContext(), locationUri, optional);
+		CuratorFactory.registerCurator(context.getBootstrapContext(), locationUri, location.isOptional());
 
 		// create locations
 		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
@@ -97,9 +98,9 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 			event.getApplicationContext().getEnvironment().getPropertySources().addFirst(propertySource);
 		});
 
-		ArrayList<ZookeeperConfigDataLocation> locations = new ArrayList<>();
+		ArrayList<ZookeeperConfigDataResource> locations = new ArrayList<>();
 		contexts.forEach(propertySourceContext -> locations
-				.add(new ZookeeperConfigDataLocation(propertySourceContext, optional)));
+				.add(new ZookeeperConfigDataResource(propertySourceContext, location.isOptional())));
 
 		return locations;
 	}
@@ -113,16 +114,17 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	@Nullable
-	protected UriComponents parseLocation(String location) {
-		String uri = location.substring(PREFIX.length());
-		if (!StringUtils.hasText(uri)) {
+	protected UriComponents parseLocation(ConfigDataLocation location) {
+		String originalUri = location.getNonPrefixedValue(PREFIX);
+		if (!StringUtils.hasText(originalUri)) {
 			return null;
 		}
-		if (!uri.startsWith("//")) {
-			uri = PREFIX + "//" + uri;
+		String uri;
+		if (!originalUri.startsWith("//")) {
+			uri = PREFIX + "//" + originalUri;
 		}
 		else {
-			uri = location;
+			uri = originalUri;
 		}
 		return UriComponentsBuilder.fromUriString(uri).build();
 	}

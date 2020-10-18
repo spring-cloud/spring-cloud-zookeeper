@@ -30,7 +30,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 
 import org.springframework.boot.BootstrapContext;
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
+import org.springframework.boot.context.config.ConfigDataException;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.util.StringUtils;
@@ -136,7 +136,7 @@ public abstract class CuratorFactory {
 		catch (Exception e) {
 			if (!optional) {
 				log.error("Unable to connect to zookeeper", e);
-				throw new ConfigDataLocationNotFoundException("Unable to connect to zookeeper", null, e);
+				throw new ZookeeperConnectException("Unable to connect to zookeeper", e);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("Unable to connect to zookeeper", e);
@@ -153,6 +153,18 @@ public abstract class CuratorFactory {
 		}
 		catch (IllegalStateException e) {
 			return () -> null;
+		}
+	}
+
+	private static class ZookeeperConnectException extends ConfigDataException {
+
+		/**
+		 * Create a new {@link ConfigDataException} instance.
+		 * @param message the exception message
+		 * @param cause the exception cause
+		 */
+		protected ZookeeperConnectException(String message, Throwable cause) {
+			super(message, cause);
 		}
 	}
 

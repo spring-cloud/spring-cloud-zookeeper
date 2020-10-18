@@ -18,15 +18,15 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.Objects;
 
-import org.springframework.boot.context.config.ConfigDataLocation;
+import org.springframework.boot.context.config.ConfigDataResource;
 import org.springframework.core.style.ToStringCreator;
 
-public class ZookeeperConfigDataLocation extends ConfigDataLocation {
+public class ZookeeperConfigDataResource extends ConfigDataResource {
 
 	private final String context;
 	private final boolean optional;
 
-	public ZookeeperConfigDataLocation(String context, boolean optional) {
+	public ZookeeperConfigDataResource(String context, boolean optional) {
 		this.context = context;
 		this.optional = optional;
 	}
@@ -47,7 +47,7 @@ public class ZookeeperConfigDataLocation extends ConfigDataLocation {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		ZookeeperConfigDataLocation that = (ZookeeperConfigDataLocation) o;
+		ZookeeperConfigDataResource that = (ZookeeperConfigDataResource) o;
 		return this.optional == that.optional &&
 				this.context.equals(that.context);
 	}
