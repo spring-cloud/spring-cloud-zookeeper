@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerProperties;
 import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient;
 import org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration;
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient;
 import org.springframework.cloud.openfeign.loadbalancer.FeignLoadBalancerAutoConfiguration;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
@@ -67,19 +68,22 @@ public class DependencyFeignClientAutoConfiguration {
 
 	private final LoadBalancerProperties loadBalancerProperties;
 
+	private final LoadBalancerClientFactory loadBalancerClientFactory;
+
 	public DependencyFeignClientAutoConfiguration(@Autowired(required = false) FeignBlockingLoadBalancerClient feignLoadBalancerClient,
-			ZookeeperDependencies zookeeperDependencies, BlockingLoadBalancerClient loadBalancerClient, LoadBalancerProperties loadBalancerProperties) {
+			ZookeeperDependencies zookeeperDependencies, BlockingLoadBalancerClient loadBalancerClient, LoadBalancerProperties loadBalancerProperties, LoadBalancerClientFactory loadBalancerClientFactory) {
 		this.feignLoadBalancerClient = feignLoadBalancerClient;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.loadBalancerClient = loadBalancerClient;
 		this.loadBalancerProperties = loadBalancerProperties;
+		this.loadBalancerClientFactory = loadBalancerClientFactory;
 	}
 
 	@Bean
 	@Primary
 	Client dependencyBasedFeignClient() {
 		return new FeignBlockingLoadBalancerClient(new Client.Default(null, null),
-				loadBalancerClient, loadBalancerProperties) {
+				loadBalancerClient, loadBalancerProperties, loadBalancerClientFactory) {
 
 			@Override
 			public Response execute(Request request, Request.Options options)
