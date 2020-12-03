@@ -17,7 +17,6 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -95,8 +94,6 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 			this.contexts = sources.getAutomaticContexts(profiles);
 
 			CompositePropertySource composite = new CompositePropertySource("zookeeper");
-
-			Collections.reverse(this.contexts);
 
 			for (String propertySourceContext : this.contexts) {
 				PropertySource<CuratorFramework> propertySource = sources.createPropertySource(propertySourceContext, true, this.curator);
