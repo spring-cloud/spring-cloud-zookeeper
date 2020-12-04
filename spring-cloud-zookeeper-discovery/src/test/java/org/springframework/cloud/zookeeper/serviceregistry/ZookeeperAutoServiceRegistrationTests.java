@@ -81,7 +81,7 @@ public class ZookeeperAutoServiceRegistrationTests {
 		 * registration.getServiceId(), service.getId());
 		 * assertEquals("service name was wrong", "myTestService1-FF-something",
 		 * service.getService()); assertFalse("service address must not be empty",
-		 * StringUtils.isEmpty(service.getAddress()));
+		 * !StringUtils.hasLength(service.getAddress()));
 		 * assertEquals("service address must equals hostname from discovery properties",
 		 * discoveryProperties.getHostname(), service.getAddress());
 		 */
