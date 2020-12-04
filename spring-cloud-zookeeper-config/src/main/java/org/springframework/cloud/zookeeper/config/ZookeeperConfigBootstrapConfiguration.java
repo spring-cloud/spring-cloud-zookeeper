@@ -49,7 +49,7 @@ public class ZookeeperConfigBootstrapConfiguration {
 	@ConditionalOnMissingBean
 	public ZookeeperConfigProperties zookeeperConfigProperties(Environment env) {
 		ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
-		if (StringUtils.isEmpty(properties.getName())) {
+		if (!StringUtils.hasLength(properties.getName())) {
 			properties.setName(env.getProperty("spring.application.name", "application"));
 		}
 		return properties;
