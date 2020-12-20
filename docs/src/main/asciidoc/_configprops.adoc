@@ -4,6 +4,12 @@
 |spring.cloud.zookeeper.base-sleep-time-ms | `50` | Initial amount of time to wait between retries.
 |spring.cloud.zookeeper.block-until-connected-unit |  | The unit of time related to blocking on connection to Zookeeper.
 |spring.cloud.zookeeper.block-until-connected-wait | `10` | Wait time to block on connection to Zookeeper.
+|spring.cloud.zookeeper.config.default-context | `application` | The name of the default context.
+|spring.cloud.zookeeper.config.enabled | `true` | 
+|spring.cloud.zookeeper.config.fail-fast | `true` | Throw exceptions during config lookup if true, otherwise, log warnings.
+|spring.cloud.zookeeper.config.name |  | Alternative to spring.application.name to use in looking up values in zookeeper.
+|spring.cloud.zookeeper.config.profile-separator | `,` | Separator for profile appended to the application name.
+|spring.cloud.zookeeper.config.root | `config` | Root folder where the configuration for Zookeeper is kept.
 |spring.cloud.zookeeper.connect-string | `localhost:2181` | Connection string to the Zookeeper cluster.
 |spring.cloud.zookeeper.connection-timeout |  | The configured connection timeout in milliseconds.
 |spring.cloud.zookeeper.dependencies |  | Mapping of alias to ZookeeperDependency. From LoadBalancer perspective the alias is actually serviceID since SC LoadBalancer can't accept nested structures in serviceID.

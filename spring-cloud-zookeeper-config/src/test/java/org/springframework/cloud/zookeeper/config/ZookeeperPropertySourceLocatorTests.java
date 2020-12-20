@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.zookeeper.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -25,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.KeeperException;
 import org.junit.After;
@@ -43,9 +45,14 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertySource;
+import org.springframework.mock.env.MockEnvironment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Spencer Gibb
@@ -185,6 +192,45 @@ public class ZookeeperPropertySourceLocatorTests {
 		testProp = this.environment.getProperty(KEY_BASIC);
 		assertThat(testProp).as("testProp was wrong after update")
 				.isEqualTo("testPropValUpdate");
+	}
+
+	@Test
+	public void compositePropertySourceHoldsPropertySourcesInCorrectOrder() {
+
+		// given
+		final String defaultContext = "someDefaultContext";
+		final String someName = "someName";
+		final String someProfile = "someProfile";
+
+		final CuratorFramework curator = mock(CuratorFramework.class);
+		when(curator.getChildren()).thenReturn(mock(GetChildrenBuilder.class));
+
+		final MockEnvironment mockEnvironment = new MockEnvironment();
+		mockEnvironment.setActiveProfiles(someProfile);
+
+		final ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
+		properties.setName(someName);
+		properties.setDefaultContext(defaultContext);
+
+		final ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(
+				curator, properties);
+
+		// when
+		final PropertySource<?> propertySource = locator.locate(mockEnvironment);
+
+		// then
+		assertThat(propertySource).isInstanceOf(CompositePropertySource.class);
+
+		// and
+		final ArrayList<PropertySource<?>> propertySources = new ArrayList<>(
+				((CompositePropertySource) propertySource).getPropertySources());
+
+		assertThat(propertySources.get(0).getName())
+				.endsWith(someName + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(1).getName()).endsWith(someName);
+		assertThat(propertySources.get(2).getName()).endsWith(
+				defaultContext + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(3).getName()).endsWith(defaultContext);
 	}
 
 	@Configuration

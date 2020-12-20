@@ -173,6 +173,9 @@ Spring Cloud Zookeeper provides an implementation of Spring Cloud LoadBalancer `
 When you use the  `spring-cloud-starter-zookeeper-discovery`, Spring Cloud LoadBalancer is autoconfigured to use the
 `ZookeeperServiceInstanceListSupplier` by default.
 
+TIP: If you were previously using the StickyRule in Zookeeper, its replacement in the current stack
+is the `SameInstancePreferenceServiceInstanceListSupplier` in SC LoadBalancer. You can read on how to set it up in the https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#spring-cloud-loadbalancer[Spring Cloud Commons documentation].
+
 [[spring-cloud-zookeeper-service-registry]]
 == Spring Cloud Zookeeper and Service Registry
 

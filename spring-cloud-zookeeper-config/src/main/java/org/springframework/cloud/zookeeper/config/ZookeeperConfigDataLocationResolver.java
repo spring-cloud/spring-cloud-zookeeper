@@ -106,7 +106,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 	}
 
 	protected List<String> getCustomContexts(UriComponents uriComponents) {
-		if (StringUtils.isEmpty(uriComponents.getPath())) {
+		if (!StringUtils.hasLength(uriComponents.getPath())) {
 			return Collections.emptyList();
 		}
 
@@ -134,7 +134,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				.bind(ZookeeperConfigProperties.PREFIX, Bindable.of(ZookeeperConfigProperties.class))
 				.orElse(new ZookeeperConfigProperties());
 
-		if (StringUtils.isEmpty(properties.getName())) {
+		if (!StringUtils.hasLength(properties.getName())) {
 			properties.setName(binder.bind("spring.application.name", String.class).orElse("application"));
 		}
 

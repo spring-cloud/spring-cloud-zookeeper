@@ -28,7 +28,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
-import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClientAutoConfiguration;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
@@ -42,8 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@AutoConfigureBefore({ CommonsClientAutoConfiguration.class,
-		NoopDiscoveryClientAutoConfiguration.class })
+@AutoConfigureBefore({CommonsClientAutoConfiguration.class})
 public class ZookeeperDiscoveryAutoConfiguration {
 
 	@Autowired
