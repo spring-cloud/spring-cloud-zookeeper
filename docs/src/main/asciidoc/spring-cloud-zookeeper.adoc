@@ -509,12 +509,38 @@ autoconfiguration that sets up Spring Cloud Zookeeper Config.
 CAUTION: When working with version 3.4 of Zookeeper you need to change
 the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
 
+[[config-data-import]]
+=== Spring Boot Config Data Import
+
+Spring Boot 2.4 introduced a new way to import configuration data via the `spring.config.import` property. This is now the default way to get configuration from Zookeeper.
+
+To optionally connect to Zookeeper for configuration set the following in application.properties:
+
+.application.properties
+[source,properties]
+----
+spring.config.import=optional:zookeeper:
+----
+
+This will connect to Zookeeper at the default location of "localhost:2181". Removing the `optional:` prefix will cause Zookeeper Config to fail if it is unable to connect to Zookeeper. To change the connection properties of Zookeeper Config either set `spring.cloud.zookeeper.connect-string` or add the connect string to the `spring.config.import` statement such as, `spring.config.import=optional:zookeeper:myhost:2818`. The location in the import property has precedence over the `connect-string` property.
+
+Zookeeper Config will try to load values from four automatic contexts based on `spring.cloud.zookeeper.config.name` (which defaults to the value of the `spring.application.name` property) and `spring.cloud.zookeeper.config.default-context` (which defaults to `application`). If you want to specify the contexts rather than using the computed ones, you can add that information to the `spring.config.import` statement.
+
+.application.properties
+[source,properties]
+----
+spring.config.import=optional:zookeeper:myhost:2181/contextone;/context/two
+----
+
+This will optionally load configuration only from `/contextone` and `/context/two`.
+
+NOTE: A `bootstrap` file (properties or yaml) is *not* needed for the Spring Boot Config Data method of import via `spring.config.import`.
+
 === Customizing
 
 Zookeeper Config may be customized by setting the following properties:
 
 [source,yml,indent=0]
-.bootstrap.yml
 ----
 spring:
   cloud:
@@ -531,6 +557,8 @@ spring:
 * `defaultContext`: Sets the name used by all applications.
 * `profileSeparator`: Sets the value of the separator used to separate the profile name in
 property sources with profiles.
+
+CAUTION: If you have set `spring.cloud.bootstrap.enabled=true` or `spring.config.use-legacy-processing=true`, or included `spring-cloud-starter-bootstrap`, then the above values will need to be placed in `bootstrap.yml` instead of `application.yml`.
 
 === Access Control Lists (ACLs)
 
