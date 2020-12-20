@@ -28,9 +28,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.springframework.boot.BootstrapContext;
+import org.springframework.boot.BootstrapRegistry;
+import org.springframework.boot.Bootstrapper;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.bind.BindContext;
+import org.springframework.boot.context.properties.bind.BindHandler;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.zookeeper.CuratorFactory;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
@@ -53,12 +59,15 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
 
 	private ConfigurableApplicationContext context;
+	private BindHandlerBootstrapper bindHandlerBootstrapper;
 
 	@Before
 	public void setup() {
+		bindHandlerBootstrapper = new BindHandlerBootstrapper();
 		this.context = new SpringApplicationBuilder(Config.class)
 				.listeners(new ZookeeperTestingServer())
 				.web(WebApplicationType.NONE)
+				.addBootstrapper(bindHandlerBootstrapper)
 				.addBootstrapper(ZookeeperBootstrapper.fromBootstrapContext(this::curatorFramework))
 				.run("--spring.config.import=zookeeper:",
 						"--spring.application.name=testZkConfigDataIntegration",
@@ -67,7 +76,7 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	}
 
 	@After
-	public void after() throws Exception {
+	public void after() {
 		if (context != null) {
 			this.context.close();
 		}
@@ -94,6 +103,7 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	public void curatorFrameworkIsCustom() {
 		CuratorFramework curator = context.getBean(CuratorFramework.class);
 		assertThat(curator).isNotNull().isInstanceOf(TestCuratorFramework.class);
+		assertThat(bindHandlerBootstrapper.onSuccessCount).isGreaterThan(0);
 	}
 
 	static class TestCuratorFramework extends CuratorFrameworkImpl {
@@ -105,6 +115,24 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {
+
+	}
+
+	static class BindHandlerBootstrapper implements Bootstrapper {
+
+		private int onSuccessCount = 0;
+
+		@Override
+		public void intitialize(BootstrapRegistry registry) {
+			registry.register(BindHandler.class, context -> new BindHandler() {
+				@Override
+				public Object onSuccess(ConfigurationPropertyName name, Bindable<?> target, BindContext context,
+						Object result) {
+					onSuccessCount++;
+					return result;
+				}
+			});
+		}
 
 	}
 

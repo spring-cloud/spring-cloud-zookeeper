@@ -24,6 +24,8 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import org.springframework.boot.BootstrapRegistry;
 import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.context.properties.bind.BindHandler;
+import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.commons.util.InetUtilsProperties;
@@ -52,7 +54,8 @@ public class ZookeeperConfigServerBootstrapper implements Bootstrapper {
 		// create discovery
 		registry.registerIfAbsent(ZookeeperDiscoveryProperties.class,
 				context -> context.get(Binder.class)
-						.bind(ZookeeperDiscoveryProperties.PREFIX, ZookeeperDiscoveryProperties.class)
+						.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
+								.of(ZookeeperDiscoveryProperties.class), getBindHandler(context))
 						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()))));
 		registry.registerIfAbsent(InstanceSerializer.class,
 				context -> new JsonInstanceSerializer<>(ZookeeperInstance.class));
@@ -72,7 +75,8 @@ public class ZookeeperConfigServerBootstrapper implements Bootstrapper {
 				return null;
 			}
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery = context.get(ServiceDiscovery.class);
-			ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, ZookeeperDependencies.class)
+			ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, Bindable
+					.of(ZookeeperDependencies.class), getBindHandler(context))
 					.orElseGet(ZookeeperDependencies::new);
 			ZookeeperDiscoveryProperties discoveryProperties = context.get(ZookeeperDiscoveryProperties.class);
 
@@ -95,6 +99,10 @@ public class ZookeeperConfigServerBootstrapper implements Bootstrapper {
 						discoveryClient);
 			}
 		});
+	}
+
+	private BindHandler getBindHandler(org.springframework.boot.BootstrapContext context) {
+		return context.getOrElse(BindHandler.class, null);
 	}
 
 	private boolean isEnabled(Binder binder) {

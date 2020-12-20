@@ -30,6 +30,7 @@ import org.springframework.boot.context.config.ConfigDataLocationNotFoundExcepti
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
+import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.CuratorFactory;
@@ -82,7 +83,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		CuratorFactory.registerCurator(context.getBootstrapContext(), locationUri, location.isOptional());
 
 		// create locations
-		ZookeeperConfigProperties properties = loadConfigProperties(context.getBinder());
+		ZookeeperConfigProperties properties = loadConfigProperties(context);
 		context.getBootstrapContext().register(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
 
 		ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
@@ -103,6 +104,10 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 				.add(new ZookeeperConfigDataResource(propertySourceContext, location.isOptional())));
 
 		return locations;
+	}
+
+	private BindHandler getBindHandler(ConfigDataLocationResolverContext context) {
+		return context.getBootstrapContext().getOrElse(BindHandler.class, null);
 	}
 
 	protected List<String> getCustomContexts(UriComponents uriComponents) {
@@ -129,13 +134,15 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		return UriComponentsBuilder.fromUriString(uri).build();
 	}
 
-	protected ZookeeperConfigProperties loadConfigProperties(Binder binder) {
+	protected ZookeeperConfigProperties loadConfigProperties(ConfigDataLocationResolverContext context) {
+		Binder binder = context.getBinder();
+		BindHandler bindHandler = getBindHandler(context);
 		ZookeeperConfigProperties properties = binder
-				.bind(ZookeeperConfigProperties.PREFIX, Bindable.of(ZookeeperConfigProperties.class))
-				.orElse(new ZookeeperConfigProperties());
+				.bind(ZookeeperConfigProperties.PREFIX, Bindable.of(ZookeeperConfigProperties.class), bindHandler)
+				.orElseGet(ZookeeperConfigProperties::new);
 
 		if (!StringUtils.hasLength(properties.getName())) {
-			properties.setName(binder.bind("spring.application.name", String.class).orElse("application"));
+			properties.setName(binder.bind("spring.application.name", Bindable.of(String.class), bindHandler).orElse("application"));
 		}
 
 		return properties;

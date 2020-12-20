@@ -21,9 +21,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.boot.BootstrapRegistry;
+import org.springframework.boot.Bootstrapper;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.bind.BindContext;
+import org.springframework.boot.context.properties.bind.BindHandler;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
 import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
@@ -58,10 +64,13 @@ public class ZookeeperConfigServerBootstrapperTests {
 	@Test
 	public void enabledAddsInstanceProviderFn() {
 		AtomicReference<ZookeeperDiscoveryClient> bootstrapDiscoveryClient = new AtomicReference<>();
+		BindHandlerBootstrapper bindHandlerBootstrapper = new BindHandlerBootstrapper();
 		context = new SpringApplicationBuilder(TestConfig.class)
 				.listeners(new ZookeeperTestingServer())
 				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
+						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval",
 						"spring.cloud.service-registry.auto-registration.enabled=false")
+				.addBootstrapper(bindHandlerBootstrapper)
 				.addBootstrapper(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
@@ -72,11 +81,29 @@ public class ZookeeperConfigServerBootstrapperTests {
 
 		ZookeeperDiscoveryClient discoveryClient = context.getBean(ZookeeperDiscoveryClient.class);
 		assertThat(discoveryClient == bootstrapDiscoveryClient.get()).isTrue();
+		assertThat(bindHandlerBootstrapper.onSuccessCount).isGreaterThan(0);
 	}
 
 	@SpringBootConfiguration
 	@EnableAutoConfiguration
 	static class TestConfig {
+
+	}
+	static class BindHandlerBootstrapper implements Bootstrapper {
+
+		private int onSuccessCount = 0;
+
+		@Override
+		public void intitialize(BootstrapRegistry registry) {
+			registry.register(BindHandler.class, context -> new BindHandler() {
+				@Override
+				public Object onSuccess(ConfigurationPropertyName name, Bindable<?> target, BindContext context,
+						Object result) {
+					onSuccessCount++;
+					return result;
+				}
+			});
+		}
 
 	}
 
