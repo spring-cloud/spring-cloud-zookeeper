@@ -160,12 +160,10 @@ public String serviceUrl() {
 }
 ----
 
-[[spring-cloud-zookeeper-netflix]]
-== Using Spring Cloud Zookeeper with Spring Cloud Netflix Components
+[[spring-cloud-zookeeper-other-componentes]]
+== Using Spring Cloud Zookeeper with Spring Cloud Components
 
-Spring Cloud Netflix supplies useful tools that work regardless of which `DiscoveryClient`
-implementation you use.
-Feign and Spring Cloud LoadBalancer also work with Spring Cloud Zookeeper.
+Feign, Spring Cloud Gateway and Spring Cloud LoadBalancer all work with Spring Cloud Zookeeper.
 
 === Spring Cloud LoadBalancer with Zookeeper
 
