@@ -64,8 +64,8 @@ public class ZookeeperConfigDataLocationResolverTests {
 		String location = "zookeeper:myhost:1234";
 		List<ZookeeperConfigDataResource> locations = testResolveProfileSpecific(location);
 		assertThat(locations).hasSize(4);
-		assertThat(toContexts(locations)).containsExactly("config/testapp,dev",
-				"config/testapp", "config/application,dev", "config/application");
+		assertThat(toContexts(locations)).containsExactly("config/application",
+				"config/application,dev", "config/testapp", "config/testapp,dev");
 	}
 
 	private List<String> toContexts(List<ZookeeperConfigDataResource> locations) {

@@ -33,6 +33,10 @@ public class ZookeeperPropertySources {
 	}
 
 	public List<String> getAutomaticContexts(List<String> profiles) {
+		return getAutomaticContexts(profiles, true);
+	}
+
+	public List<String> getAutomaticContexts(List<String> profiles, boolean reverse) {
 		String root = properties.getRoot();
 		List<String> contexts = new ArrayList<>();
 
@@ -49,7 +53,9 @@ public class ZookeeperPropertySources {
 		contexts.add(baseContext.toString());
 		addProfiles(contexts, baseContext.toString(), profiles);
 
-		Collections.reverse(contexts);
+		if (reverse) {
+			Collections.reverse(contexts);
+		}
 		return contexts;
 	}
 

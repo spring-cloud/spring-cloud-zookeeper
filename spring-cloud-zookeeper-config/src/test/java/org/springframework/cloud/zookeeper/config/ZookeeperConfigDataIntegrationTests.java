@@ -55,6 +55,8 @@ public class ZookeeperConfigDataIntegrationTests {
 	private static final Log log = LogFactory
 			.getLog(ZookeeperConfigDataIntegrationTests.class);
 
+	public static final String APPLICATION_NAME = "testZkConfigDataIntegration";
+
 	public static final String PREFIX = "test__configdata__";
 
 	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
@@ -64,6 +66,10 @@ public class ZookeeperConfigDataIntegrationTests {
 	public static final String KEY_BASIC = "testProp";
 
 	public static final String KEY_BASIC_PATH = CONTEXT + KEY_BASIC;
+
+	public static final String KEY_APP_PATH = ROOT + "/" + APPLICATION_NAME + "/" + KEY_BASIC;
+
+	public static final String VAL_BASIC_DEFAULT = "testPropValDefault";
 
 	public static final String VAL_BASIC = "testPropVal";
 
@@ -108,7 +114,9 @@ public class ZookeeperConfigDataIntegrationTests {
 
 		StringBuilder create = new StringBuilder(1024);
 		create.append(this.curator.create().creatingParentsIfNeeded()
-				.forPath(KEY_BASIC_PATH, VAL_BASIC.getBytes())).append('\n');
+				.forPath(KEY_BASIC_PATH, VAL_BASIC_DEFAULT.getBytes())).append('\n');
+		create.append(this.curator.create().creatingParentsIfNeeded()
+				.forPath(KEY_APP_PATH, VAL_BASIC.getBytes())).append('\n');
 		create.append(this.curator.create().creatingParentsIfNeeded()
 				.forPath(KEY_WITH_DOT_PATH, VAL_WITH_DOT.getBytes())).append('\n');
 		create.append(this.curator.create().creatingParentsIfNeeded()
@@ -121,7 +129,7 @@ public class ZookeeperConfigDataIntegrationTests {
 		this.context = new SpringApplicationBuilder(Config.class)
 				.web(WebApplicationType.NONE)
 				.run("--spring.config.import=zookeeper:" + connectString,
-						"--spring.application.name=testZkConfigDataIntegration",
+						"--spring.application.name=" + APPLICATION_NAME,
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
 						"--spring.cloud.zookeeper.config.root=" + ROOT);
 
@@ -171,7 +179,7 @@ public class ZookeeperConfigDataIntegrationTests {
 		String testProp = this.environment.getProperty(KEY_BASIC);
 		assertThat(testProp).as("testProp was wrong").isEqualTo(VAL_BASIC);
 
-		this.curator.setData().forPath(KEY_BASIC_PATH, "testPropValUpdate".getBytes());
+		this.curator.setData().forPath(KEY_APP_PATH, "testPropValUpdate".getBytes());
 
 		CountDownLatch latch = this.context.getBean(CountDownLatch.class);
 		boolean receivedEvent = latch.await(15, TimeUnit.SECONDS);
