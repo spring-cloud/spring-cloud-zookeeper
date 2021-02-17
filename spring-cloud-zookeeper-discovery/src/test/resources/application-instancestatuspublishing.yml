@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: instanceStatusPublishingApp
+  cloud:
+    zookeeper:
+      discovery:
+        publishInstanceHealthStatus: true
+        instanceHealthStatusPublishInterval: 1000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
