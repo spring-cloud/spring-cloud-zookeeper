@@ -276,10 +276,6 @@ public class Application {
 
 The application will retrieve configuration data from Zookeeper.
 
-=== Mixed Usage
-
-If you are going to be using Spring Cloud Zookeper to retrieve both service discovery and configuration data from Zookeeper, the easiest way to use it is to include the `org.springframework.cloud:spring-cloud-starter-zookeeper-all` starter in your build setup.
-
 == Zookeeper overview
 
 ZooKeeper is a centralized service for maintaining configuration information, naming,
