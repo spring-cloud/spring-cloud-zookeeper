@@ -4,6 +4,10 @@ include::intro.adoc[]
 
 include::_attributes.adoc[]
 
+== Quick Start
+
+include::quickstart.adoc[]
+
 == Zookeeper overview
 
 ZooKeeper is a centralized service for maintaining configuration information, naming,

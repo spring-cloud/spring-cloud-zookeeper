@@ -50,6 +50,236 @@ with Spring Cloud Netflix provides Intelligent Routing (Zuul), Client Side Load 
 :sc-ext: java
 :project-full-name: Spring Cloud Zookeeper
 
+== Quick Start
+
+This quick start walks through using Spring Cloud Zookeeper for Service Discovery and Distributed Configuration.
+
+First, run Zookeeper on your machine, then you can access it and use as Service Registry and Configuration source with Spring Cloud Zookeeper.
+
+=== Discovery Client Usage
+
+To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-discovery`.
+The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery`.
+We recommend using dependency management and `spring-cloud-starter-parent`.
+The following example shows a typical Maven configuration:
+
+[source,xml,indent=0]
+.pom.xml
+----
+<project>
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>{spring-boot-version}</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
+
+The example below shows a typical Gradle setup:
+
+[source,groovy,indent=0]
+.build.gradle
+----
+plugins {
+  id 'org.springframework.boot' version ${spring-boot-version}
+  id 'io.spring.dependency-management' version ${spring-dependency-management-version}
+  id 'java'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+----
+
+Now you can create a standard Spring Boot application, such as the following HTTP server:
+
+----
+@SpringBootApplication
+@RestController
+public class Application {
+
+    @GetMapping("/")
+    public String home() {
+        return "Hello World!";
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+----
+
+When this HTTP server runs, it connects to Zookeeper running at the default local 2181 port.
+To modify the startup behavior, you can change the location of Zookeeper by using `application.properties` as shown in the following example:
+
+----
+spring:
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+----
+
+You can now use `DiscoveryClient`, `@LoadBalanced RestTemplate` or `@LoadBalanced WebClient.Builder` to retrieve services and instances data from Zookeeper, as shown in the following example:
+
+[source,java,indent=0]
+----
+@Autowired
+private DiscoveryClient discoveryClient;
+
+public String serviceUrl() {
+    List<ServiceInstance> list = discoveryClient.getInstances("STORES");
+    if (list != null && list.size() > 0 ) {
+        return list.get(0).getUri().toString();
+    }
+    return null;
+}
+----
+
+=== Distributed Configuration Usage
+
+To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-config`.
+The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-config`.
+We recommend using dependency management and `spring-cloud-starter-parent`.
+The following example shows a typical Maven configuration:
+
+[source,xml,indent=0]
+.pom.xml
+----
+<project>
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>{spring-boot-version}</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
+
+The example below shows a typical Gradle setup:
+
+[source,groovy,indent=0]
+.build.gradle
+----
+plugins {
+  id 'org.springframework.boot' version ${spring-boot-version}
+  id 'io.spring.dependency-management' version ${spring-dependency-management-version}
+  id 'java'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.springframework.cloud:spring-cloud-starter-zookeeper-config'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+----
+
+Now you can create a standard Spring Boot application, such as the following HTTP server:
+
+----
+@SpringBootApplication
+@RestController
+public class Application {
+
+    @GetMapping("/")
+    public String home() {
+        return "Hello World!";
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+----
+
+The application will retrieve configuration data from Zookeeper.
+
+=== Mixed Usage
+
+If you are going to be using Spring Cloud Zookeper to retrieve both service discovery and configuration data from Zookeeper, the easiest way to use it is to include the `org.springframework.cloud:spring-cloud-starter-zookeeper-all` starter in your build setup.
+
 == Zookeeper overview
 
 ZooKeeper is a centralized service for maintaining configuration information, naming,
@@ -82,7 +312,7 @@ Doing so brings in the required Spring Cloud Maven repositories and Build.
 
 == Building
 
-:jdkversion: 1.7
+:jdkversion: 1.8
 
 === Basic Compile and Test
 
