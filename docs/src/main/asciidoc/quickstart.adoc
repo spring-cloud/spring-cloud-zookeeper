@@ -1,11 +1,11 @@
 This quick start walks through using Spring Cloud Zookeeper for Service Discovery and Distributed Configuration.
 
-First, run Zookeeper on your machine, then you can access it and use as Service Registry and Configuration source with Spring Cloud Zookeeper.
+First, run Zookeeper on your machine. Then you can access it and use it as a Service Registry and Configuration source with Spring Cloud Zookeeper.
 
 === Discovery Client Usage
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-discovery`.
-The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery`.
+The most convenient way to add the dependency is with a Spring Boot starter: `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery`.
 We recommend using dependency management and `spring-boot-starter-parent`.
 The following example shows a typical Maven configuration:
 
@@ -53,7 +53,7 @@ The following example shows a typical Maven configuration:
 </project>
 ----
 
-The example below shows a typical Gradle setup:
+The following example shows a typical Gradle setup:
 
 [source,groovy,indent=0]
 .build.gradle
@@ -98,8 +98,8 @@ public class Application {
 }
 ----
 
-When this HTTP server runs, it connects to Zookeeper running at the default local 2181 port.
-To modify the startup behavior, you can change the location of Zookeeper by using `application.properties` as shown in the following example:
+When this HTTP server runs, it connects to Zookeeper, which runs on the default local port (2181).
+To modify the startup behavior, you can change the location of Zookeeper by using `application.properties`, as shown in the following example:
 
 ----
 spring:
@@ -108,7 +108,7 @@ spring:
       connect-string: localhost:2181
 ----
 
-You can now use `DiscoveryClient`, `@LoadBalanced RestTemplate` or `@LoadBalanced WebClient.Builder` to retrieve services and instances data from Zookeeper, as shown in the following example:
+You can now use `DiscoveryClient`, `@LoadBalanced RestTemplate`, or `@LoadBalanced WebClient.Builder` to retrieve services and instances data from Zookeeper, as shown in the following example:
 
 [source,java,indent=0]
 ----
@@ -127,7 +127,7 @@ public String serviceUrl() {
 === Distributed Configuration Usage
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-config`.
-The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-config`.
+The most convenient way to add the dependency is with a Spring Boot starter: `org.springframework.cloud:spring-cloud-starter-zookeeper-config`.
 We recommend using dependency management and `spring-boot-starter-parent`.
 The following example shows a typical Maven configuration:
 
@@ -175,7 +175,7 @@ The following example shows a typical Maven configuration:
 </project>
 ----
 
-The example below shows a typical Gradle setup:
+The following example shows a typical Gradle setup:
 
 [source,groovy,indent=0]
 .build.gradle
@@ -220,4 +220,4 @@ public class Application {
 }
 ----
 
-The application will retrieve configuration data from Zookeeper.
+The application retrieves configuration data from Zookeeper.
