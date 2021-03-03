@@ -60,7 +60,7 @@ First, run Zookeeper on your machine, then you can access it and use as Service 
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-discovery`.
 The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-discovery`.
-We recommend using dependency management and `spring-cloud-starter-parent`.
+We recommend using dependency management and `spring-boot-starter-parent`.
 The following example shows a typical Maven configuration:
 
 [source,xml,indent=0]
@@ -182,7 +182,7 @@ public String serviceUrl() {
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-config`.
 The most convenient way to add the dependency is with a Spring Boot starter `org.springframework.cloud:spring-cloud-starter-zookeeper-config`.
-We recommend using dependency management and `spring-cloud-starter-parent`.
+We recommend using dependency management and `spring-boot-starter-parent`.
 The following example shows a typical Maven configuration:
 
 [source,xml,indent=0]
