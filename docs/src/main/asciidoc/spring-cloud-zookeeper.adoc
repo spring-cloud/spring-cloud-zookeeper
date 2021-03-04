@@ -5,6 +5,10 @@ include::intro.adoc[]
 
 include::_attributes.adoc[]
 
+== Quick Start
+
+include::quickstart.adoc[]
+
 [[spring-cloud-zookeeper-install]]
 == Install Zookeeper
 See the https://zookeeper.apache.org/doc/current/zookeeperStarted.html[installation
