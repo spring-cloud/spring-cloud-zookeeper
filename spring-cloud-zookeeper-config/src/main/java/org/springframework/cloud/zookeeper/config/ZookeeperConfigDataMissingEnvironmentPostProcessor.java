@@ -90,7 +90,7 @@ public class ZookeeperConfigDataMissingEnvironmentPostProcessor implements Envir
 				description = "No spring.config.import property has been defined";
 			}
 			String action = "Add a spring.config.import=zookeeper: property to your configuration.\n"
-					+ "\tIf configuration in not required add spring.config.import=optional:zookeeper: instead.\n"
+					+ "\tIf configuration is not required add spring.config.import=optional:zookeeper: instead.\n"
 					+ "\tTo disable this check, set spring.cloud.zookeeper.config.enabled=false or \n"
 					+ "\tspring.cloud.zookeeper.config.import-check.enabled=false.";
 			return new FailureAnalysis(description, action, cause);
