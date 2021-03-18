@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.3-SNAPSHOT</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -138,7 +138,7 @@
 	</dependencyManagement>
 
 	<properties>
-		<spring-cloud-build.version>3.0.2</spring-cloud-build.version>
+		<spring-cloud-build.version>3.0.3-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-commons.version>3.0.3-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>3.0.4-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>3.0.3-SNAPSHOT</spring-cloud-openfeign.version>
