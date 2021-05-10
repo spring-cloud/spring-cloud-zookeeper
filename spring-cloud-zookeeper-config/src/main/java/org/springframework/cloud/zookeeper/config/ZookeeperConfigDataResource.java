@@ -25,10 +25,17 @@ public class ZookeeperConfigDataResource extends ConfigDataResource {
 
 	private final String context;
 	private final boolean optional;
+	private final String profile;
 
-	public ZookeeperConfigDataResource(String context, boolean optional) {
+	public ZookeeperConfigDataResource(String context, boolean optional, String profile) {
 		this.context = context;
 		this.optional = optional;
+		this.profile = profile;
+	}
+
+	@Deprecated
+	public ZookeeperConfigDataResource(String context, boolean optional) {
+		this(context, optional, null);
 	}
 
 	public String getContext() {
@@ -37,6 +44,10 @@ public class ZookeeperConfigDataResource extends ConfigDataResource {
 
 	public boolean isOptional() {
 		return this.optional;
+	}
+
+	public String getProfile() {
+		return this.profile;
 	}
 
 	@Override
@@ -48,13 +59,12 @@ public class ZookeeperConfigDataResource extends ConfigDataResource {
 			return false;
 		}
 		ZookeeperConfigDataResource that = (ZookeeperConfigDataResource) o;
-		return this.optional == that.optional &&
-				this.context.equals(that.context);
+		return this.optional == that.optional && this.context.equals(that.context) && Objects.equals(this.profile, that.profile);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.optional, this.context);
+		return Objects.hash(this.optional, this.context, this.profile);
 	}
 
 	@Override
@@ -62,6 +72,7 @@ public class ZookeeperConfigDataResource extends ConfigDataResource {
 		return new ToStringCreator(this)
 				.append("context", context)
 				.append("optional", optional)
+				.append("profile", profile)
 				.toString();
 
 	}

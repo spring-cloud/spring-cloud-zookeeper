@@ -19,9 +19,12 @@ package org.springframework.cloud.zookeeper.config;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
+
+import org.springframework.core.style.ToStringCreator;
 
 public class ZookeeperPropertySources {
 	private final ZookeeperConfigProperties properties;
@@ -37,11 +40,15 @@ public class ZookeeperPropertySources {
 	}
 
 	public List<String> getAutomaticContexts(List<String> profiles, boolean reverse) {
+		return generateAutomaticContexts(profiles, reverse).stream().map(Context::getPath).collect(Collectors.toList());
+	}
+
+	public List<Context> generateAutomaticContexts(List<String> profiles, boolean reverse) {
+		List<Context> contexts = new ArrayList<>();
 		String root = properties.getRoot();
-		List<String> contexts = new ArrayList<>();
 
 		String defaultContext = root + "/" + properties.getDefaultContext();
-		contexts.add(defaultContext);
+		contexts.add(new Context(defaultContext));
 		addProfiles(contexts, defaultContext, profiles);
 
 		StringBuilder baseContext = new StringBuilder(root);
@@ -50,7 +57,7 @@ public class ZookeeperPropertySources {
 		}
 		// getName() defaults to ${spring.application.name} or application
 		baseContext.append(properties.getName());
-		contexts.add(baseContext.toString());
+		contexts.add(new Context(baseContext.toString()));
 		addProfiles(contexts, baseContext.toString(), profiles);
 
 		if (reverse) {
@@ -59,9 +66,10 @@ public class ZookeeperPropertySources {
 		return contexts;
 	}
 
-	private void addProfiles(List<String> contexts, String baseContext, List<String> profiles) {
+	private void addProfiles(List<Context> contexts, String baseContext, List<String> profiles) {
 		for (String profile : profiles) {
-			contexts.add(baseContext + properties.getProfileSeparator() + profile);
+			String path = baseContext + properties.getProfileSeparator() + profile;
+			contexts.add(new Context(path, profile));
 		}
 	}
 
@@ -80,6 +88,38 @@ public class ZookeeperPropertySources {
 		}
 		return null;
 	}
+	public static class Context {
+
+		private final String path;
+
+		private final String profile;
+
+		public Context(String path) {
+			this.path = path;
+			this.profile = null;
+		}
+
+		public Context(String path, String profile) {
+			this.path = path;
+			this.profile = profile;
+		}
+
+		public String getPath() {
+			return this.path;
+		}
+
+		public String getProfile() {
+			return this.profile;
+		}
+
+		@Override
+		public String toString() {
+			return new ToStringCreator(this).append("path", path).append("profile", profile).toString();
+
+		}
+
+	}
+
 
 	static class ZookeeperPropertySourceNotFoundException extends RuntimeException {
 

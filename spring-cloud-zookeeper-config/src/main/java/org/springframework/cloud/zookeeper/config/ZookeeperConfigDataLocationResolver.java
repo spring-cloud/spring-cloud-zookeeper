@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 
@@ -35,6 +36,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.zookeeper.CuratorFactory;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
+import org.springframework.cloud.zookeeper.config.ZookeeperPropertySources.Context;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
@@ -88,20 +90,21 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
 
-		List<String> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
-				? sources.getAutomaticContexts(profiles.getAccepted(), false) : getCustomContexts(locationUri);
+		List<Context> contexts = (locationUri == null || CollectionUtils.isEmpty(locationUri.getPathSegments()))
+				? sources.generateAutomaticContexts(profiles.getAccepted(), false) : getCustomContexts(locationUri);
 
 		// promote beans to context
 		context.getBootstrapContext().addCloseListener(event -> {
 			HashMap<String, Object> source = new HashMap<>();
-			source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts);
+			source.put("spring.cloud.zookeeper.config.property-source-contexts", contexts.stream().map(Context::getPath).collect(Collectors.toList()));
 			MapPropertySource propertySource = new MapPropertySource("zookeeperConfigData", source);
 			event.getApplicationContext().getEnvironment().getPropertySources().addFirst(propertySource);
 		});
 
 		ArrayList<ZookeeperConfigDataResource> locations = new ArrayList<>();
 		contexts.forEach(propertySourceContext -> locations
-				.add(new ZookeeperConfigDataResource(propertySourceContext, location.isOptional())));
+				.add(new ZookeeperConfigDataResource(propertySourceContext.getPath(), location.isOptional(), propertySourceContext
+						.getProfile())));
 
 		return locations;
 	}
@@ -110,12 +113,12 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 		return context.getBootstrapContext().getOrElse(BindHandler.class, null);
 	}
 
-	protected List<String> getCustomContexts(UriComponents uriComponents) {
+	protected List<Context> getCustomContexts(UriComponents uriComponents) {
 		if (!StringUtils.hasLength(uriComponents.getPath())) {
 			return Collections.emptyList();
 		}
 
-		return Arrays.asList(uriComponents.getPath().split(";"));
+		return Arrays.stream(uriComponents.getPath().split(";")).map(Context::new).collect(Collectors.toList());
 	}
 
 	@Nullable
