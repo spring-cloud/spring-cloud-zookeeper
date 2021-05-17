@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.zookeeper;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -85,19 +86,40 @@ public abstract class CuratorFactory {
 	}
 
 	public static void registerCurator(BootstrapRegistry registery, UriComponents location, boolean optional) {
-		registery.registerIfAbsent(ZookeeperProperties.class,
-				context -> loadProperties(context.get(Binder.class), location));
+		registerCurator(registery, location, optional, bootstrapContext -> true);
+	}
 
-		registery.registerIfAbsent(RetryPolicy.class, context -> retryPolicy(context.get(ZookeeperProperties.class)));
+	public static void registerCurator(BootstrapRegistry registery, UriComponents location, boolean optional,
+			Predicate<BootstrapContext> predicate) {
+		registery.registerIfAbsent(ZookeeperProperties.class, context -> {
+			if (!predicate.test(context)) {
+				return null;
+			}
+			return loadProperties(context.get(Binder.class), location);
+		});
 
-		registery.registerIfAbsent(CuratorFramework.class,
-				context -> curatorFramework(context, context.get(ZookeeperProperties.class), optional));
+		registery.registerIfAbsent(RetryPolicy.class, context -> {
+			if (!predicate.test(context)) {
+				return null;
+			}
+			return retryPolicy(context.get(ZookeeperProperties.class));
+		});
+
+		registery.registerIfAbsent(CuratorFramework.class, context -> {
+			if (!predicate.test(context)) {
+				return null;
+			}
+			return curatorFramework(context, context.get(ZookeeperProperties.class), optional);
+		});
 
 		// promote beans to context
 		registery.addCloseListener(event -> {
-			CuratorFramework curatorFramework = event.getBootstrapContext().get(CuratorFramework.class);
-			event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
-					curatorFramework);
+			BootstrapContext context = event.getBootstrapContext();
+			if (predicate.test(context)) {
+				CuratorFramework curatorFramework = context.get(CuratorFramework.class);
+				event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
+						curatorFramework);
+			}
 		});
 
 	}

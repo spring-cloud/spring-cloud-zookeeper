@@ -18,9 +18,11 @@ package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.BootstrapRegistry;
 import org.springframework.boot.Bootstrapper;
 import org.springframework.boot.SpringBootConfiguration;
@@ -36,6 +38,7 @@ import org.springframework.cloud.zookeeper.test.ZookeeperTestingServer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ZookeeperConfigServerBootstrapperTests {
 
@@ -50,7 +53,7 @@ public class ZookeeperConfigServerBootstrapperTests {
 
 	@Test
 	public void notEnabledDoesNotAddInstanceProviderFn() {
-		new SpringApplicationBuilder(TestConfig.class)
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfig.class)
 				.listeners(new ZookeeperTestingServer())
 				.properties("--server.port=0", "spring.cloud.service-registry.auto-registration.enabled=false")
 				.addBootstrapper(registry -> registry.addCloseListener(event -> {
@@ -58,7 +61,12 @@ public class ZookeeperConfigServerBootstrapperTests {
 							.get(ConfigServerInstanceProvider.Function.class);
 					assertThat(providerFn).as("ConfigServerInstanceProvider.Function was created when it shouldn't")
 							.isNull();
-				})).run().close();
+				})).run();
+		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
+		assertThat(curatorFramework).isNotNull();
+		assertThatThrownBy(() ->
+		context.getBean("configDataCuratorFramework", CuratorFramework.class)).isInstanceOf(NoSuchBeanDefinitionException.class);
+		context.close();
 	}
 
 	@Test

@@ -49,23 +49,37 @@ public class ZookeeperConfigServerBootstrapper implements Bootstrapper {
 			return;
 		}
 		// create curator
-		CuratorFactory.registerCurator(registry, null, true);
+		CuratorFactory.registerCurator(registry, null, true, bootstrapContext -> isEnabled(bootstrapContext.get(Binder.class)));
 
 		// create discovery
-		registry.registerIfAbsent(ZookeeperDiscoveryProperties.class,
-				context -> context.get(Binder.class)
-						.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
-								.of(ZookeeperDiscoveryProperties.class), getBindHandler(context))
-						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()))));
-		registry.registerIfAbsent(InstanceSerializer.class,
-				context -> new JsonInstanceSerializer<>(ZookeeperInstance.class));
+		registry.registerIfAbsent(ZookeeperDiscoveryProperties.class, context -> {
+			Binder binder = context.get(Binder.class);
+			if (!isEnabled(binder)) {
+				return null;
+			}
+			return binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
+							.of(ZookeeperDiscoveryProperties.class), getBindHandler(context))
+					.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties())));
+		});
+		registry.registerIfAbsent(InstanceSerializer.class, context -> {
+			if (!isEnabled(context.get(Binder.class))) {
+				return null;
+			}
+			return new JsonInstanceSerializer<>(ZookeeperInstance.class);
+		});
 		registry.registerIfAbsent(ServiceDiscoveryCustomizer.class, context -> {
+			if (!isEnabled(context.get(Binder.class))) {
+				return null;
+			}
 			CuratorFramework curator = context.get(CuratorFramework.class);
 			ZookeeperDiscoveryProperties properties = context.get(ZookeeperDiscoveryProperties.class);
 			InstanceSerializer<ZookeeperInstance> serializer = context.get(InstanceSerializer.class);
 			return new DefaultServiceDiscoveryCustomizer(curator, properties, serializer);
 		});
 		registry.registerIfAbsent(ServiceDiscovery.class, context -> {
+			if (!isEnabled(context.get(Binder.class))) {
+				return null;
+			}
 			ServiceDiscoveryCustomizer customizer = context.get(ServiceDiscoveryCustomizer.class);
 			return customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
 		});
