@@ -222,6 +222,14 @@ $ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE
 
 NOTE: The preceding example uses the `http` command from https://httpie.org.
 
+==== Automatic Instance Status publishing
+Spring Cloud Zookeeper supports the automatic publishing of the instance status to the service registry. This can explicitly be enabled using the property `spring.cloud.zookeeper.discovery.publishInstanceHealthStatus`. You can set the automatic instance publishing interval via `spring.cloud.discovery.instanceHealthStatusPublishInterval` in milliseconds the default value is 10000 (10 seconds).
+
+The instance status is determined from the actuator `HealthEndpoint`. Therfore every custom `HealthContributor` is being respected.
+
+NOTE: For the automatic instance status publishing to work you must include the Spring Boot Actuator dependency. Furthermore `@EnableScheduling` must be present on one of your Configuration classes.
+
+
 [[spring-cloud-zookeeper-dependencies]]
 == Zookeeper Dependencies
 

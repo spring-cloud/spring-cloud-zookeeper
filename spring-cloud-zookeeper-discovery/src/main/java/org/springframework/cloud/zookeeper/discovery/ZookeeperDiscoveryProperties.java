@@ -19,6 +19,7 @@ package org.springframework.cloud.zookeeper.discovery;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.support.StatusConstants;
@@ -98,6 +99,18 @@ public class ZookeeperDiscoveryProperties {
 	 * {@link StatusConstants#STATUS_UP}).
 	 */
 	private String initialStatus = StatusConstants.STATUS_UP;
+
+	/**
+	 * Publish the instance health status based on {@link HealthEndpoint} to the service
+	 * registry.
+	 */
+	private boolean publishInstanceHealthStatus = false;
+
+	/**
+	 * Interval in milliseconds in which the instance health status is checked and
+	 * published.
+	 */
+	private long instanceHealthStatusPublishInterval = 10000;
 
 	/**
 	 * Order of the discovery client used by `CompositeDiscoveryClient` for sorting
@@ -206,6 +219,23 @@ public class ZookeeperDiscoveryProperties {
 
 	public void setInitialStatus(String initialStatus) {
 		this.initialStatus = initialStatus;
+	}
+
+	public boolean isPublishInstanceHealthStatus() {
+		return publishInstanceHealthStatus;
+	}
+
+	public void setPublishInstanceHealthStatus(boolean publishInstanceHealthStatus) {
+		this.publishInstanceHealthStatus = publishInstanceHealthStatus;
+	}
+
+	public long getInstanceHealthStatusPublishInterval() {
+		return instanceHealthStatusPublishInterval;
+	}
+
+	public void setInstanceHealthStatusPublishInterval(
+			long instanceHealthStatusPublishInterval) {
+		this.instanceHealthStatusPublishInterval = instanceHealthStatusPublishInterval;
 	}
 
 	public int getOrder() {

@@ -16,8 +16,11 @@
 
 package org.springframework.cloud.zookeeper.serviceregistry;
 
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
@@ -30,6 +33,7 @@ import org.springframework.cloud.zookeeper.support.StatusConstants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringUtils;
 
 /**
@@ -80,6 +84,18 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 		// TODO add customizer?
 
 		return builder.build();
+	}
+
+	@Bean
+	@ConditionalOnAvailableEndpoint(endpoint = HealthEndpoint.class)
+	@ConditionalOnProperty(name = "spring.cloud.zookeeper.discovery.publishInstanceHealthStatus", havingValue = "true")
+	@ConditionalOnBean(ScheduledAnnotationBeanPostProcessor.class)
+	public ZookeeperInstanceHealthPublisher zookeeperInstanceHealthPublisher(
+			HealthEndpoint healthEndpoint,
+			ZookeeperServiceRegistry zookeeperServiceRegistry,
+			ZookeeperRegistration zookeeperRegistration) {
+		return new ZookeeperInstanceHealthPublisher(healthEndpoint,
+				zookeeperServiceRegistry, zookeeperRegistration);
 	}
 
 }
