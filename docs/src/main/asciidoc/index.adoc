@@ -1,1 +1,1 @@
-spring-cloud-zookeeper.adoc
+include::spring-cloud-zookeeper.adoc[]
