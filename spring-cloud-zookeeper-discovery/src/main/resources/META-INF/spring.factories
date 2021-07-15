@@ -19,5 +19,5 @@ org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPo
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperDiscoveryClientConfigServiceBootstrapConfiguration
 
-org.springframework.boot.Bootstrapper=\
+org.springframework.boot.BootstrapRegistryInitializer=\
 org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperConfigServerBootstrapper

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -56,7 +56,7 @@ public class ZookeeperConfigServerBootstrapperTests {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfig.class)
 				.listeners(new ZookeeperTestingServer())
 				.properties("--server.port=0", "spring.cloud.service-registry.auto-registration.enabled=false")
-				.addBootstrapper(registry -> registry.addCloseListener(event -> {
+				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
 					assertThat(providerFn).as("ConfigServerInstanceProvider.Function was created when it shouldn't")
@@ -78,8 +78,8 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
 						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval",
 						"spring.cloud.service-registry.auto-registration.enabled=false")
-				.addBootstrapper(bindHandlerBootstrapper)
-				.addBootstrapper(registry -> registry.addCloseListener(event -> {
+				.addBootstrapRegistryInitializer(bindHandlerBootstrapper)
+				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
 					assertThat(providerFn).as("ConfigServerInstanceProvider.Function was not created when it should.")
@@ -97,12 +97,12 @@ public class ZookeeperConfigServerBootstrapperTests {
 	static class TestConfig {
 
 	}
-	static class BindHandlerBootstrapper implements Bootstrapper {
+	static class BindHandlerBootstrapper implements BootstrapRegistryInitializer {
 
 		private int onSuccessCount = 0;
 
 		@Override
-		public void intitialize(BootstrapRegistry registry) {
+		public void initialize(BootstrapRegistry registry) {
 			registry.register(BindHandler.class, context -> new BindHandler() {
 				@Override
 				public Object onSuccess(ConfigurationPropertyName name, Bindable<?> target, BindContext context,

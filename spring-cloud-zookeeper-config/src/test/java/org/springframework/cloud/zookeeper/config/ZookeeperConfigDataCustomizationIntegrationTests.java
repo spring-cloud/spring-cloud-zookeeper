@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import org.springframework.boot.BootstrapContext;
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -67,8 +67,8 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 		this.context = new SpringApplicationBuilder(Config.class)
 				.listeners(new ZookeeperTestingServer())
 				.web(WebApplicationType.NONE)
-				.addBootstrapper(bindHandlerBootstrapper)
-				.addBootstrapper(ZookeeperBootstrapper.fromBootstrapContext(this::curatorFramework))
+				.addBootstrapRegistryInitializer(bindHandlerBootstrapper)
+				.addBootstrapRegistryInitializer(ZookeeperBootstrapper.fromBootstrapContext(this::curatorFramework))
 				.run("--spring.config.import=zookeeper:",
 						"--spring.application.name=testZkConfigDataIntegration",
 						"--logging.level.org.springframework.cloud.zookeeper=DEBUG",
@@ -118,12 +118,12 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 
 	}
 
-	static class BindHandlerBootstrapper implements Bootstrapper {
+	static class BindHandlerBootstrapper implements BootstrapRegistryInitializer {
 
 		private int onSuccessCount = 0;
 
 		@Override
-		public void intitialize(BootstrapRegistry registry) {
+		public void initialize(BootstrapRegistry registry) {
 			registry.register(BindHandler.class, context -> new BindHandler() {
 				@Override
 				public Object onSuccess(ConfigurationPropertyName name, Bindable<?> target, BindContext context,

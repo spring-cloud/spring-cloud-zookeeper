@@ -25,10 +25,10 @@ import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.boot.BootstrapContext;
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 
-public class ZookeeperBootstrapper implements Bootstrapper {
+public class ZookeeperBootstrapper implements BootstrapRegistryInitializer {
 
 	private Function<BootstrapContext, RetryPolicy> retryPolicy;
 
@@ -38,7 +38,7 @@ public class ZookeeperBootstrapper implements Bootstrapper {
 
 	private Function<BootstrapContext, CuratorFrameworkCustomizer> curatorFrameworkCustomizer;
 
-	static Bootstrapper fromBootstrapContext(Function<BootstrapContext, CuratorFramework> factory) {
+	static BootstrapRegistryInitializer fromBootstrapContext(Function<BootstrapContext, CuratorFramework> factory) {
 		return registry -> registry.register(CuratorFramework.class, factory::apply);
 	}
 
@@ -67,7 +67,7 @@ public class ZookeeperBootstrapper implements Bootstrapper {
 	}
 
 	@Override
-	public void intitialize(BootstrapRegistry registry) {
+	public void initialize(BootstrapRegistry registry) {
 		register(registry, RetryPolicy.class, retryPolicy);
 		register(registry, EnsembleProvider.class, ensembleProvider);
 		register(registry, TracerDriver.class, tracerDriver);

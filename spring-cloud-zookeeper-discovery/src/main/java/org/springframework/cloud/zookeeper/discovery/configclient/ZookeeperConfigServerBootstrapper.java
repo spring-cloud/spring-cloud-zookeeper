@@ -23,7 +23,7 @@ import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -40,11 +40,11 @@ import org.springframework.cloud.zookeeper.support.DefaultServiceDiscoveryCustom
 import org.springframework.cloud.zookeeper.support.ServiceDiscoveryCustomizer;
 import org.springframework.util.ClassUtils;
 
-public class ZookeeperConfigServerBootstrapper implements Bootstrapper {
+public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryInitializer {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void intitialize(BootstrapRegistry registry) {
+	public void initialize(BootstrapRegistry registry) {
 		if (!ClassUtils.isPresent("org.springframework.cloud.config.client.ConfigServerInstanceProvider", null)) {
 			return;
 		}
