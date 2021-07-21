@@ -29,9 +29,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -79,10 +78,10 @@ class PortListener implements ApplicationListener<WebServerInitializedEvent> {
 @FeignClient("someAlias")
 interface AliasUsingFeignClient {
 
-	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
+	@GetMapping("/application/beans")
 	String getBeans();
 
-	@RequestMapping(method = RequestMethod.GET, value = "/checkHeaders")
+	@GetMapping("/checkHeaders")
 	String checkHeaders();
 
 }
@@ -90,7 +89,7 @@ interface AliasUsingFeignClient {
 @FeignClient("nameWithoutAlias")
 interface IdUsingFeignClient {
 
-	@RequestMapping(method = RequestMethod.GET, value = "/application/beans")
+	@GetMapping("/application/beans")
 	String getBeans();
 
 }
@@ -104,17 +103,17 @@ class PingController {
 		this.portListener = portListener;
 	}
 
-	@RequestMapping("/ping")
+	@GetMapping("/ping")
 	String ping() {
 		return "pong";
 	}
 
-	@RequestMapping("/port")
+	@GetMapping("/port")
 	Integer port() {
 		return this.portListener.getPort();
 	}
 
-	@RequestMapping("/checkHeaders")
+	@GetMapping("/checkHeaders")
 	String checkHeaders(@RequestHeader("Content-Type") String contentType,
 			@RequestHeader("header1") Collection<String> header1,
 			@RequestHeader("header2") Collection<String> header2) {

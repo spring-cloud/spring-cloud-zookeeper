@@ -30,8 +30,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -66,22 +65,22 @@ public class SampleZookeeperApplication {
 	@Autowired
 	private RestTemplate rest;
 
-	@RequestMapping("/")
+	@GetMapping("/")
 	public ServiceInstance lb() {
 		return this.loadBalancer.choose(this.appName);
 	}
 
-	@RequestMapping("/hi")
+	@GetMapping("/hi")
 	public String hi() {
 		return "Hello World! from " + this.registration;
 	}
 
-	@RequestMapping("/self")
+	@GetMapping("/self")
 	public String self() {
 		return this.appClient.hi();
 	}
 
-	@RequestMapping("/myenv")
+	@GetMapping("/myenv")
 	public String env(@RequestParam("prop") String prop) {
 		return this.env.getProperty(prop, "Not Found");
 	}
@@ -103,7 +102,7 @@ public class SampleZookeeperApplication {
 	@FeignClient("testZookeeperApp")
 	interface AppClient {
 
-		@RequestMapping(path = "/hi", method = RequestMethod.GET)
+		@GetMapping("/hi")
 		String hi();
 
 	}
