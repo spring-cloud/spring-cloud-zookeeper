@@ -26,7 +26,7 @@ that comes shipped with `curator`, and thus `spring-cloud-zookeeper`.
 To do so exclude that dependency and add the 3.4.x version like shown below, 
 Note that ZooKeeper 3.4.x is no longer supported by Curator 5.0,
 please check https://curator.apache.org/zk-compatibility-34.html[documentation].
-There will be a little steps, you need also change curator to 4.2.0.
+There will be a few more steps, you need to change curator version to 4.2.0.
 
 
 
