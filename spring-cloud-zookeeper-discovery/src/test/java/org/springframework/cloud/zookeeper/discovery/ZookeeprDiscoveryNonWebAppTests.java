@@ -28,6 +28,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -104,13 +105,13 @@ public class ZookeeprDiscoveryNonWebAppTests {
 		@LoadBalanced
 		@Bean
 		RestTemplate restTemplate() {
-			return new RestTemplate();
+			this.restTemplate = new RestTemplateBuilder().build();
+			return this.restTemplate;
 		}
 
 		@Autowired
 		DiscoveryClient discoveryClient;
 
-		@Autowired
 		RestTemplate restTemplate;
 
 	}
