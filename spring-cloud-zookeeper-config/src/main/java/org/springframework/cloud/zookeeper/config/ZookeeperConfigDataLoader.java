@@ -18,7 +18,6 @@ package org.springframework.cloud.zookeeper.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -31,7 +30,6 @@ import org.springframework.boot.context.config.ConfigDataResourceNotFoundExcepti
 import org.springframework.util.StringUtils;
 
 public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataResource> {
-	private static final EnumSet<ConfigData.Option> ALL_OPTIONS = EnumSet.allOf(ConfigData.Option.class);
 
 	private final Log log;
 
@@ -50,27 +48,17 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(resource.getContext(),
 					curator);
 			List<ZookeeperPropertySource> propertySources = Collections.singletonList(propertySource);
-			if (ALL_OPTIONS.size() == 1) {
-				// boot 2.4.2 and prior
-				return new ConfigData(propertySources);
-			}
-			else if (ALL_OPTIONS.size() == 2) {
-				// boot 2.4.3 and 2.4.4
-				return new ConfigData(propertySources, ConfigData.Option.IGNORE_IMPORTS, ConfigData.Option.IGNORE_PROFILES);
-			}
-			else if (ALL_OPTIONS.size() > 2) {
-				// boot 2.4.5+
-				return new ConfigData(propertySources, source -> {
-					List<ConfigData.Option> options = new ArrayList<>();
-					options.add(ConfigData.Option.IGNORE_IMPORTS);
-					options.add(ConfigData.Option.IGNORE_PROFILES);
-					if (StringUtils.hasText(resource.getProfile())) {
-						options.add(ConfigData.Option.PROFILE_SPECIFIC);
-					}
-					return ConfigData.Options.of(options.toArray(new ConfigData.Option[0]));
-				});
 
-			}
+			return new ConfigData(propertySources, source -> {
+				List<ConfigData.Option> options = new ArrayList<>();
+				options.add(ConfigData.Option.IGNORE_IMPORTS);
+				options.add(ConfigData.Option.IGNORE_PROFILES);
+				if (StringUtils.hasText(resource.getProfile())) {
+					options.add(ConfigData.Option.PROFILE_SPECIFIC);
+				}
+				return ConfigData.Options.of(options.toArray(new ConfigData.Option[0]));
+			});
+
 		}
 		catch (Exception e) {
 			if (log.isDebugEnabled()) {
@@ -78,7 +66,6 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 			}
 			throw new ConfigDataResourceNotFoundException(resource, e);
 		}
-		return null;
 	}
 
 }
