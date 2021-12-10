@@ -74,7 +74,7 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 		}
 		catch (Exception e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting properties from consul: " + resource, e);
+				log.debug("Error getting properties from zookeeper: " + resource, e);
 			}
 			throw new ConfigDataResourceNotFoundException(resource, e);
 		}
