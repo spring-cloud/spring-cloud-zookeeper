@@ -117,8 +117,10 @@ public abstract class CuratorFactory {
 			BootstrapContext context = event.getBootstrapContext();
 			if (predicate.test(context)) {
 				CuratorFramework curatorFramework = context.get(CuratorFramework.class);
-				event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
-						curatorFramework);
+				if (!event.getApplicationContext().getBeanFactory().containsBean("configDataCuratorFramework")) {
+					event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
+							curatorFramework);
+				}
 			}
 		});
 

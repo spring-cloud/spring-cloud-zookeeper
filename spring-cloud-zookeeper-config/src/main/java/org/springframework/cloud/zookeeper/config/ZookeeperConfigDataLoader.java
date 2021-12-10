@@ -43,6 +43,10 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataResource resource) {
 		try {
 			CuratorFramework curator = context.getBootstrapContext().get(CuratorFramework.class);
+			if (curator == null) {
+				// this can happen if certain conditions are met
+				return null;
+			}
 			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(resource.getContext(),
 					curator);
 			List<ZookeeperPropertySource> propertySources = Collections.singletonList(propertySource);
@@ -70,7 +74,7 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 		}
 		catch (Exception e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Error getting properties from consul: " + resource, e);
+				log.debug("Error getting properties from zookeeper: " + resource, e);
 			}
 			throw new ConfigDataResourceNotFoundException(resource, e);
 		}
