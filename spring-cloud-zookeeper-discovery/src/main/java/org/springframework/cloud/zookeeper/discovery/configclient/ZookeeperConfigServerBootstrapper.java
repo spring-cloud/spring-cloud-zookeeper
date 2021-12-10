@@ -45,7 +45,9 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 	@Override
 	@SuppressWarnings("unchecked")
 	public void initialize(BootstrapRegistry registry) {
-		if (!ClassUtils.isPresent("org.springframework.cloud.config.client.ConfigServerInstanceProvider", null)) {
+		if (!ClassUtils.isPresent("org.springframework.cloud.config.client.ConfigServerInstanceProvider", null) ||
+				// don't run if bootstrap enabled, how to check the property?
+				ClassUtils.isPresent("org.springframework.cloud.bootstrap.marker.Marker", null)) {
 			return;
 		}
 		// create curator
