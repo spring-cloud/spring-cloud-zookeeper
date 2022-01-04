@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.zookeeper.discovery.configclient;
 
-import javax.annotation.PostConstruct;
-
+import jakarta.annotation.PostConstruct;
 import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.beans.factory.annotation.Autowired;

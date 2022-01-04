@@ -18,8 +18,7 @@ package org.springframework.cloud.zookeeper.discovery;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.annotation.PreDestroy;
-
+import jakarta.annotation.PreDestroy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
