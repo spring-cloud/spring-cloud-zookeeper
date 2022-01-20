@@ -19,8 +19,8 @@ package org.springframework.cloud.zookeeper.discovery.dependency;
 import java.util.Collections;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.cloud.bootstrap.BootstrapConfigFileApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -39,7 +39,7 @@ public class DependencyEnvironmentPostProcessor
 		implements EnvironmentPostProcessor, Ordered {
 
 	// after ConfigFileEnvironmentPostProcessorr
-	private int order = ConfigFileApplicationListener.DEFAULT_ORDER + 1;
+	private int order = BootstrapConfigFileApplicationListener.DEFAULT_ORDER + 1;
 
 	@Override
 	public int getOrder() {
