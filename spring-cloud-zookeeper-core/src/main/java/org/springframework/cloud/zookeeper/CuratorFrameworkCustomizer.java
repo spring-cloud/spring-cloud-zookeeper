@@ -28,8 +28,8 @@ import org.springframework.beans.factory.ObjectProvider;
  * ZookeeperAutoConfiguration} ZookeeperAutoConfiguration} to further customize the
  * {@link CuratorFramework} that it provides.
  *
- * @see ZookeeperAutoConfiguration
  * @author Bernardo Gomez Palacio.
+ * @see ZookeeperAutoConfiguration
  */
 @FunctionalInterface
 public interface CuratorFrameworkCustomizer {
