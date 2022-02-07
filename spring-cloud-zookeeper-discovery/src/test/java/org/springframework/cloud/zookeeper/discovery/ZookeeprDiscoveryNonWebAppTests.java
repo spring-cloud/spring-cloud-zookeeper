@@ -35,7 +35,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.SocketUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -120,7 +120,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 	@RestController
 	static class HelloProducer {
 
-		@RequestMapping("/")
+		@GetMapping("/")
 		public String foo() {
 			return "foo";
 		}

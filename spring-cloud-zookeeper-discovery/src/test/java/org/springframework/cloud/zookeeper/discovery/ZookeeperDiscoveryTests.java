@@ -46,8 +46,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -153,7 +152,7 @@ public class ZookeeperDiscoveryTests {
 	@FeignClient("loadBalancerApp")
 	public interface IdUsingFeignClient {
 
-		@RequestMapping(method = RequestMethod.GET, value = "/hi")
+		@GetMapping("/hi")
 		String hi();
 
 	}
@@ -172,7 +171,7 @@ public class ZookeeperDiscoveryTests {
 			return new TestLoadBalancedClient(restTemplate, springAppName);
 		}
 
-		@RequestMapping("/hi")
+		@GetMapping("/hi")
 		public String hi() {
 			return "hi";
 		}
@@ -183,7 +182,7 @@ public class ZookeeperDiscoveryTests {
 	@Profile("loadbalancer")
 	class PingController {
 
-		@RequestMapping("/ping")
+		@GetMapping("/ping")
 		String ping() {
 			return "pong";
 		}
