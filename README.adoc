@@ -315,7 +315,7 @@ Doing so brings in the required Spring Cloud Maven repositories and Build.
 
 == Building
 
-:jdkversion: 1.8
+:jdkversion: 17
 
 === Basic Compile and Test
 
