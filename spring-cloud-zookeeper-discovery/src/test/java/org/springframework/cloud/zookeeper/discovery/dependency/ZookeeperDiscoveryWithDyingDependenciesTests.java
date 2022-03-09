@@ -30,12 +30,12 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.cloud.zookeeper.discovery.test.TestLoadBalancedClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.util.SocketUtils;
 
 import static com.jayway.awaitility.Awaitility.await;
 
@@ -57,7 +57,7 @@ public class ZookeeperDiscoveryWithDyingDependenciesTests {
 		TestingServer testingServer = null;
 		try {
 			// given:
-			int zookeeperPort = SocketUtils.findAvailableTcpPort();
+			int zookeeperPort = TestSocketUtils.findAvailableTcpPort();
 			testingServer = new TestingServer(zookeeperPort);
 			System.setProperty("spring.jmx.enabled", "false");
 			System.setProperty("spring.cloud.zookeeper.connectString",

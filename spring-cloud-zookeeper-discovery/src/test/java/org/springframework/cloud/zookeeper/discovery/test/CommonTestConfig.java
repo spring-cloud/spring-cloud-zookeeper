@@ -19,10 +19,10 @@ package org.springframework.cloud.zookeeper.discovery.test;
 import org.apache.curator.test.TestingServer;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -39,7 +39,7 @@ public class CommonTestConfig {
 
 	@Bean(destroyMethod = "close")
 	TestingServer testingServer() throws Exception {
-		return new TestingServer(SocketUtils.findAvailableTcpPort());
+		return new TestingServer(TestSocketUtils.findAvailableTcpPort());
 	}
 
 	@Bean

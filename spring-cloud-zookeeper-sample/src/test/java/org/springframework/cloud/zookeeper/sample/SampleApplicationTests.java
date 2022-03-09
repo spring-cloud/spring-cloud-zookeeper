@@ -21,10 +21,10 @@ import org.junit.Test;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,10 +32,10 @@ public class SampleApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		int zkPort = SocketUtils.findAvailableTcpPort();
+		int zkPort = TestSocketUtils.findAvailableTcpPort();
 		TestingServer server = new TestingServer(zkPort);
 
-		int port = SocketUtils.findAvailableTcpPort(zkPort + 1);
+		int port = TestSocketUtils.findAvailableTcpPort(zkPort + 1);
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				SampleZookeeperApplication.class).run("--server.port=" + port,

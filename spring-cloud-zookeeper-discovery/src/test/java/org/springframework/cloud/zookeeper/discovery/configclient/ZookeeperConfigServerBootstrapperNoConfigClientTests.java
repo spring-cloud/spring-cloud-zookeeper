@@ -26,8 +26,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.test.ClassPathExclusions;
 import org.springframework.cloud.test.ModifiedClassPathRunner;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
 
 @RunWith(ModifiedClassPathRunner.class)
 @ClassPathExclusions({ "spring-cloud-config-client-*.jar", "spring-cloud-config-server-*.jar" })
@@ -39,7 +39,7 @@ public class ZookeeperConfigServerBootstrapperNoConfigClientTests {
 		ConfigurableApplicationContext context = null;
 		try {
 			TomcatURLStreamHandlerFactory.disable();
-			int port = SocketUtils.findAvailableTcpPort();
+			int port = TestSocketUtils.findAvailableTcpPort();
 			testingServer = new TestingServer(port);
 			context = new SpringApplicationBuilder(TestConfig.class).properties("--server.port=0",
 					"spring.cloud.config.discovery.enabled=true", "spring.cloud.zookeeper.connect-string=localhost:" + port,

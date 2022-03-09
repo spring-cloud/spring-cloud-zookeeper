@@ -31,10 +31,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.SocketUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -54,7 +54,7 @@ public class ZookeeprDiscoveryNonWebAppTests {
 
 	@Before
 	public void setup() throws Exception {
-		this.server = new TestingServer(SocketUtils.findAvailableTcpPort());
+		this.server = new TestingServer(TestSocketUtils.findAvailableTcpPort());
 		this.connectionString = "--spring.cloud.zookeeper.connectString="
 				+ this.server.getConnectString();
 	}
