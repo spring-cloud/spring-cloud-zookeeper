@@ -2,7 +2,7 @@
 
 set -o errexit
 
-SCRIPT_URL="https://raw.githubusercontent.com/spring-cloud-samples/brewery/master/runAcceptanceTests.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/spring-cloud-samples/brewery/2020.0.x/runAcceptanceTests.sh"
 AT_WHAT_TO_TEST="ZOOKEEPER"
 
 curl "${SCRIPT_URL}" --output runAcceptanceTests.sh
