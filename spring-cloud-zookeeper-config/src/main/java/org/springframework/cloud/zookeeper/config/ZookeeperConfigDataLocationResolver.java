@@ -34,6 +34,7 @@ import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.cloud.zookeeper.CuratorFactory;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.config.ZookeeperPropertySources.Context;
@@ -53,8 +54,8 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 	private final Log log;
 
-	public ZookeeperConfigDataLocationResolver(Log log) {
-		this.log = log;
+	public ZookeeperConfigDataLocationResolver(DeferredLogFactory logFactory) {
+		this.log = logFactory.getLog(ZookeeperConfigDataLocationResolver.class);
 	}
 
 	@Override

@@ -27,14 +27,15 @@ import org.springframework.boot.context.config.ConfigData;
 import org.springframework.boot.context.config.ConfigDataLoader;
 import org.springframework.boot.context.config.ConfigDataLoaderContext;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.util.StringUtils;
 
 public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConfigDataResource> {
 
 	private final Log log;
 
-	public ZookeeperConfigDataLoader(Log log) {
-		this.log = log;
+	public ZookeeperConfigDataLoader(DeferredLogFactory logFactory) {
+		this.log = logFactory.getLog(ZookeeperConfigDataLoader.class);
 	}
 
 	@Override

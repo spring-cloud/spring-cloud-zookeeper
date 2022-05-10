@@ -39,7 +39,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 
 	@Test
 	public void testParseLocation() {
-		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver(LogFactory.getLog(getClass()));
+		ZookeeperConfigDataLocationResolver resolver = new ZookeeperConfigDataLocationResolver(destination -> LogFactory.getLog(ZookeeperConfigDataLocationResolver.class));
 		UriComponents uriComponents = resolver.parseLocation(
 				ConfigDataLocation.of("zookeeper:myhost:2182/mypath1;/mypath2;/mypath3"));
 		assertThat(uriComponents.toUri()).hasScheme("zookeeper").hasHost("myhost")
@@ -94,7 +94,7 @@ public class ZookeeperConfigDataLocationResolverTests {
 	}
 
 	private ZookeeperConfigDataLocationResolver createResolver() {
-		return new ZookeeperConfigDataLocationResolver(LogFactory.getLog(getClass()));
+		return new ZookeeperConfigDataLocationResolver(destination -> LogFactory.getLog(ZookeeperConfigDataLocationResolver.class));
 	}
 
 }
