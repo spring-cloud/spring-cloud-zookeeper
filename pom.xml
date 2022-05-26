@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>spring-cloud-zookeeper</artifactId>
-	<version>3.1.2-SNAPSHOT</version>
+	<version>3.1.2</version>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Zookeeper</name>
 	<description>Spring Cloud Zookeeper</description>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>3.1.2-SNAPSHOT</version>
+		<version>3.1.3</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -138,10 +138,10 @@
 	</dependencyManagement>
 
 	<properties>
-		<spring-cloud-build.version>3.1.2-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-commons.version>3.1.2-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-config.version>3.1.2-SNAPSHOT</spring-cloud-config.version>
-		<spring-cloud-openfeign.version>3.1.2-SNAPSHOT</spring-cloud-openfeign.version>
+		<spring-cloud-build.version>3.1.3</spring-cloud-build.version>
+		<spring-cloud-commons.version>3.1.3</spring-cloud-commons.version>
+		<spring-cloud-config.version>3.1.3</spring-cloud-config.version>
+		<spring-cloud-openfeign.version>3.1.3</spring-cloud-openfeign.version>
 	</properties>
 
 	<profiles>
