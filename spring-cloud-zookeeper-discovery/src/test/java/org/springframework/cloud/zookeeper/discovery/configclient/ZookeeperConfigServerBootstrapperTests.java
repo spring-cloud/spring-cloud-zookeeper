@@ -52,20 +52,62 @@ public class ZookeeperConfigServerBootstrapperTests {
 	}
 
 	@Test
-	public void notEnabledDoesNotAddInstanceProviderFn() {
+	public void notEnabledReturnsEmptyList() {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfig.class)
 				.listeners(new ZookeeperTestingServer())
 				.properties("--server.port=0", "spring.cloud.service-registry.auto-registration.enabled=false")
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn).as("ConfigServerInstanceProvider.Function was created when it shouldn't")
-							.isNull();
+					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+							.isEmpty();
 				})).run();
 		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
 		assertThat(curatorFramework).isNotNull();
 		assertThatThrownBy(() ->
 		context.getBean("configDataCuratorFramework", CuratorFramework.class)).isInstanceOf(NoSuchBeanDefinitionException.class);
+		context.close();
+	}
+
+	@Test
+	public void zookeeperDiscoveryClientDisabledReturnsEmptyList() {
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfig.class)
+				.listeners(new ZookeeperTestingServer())
+				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
+						"spring.cloud.zookeeper.discovery.enabled=false",
+						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval",
+						"spring.cloud.service-registry.auto-registration.enabled=false")
+				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
+					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
+							.get(ConfigServerInstanceProvider.Function.class);
+					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+							.isEmpty();
+				})).run();
+		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
+		assertThat(curatorFramework).isNotNull();
+		assertThatThrownBy(() ->
+				context.getBean("configDataCuratorFramework", CuratorFramework.class)).isInstanceOf(NoSuchBeanDefinitionException.class);
+		context.close();
+	}
+
+	@Test
+	public void discoveryClientDisabledReturnsEmptyList() {
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestConfig.class)
+				.listeners(new ZookeeperTestingServer())
+				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
+						"spring.cloud.discovery.enabled=false",
+						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval",
+						"spring.cloud.service-registry.auto-registration.enabled=false")
+				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
+					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
+							.get(ConfigServerInstanceProvider.Function.class);
+					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+							.isEmpty();
+				})).run();
+		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
+		assertThat(curatorFramework).isNotNull();
+		assertThatThrownBy(() ->
+				context.getBean("configDataCuratorFramework", CuratorFramework.class)).isInstanceOf(NoSuchBeanDefinitionException.class);
 		context.close();
 	}
 
@@ -82,7 +124,7 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn).as("ConfigServerInstanceProvider.Function was not created when it should.")
+					assertThat(providerFn.apply("id")).as("Should return empty list.")
 							.isNotNull();
 					bootstrapDiscoveryClient.set(event.getBootstrapContext().get(ZookeeperDiscoveryClient.class));
 				})).run();

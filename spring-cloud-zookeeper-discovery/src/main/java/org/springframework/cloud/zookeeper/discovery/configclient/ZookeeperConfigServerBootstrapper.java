@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.zookeeper.discovery.configclient;
 
+import java.util.Collections;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
@@ -32,6 +34,7 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.CuratorFactory;
+import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
@@ -102,7 +105,7 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 		// create instance provider
 		registry.registerIfAbsent(ConfigServerInstanceProvider.Function.class, context -> {
 			if (!isEnabled(context.get(Binder.class))) {
-				return null;
+				return (id) -> Collections.emptyList();
 			}
 			return context.get(ZookeeperDiscoveryClient.class)::getInstances;
 		});
@@ -122,7 +125,9 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 	}
 
 	private boolean isEnabled(Binder binder) {
-		return binder.bind(ConfigClientProperties.CONFIG_DISCOVERY_ENABLED, Boolean.class).orElse(false);
+		return binder.bind(ConfigClientProperties.CONFIG_DISCOVERY_ENABLED, Boolean.class).orElse(false) &&
+				binder.bind(ConditionalOnZookeeperDiscoveryEnabled.PROPERTY, Boolean.class).orElse(true) &&
+				binder.bind("spring.cloud.discovery.enabled", Boolean.class).orElse(true);
 	}
 
 }
