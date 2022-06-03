@@ -22,6 +22,7 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
@@ -52,6 +53,7 @@ public class ZookeeperServiceRegistryAutoConfiguration
 	}
 
 	@Bean
+	@ConditionalOnBean(ServiceDiscovery.class)
 	@SuppressWarnings("unchecked")
 	public ZookeeperServiceRegistry zookeeperServiceRegistry() {
 		return new ZookeeperServiceRegistry(this.context.getBean(ServiceDiscovery.class));

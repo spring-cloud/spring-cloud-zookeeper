@@ -33,7 +33,10 @@ import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @ConditionalOnZookeeperEnabled
-@ConditionalOnProperty(value = "spring.cloud.zookeeper.discovery.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = ConditionalOnZookeeperDiscoveryEnabled.PROPERTY, matchIfMissing = true)
 public @interface ConditionalOnZookeeperDiscoveryEnabled {
-
+	/**
+	 * Property name.
+	 */
+	String PROPERTY = "spring.cloud.zookeeper.discovery.enabled";
 }
