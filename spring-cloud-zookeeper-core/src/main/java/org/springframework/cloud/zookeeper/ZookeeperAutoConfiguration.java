@@ -22,12 +22,19 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.drivers.TracerDriver;
 import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.x.discovery.UriSpec;
+import org.apache.zookeeper.ClientCnxnSocketNIO;
 
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ClassUtils;
 
 /**
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -66,4 +73,32 @@ public class ZookeeperAutoConfiguration {
 		return CuratorFactory.retryPolicy(properties);
 	}
 
+}
+
+// TODO: remove after GraalVM metadata PR merged
+class ZookeeperCoreHints implements RuntimeHintsRegistrar {
+
+	@Override
+	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+		if (!ClassUtils.isPresent("org.apache.zookeeper.ZooKeeper", classLoader)) {
+			return;
+		}
+		hints.reflection().registerType(TypeReference.of(ClientCnxnSocketNIO.class),
+				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
+		hints.reflection()
+				.registerType(TypeReference.of("org.apache.curator.x.discovery.details.OldServiceInstance"),
+						hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+								MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection()
+				.registerType(TypeReference.of("org.apache.curator.x.discovery.UriSpec"),
+						hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+								MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection().registerType(TypeReference.of(UriSpec.Part.class),
+				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+						MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection()
+				.registerType(TypeReference.of("org.apache.curator.x.discovery.ServiceInstance"),
+						hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+								MemberCategory.INVOKE_DECLARED_METHODS));
+	}
 }

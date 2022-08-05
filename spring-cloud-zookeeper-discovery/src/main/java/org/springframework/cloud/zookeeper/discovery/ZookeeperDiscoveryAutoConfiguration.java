@@ -19,6 +19,10 @@ package org.springframework.cloud.zookeeper.discovery;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -32,6 +36,7 @@ import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ClassUtils;
 
 /**
  * @author Spencer Gibb
@@ -81,3 +86,21 @@ public class ZookeeperDiscoveryAutoConfiguration {
 	}
 
 }
+
+class ZookeeperDiscoveryHints implements RuntimeHintsRegistrar {
+
+	@Override
+	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+		if (!ClassUtils.isPresent("org.apache.zookeeper.ZooKeeper", classLoader)) {
+			return;
+		}
+		hints.reflection()
+				.registerType(TypeReference.of(ZookeeperInstance.class),
+						hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+								MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection().registerType(TypeReference.of(ZookeeperServiceInstance.class),
+				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.DECLARED_FIELDS,
+						MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
+	}
+}
+
