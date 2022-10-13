@@ -564,6 +564,8 @@ property sources with profiles.
 
 CAUTION: If you have set `spring.cloud.bootstrap.enabled=true` or `spring.config.use-legacy-processing=true`, or included `spring-cloud-starter-bootstrap`, then the above values will need to be placed in `bootstrap.yml` instead of `application.yml`.
 
+NOTE: Due to a long-standing issue, the priority of the configuration in `bootstrap` mode is different from that in the `spring.config.import` mode. Setting `spring.cloud.zookeeper.config.profilePriority=true` can fix this and align it with the behavior of Spring Cloud Config. The default value of this flag is `false`, and will be set to `true` in the future, and this flag will eventually be removed.
+
 === Access Control Lists (ACLs)
 
 You can add authentication information for Zookeeper ACLs by calling the `addAuthInfo`
