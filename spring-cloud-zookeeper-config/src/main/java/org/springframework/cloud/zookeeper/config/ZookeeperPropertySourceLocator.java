@@ -40,15 +40,19 @@ import org.springframework.util.Assert;
  * Client</a>. Configuration is loaded into the Spring Environment during the special
  * "bootstrap" phase. Configuration is stored in the {@code /config} namespace by default.
  * Multiple {@code PropertySource} instances are created based on the application's name
- * and the active profiles that mimicks the Spring Cloud Config order of resolving
- * properties. For example, an application with the name "testApp" and with the "dev"
- * profile will have the following property sources created:
+ * and the active profiles that mimics the Spring Cloud Config order of resolving
+ * properties.What's more,it supports multiple business namespaces through {@code defaultContext}.
+ * For example, an application with the name "testApp",and with the "dev"
+ * profile,with "namespace1,namespace2" defaultContext will have the following property sources
+ * created:
  *
  * <pre>{@code
  * config/testApp,dev
  * config/testApp
- * config/application,dev
- * config/application
+ * config/namespace1,dev
+ * config/namespace1
+ * config/namespace2,dev
+ * config/namespace2
  * }</pre>
  *
  * The most specific property source is at the top, with the least specific at the bottom.
@@ -58,6 +62,7 @@ import org.springframework.util.Assert;
  * named "testApp".
  *
  * @author Spencer Gibb
+ * @author lemonJ
  * @since 1.0.0
  */
 public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
@@ -107,16 +112,4 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	@PreDestroy
 	public void destroy() {
 	}
-
-	private PropertySource<CuratorFramework> create(String context) {
-		return new ZookeeperPropertySource(context, this.curator);
-	}
-
-	private void addProfiles(List<String> contexts, String baseContext,
-			List<String> profiles) {
-		for (String profile : profiles) {
-			contexts.add(baseContext + this.properties.getProfileSeparator() + profile);
-		}
-	}
-
 }
