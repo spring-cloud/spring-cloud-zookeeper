@@ -41,9 +41,9 @@ import org.springframework.util.Assert;
  * "bootstrap" phase. Configuration is stored in the {@code /config} namespace by default.
  * Multiple {@code PropertySource} instances are created based on the application's name
  * and the active profiles that mimics the Spring Cloud Config order of resolving
- * properties.What's more,it supports multiple business namespaces through {@code defaultContext}.
- * For example, an application with the name "testApp",and with the "dev"
- * profile,with "namespace1,namespace2" defaultContext will have the following property sources
+ * properties. What's more,it supports multiple business namespaces through {@code defaultContext}.
+ * For example, an application with the name "testApp", and with the "dev"
+ * profile, with "namespace1,namespace2" defaultContext will have the following property sources
  * created:
  *
  * <pre>{@code
@@ -55,11 +55,9 @@ import org.springframework.util.Assert;
  * config/namespace2
  * }</pre>
  *
- * The most specific property source is at the top, with the least specific at the bottom.
- * Properties is the {@code config/application} namespace are applicable to all
- * applications using zookeeper for configuration. Properties in the
- * {@code config/testApp} namespace are only available to the instances of the service
- * named "testApp".
+ * Properties in the {@code config/testApp} namespace are only available to the instances of the service
+ * named "testApp". If you want to share the configuration with other applications, you can configure the
+ * same {@code defaultContext} like "namespace1" or "namespace2".
  *
  * @author Spencer Gibb
  * @author lemonJ
