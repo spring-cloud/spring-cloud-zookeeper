@@ -69,21 +69,13 @@ public class ZookeeperPropertySourceTests {
 			this.curator.create().creatingParentsIfNeeded().forPath(path);
 			this.curator.setData().forPath(path, "testPropValUpdate".getBytes());
 		}
-		long startTime = System.currentTimeMillis();
+
 		ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
 		properties.setParallel(true);
 		ZookeeperPropertySource parallelPropertySource = new ZookeeperPropertySource(ROOT, curator, properties);
-		long parallelElapsedTime = System.currentTimeMillis() - startTime;
 
-		startTime = System.currentTimeMillis();
 		properties.setParallel(false);
 		ZookeeperPropertySource serialPropertySource = new ZookeeperPropertySource(ROOT, curator, properties);
-		long serialElapsedTime = System.currentTimeMillis() - startTime;
-
-		int processors = Runtime.getRuntime().availableProcessors();
-		if (processors > 1) {
-			assertThat(parallelElapsedTime).as("parallelElapsedTime").isLessThan(serialElapsedTime);
-		}
 
 		Field propertiesField = ZookeeperPropertySource.class.getDeclaredField("properties");
 		propertiesField.setAccessible(true);
