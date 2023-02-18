@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import static org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryPr
  * the user wants a dynamic port for spring boot.
  *
  * @author Spencer Gibb
+ * @author Ivan Zaitsev
  */
 public class ServiceInstanceRegistration implements ZookeeperRegistration {
 
@@ -73,6 +74,14 @@ public class ServiceInstanceRegistration implements ZookeeperRegistration {
 	}
 
 	@Override
+	public String getInstanceId() {
+		if (this.serviceInstance == null) {
+			return null;
+		}
+		return serviceInstance.getId();
+	}
+
+	@Override
 	public String getServiceId() {
 		if (this.serviceInstance == null) {
 			return null;
@@ -81,7 +90,7 @@ public class ServiceInstanceRegistration implements ZookeeperRegistration {
 	}
 
 	public int getPort() {
-		if (this.serviceInstance == null) {
+		if (this.serviceInstance == null || this.serviceInstance.getPort() == null) {
 			return 0;
 		}
 		return this.serviceInstance.getPort();
