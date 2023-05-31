@@ -17,23 +17,31 @@
 package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.commons.logging.Log;
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
+import org.springframework.boot.BootstrapContext;
 import org.springframework.boot.BootstrapRegistry;
 import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.CuratorFactory;
+import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -44,6 +52,12 @@ import org.springframework.cloud.zookeeper.support.ServiceDiscoveryCustomizer;
 import org.springframework.util.ClassUtils;
 
 public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryInitializer {
+
+	private static boolean isEnabled(Binder binder) {
+		return binder.bind(ConfigClientProperties.CONFIG_DISCOVERY_ENABLED, Boolean.class).orElse(false) &&
+				binder.bind(ConditionalOnZookeeperDiscoveryEnabled.PROPERTY, Boolean.class).orElse(true) &&
+				binder.bind("spring.cloud.discovery.enabled", Boolean.class).orElse(true);
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -95,7 +109,7 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 			}
 			ServiceDiscovery<ZookeeperInstance> serviceDiscovery = context.get(ServiceDiscovery.class);
 			ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, Bindable
-					.of(ZookeeperDependencies.class), getBindHandler(context))
+							.of(ZookeeperDependencies.class), getBindHandler(context))
 					.orElseGet(ZookeeperDependencies::new);
 			ZookeeperDiscoveryProperties discoveryProperties = context.get(ZookeeperDiscoveryProperties.class);
 
@@ -103,12 +117,9 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 		});
 
 		// create instance provider
-		registry.registerIfAbsent(ConfigServerInstanceProvider.Function.class, context -> {
-			if (!isEnabled(context.get(Binder.class))) {
-				return (id) -> Collections.emptyList();
-			}
-			return context.get(ZookeeperDiscoveryClient.class)::getInstances;
-		});
+		// We need to pass the lambda here so we do not create a new instance of ConfigServerInstanceProvider.Function
+		// which would result in a ClassNotFoundException when Spring Cloud Config is not on the classpath
+		registry.registerIfAbsent(ConfigServerInstanceProvider.Function.class, ZookeeperFunction::create);
 
 		// promote beans to context
 		registry.addCloseListener(event -> {
@@ -124,10 +135,63 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 		return context.getOrElse(BindHandler.class, null);
 	}
 
-	private boolean isEnabled(Binder binder) {
-		return binder.bind(ConfigClientProperties.CONFIG_DISCOVERY_ENABLED, Boolean.class).orElse(false) &&
-				binder.bind(ConditionalOnZookeeperDiscoveryEnabled.PROPERTY, Boolean.class).orElse(true) &&
-				binder.bind("spring.cloud.discovery.enabled", Boolean.class).orElse(true);
+	/*
+	 * This Function is executed when loading config data.  Because of this we cannot rely on the
+	 * BootstrapContext because Boot has not finished loading all the configuration data so if we
+	 * ask the BootstrapContext for configuration data it will not have it.  The apply method in this function
+	 * is passed the Binder and BindHandler from the config data context which has the configuration properties that
+	 * have been loaded so far in the config data process.
+	 *
+	 * We will create many of the same beans in this function as we do above in the initializer above.  We do both
+	 * to maintain compatibility since we are promoting those beans to the main application context.
+	 */
+	static final class ZookeeperFunction implements ConfigServerInstanceProvider.Function {
+
+		private final BootstrapContext context;
+
+		private ZookeeperFunction(BootstrapContext context) {
+			this.context = context;
+		}
+
+		static ZookeeperFunction create(BootstrapContext context) {
+			return new ZookeeperFunction(context);
+		}
+
+		@Override
+		public List<ServiceInstance> apply(String serviceId) {
+			return apply(serviceId, null, null, null);
+		}
+
+		@Override
+		public List<ServiceInstance> apply(String serviceId, Binder binder, BindHandler bindHandler, Log log) {
+			if (binder == null || !isEnabled(binder)) {
+				return Collections.emptyList();
+			}
+
+			ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+					.orElse(new ZookeeperProperties());
+			RetryPolicy retryPolicy = new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
+					properties.getMaxSleepMs());
+			try {
+				CuratorFramework curatorFramework = CuratorFactory.curatorFramework(properties, retryPolicy, Stream::of,
+						() -> null, () -> null);
+				InstanceSerializer<ZookeeperInstance> serializer = new JsonInstanceSerializer<>(ZookeeperInstance.class);
+				ZookeeperDiscoveryProperties discoveryProperties = binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
+								.of(ZookeeperDiscoveryProperties.class), bindHandler)
+						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties())));
+				DefaultServiceDiscoveryCustomizer customizer = new DefaultServiceDiscoveryCustomizer(curatorFramework, discoveryProperties, serializer);
+				ServiceDiscovery<ZookeeperInstance> serviceDiscovery = customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
+				ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, Bindable
+								.of(ZookeeperDependencies.class), bindHandler)
+						.orElseGet(ZookeeperDependencies::new);
+				return new ZookeeperDiscoveryClient(serviceDiscovery, dependencies, discoveryProperties).getInstances(serviceId);
+			}
+			catch (Exception e) {
+				log.warn("Error fetching config server instance from Zookeeper", e);
+				return Collections.emptyList();
+			}
+
+		}
 	}
 
 }

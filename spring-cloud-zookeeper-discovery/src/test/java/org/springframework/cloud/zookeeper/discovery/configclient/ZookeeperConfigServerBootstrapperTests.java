@@ -18,6 +18,7 @@ package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.bind.BindContext;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
@@ -39,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 public class ZookeeperConfigServerBootstrapperTests {
 
@@ -59,7 +62,8 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+					Log log = mock(Log.class);
+					assertThat(providerFn.apply("id", event.getBootstrapContext().get(Binder.class), event.getBootstrapContext().get(BindHandler.class), log)).as("ConfigServerInstanceProvider.Function should return empty list")
 							.isEmpty();
 				})).run();
 		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
@@ -80,7 +84,8 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+					Log log = mock(Log.class);
+					assertThat(providerFn.apply("id", event.getBootstrapContext().get(Binder.class), event.getBootstrapContext().get(BindHandler.class), log)).as("ConfigServerInstanceProvider.Function should return empty list")
 							.isEmpty();
 				})).run();
 		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
@@ -101,7 +106,7 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn.apply("id")).as("ConfigServerInstanceProvider.Function should return empty list")
+					assertThat(providerFn.apply("id", event.getBootstrapContext().get(Binder.class), event.getBootstrapContext().get(BindHandler.class), mock(Log.class))).as("ConfigServerInstanceProvider.Function should return empty list")
 							.isEmpty();
 				})).run();
 		CuratorFramework curatorFramework = context.getBean("curatorFramework", CuratorFramework.class);
@@ -124,7 +129,7 @@ public class ZookeeperConfigServerBootstrapperTests {
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
 							.get(ConfigServerInstanceProvider.Function.class);
-					assertThat(providerFn.apply("id")).as("Should return empty list.")
+					assertThat(providerFn.apply("id", event.getBootstrapContext().get(Binder.class), event.getBootstrapContext().get(BindHandler.class), mock(Log.class))).as("Should return empty list.")
 							.isNotNull();
 					bootstrapDiscoveryClient.set(event.getBootstrapContext().get(ZookeeperDiscoveryClient.class));
 				})).run();
