@@ -126,6 +126,26 @@
 				<artifactId>spring-cloud-test-support</artifactId>
 				<version>${spring-cloud-commons.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>mockserver</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mock-server</groupId>
+				<artifactId>mockserver-client-java</artifactId>
+				<version>${mockserverclient.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -134,6 +154,8 @@
 		<spring-cloud-commons.version>4.0.4-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>4.0.4-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>4.0.4-SNAPSHOT</spring-cloud-openfeign.version>
+		<testcontainers.version>1.17.6</testcontainers.version>
+		<mockserverclient.version>5.15.0</mockserverclient.version>
 	</properties>
 
 	<profiles>
