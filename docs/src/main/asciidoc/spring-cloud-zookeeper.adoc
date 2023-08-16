@@ -572,7 +572,7 @@ method of a `CuratorFramework` bean. One way to accomplish this is to provide yo
 
 [source,java,indent=0]
 ----
-@BoostrapConfiguration
+@BootstrapConfiguration
 public class CustomCuratorFrameworkConfig {
 
   @Bean
@@ -593,7 +593,7 @@ Alternatively, you can add your credentials from a class that depends on the exi
 
 [source,java,indent=0]
 ----
-@BoostrapConfiguration
+@BootstrapConfiguration
 public class DefaultCuratorFrameworkConfig {
 
   public ZookeeperConfig(CuratorFramework curator) {
