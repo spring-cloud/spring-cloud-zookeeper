@@ -31,6 +31,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration(proxyBeanMethods = false)
 @EnableAutoConfiguration
 @RestController
+@EnableScheduling
 @EnableFeignClients
 public class SampleZookeeperApplication {
 
@@ -60,6 +62,9 @@ public class SampleZookeeperApplication {
 
 	@Autowired
 	private AppClient appClient;
+
+	@Autowired
+	private ModifyableHealthContributer modifyableHealthContributer;
 
 	@Autowired(required = false)
 	private Registration registration;
@@ -86,6 +91,18 @@ public class SampleZookeeperApplication {
 		return this.env.getProperty(prop, "Not Found");
 	}
 
+	@RequestMapping("/up")
+	public String up() {
+		modifyableHealthContributer.setHealthy(true);
+		return "Instance is now marked as healthy.";
+	}
+
+	@RequestMapping("/down")
+	public String down() {
+		modifyableHealthContributer.setHealthy(false);
+		return "Instance is now marked as unhealthy.";
+	}
+
 	public String rt() {
 		return this.rest.getForObject("http://" + this.appName + "/hi", String.class);
 	}
@@ -95,6 +112,11 @@ public class SampleZookeeperApplication {
 	RestTemplate loadBalancedRestTemplate() {
 		this.rest = new RestTemplateBuilder().build();
 		return this.rest;
+	}
+
+	@Bean
+	ModifyableHealthContributer modifyableHealthContributer() {
+		return new ModifyableHealthContributer();
 	}
 
 	public static void main(String[] args) {
