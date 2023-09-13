@@ -1,0 +1,143 @@
+[[spring-cloud-zookeeper-config]]
+= Distributed Configuration with Zookeeper
+
+Zookeeper provides a
+https://zookeeper.apache.org/doc/current/zookeeperOver.html#sc_dataModelNameSpace[hierarchical namespace]
+that lets clients store arbitrary data, such as configuration data. Spring Cloud Zookeeper
+Config is an alternative to the
+https://github.com/spring-cloud/spring-cloud-config[Config Server and Client].
+Configuration is loaded into the Spring Environment during the special "`bootstrap`"
+phase. Configuration is stored in the `/config` namespace by default. Multiple
+`PropertySource` instances are created, based on the application's name and the active
+profiles, to mimic the Spring Cloud Config order of resolving properties. For example, an
+application with a name of `testApp` and with the `dev` profile has the following property
+sources created for it:
+
+* `config/testApp,dev`
+* `config/testApp`
+* `config/application,dev`
+* `config/application`
+
+The most specific property source is at the top, with the least specific at the bottom.
+Properties in the `config/application` namespace apply to all applications that use
+zookeeper for configuration. Properties in the `config/testApp` namespace are available
+only to the instances of the service named `testApp`.
+
+Configuration is currently read on startup of the application. Sending a HTTP `POST`
+request to `/refresh` causes the configuration to be reloaded. Watching the configuration
+namespace (which Zookeeper supports) is not currently implemented.
+
+[[activating]]
+== Activating
+
+Including a dependency on
+`org.springframework.cloud:spring-cloud-starter-zookeeper-config` enables
+autoconfiguration that sets up Spring Cloud Zookeeper Config.
+
+CAUTION: When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
+
+[[config-data-import]]
+== Spring Boot Config Data Import
+
+Spring Boot 2.4 introduced a new way to import configuration data via the `spring.config.import` property. This is now the default way to get configuration from Zookeeper.
+
+To optionally connect to Zookeeper for configuration set the following in application.properties:
+
+.application.properties
+[source,properties]
+----
+spring.config.import=optional:zookeeper:
+----
+
+This will connect to Zookeeper at the default location of "localhost:2181". Removing the `optional:` prefix will cause Zookeeper Config to fail if it is unable to connect to Zookeeper. To change the connection properties of Zookeeper Config either set `spring.cloud.zookeeper.connect-string` or add the connect string to the `spring.config.import` statement such as, `spring.config.import=optional:zookeeper:myhost:2818`. The location in the import property has precedence over the `connect-string` property.
+
+Zookeeper Config will try to load values from four automatic contexts based on `spring.cloud.zookeeper.config.name` (which defaults to the value of the `spring.application.name` property) and `spring.cloud.zookeeper.config.default-context` (which defaults to `application`). If you want to specify the contexts rather than using the computed ones, you can add that information to the `spring.config.import` statement.
+
+.application.properties
+[source,properties]
+----
+spring.config.import=optional:zookeeper:myhost:2181/contextone;/context/two
+----
+
+This will optionally load configuration only from `/contextone` and `/context/two`.
+
+NOTE: A `bootstrap` file (properties or yaml) is *not* needed for the Spring Boot Config Data method of import via `spring.config.import`.
+
+[[customizing]]
+== Customizing
+
+Zookeeper Config may be customized by setting the following properties:
+
+[source,yml,indent=0]
+----
+spring:
+  cloud:
+    zookeeper:
+      config:
+        enabled: true
+        root: configuration
+        defaultContext: apps
+        profileSeparator: '::'
+----
+
+* `enabled`: Setting this value to `false` disables Zookeeper Config.
+* `root`: Sets the base namespace for configuration values.
+* `defaultContext`: Sets the name used by all applications.
+* `profileSeparator`: Sets the value of the separator used to separate the profile name in
+property sources with profiles.
+
+CAUTION: If you have set `spring.cloud.bootstrap.enabled=true` or `spring.config.use-legacy-processing=true`, or included `spring-cloud-starter-bootstrap`, then the above values will need to be placed in `bootstrap.yml` instead of `application.yml`.
+
+[[access-control-lists-acls]]
+== Access Control Lists (ACLs)
+
+You can add authentication information for Zookeeper ACLs by calling the `addAuthInfo`
+method of a `CuratorFramework` bean. One way to accomplish this is to provide your own
+`CuratorFramework` bean, as shown in the following example:
+
+[source,java,indent=0]
+----
+@BoostrapConfiguration
+public class CustomCuratorFrameworkConfig {
+
+  @Bean
+  public CuratorFramework curatorFramework() {
+    CuratorFramework curator = new CuratorFramework();
+    curator.addAuthInfo("digest", "user:password".getBytes());
+    return curator;
+  }
+
+}
+----
+Consult
+https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
+to see how the `CuratorFramework` bean's default configuration.
+
+Alternatively, you can add your credentials from a class that depends on the existing
+`CuratorFramework` bean, as shown in the following example:
+
+[source,java,indent=0]
+----
+@BoostrapConfiguration
+public class DefaultCuratorFrameworkConfig {
+
+  public ZookeeperConfig(CuratorFramework curator) {
+    curator.addAuthInfo("digest", "user:password".getBytes());
+  }
+
+}
+----
+
+The creation of this bean must occur during the boostrapping phase. You can register
+configuration classes to run during this phase by annotating them with
+`@BootstrapConfiguration` and including them in a comma-separated list that you set as the
+value of the `org.springframework.cloud.bootstrap.BootstrapConfiguration` property in the
+`resources/META-INF/spring.factories` file, as shown in the following example:
+
+.resources/META-INF/spring.factories
+----
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+my.project.CustomCuratorFrameworkConfig,\
+my.project.DefaultCuratorFrameworkConfig
+----
