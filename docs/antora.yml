@@ -1,6 +1,6 @@
 name: cloud-zookeeper
 version: true
-title: spring-cloud-zookeeper
+title: Spring Cloud Zookeeper
 nav:
   - modules/ROOT/nav.adoc
 ext:
