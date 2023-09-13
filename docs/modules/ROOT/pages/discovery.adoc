@@ -19,7 +19,7 @@ NOTE: For web functionality, you still need to include
 `org.springframework.boot:spring-boot-starter-web`.
 
 CAUTION: When working with version 3.4 of Zookeeper you need to change
-the way you include the dependency as described xref:spring-cloud-zookeeper/install.adoc[here].
+the way you include the dependency as described xref:install.adoc[here].
 
 [[registering-with-zookeeper]]
 == Registering with Zookeeper
@@ -61,7 +61,7 @@ spring:
       connect-string: localhost:2181
 ----
 
-CAUTION: If you use xref:spring-cloud-zookeeper/config.adoc[Spring Cloud Zookeeper Config], the
+CAUTION: If you use xref:config.adoc[Spring Cloud Zookeeper Config], the
 values shown in the preceding example need to be in `bootstrap.yml` instead of
 `application.yml`.
 
@@ -79,11 +79,8 @@ If you would like to disable the Zookeeper Discovery Client, you can set
 == Using the DiscoveryClient
 
 Spring Cloud has support for
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign]
-(a REST client builder),
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/ascii[Spring
-`RestTemplate`] and
-https://cloud.spring.io/spring-cloud-commons/reference/html/#loadbalanced-webclient[Spring WebFlux], using logical service names instead of physical URLs.
+https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/[OpenFeign]
+(a REST client builder), `RestTemplate` and `WebClient` via https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/loadbalancer.html#spring-cloud-loadbalancer-integrations[Spring Cloud Loadbalancer], using logical service names instead of physical URLs.
 
 You can also use the `org.springframework.cloud.client.discovery.DiscoveryClient`, which
 provides a simple API for discovery clients that is not specific to Netflix, as shown in

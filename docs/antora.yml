@@ -1,6 +1,6 @@
-name: PROJECT_WITHOUT_SPRING
+name: cloud-zookeeper
 version: true
-title: PROJECT_NAME
+title: spring-cloud-zookeeper
 nav:
   - modules/ROOT/nav.adoc
 ext:

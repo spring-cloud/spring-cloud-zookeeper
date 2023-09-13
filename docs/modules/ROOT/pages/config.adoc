@@ -35,7 +35,7 @@ Including a dependency on
 autoconfiguration that sets up Spring Cloud Zookeeper Config.
 
 CAUTION: When working with version 3.4 of Zookeeper you need to change
-the way you include the dependency as described xref:spring-cloud-zookeeper/install.adoc[here].
+the way you include the dependency as described xref:install.adoc[here].
 
 [[config-data-import]]
 == Spring Boot Config Data Import
@@ -111,7 +111,7 @@ public class CustomCuratorFrameworkConfig {
 }
 ----
 Consult
-https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
+https://github.com/spring-cloud/spring-cloud-zookeeper/blob/main/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
 to see how the `CuratorFramework` bean's default configuration.
 
 Alternatively, you can add your credentials from a class that depends on the existing
