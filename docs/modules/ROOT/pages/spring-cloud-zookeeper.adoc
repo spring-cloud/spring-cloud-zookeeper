@@ -2,7 +2,5 @@
 [[spring-cloud-zookeeper]]
 = Spring Cloud Zookeeper
 
-include::intro.adoc[]
 
-include::_attributes.adoc[]
 

@@ -1,13 +1,10 @@
 image::https://travis-ci.org/spring-cloud/spring-cloud-zookeeper.svg?branch=master[Build Status, link=https://travis-ci.org/spring-cloud/spring-cloud-zookeeper]
 
-include::intro.adoc[]
 
-include::_attributes.adoc[]
 
 [[quick-start]]
 = Quick Start
 
-include::quickstart.adoc[]
 
 [[zookeeper-overview]]
 = Zookeeper overview
