@@ -3,10 +3,10 @@
 
 The following topics cover how to work with Spring Cloud Zookeeper dependencies:
 
-* <<spring-cloud-zookeeper-dependencies-using>>
-* <<spring-cloud-zookeeper-dependencies-activating>>
-* <<spring-cloud-zookeeper-dependencies-setting-up>>
-* <<spring-cloud-zookeeper-dependencies-configuring>>
+* xref:spring-cloud-zookeeper/dependencies.adoc#spring-cloud-zookeeper-dependencies-using[Using the Zookeeper Dependencies]
+* xref:spring-cloud-zookeeper/dependencies.adoc#spring-cloud-zookeeper-dependencies-activating[Activating Zookeeper Dependencies]
+* xref:spring-cloud-zookeeper/dependencies.adoc#spring-cloud-zookeeper-dependencies-setting-up[Setting up Zookeeper Dependencies]
+* xref:spring-cloud-zookeeper/dependencies.adoc#spring-cloud-zookeeper-dependencies-configuring[Configuring Spring Cloud Zookeeper Dependencies]
 
 [[spring-cloud-zookeeper-dependencies-using]]
 == Using the Zookeeper Dependencies
@@ -92,7 +92,7 @@ public interface NewsletterService {
 
 The path is represented by the `path` YAML property and is the path under which the dependency is registered under Zookeeper.
 As described in the
-<<spring-cloud-zookeeper-dependencies-setting-up-aliases,previous section>>, Spring Cloud LoadBalancer operates on URLs.
+xref:spring-cloud-zookeeper/dependencies.adoc#spring-cloud-zookeeper-dependencies-setting-up-aliases[previous section], Spring Cloud LoadBalancer operates on URLs.
 As a result, this path is not compliant with its requirement.
 That is why Spring Cloud Zookeeper maps the alias to the proper path.
 
@@ -172,7 +172,7 @@ exception, and the Spring Context fails to set up. In other words, your applicat
 start if the required dependency is not registered in Zookeeper.
 
 You can read more about Spring Cloud Zookeeper Presence Checker
-<<spring-cloud-zookeeper-dependency-watcher-presence-checker,later in this document>>.
+xref:spring-cloud-zookeeper/dependency-watcher.adoc#spring-cloud-zookeeper-dependency-watcher-presence-checker[later in this document].
 
 [[stubs]]
 === Stubs

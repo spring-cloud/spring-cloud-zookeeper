@@ -81,7 +81,7 @@ dependencyManagement {
 ----
 
 WARNING: Depending on the version you are using, you might need to adjust Apache Zookeeper version used in your project.
-You can read more about it in the <<spring-cloud-zookeeper-install,Install Zookeeper section>>.
+You can read more about it in the xref:spring-cloud-zookeeper/install.adoc[Install Zookeeper section].
 
 Now you can create a standard Spring Boot application, such as the following HTTP server:
 
@@ -207,7 +207,7 @@ dependencyManagement {
 ----
 
 WARNING: Depending on the version you are using, you might need to adjust Apache Zookeeper version used in your project.
-You can read more about it in the <<spring-cloud-zookeeper-install,Install Zookeeper section>>.
+You can read more about it in the xref:spring-cloud-zookeeper/install.adoc[Install Zookeeper section].
 
 Now you can create a standard Spring Boot application, such as the following HTTP server:
 
@@ -231,4 +231,4 @@ public class Application {
 The application retrieves configuration data from Zookeeper.
 
 WARNING: If you use Spring Cloud Zookeeper Config, you need to set the `spring.config.import` property in order to bind to Zookeeper.
-You can read more about it in the <<config-data-import,Spring Boot Config Data Import section>>.
+You can read more about it in the xref:spring-cloud-zookeeper/config.adoc#config-data-import[Spring Boot Config Data Import section].

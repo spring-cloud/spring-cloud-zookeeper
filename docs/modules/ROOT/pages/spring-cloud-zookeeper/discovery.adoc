@@ -19,7 +19,7 @@ NOTE: For web functionality, you still need to include
 `org.springframework.boot:spring-boot-starter-web`.
 
 CAUTION: When working with version 3.4 of Zookeeper you need to change
-the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
+the way you include the dependency as described xref:spring-cloud-zookeeper/install.adoc[here].
 
 [[registering-with-zookeeper]]
 == Registering with Zookeeper
@@ -61,7 +61,7 @@ spring:
       connect-string: localhost:2181
 ----
 
-CAUTION: If you use <<spring-cloud-zookeeper-config,Spring Cloud Zookeeper Config>>, the
+CAUTION: If you use xref:spring-cloud-zookeeper/config.adoc[Spring Cloud Zookeeper Config], the
 values shown in the preceding example need to be in `bootstrap.yml` instead of
 `application.yml`.
 

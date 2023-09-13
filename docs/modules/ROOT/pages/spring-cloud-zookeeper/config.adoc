@@ -35,7 +35,7 @@ Including a dependency on
 autoconfiguration that sets up Spring Cloud Zookeeper Config.
 
 CAUTION: When working with version 3.4 of Zookeeper you need to change
-the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
+the way you include the dependency as described xref:spring-cloud-zookeeper/install.adoc[here].
 
 [[config-data-import]]
 == Spring Boot Config Data Import
