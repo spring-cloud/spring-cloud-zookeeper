@@ -1,0 +1,102 @@
+[[spring-cloud-zookeeper-discovery]]
+= Service Discovery with Zookeeper
+
+Service Discovery is one of the key tenets of a microservice based architecture. Trying to
+hand-configure each client or some form of convention can be difficult to do and can be
+brittle. https://curator.apache.org[Curator](A Java library for Zookeeper) provides Service
+Discovery through a https://curator.apache.org/curator-x-discovery/[Service Discovery
+Extension]. Spring Cloud Zookeeper uses this extension for service registration and
+discovery.
+
+[[activating]]
+== Activating
+
+Including a dependency on
+`org.springframework.cloud:spring-cloud-starter-zookeeper-discovery` enables
+autoconfiguration that sets up Spring Cloud Zookeeper Discovery.
+
+NOTE: For web functionality, you still need to include
+`org.springframework.boot:spring-boot-starter-web`.
+
+CAUTION: When working with version 3.4 of Zookeeper you need to change
+the way you include the dependency as described xref:install.adoc[here].
+
+[[registering-with-zookeeper]]
+== Registering with Zookeeper
+
+When a client registers with Zookeeper, it provides metadata (such as host and port, ID,
+and name) about itself.
+
+The following example shows a Zookeeper client:
+
+[source,java,indent=0]
+----
+@SpringBootApplication
+@RestController
+public class Application {
+
+    @RequestMapping("/")
+    public String home() {
+        return "Hello world";
+    }
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(Application.class).web(true).run(args);
+    }
+
+}
+----
+
+NOTE: The preceding example is a normal Spring Boot application.
+
+If Zookeeper is located somewhere other than `localhost:2181`, the configuration must
+provide the location of the server, as shown in the following example:
+
+[source,yml,indent=0]
+.application.yml
+----
+spring:
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+----
+
+CAUTION: If you use xref:config.adoc[Spring Cloud Zookeeper Config], the
+values shown in the preceding example need to be in `bootstrap.yml` instead of
+`application.yml`.
+
+The default service name, instance ID, and port (taken from the `Environment`) are
+`${spring.application.name}`, the Spring Context ID, and `${server.port}`, respectively.
+
+Having `spring-cloud-starter-zookeeper-discovery` on the classpath makes the app into both
+a Zookeeper "`service`" (that is, it registers itself) and a "`client`" (that is, it can
+query Zookeeper to locate other services).
+
+If you would like to disable the Zookeeper Discovery Client, you can set
+`spring.cloud.zookeeper.discovery.enabled` to `false`.
+
+[[using-the-discoveryclient]]
+== Using the DiscoveryClient
+
+Spring Cloud has support for
+https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/[OpenFeign]
+(a REST client builder), `RestTemplate` and `WebClient` via https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/loadbalancer.html#spring-cloud-loadbalancer-integrations[Spring Cloud Loadbalancer], using logical service names instead of physical URLs.
+
+You can also use the `org.springframework.cloud.client.discovery.DiscoveryClient`, which
+provides a simple API for discovery clients that is not specific to Netflix, as shown in
+the following example:
+
+[source,java,indent=0]
+----
+@Autowired
+private DiscoveryClient discoveryClient;
+
+public String serviceUrl() {
+    List<ServiceInstance> list = discoveryClient.getInstances("STORES");
+    if (list != null && list.size() > 0 ) {
+        return list.get(0).getUri().toString();
+    }
+    return null;
+}
+----
+

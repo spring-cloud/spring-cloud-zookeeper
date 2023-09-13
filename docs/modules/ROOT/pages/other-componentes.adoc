@@ -1,0 +1,16 @@
+[[spring-cloud-zookeeper-other-componentes]]
+= Using Spring Cloud Zookeeper with Spring Cloud Components
+:page-section-summary-toc: 1
+
+Feign, Spring Cloud Gateway and Spring Cloud LoadBalancer all work with Spring Cloud Zookeeper.
+
+[[spring-cloud-loadbalancer-with-zookeeper]]
+== Spring Cloud LoadBalancer with Zookeeper
+
+Spring Cloud Zookeeper provides an implementation of Spring Cloud LoadBalancer `ServiceInstanceListSupplier`.
+When you use the  `spring-cloud-starter-zookeeper-discovery`, Spring Cloud LoadBalancer is autoconfigured to use the
+`ZookeeperServiceInstanceListSupplier` by default.
+
+TIP: If you were previously using the StickyRule in Zookeeper, its replacement in the current stack
+is the `SameInstancePreferenceServiceInstanceListSupplier` in SC LoadBalancer. You can read on how to set it up in the https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#spring-cloud-loadbalancer[Spring Cloud Commons documentation].
+

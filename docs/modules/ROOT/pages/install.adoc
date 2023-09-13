@@ -1,0 +1,8 @@
+[[spring-cloud-zookeeper-install]]
+= Working with Zookeeper
+
+See the https://zookeeper.apache.org/doc/current/zookeeperStarted.html[installation
+documentation] for instructions on how to install Zookeeper.
+
+// TODO: describe Testcontainers and zk
+
