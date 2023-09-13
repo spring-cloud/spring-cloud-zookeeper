@@ -2,6 +2,7 @@ This quick start walks through using Spring Cloud Zookeeper for Service Discover
 
 First, run Zookeeper on your machine. Then you can access it and use it as a Service Registry and Configuration source with Spring Cloud Zookeeper.
 
+[[discovery-client-usage]]
 === Discovery Client Usage
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-discovery`.
@@ -127,6 +128,7 @@ public String serviceUrl() {
 }
 ----
 
+[[distributed-configuration-usage]]
 === Distributed Configuration Usage
 
 To use these features in an application, you can build it as a Spring Boot application that depends on `spring-cloud-zookeeper-core` and `spring-cloud-zookeeper-config`.

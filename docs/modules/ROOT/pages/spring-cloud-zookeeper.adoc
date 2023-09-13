@@ -1,10 +1,12 @@
 
+[[spring-cloud-zookeeper]]
 = Spring Cloud Zookeeper
 
 include::intro.adoc[]
 
 include::_attributes.adoc[]
 
+[[quick-start]]
 == Quick Start
 
 include::quickstart.adoc[]
@@ -72,6 +74,7 @@ Discovery through a https://curator.apache.org/curator-x-discovery/[Service Disc
 Extension]. Spring Cloud Zookeeper uses this extension for service registration and
 discovery.
 
+[[activating]]
 === Activating
 
 Including a dependency on
@@ -84,6 +87,7 @@ NOTE: For web functionality, you still need to include
 CAUTION: When working with version 3.4 of Zookeeper you need to change
 the way you include the dependency as described <<spring-cloud-zookeeper-install,here>>.
 
+[[registering-with-zookeeper]]
 === Registering with Zookeeper
 
 When a client registers with Zookeeper, it provides metadata (such as host and port, ID,
@@ -137,6 +141,7 @@ query Zookeeper to locate other services).
 If you would like to disable the Zookeeper Discovery Client, you can set
 `spring.cloud.zookeeper.discovery.enabled` to `false`.
 
+[[using-the-discoveryclient]]
 === Using the DiscoveryClient
 
 Spring Cloud has support for
@@ -169,6 +174,7 @@ public String serviceUrl() {
 
 Feign, Spring Cloud Gateway and Spring Cloud LoadBalancer all work with Spring Cloud Zookeeper.
 
+[[spring-cloud-loadbalancer-with-zookeeper]]
 === Spring Cloud LoadBalancer with Zookeeper
 
 Spring Cloud Zookeeper provides an implementation of Spring Cloud LoadBalancer `ServiceInstanceListSupplier`.
@@ -204,6 +210,7 @@ public void registerThings() {
 }
 ----
 
+[[instance-status]]
 === Instance Status
 
 Netflix Eureka supports having instances that are `OUT_OF_SERVICE` registered with the server.
@@ -311,6 +318,7 @@ public interface NewsletterService {
 }
 ----
 
+[[path]]
 ==== Path
 
 The path is represented by the `path` YAML property and is the path under which the dependency is registered under Zookeeper.
@@ -319,6 +327,7 @@ As described in the
 As a result, this path is not compliant with its requirement.
 That is why Spring Cloud Zookeeper maps the alias to the proper path.
 
+[[load-balancer-type]]
 ==== Load Balancer Type
 
 The load balancer type is represented by `loadBalancerType` YAML property.
@@ -330,6 +339,7 @@ You can choose one of the following load balancing strategies:
 * RANDOM: Picks an instance randomly.
 * ROUND_ROBIN: Iterates over instances over and over again.
 
+[[content-type-template-and-version]]
 ==== `Content-Type` Template and Version
 
 The `Content-Type` template and version are represented by the `contentTypeTemplate` and
@@ -358,6 +368,7 @@ The combination of `contentTypeTemplate` and version results in the creation of 
 application/vnd.newsletter.v1+json
 ----
 
+[[default-headers]]
 ==== Default Headers
 
 Default headers are represented by the `headers` map in YAML.
@@ -379,6 +390,7 @@ headers:
 That `headers` section results in adding the `Accept` and `Cache-Control` headers with
 appropriate list of values in your HTTP request.
 
+[[required-dependencies]]
 ==== Required Dependencies
 
 Required dependencies are represented by `required` property in YAML.
@@ -393,6 +405,7 @@ start if the required dependency is not registered in Zookeeper.
 You can read more about Spring Cloud Zookeeper Presence Checker
 <<spring-cloud-zookeeper-dependency-watcher-presence-checker,later in this document>>.
 
+[[stubs]]
 ==== Stubs
 
 You can provide a colon-separated path to the JAR containing stubs of the dependency, as
@@ -431,12 +444,14 @@ The Dependency Watcher mechanism lets you register listeners to your dependencie
 functionality is, in fact, an implementation of the `Observator` pattern. When a
 dependency changes, its state (to either UP or DOWN), some custom logic can be applied.
 
+[[activating]]
 === Activating
 
 Spring Cloud Zookeeper Dependencies functionality needs to be enabled for you to use the
 Dependency Watcher mechanism.
 // TODO: How can the reader do that?
 
+[[registering-a-listener]]
 === Registering a Listener
 
 To register a listener, you must implement an interface called
@@ -504,6 +519,7 @@ Configuration is currently read on startup of the application. Sending a HTTP `P
 request to `/refresh` causes the configuration to be reloaded. Watching the configuration
 namespace (which Zookeeper supports) is not currently implemented.
 
+[[activating]]
 === Activating
 
 Including a dependency on
@@ -540,6 +556,7 @@ This will optionally load configuration only from `/contextone` and `/context/tw
 
 NOTE: A `bootstrap` file (properties or yaml) is *not* needed for the Spring Boot Config Data method of import via `spring.config.import`.
 
+[[customizing]]
 === Customizing
 
 Zookeeper Config may be customized by setting the following properties:
@@ -564,6 +581,7 @@ property sources with profiles.
 
 CAUTION: If you have set `spring.cloud.bootstrap.enabled=true` or `spring.config.use-legacy-processing=true`, or included `spring-cloud-starter-bootstrap`, then the above values will need to be placed in `bootstrap.yml` instead of `application.yml`.
 
+[[access-control-lists-acls]]
 === Access Control Lists (ACLs)
 
 You can add authentication information for Zookeeper ACLs by calling the `addAuthInfo`
