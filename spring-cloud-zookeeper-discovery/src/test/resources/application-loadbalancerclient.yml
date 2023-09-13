@@ -1,9 +1,0 @@
-spring.application.name: loadbalancerclient
-spring.cloud.zookeeper:
-  dependencies:
-    someAlias:
-      path: testInstance
-      loadBalancerType: STICKY
-logging:
-  level:
-    org.apache.zookeeper.ClientCnxn: ERROR

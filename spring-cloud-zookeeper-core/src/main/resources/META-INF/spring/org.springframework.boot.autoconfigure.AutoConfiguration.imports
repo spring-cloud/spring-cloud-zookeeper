@@ -1,2 +1,0 @@
-org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration
-org.springframework.cloud.zookeeper.ZookeeperHealthAutoConfiguration
