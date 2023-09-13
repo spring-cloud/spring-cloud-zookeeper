@@ -1,5 +1,6 @@
 [[spring-cloud-zookeeper-other-componentes]]
 = Using Spring Cloud Zookeeper with Spring Cloud Components
+:page-section-summary-toc: 1
 
 Feign, Spring Cloud Gateway and Spring Cloud LoadBalancer all work with Spring Cloud Zookeeper.
 
