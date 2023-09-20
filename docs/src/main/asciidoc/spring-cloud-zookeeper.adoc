@@ -140,11 +140,11 @@ If you would like to disable the Zookeeper Discovery Client, you can set
 === Using the DiscoveryClient
 
 Spring Cloud has support for
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign]
+https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/[OpenFeign]
 (a REST client builder),
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/ascii[Spring
+https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#rest-template-loadbalancer-client[Spring
 `RestTemplate`] and
-https://cloud.spring.io/spring-cloud-commons/reference/html/#loadbalanced-webclient[Spring WebFlux], using logical service names instead of physical URLs.
+https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#webclinet-loadbalancer-clientt[Spring WebFlux], using logical service names instead of physical URLs.
 
 You can also use the `org.springframework.cloud.client.discovery.DiscoveryClient`, which
 provides a simple API for discovery clients that is not specific to Netflix, as shown in
@@ -238,11 +238,11 @@ The following topics cover how to work with Spring Cloud Zookeeper dependencies:
 Spring Cloud Zookeeper gives you a possibility to provide dependencies of your application
 as properties. As dependencies, you can understand other applications that are registered
 in Zookeeper and which you would like to call through
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc#spring-cloud-feign[Feign]
+https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/[OpenFeign]
 (a REST client builder),
-https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/ascii[Spring
+https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#rest-template-loadbalancer-client[Spring
 `RestTemplate`] and
-https://cloud.spring.io/spring-cloud-commons/reference/html/#loadbalanced-webclient[Spring WebFlux].
+https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#webclinet-loadbalancer-client[Spring WebFlux].
 
 You can also use the Zookeeper Dependency Watchers functionality to control and monitor
 the state of your dependencies.
@@ -585,7 +585,7 @@ public class CustomCuratorFrameworkConfig {
 }
 ----
 Consult
-https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
+https://github.com/spring-cloud/spring-cloud-zookeeper/blob/4.0.x/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
 to see how the `CuratorFramework` bean's default configuration.
 
 Alternatively, you can add your credentials from a class that depends on the existing
