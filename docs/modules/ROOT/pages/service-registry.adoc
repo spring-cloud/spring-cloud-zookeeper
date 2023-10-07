@@ -38,7 +38,7 @@ instance status actuator endpoint, as shown in the following example:
 
 [source,sh,indent=0]
 ----
-$ http POST http://localhost:8081/service-registry status=OUT_OF_SERVICE
+$ http POST http://localhost:8081/serviceregistry status=OUT_OF_SERVICE
 ----
 
 NOTE: The preceding example uses the `http` command from https://httpie.org.
