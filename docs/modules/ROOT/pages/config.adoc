@@ -25,7 +25,7 @@ only to the instances of the service named `testApp`.
 
 Configuration is currently read on startup of the application. Sending a HTTP `POST`
 request to `/refresh` causes the configuration to be reloaded. Watching the configuration
-namespace (which Zookeeper supports) is not currently implemented.
+namespace (which Zookeeper supports) is also available.
 
 [[activating]]
 == Activating
