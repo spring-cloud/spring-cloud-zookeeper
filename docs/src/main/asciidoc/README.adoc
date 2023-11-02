@@ -39,8 +39,8 @@ Doing so brings in the required Spring Cloud Maven repositories and Build.
 
 == Building
 
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/building.adoc[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/3.1.x/docs/src/main/asciidoc/building.adoc[]
 
 == Contributing
 
-include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]
+include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/3.1.x/docs/src/main/asciidoc/contributing.adoc[]
