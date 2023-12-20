@@ -168,22 +168,22 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 				return Collections.emptyList();
 			}
 
-			ZookeeperProperties properties = binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
-					.orElse(new ZookeeperProperties());
-			RetryPolicy retryPolicy = new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
-					properties.getMaxSleepMs());
+			ZookeeperProperties properties = context.getOrElse(ZookeeperProperties.class, binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+					.orElse(new ZookeeperProperties()));
+			RetryPolicy retryPolicy = context.getOrElse(RetryPolicy.class, new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
+					properties.getMaxSleepMs()));
 			try {
-				CuratorFramework curatorFramework = CuratorFactory.curatorFramework(properties, retryPolicy, Stream::of,
-						() -> null, () -> null);
-				InstanceSerializer<ZookeeperInstance> serializer = new JsonInstanceSerializer<>(ZookeeperInstance.class);
-				ZookeeperDiscoveryProperties discoveryProperties = binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
+				CuratorFramework curatorFramework = context.getOrElse(CuratorFramework.class, CuratorFactory.curatorFramework(properties, retryPolicy, Stream::of,
+						() -> null, () -> null));
+				InstanceSerializer<ZookeeperInstance> serializer = context.getOrElse(InstanceSerializer.class, new JsonInstanceSerializer<>(ZookeeperInstance.class));
+				ZookeeperDiscoveryProperties discoveryProperties = context.getOrElse(ZookeeperDiscoveryProperties.class, binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
 								.of(ZookeeperDiscoveryProperties.class), bindHandler)
-						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties())));
-				DefaultServiceDiscoveryCustomizer customizer = new DefaultServiceDiscoveryCustomizer(curatorFramework, discoveryProperties, serializer);
+						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()))));
+				ServiceDiscoveryCustomizer customizer = context.getOrElse(ServiceDiscoveryCustomizer.class, new DefaultServiceDiscoveryCustomizer(curatorFramework, discoveryProperties, serializer));
 				ServiceDiscovery<ZookeeperInstance> serviceDiscovery = customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
-				ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, Bindable
+				ZookeeperDependencies dependencies = context.getOrElse(ZookeeperDependencies.class, binder.bind(ZookeeperDependencies.PREFIX, Bindable
 								.of(ZookeeperDependencies.class), bindHandler)
-						.orElseGet(ZookeeperDependencies::new);
+						.orElseGet(ZookeeperDependencies::new));
 				return new ZookeeperDiscoveryClient(serviceDiscovery, dependencies, discoveryProperties).getInstances(serviceId);
 			}
 			catch (Exception e) {
