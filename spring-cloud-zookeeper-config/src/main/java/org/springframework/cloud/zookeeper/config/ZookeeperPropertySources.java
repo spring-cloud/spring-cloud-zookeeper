@@ -49,7 +49,9 @@ public class ZookeeperPropertySources {
 
 		String defaultContext = root + "/" + properties.getDefaultContext();
 		contexts.add(new Context(defaultContext));
-		addProfiles(contexts, defaultContext, profiles);
+		if (!properties.isProfilePriority()) {
+			addProfiles(contexts, defaultContext, profiles);
+		}
 
 		StringBuilder baseContext = new StringBuilder(root);
 		if (!properties.getName().startsWith("/")) {
@@ -58,6 +60,10 @@ public class ZookeeperPropertySources {
 		// getName() defaults to ${spring.application.name} or application
 		baseContext.append(properties.getName());
 		contexts.add(new Context(baseContext.toString()));
+
+		if (properties.isProfilePriority()) {
+			addProfiles(contexts, defaultContext, profiles);
+		}
 		addProfiles(contexts, baseContext.toString(), profiles);
 
 		if (reverse) {

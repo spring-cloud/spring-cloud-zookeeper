@@ -62,6 +62,11 @@ public class ZookeeperConfigProperties {
 	 */
 	private boolean failFast = true;
 
+	/**
+	 * Config with profiles always have higher priority in bootstrap mode, just like in import mode.
+	 */
+	private boolean profilePriority = false;
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -112,6 +117,14 @@ public class ZookeeperConfigProperties {
 		this.failFast = failFast;
 	}
 
+	public boolean isProfilePriority() {
+		return this.profilePriority;
+	}
+
+	public void setProfilePriority(boolean profilePriority) {
+		this.profilePriority = profilePriority;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringCreator(this)
@@ -121,6 +134,7 @@ public class ZookeeperConfigProperties {
 				.append("defaultContext", defaultContext)
 				.append("profileSeparator", profileSeparator)
 				.append("failFast", failFast)
+				.append("profilePriority", profilePriority)
 				.toString();
 
 	}

@@ -233,6 +233,46 @@ public class ZookeeperPropertySourceLocatorTests {
 		assertThat(propertySources.get(3).getName()).endsWith(defaultContext);
 	}
 
+	@Test
+	public void compositePropertySourceHoldsPropertySourcesInCorrectOrderWithProfilePriority() {
+
+		// given
+		final String defaultContext = "someDefaultContext";
+		final String someName = "someName";
+		final String someProfile = "someProfile";
+
+		final CuratorFramework curator = mock(CuratorFramework.class);
+		when(curator.getChildren()).thenReturn(mock(GetChildrenBuilder.class));
+
+		final MockEnvironment mockEnvironment = new MockEnvironment();
+		mockEnvironment.setActiveProfiles(someProfile);
+
+		final ZookeeperConfigProperties properties = new ZookeeperConfigProperties();
+		properties.setName(someName);
+		properties.setDefaultContext(defaultContext);
+		properties.setProfilePriority(true);
+
+		final ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(
+				curator, properties);
+
+		// when
+		final PropertySource<?> propertySource = locator.locate(mockEnvironment);
+
+		// then
+		assertThat(propertySource).isInstanceOf(CompositePropertySource.class);
+
+		// and
+		final ArrayList<PropertySource<?>> propertySources = new ArrayList<>(
+				((CompositePropertySource) propertySource).getPropertySources());
+
+		assertThat(propertySources.get(0).getName())
+				.endsWith(someName + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(1).getName()).endsWith(
+				defaultContext + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(2).getName()).endsWith(someName);
+		assertThat(propertySources.get(3).getName()).endsWith(defaultContext);
+	}
+
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config implements ApplicationListener<EnvironmentChangeEvent> {
