@@ -2,7 +2,7 @@
 = Spring Cloud Zookeeper Dependency Watcher
 
 The Dependency Watcher mechanism lets you register listeners to your dependencies. The
-functionality is, in fact, an implementation of the `Observator` pattern. When a
+functionality is, in fact, an implementation of the `Observer` pattern. When a
 dependency changes, its state (to either UP or DOWN), some custom logic can be applied.
 
 [[activating]]
