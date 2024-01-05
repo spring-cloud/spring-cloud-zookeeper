@@ -67,11 +67,18 @@ public class ZookeeperConfigServerBootstrapperCustomizerTests {
 	public void enabledAddsInstanceProviderFn() {
 		AtomicReference<ZookeeperDiscoveryClient> bootstrapDiscoveryClient = new AtomicReference<>();
 		BindHandlerBootstrapper bindHandlerBootstrapper = new BindHandlerBootstrapper();
+		ZookeeperTestingServer testingServer = new ZookeeperTestingServer();
+		testingServer.start();
 		context = new SpringApplicationBuilder(ZookeeperConfigServerBootstrapperTests.TestConfig.class)
-				.listeners(new ZookeeperTestingServer())
+				.listeners(testingServer)
 				.properties("--server.port=0", "spring.cloud.config.discovery.enabled=true",
-						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval",
-						"spring.cloud.service-registry.auto-registration.enabled=false")
+						"spring.cloud.zookeeper.discovery.metadata[mymetadataprop]=mymetadataval")
+				.addBootstrapRegistryInitializer(registry -> {
+					ZookeeperProperties properties = new ZookeeperProperties();
+					properties.setConnectString("localhost:" + testingServer.getPort());
+					registry.registerIfAbsent(ZookeeperProperties.class, context ->
+							properties);
+				})
 				.addBootstrapRegistryInitializer(bindHandlerBootstrapper)
 				.addBootstrapRegistryInitializer(registry -> registry.addCloseListener(event -> {
 					ConfigServerInstanceProvider.Function providerFn = event.getBootstrapContext()
@@ -80,7 +87,11 @@ public class ZookeeperConfigServerBootstrapperCustomizerTests {
 							.get(Binder.class), event.getBootstrapContext()
 							.get(BindHandler.class), mock(Log.class))).as("Should return empty list.")
 							.isNotNull();
-					bootstrapDiscoveryClient.set(event.getBootstrapContext().get(ZookeeperDiscoveryClient.class));
+					bootstrapDiscoveryClient.set(((ZookeeperConfigServerBootstrapper.ZookeeperFunction) providerFn).getDiscoveryClient());
+
+					//Since we don't call the provider function until this close event we need to promote the discovery client
+					event.getApplicationContext().getBeanFactory().registerSingleton("zookeeperServiceDiscovery",
+							bootstrapDiscoveryClient.get());
 					CuratorFrameworkCustomizer curatorFrameworkCustomizer = event.getBootstrapContext()
 							.get(CuratorFrameworkCustomizer.class);
 					assertThat(curatorFrameworkCustomizer).isInstanceOf(MyCuratorFrameworkCustomizer.class);
@@ -123,6 +134,12 @@ public class ZookeeperConfigServerBootstrapperCustomizerTests {
 					return result;
 				}
 			});
+
+			ZookeeperProperties properties = new ZookeeperProperties();
+
+
+			registerIfAbsentAndEnabled(registry, ZookeeperProperties.class, context ->
+					new ZookeeperProperties());
 
 			registerIfAbsentAndEnabled(registry, RetryPolicy.class, context ->
 					new MyRetryPolicy(context.get(ZookeeperProperties.class)));

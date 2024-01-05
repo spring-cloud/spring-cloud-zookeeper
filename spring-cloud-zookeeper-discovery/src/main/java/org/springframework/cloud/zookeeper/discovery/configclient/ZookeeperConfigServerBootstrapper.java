@@ -18,10 +18,13 @@ package org.springframework.cloud.zookeeper.discovery.configclient;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.drivers.TracerDriver;
+import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.x.discovery.ServiceDiscovery;
@@ -41,6 +44,7 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.CuratorFactory;
+import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
@@ -67,54 +71,6 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 				ClassUtils.isPresent("org.springframework.cloud.bootstrap.marker.Marker", null)) {
 			return;
 		}
-		// create curator
-		CuratorFactory.registerCurator(registry, null, true, bootstrapContext -> isEnabled(bootstrapContext.get(Binder.class)));
-
-		// create discovery
-		registry.registerIfAbsent(ZookeeperDiscoveryProperties.class, context -> {
-			Binder binder = context.get(Binder.class);
-			if (!isEnabled(binder)) {
-				return null;
-			}
-			return binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
-							.of(ZookeeperDiscoveryProperties.class), getBindHandler(context))
-					.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties())));
-		});
-		registry.registerIfAbsent(InstanceSerializer.class, context -> {
-			if (!isEnabled(context.get(Binder.class))) {
-				return null;
-			}
-			return new JsonInstanceSerializer<>(ZookeeperInstance.class);
-		});
-		registry.registerIfAbsent(ServiceDiscoveryCustomizer.class, context -> {
-			if (!isEnabled(context.get(Binder.class))) {
-				return null;
-			}
-			CuratorFramework curator = context.get(CuratorFramework.class);
-			ZookeeperDiscoveryProperties properties = context.get(ZookeeperDiscoveryProperties.class);
-			InstanceSerializer<ZookeeperInstance> serializer = context.get(InstanceSerializer.class);
-			return new DefaultServiceDiscoveryCustomizer(curator, properties, serializer);
-		});
-		registry.registerIfAbsent(ServiceDiscovery.class, context -> {
-			if (!isEnabled(context.get(Binder.class))) {
-				return null;
-			}
-			ServiceDiscoveryCustomizer customizer = context.get(ServiceDiscoveryCustomizer.class);
-			return customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
-		});
-		registry.registerIfAbsent(ZookeeperDiscoveryClient.class, context -> {
-			Binder binder = context.get(Binder.class);
-			if (!isEnabled(binder)) {
-				return null;
-			}
-			ServiceDiscovery<ZookeeperInstance> serviceDiscovery = context.get(ServiceDiscovery.class);
-			ZookeeperDependencies dependencies = binder.bind(ZookeeperDependencies.PREFIX, Bindable
-							.of(ZookeeperDependencies.class), getBindHandler(context))
-					.orElseGet(ZookeeperDependencies::new);
-			ZookeeperDiscoveryProperties discoveryProperties = context.get(ZookeeperDiscoveryProperties.class);
-
-			return new ZookeeperDiscoveryClient(serviceDiscovery, dependencies, discoveryProperties);
-		});
 
 		// create instance provider
 		// We need to pass the lambda here so we do not create a new instance of ConfigServerInstanceProvider.Function
@@ -123,10 +79,18 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 
 		// promote beans to context
 		registry.addCloseListener(event -> {
-			ZookeeperDiscoveryClient discoveryClient = event.getBootstrapContext().get(ZookeeperDiscoveryClient.class);
+			ZookeeperFunction zookeeperFunction = ((ZookeeperFunction) event.getBootstrapContext().get(ConfigServerInstanceProvider.Function.class));
+			ZookeeperDiscoveryClient discoveryClient = zookeeperFunction.getDiscoveryClient();
 			if (discoveryClient != null) {
 				event.getApplicationContext().getBeanFactory().registerSingleton("zookeeperServiceDiscovery",
 						discoveryClient);
+			}
+
+			CuratorFramework curatorFramework = zookeeperFunction.getCuratorFramework();
+			if (curatorFramework != null && !event.getApplicationContext().getBeanFactory().containsBean("configDataCuratorFramework")) {
+				event.getApplicationContext().getBeanFactory().registerSingleton("configDataCuratorFramework",
+						curatorFramework);
+
 			}
 		});
 	}
@@ -149,6 +113,10 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 
 		private final BootstrapContext context;
 
+		private ZookeeperDiscoveryClient discoveryClient;
+
+		private CuratorFramework curatorFramework;
+
 		private ZookeeperFunction(BootstrapContext context) {
 			this.context = context;
 		}
@@ -162,35 +130,63 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 			return apply(serviceId, null, null, null);
 		}
 
+		private static <T> Supplier<T> supplier(BootstrapContext context, Class<T> type) {
+			if (context.isRegistered(type)) {
+				T instance = context.get(type);
+				return () -> instance;
+			}
+			else {
+				return () -> null;
+			}
+		}
+
 		@Override
 		public List<ServiceInstance> apply(String serviceId, Binder binder, BindHandler bindHandler, Log log) {
 			if (binder == null || !isEnabled(binder)) {
 				return Collections.emptyList();
 			}
+			if (this.discoveryClient == null) {
+				ZookeeperProperties properties = context.getOrElseSupply(ZookeeperProperties.class, () -> binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
+						.orElse(new ZookeeperProperties()));
+				RetryPolicy retryPolicy = context.getOrElseSupply(RetryPolicy.class, () -> new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
+						properties.getMaxSleepMs()));
+				try {
 
-			ZookeeperProperties properties = context.getOrElse(ZookeeperProperties.class, binder.bind(ZookeeperProperties.PREFIX, Bindable.of(ZookeeperProperties.class))
-					.orElse(new ZookeeperProperties()));
-			RetryPolicy retryPolicy = context.getOrElse(RetryPolicy.class, new ExponentialBackoffRetry(properties.getBaseSleepTimeMs(), properties.getMaxRetries(),
-					properties.getMaxSleepMs()));
-			try {
-				CuratorFramework curatorFramework = context.getOrElse(CuratorFramework.class, CuratorFactory.curatorFramework(properties, retryPolicy, Stream::of,
-						() -> null, () -> null));
-				InstanceSerializer<ZookeeperInstance> serializer = context.getOrElse(InstanceSerializer.class, new JsonInstanceSerializer<>(ZookeeperInstance.class));
-				ZookeeperDiscoveryProperties discoveryProperties = context.getOrElse(ZookeeperDiscoveryProperties.class, binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
-								.of(ZookeeperDiscoveryProperties.class), bindHandler)
-						.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()))));
-				ServiceDiscoveryCustomizer customizer = context.getOrElse(ServiceDiscoveryCustomizer.class, new DefaultServiceDiscoveryCustomizer(curatorFramework, discoveryProperties, serializer));
-				ServiceDiscovery<ZookeeperInstance> serviceDiscovery = customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
-				ZookeeperDependencies dependencies = context.getOrElse(ZookeeperDependencies.class, binder.bind(ZookeeperDependencies.PREFIX, Bindable
-								.of(ZookeeperDependencies.class), bindHandler)
-						.orElseGet(ZookeeperDependencies::new));
-				return new ZookeeperDiscoveryClient(serviceDiscovery, dependencies, discoveryProperties).getInstances(serviceId);
-			}
-			catch (Exception e) {
-				log.warn("Error fetching config server instance from Zookeeper", e);
-				return Collections.emptyList();
-			}
+					Supplier<Stream<CuratorFrameworkCustomizer>> customizers = () -> null;
+					if (context.isRegistered(CuratorFrameworkCustomizer.class)) {
+						CuratorFrameworkCustomizer customizer = context.get(CuratorFrameworkCustomizer.class);
+						customizers = () -> Stream.of(customizer);
+					}
 
+					this.curatorFramework =	CuratorFactory.curatorFramework(properties, retryPolicy, customizers,
+							supplier(context, EnsembleProvider.class), supplier(context, TracerDriver.class));
+
+					InstanceSerializer<ZookeeperInstance> serializer = context.getOrElseSupply(InstanceSerializer.class, () -> new JsonInstanceSerializer<>(ZookeeperInstance.class));
+					ZookeeperDiscoveryProperties discoveryProperties = context.getOrElseSupply(ZookeeperDiscoveryProperties.class, () -> binder.bind(ZookeeperDiscoveryProperties.PREFIX, Bindable
+									.of(ZookeeperDiscoveryProperties.class), bindHandler)
+							.orElseGet(() -> new ZookeeperDiscoveryProperties(new InetUtils(new InetUtilsProperties()))));
+					ServiceDiscoveryCustomizer customizer = context.getOrElseSupply(ServiceDiscoveryCustomizer.class, () -> new DefaultServiceDiscoveryCustomizer(curatorFramework, discoveryProperties, serializer));
+					ServiceDiscovery<ZookeeperInstance> serviceDiscovery = customizer.customize(ServiceDiscoveryBuilder.builder(ZookeeperInstance.class));
+					ZookeeperDependencies dependencies = context.getOrElseSupply(ZookeeperDependencies.class, () -> binder.bind(ZookeeperDependencies.PREFIX, Bindable
+									.of(ZookeeperDependencies.class), bindHandler)
+							.orElseGet(ZookeeperDependencies::new));
+					this.discoveryClient = new ZookeeperDiscoveryClient(serviceDiscovery, dependencies, discoveryProperties);
+
+				}
+				catch (Exception e) {
+					log.warn("Error fetching config server instance from Zookeeper", e);
+					return Collections.emptyList();
+				}
+			}
+			return this.discoveryClient.getInstances(serviceId);
+
+		}
+		public ZookeeperDiscoveryClient getDiscoveryClient() {
+			return this.discoveryClient;
+		}
+
+		public CuratorFramework getCuratorFramework() {
+			return this.curatorFramework;
 		}
 	}
 

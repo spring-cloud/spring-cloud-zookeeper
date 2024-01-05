@@ -131,7 +131,10 @@ public class ZookeeperConfigServerBootstrapperTests {
 							.get(ConfigServerInstanceProvider.Function.class);
 					assertThat(providerFn.apply("id", event.getBootstrapContext().get(Binder.class), event.getBootstrapContext().get(BindHandler.class), mock(Log.class))).as("Should return empty list.")
 							.isNotNull();
-					bootstrapDiscoveryClient.set(event.getBootstrapContext().get(ZookeeperDiscoveryClient.class));
+					bootstrapDiscoveryClient.set(((ZookeeperConfigServerBootstrapper.ZookeeperFunction) providerFn).getDiscoveryClient());
+					//Since we don't call the provider function until this close event we need to promote the discovery client
+					event.getApplicationContext().getBeanFactory().registerSingleton("zookeeperServiceDiscovery",
+							bootstrapDiscoveryClient.get());
 				})).run();
 
 		ZookeeperDiscoveryClient discoveryClient = context.getBean(ZookeeperDiscoveryClient.class);
