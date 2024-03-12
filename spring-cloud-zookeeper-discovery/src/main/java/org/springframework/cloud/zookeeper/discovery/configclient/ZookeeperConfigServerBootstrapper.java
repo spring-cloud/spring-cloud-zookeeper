@@ -35,6 +35,7 @@ import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServerConfigDataLocationResolver.PropertyResolver;
 import org.springframework.cloud.config.client.ConfigServerInstanceProvider;
 import org.springframework.cloud.zookeeper.CuratorFactory;
+import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.discovery.ConditionalOnZookeeperDiscoveryEnabled;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClient;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
@@ -66,6 +67,17 @@ public class ZookeeperConfigServerBootstrapper implements BootstrapRegistryIniti
 				ClassUtils.isPresent("org.springframework.cloud.bootstrap.marker.Marker", null)) {
 			return;
 		}
+
+		//Register ZookeeperProperties instead of in CuratorFactor.registerCurator here so we can properly resolve the properties.
+		//We need to use the PropertyResolver to do so but that is not available in CuratorFactory since it is a class
+		//from Spring Cloud Config.
+		registry.registerIfAbsent(ZookeeperProperties.class, context -> {
+			if (!isEnabled(context)) {
+				return null;
+			}
+			PropertyResolver propertyResolver = getPropertyResolver(context);
+			return propertyResolver.resolveOrCreateConfigurationProperties(ZookeeperProperties.PREFIX, ZookeeperProperties.class);
+		});
 
 		// create curator
 		CuratorFactory.registerCurator(registry, null, true, ZookeeperConfigServerBootstrapper::isEnabled);
