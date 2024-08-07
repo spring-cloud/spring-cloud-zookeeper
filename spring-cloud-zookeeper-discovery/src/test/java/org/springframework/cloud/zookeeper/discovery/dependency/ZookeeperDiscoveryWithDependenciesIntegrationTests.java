@@ -119,7 +119,7 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	}
 
 	@Test
-	@Disabled
+	@Ignore
 	public void should_have_headers_from_dependencies_attached_to_the_request_via_load_balanced_rest_template() {
 		// expect:
 		await().until(() -> {
