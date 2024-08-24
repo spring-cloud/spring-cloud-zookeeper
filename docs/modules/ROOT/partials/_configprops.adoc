@@ -2,7 +2,7 @@
 |Name | Default | Description
 
 |spring.cloud.zookeeper.base-sleep-time-ms | `+++50+++` | Initial amount of time to wait between retries.
-|spring.cloud.zookeeper.block-until-connected-unit |  | The unit of time related to blocking on connection to Zookeeper.
+|spring.cloud.zookeeper.block-until-connected-unit | `+++seconds+++` | The unit of time related to blocking on connection to Zookeeper.
 |spring.cloud.zookeeper.block-until-connected-wait | `+++10+++` | Wait time to block on connection to Zookeeper.
 |spring.cloud.zookeeper.config.default-context | `+++application+++` | The name of the default context.
 |spring.cloud.zookeeper.config.enabled | `+++true+++` | 
