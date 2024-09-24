@@ -75,7 +75,7 @@ public class ZookeeperPropertySources {
 
 	public ZookeeperPropertySource createPropertySource(String context, boolean optional, CuratorFramework curator) {
 		try {
-			return new ZookeeperPropertySource(context, curator);
+			return new ZookeeperPropertySource(context, curator, this.properties);
 			// TODO: howto call close when /refresh
 		}
 		catch (Exception e) {
