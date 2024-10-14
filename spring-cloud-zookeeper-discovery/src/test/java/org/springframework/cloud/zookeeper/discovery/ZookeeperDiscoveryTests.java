@@ -22,6 +22,7 @@ import com.jayway.awaitility.Awaitility;
 import com.toomuchcoding.jsonassert.JsonPath;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
