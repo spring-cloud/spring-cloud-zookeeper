@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +118,6 @@ public class ZookeeperDiscoveryWithDependenciesIntegrationTests {
 	}
 
 	@Test
-	@Disabled
 	public void should_have_headers_from_dependencies_attached_to_the_request_via_load_balanced_rest_template() {
 		// expect:
 		await().until(() -> {
