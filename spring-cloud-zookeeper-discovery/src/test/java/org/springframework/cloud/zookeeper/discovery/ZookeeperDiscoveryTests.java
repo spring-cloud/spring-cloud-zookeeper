@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.jayway.awaitility.Awaitility;
 import com.toomuchcoding.jsonassert.JsonPath;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
@@ -89,7 +88,7 @@ public class ZookeeperDiscoveryTests {
 	Registration registration;
 
 	@Test
-	@Ignore
+	@Disabled
 	public void should_find_the_app_by_its_name_via_LoadBalancer() {
 		// expect:
 		then(registeredServiceStatusViaServiceName()).isEqualTo("UP");
