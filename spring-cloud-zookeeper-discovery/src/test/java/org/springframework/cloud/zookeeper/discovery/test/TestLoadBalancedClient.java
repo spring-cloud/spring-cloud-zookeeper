@@ -24,6 +24,9 @@ import org.springframework.web.client.RestTemplate;
  */
 public class TestLoadBalancedClient extends TestServiceRestClient {
 
+	/**
+	 * Shared base path.
+	 */
 	public static final String BASE_PATH = new WebEndpointProperties().getBasePath();
 
 	private final String thisAppName;
