@@ -84,7 +84,11 @@ public class ServiceInstanceRegistration implements ZookeeperRegistration {
 		if (this.serviceInstance == null) {
 			return 0;
 		}
-		return this.serviceInstance.getPort();
+		Integer port = this.serviceInstance.getPort();
+		if (port == null) { // might be the case with SSL enabled
+			return 0;
+		}
+		return port.intValue();
 	}
 
 	public void setPort(int port) {
