@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.imps.CuratorFrameworkImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,8 +85,9 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 		ZookeeperProperties properties = context.get(ZookeeperProperties.class);
 		CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
 				.retryPolicy(CuratorFactory.retryPolicy(properties))
-				.connectString(properties.getConnectString());
-		TestCuratorFramework curator = new TestCuratorFramework(builder);
+				.connectString(properties.getConnectString())
+				.namespace("testnamespace");
+		CuratorFramework curator = builder.build();
 		curator.start();
 		try {
 			curator.blockUntilConnected(properties.getBlockUntilConnectedWait(),
@@ -102,16 +102,11 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 	@Test
 	public void curatorFrameworkIsCustom() {
 		CuratorFramework curator = context.getBean(CuratorFramework.class);
-		assertThat(curator).isNotNull().isInstanceOf(TestCuratorFramework.class);
+		assertThat(curator).isNotNull();
+		assertThat(curator.getNamespace()).isEqualTo("testnamespace");
 		assertThat(bindHandlerBootstrapper.onSuccessCount).isGreaterThan(0);
 	}
-
-	static class TestCuratorFramework extends CuratorFrameworkImpl {
-		TestCuratorFramework(CuratorFrameworkFactory.Builder builder) {
-			super(builder);
-		}
-	}
-
+	
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {
