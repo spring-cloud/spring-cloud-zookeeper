@@ -50,13 +50,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ZookeeperConfigDataCustomizationIntegrationTests {
 
+	public static final String PREFIX = "test__configdata__";
+	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
 	private static final Log log = LogFactory
 			.getLog(ZookeeperConfigDataCustomizationIntegrationTests.class);
-
-	public static final String PREFIX = "test__configdata__";
-
-	public static final String ROOT = "/" + PREFIX + UUID.randomUUID();
-
 	private ConfigurableApplicationContext context;
 	private BindHandlerBootstrapper bindHandlerBootstrapper;
 
@@ -106,7 +103,7 @@ public class ZookeeperConfigDataCustomizationIntegrationTests {
 		assertThat(curator.getNamespace()).isEqualTo("testnamespace");
 		assertThat(bindHandlerBootstrapper.onSuccessCount).isGreaterThan(0);
 	}
-	
+
 	@Configuration
 	@EnableAutoConfiguration
 	static class Config {
