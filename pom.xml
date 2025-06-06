@@ -152,7 +152,7 @@
 	<properties>
 		<spring-cloud-build.version>5.0.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-commons.version>5.0.0-SNAPSHOT</spring-cloud-commons.version>
-		<spring-cloud-config.version>4.3.1-SNAPSHOT</spring-cloud-config.version>
+		<spring-cloud-config.version>5.0.0-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>5.0.0-SNAPSHOT</spring-cloud-openfeign.version>
 		<testcontainers.version>1.21.1</testcontainers.version>
 		<mockserverclient.version>5.15.0</mockserverclient.version>
