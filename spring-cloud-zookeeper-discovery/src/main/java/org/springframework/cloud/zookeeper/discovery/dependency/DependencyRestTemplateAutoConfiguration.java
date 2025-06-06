@@ -94,7 +94,7 @@ public class DependencyRestTemplateAutoConfiguration {
 			private Map<String, Collection<String>> convertHeadersFromListToCollection(
 					HttpHeaders headers) {
 				Map<String, Collection<String>> transformedHeaders = new HashMap<>();
-				for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+				for (Map.Entry<String, List<String>> entry : headers.headerSet()) {
 					transformedHeaders.put(entry.getKey(), entry.getValue());
 				}
 				return transformedHeaders;
