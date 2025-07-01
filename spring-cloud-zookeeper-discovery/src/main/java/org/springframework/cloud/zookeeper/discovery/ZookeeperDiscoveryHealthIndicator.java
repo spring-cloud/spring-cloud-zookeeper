@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.Health;
 import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies;
 
 /**
- * {@link org.springframework.boot.actuate.health.HealthIndicator} that presents the
+ * {@link org.springframework.boot.health.contributor.HealthIndicator} that presents the
  * status of all instances registered in Zookeeper.
  *
  * @author Spencer Gibb

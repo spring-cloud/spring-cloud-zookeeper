@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class DependenciesNotPassedCondition extends DependenciesPassedCondition 
 	public ConditionOutcome getMatchOutcome(ConditionContext context,
 			AnnotatedTypeMetadata metadata) {
 		ConditionOutcome propertiesSet = super.getMatchOutcome(context, metadata);
-		return ConditionOutcome.inverse(propertiesSet);
+		return new ConditionOutcome(propertiesSet.isMatch(), propertiesSet.getMessage());
 	}
 
 }
