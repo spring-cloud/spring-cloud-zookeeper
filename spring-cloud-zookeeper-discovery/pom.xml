@@ -176,6 +176,11 @@
 			<artifactId>mockserver-client-java</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-restclient</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
