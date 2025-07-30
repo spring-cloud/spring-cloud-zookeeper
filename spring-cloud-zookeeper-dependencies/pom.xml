@@ -14,7 +14,7 @@
 	<name>spring-cloud-zookeeper-dependencies</name>
 	<description>Spring Cloud Zookeeper Dependencies</description>
 	<properties>
-		<curator.version>5.8.0</curator.version>
+		<curator.version>5.9.0</curator.version>
 		<maven-checkstyle-plugin.failsOnError>true</maven-checkstyle-plugin.failsOnError>
 		<maven-checkstyle-plugin.failsOnViolation>true</maven-checkstyle-plugin.failsOnViolation>
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true</maven-checkstyle-plugin.includeTestSourceDirectory>
