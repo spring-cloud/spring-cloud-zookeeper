@@ -1,9 +1,9 @@
 # Environment Post Processors
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.EnvironmentPostProcessor=\
 org.springframework.cloud.zookeeper.discovery.dependency.DependencyEnvironmentPostProcessor
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperDiscoveryClientConfigServiceBootstrapConfiguration
 
-org.springframework.boot.BootstrapRegistryInitializer=\
+org.springframework.boot.bootstrap.BootstrapRegistryInitializer=\
 org.springframework.cloud.zookeeper.discovery.configclient.ZookeeperConfigServerBootstrapper

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.ConfigurableBootstrapContext;
+import org.springframework.boot.bootstrap.ConfigurableBootstrapContext;
 import org.springframework.boot.context.config.ConfigDataLocation;
 import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
 import org.springframework.boot.context.config.Profiles;
