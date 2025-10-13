@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import feign.Client;
@@ -32,12 +33,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient;
 import org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient;
 import org.springframework.cloud.openfeign.loadbalancer.FeignLoadBalancerAutoConfiguration;
+import org.springframework.cloud.openfeign.loadbalancer.LoadBalancerFeignRequestTransformer;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,24 +67,24 @@ public class DependencyFeignClientAutoConfiguration {
 
 	private final BlockingLoadBalancerClient loadBalancerClient;
 
-	private final LoadBalancerProperties loadBalancerProperties;
-
 	private final LoadBalancerClientFactory loadBalancerClientFactory;
 
+	private final List<LoadBalancerFeignRequestTransformer> transformers;
+
 	public DependencyFeignClientAutoConfiguration(@Autowired(required = false) FeignBlockingLoadBalancerClient feignLoadBalancerClient,
-			ZookeeperDependencies zookeeperDependencies, BlockingLoadBalancerClient loadBalancerClient, LoadBalancerProperties loadBalancerProperties, LoadBalancerClientFactory loadBalancerClientFactory) {
+			ZookeeperDependencies zookeeperDependencies, BlockingLoadBalancerClient loadBalancerClient, LoadBalancerClientFactory loadBalancerClientFactory, List<LoadBalancerFeignRequestTransformer> transformers) {
 		this.feignLoadBalancerClient = feignLoadBalancerClient;
 		this.zookeeperDependencies = zookeeperDependencies;
 		this.loadBalancerClient = loadBalancerClient;
-		this.loadBalancerProperties = loadBalancerProperties;
 		this.loadBalancerClientFactory = loadBalancerClientFactory;
+		this.transformers = transformers;
 	}
 
 	@Bean
 	@Primary
 	Client dependencyBasedFeignClient() {
 		return new FeignBlockingLoadBalancerClient(new Client.Default(null, null),
-				loadBalancerClient, loadBalancerProperties, loadBalancerClientFactory) {
+				loadBalancerClient, loadBalancerClientFactory, transformers) {
 
 			@Override
 			public Response execute(Request request, Request.Options options)
