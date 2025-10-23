@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.zookeeper.sample;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,12 +30,10 @@ import org.springframework.cloud.zookeeper.discovery.watcher.DependencyWatcherAu
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperServiceRegistryAutoConfiguration;
 import org.springframework.cloud.zookeeper.support.CuratorServiceDiscoveryAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleZookeeperApplication.class, webEnvironment = RANDOM_PORT,
 		properties = "spring.cloud.zookeeper.enabled=false")
 public class ZookeeperDisabledTests {
