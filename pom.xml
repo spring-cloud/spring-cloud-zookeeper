@@ -200,7 +200,7 @@
 
 	<properties>
 		<spring-cloud-build.version>4.2.3-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-commons.version>4.2.3-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.2.4-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-config.version>4.2.4-SNAPSHOT</spring-cloud-config.version>
 		<spring-cloud-openfeign.version>4.2.3-SNAPSHOT</spring-cloud-openfeign.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
