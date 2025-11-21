@@ -56,7 +56,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistry<ZookeeperRegist
 
 	/**
 	 * TODO: add when ZookeeperServiceDiscovery is removed One can override this method to
-	 * provide custom way of registering {@link ServiceDiscovery}
+	 * provide custom way of registering {@link ServiceDiscovery}.
 	 */
 	/*
 	 * private void configureServiceDiscovery() {
