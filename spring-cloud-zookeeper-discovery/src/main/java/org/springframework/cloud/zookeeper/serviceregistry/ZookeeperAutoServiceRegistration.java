@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Zookeeper {@link AbstractAutoServiceRegistration} that uses
@@ -41,14 +42,14 @@ public class ZookeeperAutoServiceRegistration
 	private ZookeeperDiscoveryProperties properties;
 
 	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
-			ZookeeperRegistration registration, ZookeeperDiscoveryProperties properties) {
-		this(registry, registration, properties, null);
+			ZookeeperRegistration registration, ZookeeperDiscoveryProperties properties, ApplicationContext applicationContext) {
+		this(registry, registration, properties, null, applicationContext);
 	}
 
 	public ZookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
 			ZookeeperRegistration registration, ZookeeperDiscoveryProperties properties,
-			AutoServiceRegistrationProperties arProperties) {
-		super(registry, arProperties);
+			AutoServiceRegistrationProperties arProperties, ApplicationContext applicationContext) {
+		super(applicationContext, registry, arProperties);
 		this.registration = registration;
 		this.properties = properties;
 		if (this.properties.getInstancePort() != null) {

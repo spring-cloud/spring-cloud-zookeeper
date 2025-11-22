@@ -47,8 +47,8 @@ public class ZookeeperAutoServiceRegistrationAutoConfiguration {
 	@Bean
 	public ZookeeperAutoServiceRegistration zookeeperAutoServiceRegistration(
 			ZookeeperServiceRegistry registry, ZookeeperRegistration registration,
-			ZookeeperDiscoveryProperties properties) {
-		return new ZookeeperAutoServiceRegistration(registry, registration, properties);
+			ZookeeperDiscoveryProperties properties, ApplicationContext context) {
+		return new ZookeeperAutoServiceRegistration(registry, registration, properties, context);
 	}
 
 	@Bean
