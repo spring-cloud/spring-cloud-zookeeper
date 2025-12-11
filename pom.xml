@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>spring-cloud-zookeeper</artifactId>
-	<version>4.2.3-SNAPSHOT</version>
+	<version>4.2.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Zookeeper</name>
 	<description>Spring Cloud Zookeeper</description>
