@@ -198,7 +198,8 @@ public class ZookeeperPropertySourceLocatorTests {
 	public void compositePropertySourceHoldsPropertySourcesInCorrectOrder() {
 
 		// given
-		final String defaultContext = "someDefaultContext";
+		final String defaultContext = "someDefaultContext1,someDefaultContext2";
+		String[] defaultContextArray = defaultContext.split(",");
 		final String someName = "someName";
 		final String someProfile = "someProfile";
 
@@ -229,8 +230,11 @@ public class ZookeeperPropertySourceLocatorTests {
 				.endsWith(someName + properties.getProfileSeparator() + someProfile);
 		assertThat(propertySources.get(1).getName()).endsWith(someName);
 		assertThat(propertySources.get(2).getName()).endsWith(
-				defaultContext + properties.getProfileSeparator() + someProfile);
-		assertThat(propertySources.get(3).getName()).endsWith(defaultContext);
+				defaultContextArray[0] + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(3).getName()).endsWith(defaultContextArray[0]);
+		assertThat(propertySources.get(4).getName()).endsWith(
+				defaultContextArray[1] + properties.getProfileSeparator() + someProfile);
+		assertThat(propertySources.get(5).getName()).endsWith(defaultContextArray[1]);
 	}
 
 	@Configuration
