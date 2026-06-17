@@ -16,11 +16,12 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import java.nio.charset.Charset;
-import java.util.LinkedHashMap;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,10 +41,14 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 
 	private static final Log log = LogFactory.getLog(ZookeeperPropertySource.class);
 
-	private Map<String, String> properties = new LinkedHashMap<>();
+	private final ZookeeperConfigProperties zookeeperConfigProperties;
 
-	public ZookeeperPropertySource(String context, CuratorFramework source) {
+	private Map<String, String> properties = new ConcurrentHashMap<>(256);
+
+	public ZookeeperPropertySource(String context, CuratorFramework source,
+			ZookeeperConfigProperties zookeeperConfigProperties) {
 		super(context, source);
+		this.zookeeperConfigProperties = zookeeperConfigProperties;
 		findProperties(this.getContext(), null);
 	}
 
@@ -86,9 +91,20 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 			if (children == null || children.isEmpty()) {
 				return;
 			}
-			for (String child : children) {
+
+			Stream<String> childrenStream = children.stream();
+			if (zookeeperConfigProperties.isParallel() && this.getContext().equals(path)) {
+				childrenStream = children.parallelStream();
+			}
+			childrenStream.forEach(child -> {
 				String childPath = path + "/" + child;
-				List<String> childPathChildren = getChildren(childPath);
+				List<String> childPathChildren = null;
+				try {
+					childPathChildren = getChildren(childPath);
+				}
+				catch (Exception e) {
+					ReflectionUtils.rethrowRuntimeException(e);
+				}
 
 				byte[] bytes = getPropertyBytes(childPath);
 				if (bytes == null || bytes.length == 0) {
@@ -97,13 +113,13 @@ public class ZookeeperPropertySource extends AbstractZookeeperPropertySource {
 					}
 				}
 				else {
-					registerKeyValue(childPath,
-							new String(bytes, Charset.forName("UTF-8")));
+					registerKeyValue(childPath, new String(bytes, StandardCharsets.UTF_8));
 				}
 
 				// Check children even if we have found a value for the current znode
 				findProperties(childPath, childPathChildren);
-			}
+			});
+
 			log.trace("leaving findProperties for path: " + path);
 		}
 		catch (Exception exception) {
