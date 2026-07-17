@@ -62,6 +62,11 @@ public class ZookeeperConfigProperties {
 	 */
 	private boolean failFast = true;
 
+	/**
+	 * get config in parallel way.
+	 */
+	private boolean parallel = false;
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -112,6 +117,14 @@ public class ZookeeperConfigProperties {
 		this.failFast = failFast;
 	}
 
+	public boolean isParallel() {
+		return parallel;
+	}
+
+	public void setParallel(boolean parallel) {
+		this.parallel = parallel;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringCreator(this)
@@ -121,6 +134,7 @@ public class ZookeeperConfigProperties {
 				.append("defaultContext", defaultContext)
 				.append("profileSeparator", profileSeparator)
 				.append("failFast", failFast)
+				.append("parallel", parallel)
 				.toString();
 
 	}

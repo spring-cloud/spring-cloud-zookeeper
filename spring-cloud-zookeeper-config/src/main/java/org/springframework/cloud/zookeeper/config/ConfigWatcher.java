@@ -17,7 +17,7 @@
 package org.springframework.cloud.zookeeper.config;
 
 import java.io.Closeable;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -124,7 +124,7 @@ public class ConfigWatcher
 		out.append(", path=").append(event.getData().getPath());
 		byte[] data = event.getData().getData();
 		if (data != null && data.length > 0) {
-			out.append(", data=").append(new String(data, Charset.forName("UTF-8")));
+			out.append(", data=").append(new String(data, StandardCharsets.UTF_8));
 		}
 		return out.toString();
 	}
