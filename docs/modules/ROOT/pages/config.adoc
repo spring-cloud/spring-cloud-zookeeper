@@ -92,52 +92,38 @@ CAUTION: If you have set `spring.cloud.bootstrap.enabled=true` or `spring.config
 [[access-control-lists-acls]]
 == Access Control Lists (ACLs)
 
-You can add authentication information for Zookeeper ACLs by calling the `addAuthInfo`
-method of a `CuratorFramework` bean. One way to accomplish this is to provide your own
-`CuratorFramework` bean, as shown in the following example:
+`CuratorFramework` is an interface and does not provide `addAuthInfo`.
+Do not replace the auto-configured `CuratorFramework` bean only to add credentials;
+`ZookeeperAutoConfiguration` backs off when that bean is already present.
+
+Declare a `CuratorFrameworkCustomizer` instead. Auto-configuration applies every such
+bean to the `CuratorFrameworkFactory.Builder` before the client is built, so you can
+call Curator's `authorization()` methods:
 
 [source,java,indent=0]
 ----
-@BoostrapConfiguration
-public class CustomCuratorFrameworkConfig {
+@Configuration
+public class ZookeeperAuthConfig {
 
   @Bean
-  public CuratorFramework curatorFramework() {
-    CuratorFramework curator = new CuratorFramework();
-    curator.addAuthInfo("digest", "user:password".getBytes());
-    return curator;
+  public CuratorFrameworkCustomizer digestAuthCustomizer() {
+    return builder -> builder.authorization("digest", "user:password".getBytes());
   }
 
 }
 ----
+
 Consult
 https://github.com/spring-cloud/spring-cloud-zookeeper/blob/main/spring-cloud-zookeeper-core/src/main/java/org/springframework/cloud/zookeeper/ZookeeperAutoConfiguration.java[the ZookeeperAutoConfiguration class]
-to see how the `CuratorFramework` bean's default configuration.
+for the default `CuratorFramework` setup.
 
-Alternatively, you can add your credentials from a class that depends on the existing
-`CuratorFramework` bean, as shown in the following example:
-
-[source,java,indent=0]
-----
-@BoostrapConfiguration
-public class DefaultCuratorFrameworkConfig {
-
-  public ZookeeperConfig(CuratorFramework curator) {
-    curator.addAuthInfo("digest", "user:password".getBytes());
-  }
-
-}
-----
-
-The creation of this bean must occur during the boostrapping phase. You can register
-configuration classes to run during this phase by annotating them with
-`@BootstrapConfiguration` and including them in a comma-separated list that you set as the
-value of the `org.springframework.cloud.bootstrap.BootstrapConfiguration` property in the
-`resources/META-INF/spring.factories` file, as shown in the following example:
+If you still create the client during legacy bootstrap (`spring-cloud-starter-bootstrap`
+or `spring.cloud.bootstrap.enabled=true`), register the same `@Bean` on a
+`@BootstrapConfiguration` listed in `META-INF/spring.factories` so the customizer exists
+before that client is built:
 
 .resources/META-INF/spring.factories
 ----
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-my.project.CustomCuratorFrameworkConfig,\
-my.project.DefaultCuratorFrameworkConfig
+my.project.ZookeeperAuthConfig
 ----
