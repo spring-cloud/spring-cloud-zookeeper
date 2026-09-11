@@ -87,7 +87,7 @@ public class ZookeeperConfigDataLocationResolver implements ConfigDataLocationRe
 
 		// create locations
 		ZookeeperConfigProperties properties = loadConfigProperties(context);
-		context.getBootstrapContext().register(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
+		context.getBootstrapContext().registerIfAbsent(ZookeeperConfigProperties.class, InstanceSupplier.of(properties));
 
 		ZookeeperPropertySources sources = new ZookeeperPropertySources(properties, log);
 
