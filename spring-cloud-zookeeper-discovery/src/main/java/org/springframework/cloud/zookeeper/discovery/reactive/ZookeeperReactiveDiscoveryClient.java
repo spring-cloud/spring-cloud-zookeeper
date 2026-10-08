@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.zookeeper.discovery.reactive;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -121,7 +122,7 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 
 	@Override
 	public Mono<Void> reactiveProbe() {
-		return Mono.fromCallable(() -> {
+		return Mono.<Collection<String>>fromCallable(() -> {
 					try {
 						return serviceDiscovery.queryForNames();
 					}
@@ -129,7 +130,7 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 						if (logger.isDebugEnabled()) {
 							logger.debug("Error getting services from zookeeper. Possibly, no service has registered.", e);
 						}
-						return Collections.emptyList();
+						return Collections.<String>emptyList();
 					}
 				})
 				.subscribeOn(Schedulers.boundedElastic())
