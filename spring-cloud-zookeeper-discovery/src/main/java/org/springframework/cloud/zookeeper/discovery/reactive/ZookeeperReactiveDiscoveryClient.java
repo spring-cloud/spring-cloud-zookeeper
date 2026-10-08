@@ -39,6 +39,7 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
  * {@link org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies} to service names in Zookeeper.
  *
  * @author Tim Ysewyn
+ * @author Divyansh Kumar
  * @since 2.2.0
  */
 public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient {
@@ -114,6 +115,13 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 			return pathForAlias.isEmpty() ? serviceId : pathForAlias;
 		}
 		return serviceId;
+	}
+
+	@Override
+	public Mono<Void> reactiveProbe() {
+		return Mono.fromCallable(() -> serviceDiscovery.queryForNames())
+				.subscribeOn(Schedulers.boundedElastic())
+				.then();
 	}
 
 	@Override

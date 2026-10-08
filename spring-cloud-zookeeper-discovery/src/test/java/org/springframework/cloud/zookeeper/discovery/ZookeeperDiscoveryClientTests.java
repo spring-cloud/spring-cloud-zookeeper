@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Marcin Grzejszczak
+ * @author Divyansh Kumar
  */
 public class ZookeeperDiscoveryClientTests {
 
@@ -73,6 +74,29 @@ public class ZookeeperDiscoveryClientTests {
 		List<ServiceInstance> instances = discoveryClient.getInstances("myservice");
 		// then:
 		then(instances).isEmpty();
+	}
+
+	@Test
+	public void shouldCompleteProbeWhenClientHealthy() throws Exception {
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
+		when(serviceDiscovery.queryForNames()).thenReturn(List.of("my-service"));
+		ZookeeperDiscoveryClient discoveryClient = new ZookeeperDiscoveryClient(
+				serviceDiscovery, null, new ZookeeperDiscoveryProperties());
+
+		discoveryClient.probe();
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void shouldThrowProbeWhenClientThrows() throws Exception {
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
+		when(serviceDiscovery.queryForNames())
+				.thenThrow(new RuntimeException("Zookeeper query failed"));
+		ZookeeperDiscoveryClient discoveryClient = new ZookeeperDiscoveryClient(
+				serviceDiscovery, null, new ZookeeperDiscoveryProperties());
+
+		discoveryClient.probe();
 	}
 
 }
