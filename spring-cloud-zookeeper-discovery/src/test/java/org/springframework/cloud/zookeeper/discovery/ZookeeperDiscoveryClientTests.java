@@ -87,6 +87,18 @@ public class ZookeeperDiscoveryClientTests {
 		discoveryClient.probe();
 	}
 
+	@Test
+	public void shouldCompleteProbeWhenNoNodeException() throws Exception {
+		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(
+				ServiceDiscovery.class);
+		when(serviceDiscovery.queryForNames())
+				.thenThrow(new NoNodeException("path"));
+		ZookeeperDiscoveryClient discoveryClient = new ZookeeperDiscoveryClient(
+				serviceDiscovery, null, new ZookeeperDiscoveryProperties());
+
+		discoveryClient.probe();
+	}
+
 	@Test(expected = RuntimeException.class)
 	public void shouldThrowProbeWhenClientThrows() throws Exception {
 		ServiceDiscovery<ZookeeperInstance> serviceDiscovery = mock(

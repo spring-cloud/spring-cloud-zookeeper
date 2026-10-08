@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.discovery.reactive;
 
 import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.zookeeper.KeeperException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -122,6 +123,12 @@ class ZookeeperReactiveDiscoveryClientTests {
 	@Test
 	public void shouldCompleteReactiveProbeWhenClientHealthy() throws Exception {
 		when(zkClient.queryForNames()).thenReturn(singletonList("my-service"));
+		StepVerifier.create(client.reactiveProbe()).verifyComplete();
+	}
+
+	@Test
+	public void shouldCompleteReactiveProbeWhenNoNodeException() throws Exception {
+		when(zkClient.queryForNames()).thenThrow(new KeeperException.NoNodeException("path"));
 		StepVerifier.create(client.reactiveProbe()).verifyComplete();
 	}
 
