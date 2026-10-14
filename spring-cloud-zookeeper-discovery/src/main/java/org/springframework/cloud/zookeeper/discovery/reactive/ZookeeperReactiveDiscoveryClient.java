@@ -16,10 +16,13 @@
 
 package org.springframework.cloud.zookeeper.discovery.reactive;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.zookeeper.KeeperException;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,7 @@ import org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDepende
  * {@link org.springframework.cloud.zookeeper.discovery.dependency.ZookeeperDependencies} to service names in Zookeeper.
  *
  * @author Tim Ysewyn
+ * @author Divyansh Kumar
  * @since 2.2.0
  */
 public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient {
@@ -114,6 +118,23 @@ public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient
 			return pathForAlias.isEmpty() ? serviceId : pathForAlias;
 		}
 		return serviceId;
+	}
+
+	@Override
+	public Mono<Void> reactiveProbe() {
+		return Mono.<Collection<String>>fromCallable(() -> {
+					try {
+						return serviceDiscovery.queryForNames();
+					}
+					catch (KeeperException.NoNodeException e) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Error getting services from zookeeper. Possibly, no service has registered.", e);
+						}
+						return Collections.<String>emptyList();
+					}
+				})
+				.subscribeOn(Schedulers.boundedElastic())
+				.then();
 	}
 
 	@Override
