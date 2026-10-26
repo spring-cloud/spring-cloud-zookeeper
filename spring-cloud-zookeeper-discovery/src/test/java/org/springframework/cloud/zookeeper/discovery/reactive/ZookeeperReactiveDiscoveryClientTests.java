@@ -17,6 +17,7 @@
 package org.springframework.cloud.zookeeper.discovery.reactive;
 
 import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.zookeeper.KeeperException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Tim Ysewyn
+ * @author Divyansh Kumar
  */
 @ExtendWith(MockitoExtension.class)
 class ZookeeperReactiveDiscoveryClientTests {
@@ -116,6 +118,28 @@ class ZookeeperReactiveDiscoveryClientTests {
 		when(zkClient.queryForInstances("path-for-existing-service")).thenReturn(singletonList(serviceInstance));
 		Flux<ServiceInstance> services = this.client.getInstances("existing-service");
 		StepVerifier.create(services).expectNextCount(1).expectComplete().verify();
+	}
+
+	@Test
+	public void shouldCompleteReactiveProbeWhenClientHealthy() throws Exception {
+		when(zkClient.queryForNames()).thenReturn(singletonList("my-service"));
+		StepVerifier.create(client.reactiveProbe()).verifyComplete();
+	}
+
+	@Test
+	public void shouldCompleteReactiveProbeWhenNoNodeException() throws Exception {
+		when(zkClient.queryForNames()).thenThrow(new KeeperException.NoNodeException("path"));
+		StepVerifier.create(client.reactiveProbe()).verifyComplete();
+	}
+
+	@Test
+	public void shouldErrorReactiveProbeWhenClientThrows() throws Exception {
+		RuntimeException exception = new RuntimeException("Zookeeper query failed");
+		when(zkClient.queryForNames()).thenThrow(exception);
+		StepVerifier.create(client.reactiveProbe())
+				.verifyErrorSatisfies(ex -> assertThat(ex)
+						.isInstanceOf(RuntimeException.class)
+						.hasMessage("Zookeeper query failed"));
 	}
 
 	private void configureServiceInstance() {
