@@ -111,11 +111,20 @@ public class ConfigWatcher
 	public void childEvent(CuratorFramework client, TreeCacheEvent event)
 			throws Exception {
 		TreeCacheEvent.Type eventType = event.getType();
-		if (eventType == NODE_ADDED || eventType == NODE_REMOVED
-				|| eventType == NODE_UPDATED) {
-			this.publisher
-					.publishEvent(new RefreshEvent(this, event, getEventDesc(event)));
+		if (eventType != NODE_ADDED && eventType != NODE_REMOVED
+				&& eventType != NODE_UPDATED) {
+			return;
 		}
+
+		// ignore event whose modify time is out of date
+		String path = event.getData().getPath();
+		long validTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1);
+		if (eventType == NODE_ADDED
+				&& event.getData().getStat().getMtime() < validTime) {
+			return;
+		}
+
+		this.publisher.publishEvent(new RefreshEvent(this, event, getEventDesc(event)));
 	}
 
 	public String getEventDesc(TreeCacheEvent event) {
