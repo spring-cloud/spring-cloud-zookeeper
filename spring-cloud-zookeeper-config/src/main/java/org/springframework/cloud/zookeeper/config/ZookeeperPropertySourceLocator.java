@@ -107,16 +107,4 @@ public class ZookeeperPropertySourceLocator implements PropertySourceLocator {
 	@PreDestroy
 	public void destroy() {
 	}
-
-	private PropertySource<CuratorFramework> create(String context) {
-		return new ZookeeperPropertySource(context, this.curator);
-	}
-
-	private void addProfiles(List<String> contexts, String baseContext,
-			List<String> profiles) {
-		for (String profile : profiles) {
-			contexts.add(baseContext + this.properties.getProfileSeparator() + profile);
-		}
-	}
-
 }

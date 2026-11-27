@@ -42,12 +42,13 @@ public class ZookeeperConfigDataLoader implements ConfigDataLoader<ZookeeperConf
 	public ConfigData load(ConfigDataLoaderContext context, ZookeeperConfigDataResource resource) {
 		try {
 			CuratorFramework curator = context.getBootstrapContext().get(CuratorFramework.class);
-			if (curator == null) {
+			ZookeeperConfigProperties properties = context.getBootstrapContext().get(ZookeeperConfigProperties.class);
+			if (curator == null || properties == null) {
 				// this can happen if certain conditions are met
 				return null;
 			}
-			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(resource.getContext(),
-					curator);
+			ZookeeperPropertySource propertySource = new ZookeeperPropertySource(resource.getContext(), curator,
+					properties);
 			List<ZookeeperPropertySource> propertySources = Collections.singletonList(propertySource);
 
 			return new ConfigData(propertySources, source -> {
