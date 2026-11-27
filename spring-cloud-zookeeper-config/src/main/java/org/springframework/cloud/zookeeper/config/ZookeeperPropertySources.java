@@ -16,15 +16,17 @@
 
 package org.springframework.cloud.zookeeper.config;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.curator.framework.CuratorFramework;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.StringUtils;
 
 public class ZookeeperPropertySources {
 	private final ZookeeperConfigProperties properties;
@@ -44,22 +46,23 @@ public class ZookeeperPropertySources {
 	}
 
 	public List<Context> generateAutomaticContexts(List<String> profiles, boolean reverse) {
-		List<Context> contexts = new ArrayList<>();
 		String root = properties.getRoot();
 
-		String defaultContext = root + "/" + properties.getDefaultContext();
-		contexts.add(new Context(defaultContext));
-		addProfiles(contexts, defaultContext, profiles);
+		//properties.getDefaultContext() may contain some configs and the former config owns higher priority.
+		List<String> defaultContextList = Arrays.stream(properties.getDefaultContext().split(properties.getProfileSeparator())).collect(Collectors.toList());
+		Collections.reverse(defaultContextList);
+		String name = properties.getName().startsWith("/") ? properties.getName().substring(1) : properties.getName();
+		defaultContextList.add(name);
 
-		StringBuilder baseContext = new StringBuilder(root);
-		if (!properties.getName().startsWith("/")) {
-			baseContext.append("/");
-		}
-		// getName() defaults to ${spring.application.name} or application
-		baseContext.append(properties.getName());
-		contexts.add(new Context(baseContext.toString()));
-		addProfiles(contexts, baseContext.toString(), profiles);
-
+		List<Context> contexts = defaultContextList.stream()
+				.filter(StringUtils::hasLength)
+				.flatMap(contextString -> {
+					Context context = new Context(root + "/" + contextString);
+					Stream<Context> profileContextStream = profiles.stream()
+						.map(profile -> new Context(context.getPath() + this.properties.getProfileSeparator() + profile, profile));
+					return Stream.concat(Stream.of(context), profileContextStream);
+				}
+				).distinct().collect(Collectors.toList());
 		if (reverse) {
 			Collections.reverse(contexts);
 		}
